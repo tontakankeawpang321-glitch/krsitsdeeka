@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>คู่มือการเลี้ยงลูก – จากชีต</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&family=Kodchasan:wght@600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --bg:#fffdf7; --paper:#ffffff; --ink:#0f172a; --muted:#475569; --line:#e5e7eb;
+    --brand:#ffb84d; --brand-2:#f59e0b; --chip:#fff4cf; --ring:#fde68a;
+    --ok:#16a34a; --danger:#dc2626; --radius:16px;
+    --shadow:0 10px 30px -18px rgba(2,8,23,.28);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0; background:var(--bg); color:var(--ink); font-family:"Sarabun", system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans Thai", sans-serif;}
+  a{color:#0ea5e9; text-decoration:none}
+  a:hover{text-decoration:underline}
+
+  .wrap{max-width:1100px; margin:auto; padding:24px 16px 80px}
+  header.app{
+    position:sticky; top:0; z-index:50; backdrop-filter:blur(10px);
+    background:linear-gradient(180deg, rgba(255,253,247,.9), rgba(255,253,247,.75) 60%, rgba(255,253,247,0));
+    padding:18px 16px 10px; margin:0 -16px; border-bottom:1px solid rgba(0,0,0,.04);
+  }
+  .title{
+    font-family:"Kodchasan","Sarabun",sans-serif; font-weight:700; letter-spacing:.2px;
+    display:flex; align-items:center; gap:12px; margin-bottom:6px; padding:0 16px; color:#6b4000;
+  }
+  .badge{
+    display:inline-flex; align-items:center; gap:6px;
+    background:linear-gradient(145deg,var(--brand),#ffe8b3);
+    color:#5b3b00; padding:6px 10px; border-radius:999px; font-weight:700; font-size:12px;
+    box-shadow:inset 0 1px 0 #fff, 0 2px 10px rgba(245,158,11,.25);
+  }
+
+  /* Search Bar */
+  .search-bar{ padding:10px 16px 4px; }
+  .search-bar input{
+    width:100%; padding:12px 16px; font-size:16px; font-family:inherit;
+    border-radius:12px; border:1px solid var(--line); background:var(--paper);
+    box-shadow:0 2px 8px rgba(0,0,0,.05);
+    transition: border-color .2s, box-shadow .2s;
+  }
+  .search-bar input:focus{
+    outline:none; border-color:var(--brand-2); box-shadow:0 0 0 3px var(--ring);
+  }
+
+  /* Grid */
+  .grid{
+    display:grid; gap:14px; padding:14px 0;
+    grid-template-columns: repeat(12,1fr);
+  }
+  .card{
+    grid-column: span 4;
+    background:var(--paper); border:1px solid var(--line); border-radius:var(--radius);
+    padding:14px; box-shadow:var(--shadow); display:flex; flex-direction:column; gap:10px;
+    transition:transform .18s ease, box-shadow .18s ease;
+  }
+  .card:hover{ transform:translateY(-2px); box-shadow:0 14px 40px -18px rgba(2,8,23,.36);}
+  @media (max-width:1000px){ .card{grid-column: span 6;} }
+  @media (max-width:640px){ .card{grid-column: span 12;} }
+
+  .card h3{ margin:0; font-size:18px; line-height:1.35; color:#3b2a00; display:flex; gap:8px; align-items:center; }
+  .meta{ display:flex; gap:10px; flex-wrap:wrap; color:var(--muted); font-size:12px;}
+  .meta .pill{ background:#f8fafc; border:1px solid var(--line); border-radius:999px; padding:4px 8px; }
+  .tags{ display:flex; gap:6px; flex-wrap:wrap; margin-top: auto; padding-top: 8px;}
+  .tag{ font-size:12px; background:#fef3c7; color:#5b3b00; padding:4px 8px; border-radius:999px; border:1px solid #fcd34d; }
+  .excerpt{ color:#334155; font-size:14px; line-height:1.55; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+
+  .btn{
+    align-self:flex-start; margin-top:10px; display:inline-flex; align-items:center; gap:8px; font-weight:800; letter-spacing:.2px;
+    padding:10px 14px; border-radius:12px; border:1px solid #f2c14b;
+    background:linear-gradient(145deg,#fff6d9,#ffe8b3); color:#5b3b00; cursor:pointer;
+    transition:transform .06s, box-shadow .18s, background .2s; box-shadow:inset 0 1px 0 #fff, 0 10px 24px -14px rgba(245,158,11,.45);
+  }
+  .btn:hover{ background:linear-gradient(145deg,#ffeabf,#ffd77f); }
+  .btn:active{ transform:translateY(1px); }
+
+  /* Pagination */
+  .pager{ display:flex; align-items:center; gap:8px; justify-content:center; padding:12px 0 34px;}
+  .pager button{ border:1px solid var(--line); background:var(--paper); border-radius:999px; padding:8px 12px; cursor:pointer; }
+  .pager button:disabled { opacity: 0.5; cursor: not-allowed; }
+  .pager .info{ font-size:13px; color:var(--muted); padding:0 8px; }
+
+  /* Modal */
+  .modal-backdrop{
+    position:fixed; inset:0; background:rgba(0,0,0,.42); display:none; place-items:center; padding:16px; z-index:100;
+  }
+  .modal{
+    max-width:920px; width:100%; max-height:88vh; overflow:auto;
+    background:var(--paper); border-radius:20px; border:1px solid var(--line); box-shadow:0 30px 80px rgba(0,0,0,.35);
+  }
+  .modal header{
+    position:sticky; top:0; background:linear-gradient(180deg,#fff,rgba(255,255,255,.92));
+    padding:16px 18px; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; align-items:center; gap:10px;
+  }
+  .modal .body{ padding:18px; }
+  .modal h2{ margin:0 0 8px; font-size:22px; color:#3b2a00; }
+  .close{ border:none; background:#111; color:#fff; border-radius:12px; padding:8px 12px; cursor:pointer; }
+  .srcs{ margin-top:14px; font-size:14px; color:#475569; }
+  .srcs a{ word-break:break-all }
+
+  .modal-backdrop.show{ display:grid; }
+  .content-html img{ max-width:100%; height:auto; border-radius:12px; }
+  .content-html table{ border-collapse:collapse; width:100%; }
+  .content-html table, .content-html th, .content-html td{ border:1px solid #ddd; }
+  .content-html th, .content-html td{ padding:8px; }
+
+  .skeleton{ background:linear-gradient(90deg, #f6f7f9 25%, #eceff3 37%, #f6f7f9 63%); animation:shimmer 1.2s infinite; }
+  @keyframes shimmer{ 0%{background-position:-200px 0} 100%{background-position:200px 0} }
+
+  /* --- CSS ที่เพิ่มเข้ามาสำหรับปรับจอ Dialog และล็อค Scroll --- */
+  @media (max-width: 640px) {
+    .modal-backdrop {
+      padding: 0;
+    }
+    .modal {
+      width: 100%;
+      height: 100%;
+      max-height: 100vh;
+      border-radius: 0;
+    }
+  }
+</style>
+</head>
+<body>
+  <header class="app">
+    <div class="wrap" style="padding:0">
+      <div class="title">
+        <span class="badge">คู่มือเลี้ยงลูก</span>
+        <div style="font-size:20px">บทความ 0-20 ปี</div>
+      </div>
+      <div class="search-bar">
+        <input type="search" id="searchInput" placeholder="ค้นหาบทความ (เช่น ฟัน, อาละวาด, การเงิน)...">
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section id="grid" class="grid"></section>
+    <div class="pager">
+      <button id="prevBtn">ย้อนกลับ</button>
+      <span class="info" id="pageInfo"></span>
+      <button id="nextBtn">ถัดไป</button>
+    </div>
+  </main>
+
+  <div id="modalBackdrop" class="modal-backdrop" role="dialog" aria-modal="true">
+    <div class="modal">
+      <header>
+        <h2 id="mTitle">—</h2>
+        <button id="closeModal" class="close">ปิด</button>
+      </header>
+      <div class="body">
+        <div class="meta" id="mMeta"></div>
+        <div class="content-html" id="mContent"></div>
+        <div class="srcs" id="mSources"></div>
+      </div>
+    </div>
+  </div>
+
+<script>
+const PAGE_SIZE = 12;
+const ARTICLES_DATA = [
+  { "id": "inf0_01", "title": "0–6 เดือน: การให้นมอย่างปลอดภัย", "ageRange": "0-6m", "tags": "โภชนาการ,ทารก,นมแม่,นมผง", "contentHtml": "<p>ให้นมแม่อย่างเดียว 6 เดือนแรก (ถ้าเป็นไปได้) หรือใช้นมผงตามคำแนะนำ. อุ้มกึ่งตั้งตรง ทำเรอทุกครั้ง ทำความสะอาดขวดถูกวิธี.</p>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 },
+  { "id": "inf0_02", "title": "0–6 เดือน: การนอนปลอดภัย (Safe Sleep)", "ageRange": "0-6m", "tags": "ความปลอดภัย,การนอน,ทารก", "contentHtml": "<ul><li>นอนหงายบนที่นอนแข็ง</li><li>แชร์ห้อง ไม่แชร์เตียง</li><li>เลี่ยงหมอน/ผ้าห่มหนา/ของเล่นในเตียง</li></ul>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 },
+  { "id": "inf0_03", "title": "0–6 เดือน: Tummy Time เสริมพัฒนาการ", "ageRange": "0-6m", "tags": "พัฒนาการ,เล่น,ทารก", "contentHtml": "<p>คว่ำเล่นวันละหลายรอบ รอบละ 1–5 นาที เพิ่มเวลาตามลำดับ ช่วยคอ แขน ลำตัวแข็งแรง.</p>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 },
+  { "id": "inf0_04", "title": "0–6 เดือน: ปลอบโยนร้องไห้/โคลิก", "ageRange": "0-6m", "tags": "พฤติกรรม,โคลิก,ปลอบโยน", "contentHtml": "<p>อุ้มแนบกาย ห่อตัวหลวม ๆ เสียงกล่อม เบาไฟ; ตรวจสาเหตุพื้นฐาน (หิว ง่วง ผ้าอ้อมเปียก). หากร้องกวนผิดปกติให้ปรึกษาแพทย์.</p>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 },
+  { "id": "inf0_05", "title": "0–6 เดือน: วัคซีนตามกำหนด (ภาพรวม)", "ageRange": "0-6m", "tags": "วัคซีน,สาธารณสุข,ทารก", "contentHtml": "<p>ปฏิบัติตามกำหนดวัคซีนชาติ/แพทย์. พกสมุดวัคซีนและนัดหมายล่วงหน้า.</p>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 },
+  { "id": "inf0_06", "title": "0–6 เดือน: สัญญาณอันตรายที่ควรพบแพทย์", "ageRange": "0-6m", "tags": "ฉุกเฉิน,สาธารณสุข,ทารก", "contentHtml": "<ul><li>ไข้ ≥38°C</li><li>หายใจลำบาก</li><li>ซึม/กินน้อยมาก</li><li>ตัวเขียว/ชัก</li></ul>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 },
+  { "id": "inf1_01", "title": "6–12 เดือน: เริ่มอาหารตามวัย (Complementary Feeding)", "ageRange": "6-12m", "tags": "โภชนาการ,อาหารตามวัย,ทารก", "contentHtml": "<p>เริ่มบดนิ่ม 1–2 มื้อ เพิ่มเป็น 3 มื่อ พร้อมฝึกดื่มน้ำจากแก้วปากกว้าง. ลองอาหารใหม่ทีละชนิด.</p>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 },
+  { "id": "inf1_02", "title": "6–12 เดือน: ป้องกันการสำลัก/BLW อย่างปลอดภัย", "ageRange": "6-12m", "tags": "ความปลอดภัย,อาหาร,BLW", "contentHtml": "<ul><li>นั่งตัวตรง ใกล้ผู้ใหญ่คอยดู</li><li>อาหารขนาดเหมาะมือเด็ก นุ่ม</li><li>หลีกเลี่ยงถั่วเมล็ดน้อย/องุ่นทั้งลูก</li></ul>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 },
+  { "id": "inf1_03", "title": "6–12 เดือน: พัฒนาการมอเตอร์หยาบ/ละเอียด", "ageRange": "6-12m", "tags": "พัฒนาการ,เล่น,ทารก", "contentHtml": "<p>คลาน เกาะยืน หยิบของชิ้นเล็กด้วยนิ้วหัวแม่มือ-ชี้; เล่นของหลากพื้นผิว ปลอดภัย.</p>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 },
+  { "id": "inf1_04", "title": "6–12 เดือน: ฟันซี่แรกและดูแลช่องปาก", "ageRange": "6-12m", "tags": "ทันตสุขภาพ,ฟันน้ำนม,แปรงฟัน", "contentHtml": "<p>เมื่อฟันขึ้น เริ่มเช็ด/แปรงด้วยยาสีฟันฟลูออไรด์ปริมาณเล็กน้อย (เท่าเมล็ดข้าว). ไม่ให้หลับพร้อมขวดนม.</p>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 },
+  { "id": "inf1_05", "title": "6–12 เดือน: เล่น–อ่าน–คุย เพื่อภาษา", "ageRange": "6-12m", "tags": "ภาษา,การอ่าน,ปฏิสัมพันธ์", "contentHtml": "<p>พูดคุยโต้ตอบ อ่านนิทานสั้น ๆ ชี้รูปภาพ ร้องเพลงเบา ๆ ทุกวัน.</p>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 },
+  { "id": "inf1_06", "title": "6–12 เดือน: ป้องกันอุบัติเหตุในบ้าน", "ageRange": "6-12m", "tags": "ความปลอดภัย,บ้าน,เด็กเล็ก", "contentHtml": "<ul><li>ครอบปลั๊กไฟ</li><li>กั้นบันได</li><li>เก็บสารเคมีสูงพ้นมือ</li><li>กันลื่นในห้องน้ำ</li></ul>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 },
+  { "id": "tod1_01", "title": "12–24 เดือน: สัญญาณพร้อมนั่งกระโถน", "ageRange": "1-2y", "tags": "สุขอนามัย,พัฒนาการ,การขับถ่าย", "contentHtml": "<p>สนใจห้องน้ำ/บอกได้ก่อนเปียก ผ้าอ้อมแห้งนานขึ้น นั่งทรงตัวดี. ฝึกแบบสนุก ไม่กดดัน.</p>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 },
+  { "id": "tod1_02", "title": "12–24 เดือน: จัดการอารมณ์/อาละวาด (Tantrums)", "ageRange": "1-2y", "tags": "อารมณ์,วินัยเชิงบวก,พฤติกรรม", "contentHtml": "<p>ตั้งกติกาสั้น ๆ เบี่ยงเบนสิ่งเร้า ชมพฤติกรรมดีทันที ใช้มุมสงบเมื่อจำเป็น (ไม่นาน).</p>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 },
+  { "id": "tod1_03", "title": "12–24 เดือน: สกรีนไทม์อย่างเหมาะสม", "ageRange": "1-2y", "tags": "สื่อดิจิทัล,พัฒนาการ,ครอบครัว", "contentHtml": "<p>ต่ำกว่า 2 ปี เลี่ยงสื่อ (ยกเว้นวิดีโอคอล). ถ้าใช้ ให้ดูร่วม พูดคุยเชื่อมกับกิจกรรมจริง.</p>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 },
+  { "id": "tod1_04", "title": "12–24 เดือน: แก้ปัญหากินยาก/เลือกกิน", "ageRange": "1-2y", "tags": "โภชนาการ,พฤติกรรมการกิน,เด็กเล็ก", "contentHtml": "<ul><li>เสิร์ฟซ้ำอย่างใจเย็น</li><li>จัดจานเล็กพอดี</li><li>กินพร้อมครอบครัว</li><li>เลี่ยงติดจอขณะกิน</li></ul>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 },
+  { "id": "tod1_05", "title": "12–24 เดือน: การนอนและกิจวัตรประจำวัน", "ageRange": "1-2y", "tags": "การนอน,กิจวัตร,สุขภาวะ", "contentHtml": "<p>กำหนดเวลาเข้านอน/ตื่นสม่ำเสมอ งดจอ 1 ชั่วโมงก่อนนอน พิธีกรรมนอนที่ผ่อนคลาย.</p>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 },
+  { "id": "tod1_06", "title": "12–24 เดือน: ปลอดภัยนอกบ้าน/สนามเด็กเล่น", "ageRange": "1-2y", "tags": "ความปลอดภัย,สนามเด็กเล่น,กลางแจ้ง", "contentHtml": "<p>เลือกพื้นยืดหยุ่น ตรวจอุปกรณ์เสียหาย สวมหมวกนิรภัยเมื่อขี่รถของเล่น.</p>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 },
+  { "id": "tod1_07", "title": "12–24 เดือน: ภาษาพุ่ง (Language Boom)", "ageRange": "1-2y", "tags": "ภาษา,สื่อสาร,เล่น", "contentHtml": "<p>อ่านนิทานชี้คำศัพท์ เล่นบทบาทสมมุติ ตอบโต้คำถามเชิงเลือก.</p>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 },
+  { "id": "tod1_08", "title": "12–24 เดือน: สร้างกิจวัตรและขอบเขต", "ageRange": "1-2y", "tags": "วินัยเชิงบวก,กิจวัตร,ครอบครัว", "contentHtml": "<p>ตารางกิจกรรมเช้า-ค่ำ สม่ำเสมอ ช่วยลดอาละวาดและคาดเดาได้.</p>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 },
+  { "id": "tod2_01", "title": "2–3 ปี: ฝึกขับถ่ายเต็มรูปแบบ", "ageRange": "2-3y", "tags": "สุขอนามัย,การขับถ่าย,ทักษะชีวิต", "contentHtml": "<p>ขั้นตอน: นั่งกระโถน → รู้สัญญาณ → บอกผู้ใหญ่ → เข้าห้องน้ำ → ล้างมือ. ชื่นชมทุกความพยายาม.</p>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 },
+  { "id": "tod2_02", "title": "2–3 ปี: แบ่งปัน/รอคิว (ทักษะสังคม)", "ageRange": "2-3y", "tags": "สังคม,ทักษะชีวิต,เล่น", "contentHtml": "<p>เล่นผลัดกัน ใช้ตัวจับเวลา/เพลงสนุก ฝึกทักทาย-ขอบคุณ-ขอโทษ.</p>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 },
+  { "id": "tod2_03", "title": "2–3 ปี: ขนาดส่วนอาหารและสมดุล", "ageRange": "2-3y", "tags": "โภชนาการ,มื้ออาหาร,พัฒนาการ", "contentHtml": "<p>จานเล็กหลายหมู่ เน้นผักผลไม้ โปรตีนไขมันดี น้ำสะอาด; ลดน้ำหวาน.</p>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 },
+  { "id": "tod2_04", "title": "2–3 ปี: ดูแลฟันน้ำนม + ฟลูออไรด์วาร์นิช", "ageRange": "2-3y", "tags": "ทันตสุขภาพ,ทันตกรรมป้องกัน,ฟลูออไรด์", "contentHtml": "<p>แปรงวันละ 2 ครั้ง ปรึกษาทันตแพทย์เรื่องวาร์นิชตามความเสี่ยงฟันผุ.</p>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 },
+  { "id": "tod2_05", "title": "2–3 ปี: ภูมิแพ้/อาหารเสี่ยงแพ้ เบื้องต้น", "ageRange": "2-3y", "tags": "ภูมิแพ้,ความปลอดภัย,อาหาร", "contentHtml": "<p>สังเกตผื่น/อาเจียน/หายใจลำบากหลังอาหารใหม่ หยุดทันทีและปรึกษาแพทย์เมื่อมีอาการรุนแรง.</p>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 },
+  { "id": "tod2_06", "title": "2–3 ปี: คาร์ซีท/การเดินทางปลอดภัย", "ageRange": "2-3y", "tags": "ความปลอดภัย,เดินทาง,คาร์ซีท", "contentHtml": "<p>ใช้คาร์ซีทตามน้ำหนัก/ส่วนสูง จัดวางถูกต้อง รัดแน่นกระชับ.</p>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 },
+  { "id": "pre_01", "title": "3–6 ปี: ความพร้อมก่อนเข้าโรงเรียน", "ageRange": "3-6y", "tags": "ทักษะสังคม,กำกับตนเอง,เตรียมอนุบาล", "contentHtml": "<ul><li>ทักทาย-รอคิว-ฟังคำสั่งง่าย</li><li>จับดินสอ/ตัดกระดาษ</li><li>กิจวัตรนอน-ตื่นสม่ำเสมอ</li></ul>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 },
+  { "id": "pre_02", "title": "3–6 ปี: อ่านออกเสียง/รักการอ่าน", "ageRange": "3-6y", "tags": "ภาษา,การอ่าน,พัฒนาการ", "contentHtml": "<p>อ่านนิทานประจำวัน ชี้ตัวอักษร เล่นสัมผัสเสียง (rhyme) วาดเล่าเรื่อง.</p>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 },
+  { "id": "pre_03", "title": "3–6 ปี: คณิตผ่านการเล่น (นับ/จัดกลุ่ม/รูปทรง)", "ageRange": "3-6y", "tags": "คณิต,เล่น,EF", "contentHtml": "<p>นับของจริง จับคู่/จัดหมวด ค้นหารูปทรงรอบตัว ทำของเล่นชั่งตวงง่าย ๆ.</p>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 },
+  { "id": "pre_04", "title": "3–6 ปี: ควบคุมอารมณ์และ EF เบื้องต้น", "ageRange": "3-6y", "tags": "อารมณ์,EF,วินัยเชิงบวก", "contentHtml": "<p>เกมรอคอย-เปลี่ยนกติกา ฝึกหายใจลึก 3 ครั้ง เมื่องอแงพาไปมุมสงบ.</p>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 },
+  { "id": "pre_05", "title": "3–6 ปี: ป้องกันการรังแกเบื้องต้น", "ageRange": "3-6y", "tags": "ความปลอดภัย,สังคม,โรงเรียน", "contentHtml": "<p>สอนพูดว่า “หยุดนะ” บอกครู/ผู้ใหญ่ ฝึกขอความช่วยเหลือ.</p>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 },
+  { "id": "pre_06", "title": "3–6 ปี: โภชนาการ/กล่องอาหารกลางวัน", "ageRange": "3-6y", "tags": "โภชนาการ,โรงเรียน,สุขภาพ", "contentHtml": "<p>ครบ 5 หมู่ ลดน้ำหวาน ของทอด เลือกผลไม้แทนของหวาน.</p>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 },
+  { "id": "pre_07", "title": "3–6 ปี: ฟันน้ำนมแข็งแรง", "ageRange": "3-6y", "tags": "ทันตสุขภาพ,แปรงฟัน,ทันตแพทย์", "contentHtml": "<p>แปรงเช้า-ก่อนนอน ใช้ไหมขัดฟันเมื่อซี่แตะกัน พบหมอฟันทุก 6–12 เดือน.</p>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 },
+  { "id": "pre_08", "title": "3–6 ปี: ความปลอดภัยทางถนน/น้ำ", "ageRange": "3-6y", "tags": "ความปลอดภัย,ทางถนน,น้ำ", "contentHtml": "<p>จับมือข้ามถนน ใส่อุปกรณ์ลอยน้ำเมื่อใกล้น้ำ ผู้ใหญ่เฝ้าระยะประชิด.</p>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 },
+  { "id": "sch_01", "title": "6–12 ปี: นิสัยการเรียน/การบ้าน", "ageRange": "6-12y", "tags": "การเรียน,ทักษะ,วางตาราง", "contentHtml": "<p>มุมเรียนเงียบ จัดเวลาสั้นเป็นช่วง (Pomodoro เด็ก) ตรวจเช็กรายการงาน.</p>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 },
+  { "id": "sch_02", "title": "6–12 ปี: กิจกรรมกาย 60 นาที/วัน", "ageRange": "6-12y", "tags": "ออกกำลังกาย,สุขภาพ,โรงเรียน", "contentHtml": "<p>วิ่ง กระโดด จักรยาน กีฬาเป็นทีม/เดี่ยว รวมกันให้ถึง 60 นาที/วัน.</p>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 },
+  { "id": "sch_03", "title": "6–12 ปี: สุขอนามัยการนอน", "ageRange": "6-12y", "tags": "การนอน,สุขภาวะ,สมาธิ", "contentHtml": "<p>เข้านอน-ตื่นตรงเวลา งดจอหนึ่งชั่วโมงก่อนนอน ห้องมืด เย็น สงบ.</p>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 },
+  { "id": "sch_04", "title": "6–12 ปี: กติกาใช้อินเทอร์เน็ตในบ้าน", "ageRange": "6-12y", "tags": "ดิจิทัล,ความปลอดภัยออนไลน์,ครอบครัว", "contentHtml": "<p>ตั้ง Family rules เวลา/สถานที่ใช้จอ, ไม่แชร์ข้อมูลส่วนตัว, แจ้งผู้ใหญ่เมื่อพบสิ่งไม่เหมาะสม.</p>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 },
+  { "id": "sch_05", "title": "6–12 ปี: งานบ้านตามวัย/ความรับผิดชอบ", "ageRange": "6-12y", "tags": "ทักษะชีวิต,ความรับผิดชอบ,ครอบครัว", "contentHtml": "<p>มอบหมายงานง่าย ๆ เช่น เก็บที่นอน จัดโต๊ะอาหาร ดูแลสัตว์เลี้ยง.</p>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 },
+  { "id": "sch_06", "title": "6–12 ปี: สังเกตสุขภาพจิตเบื้องต้น", "ageRange": "6-12y", "tags": "สุขภาพจิต,ครอบครัว,โรงเรียน", "contentHtml": "<p>เปลี่ยนแรง/นอน/กิน/อารมณ์ผิดปกตินานหลายสัปดาห์ ควรปรึกษาผู้เชี่ยวชาญ.</p>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 },
+  { "id": "sch_07", "title": "6–12 ปี: วัคซีน/ตรวจสุขภาพตามวัย", "ageRange": "6-12y", "tags": "สาธารณสุข,วัคซีน,ตรวจสุขภาพ", "contentHtml": "<p>ติดตามวัคซีนกระตุ้นและตรวจสายตา/การได้ยิน/ฟัน ตามคำแนะนำระบบสาธารณสุข.</p>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 },
+  { "id": "sch_08", "title": "6–12 ปี: สายตา-ท่าทาง-กระเป๋านักเรียน", "ageRange": "6-12y", "tags": "สายตา,ท่าทาง,การยศาสตร์", "contentHtml": "<p>พักสายตา 20-20-20 ปรับโต๊ะเก้าอี้เหมาะส่วนสูง กระเป๋าไม่เกิน 10–15% ของน้ำหนักตัว.</p>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 },
+  { "id": "sch_09", "title": "8–10 ปี: พูดคุยเรื่องร่างกายเปลี่ยนแปลง", "ageRange": "6-12y", "tags": "เพศศึกษาเชิงพัฒนาการ,ร่างกาย,ครอบครัว", "contentHtml": "<p>ใช้ภาษาถูกต้องทางกายภาพ สอนขอบเขตส่วนตัวและสิทธิร่างกาย (bodily autonomy).</p>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 },
+  { "id": "sch_10", "title": "6–12 ปี: มิตรภาพ/ความเห็นอกเห็นใจ", "ageRange": "6-12y", "tags": "สังคม,อารมณ์,โรงเรียน", "contentHtml": "<p>ฝึกฟังเพื่อน แก้ปัญหาความขัดแย้งอย่างเคารพ ตั้งขอบเขตที่ปลอดภัย.</p>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 },
+  { "id": "t1_01", "title": "12–15 ปี: การเปลี่ยนแปลงวัยรุ่น (กาย/ใจ)", "ageRange": "12-15y", "tags": "วัยรุ่น,พัฒนาการ,ฮอร์โมน", "contentHtml": "<p>อธิบายการเปลี่ยนแปลงปกติทางร่างกาย/อารมณ์ เปิดช่องให้ถามอย่างปลอดภัย.</p>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 },
+  { "id": "t1_02", "title": "12–15 ปี: สุขภาพจิตและการขอความช่วยเหลือ", "ageRange": "12-15y", "tags": "สุขภาพจิต,การขอความช่วยเหลือ,โรงเรียน", "contentHtml": "<p>สังเกตสัญญาณซึมเศร้า/วิตกกังวล วิธีติดต่อผู้ใหญ่ที่ไว้ใจ/สายด่วนสุขภาพจิต.</p>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 },
+  { "id": "t1_03", "title": "12–15 ปี: โซเชียลมีเดียและไซเบอร์บูลลี่", "ageRange": "12-15y", "tags": "ดิจิทัล,ความปลอดภัยออนไลน์,สังคม", "contentHtml": "<p>ตั้งค่าความเป็นส่วนตัว บันทึกหลักฐาน ไม่ตอบโต้รุนแรง รายงานแพลตฟอร์ม/ผู้ใหญ่.</p>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 },
+  { "id": "t1_04", "title": "12–15 ปี: โภชนาการ–ภาพลักษณ์ตนเอง", "ageRange": "12-15y", "tags": "โภชนาการ,ภาพลักษณ์,สุขภาวะ", "contentHtml": "<p>กินหลากหลายครบหมู่ ระวังการไดเอตสุดโต่ง สนับสนุนมุมมองกายภาพเชิงบวก.</p>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 },
+  { "id": "t1_05", "title": "12–15 ปี: การนอนและจังหวะชีวภาพวัยรุ่น", "ageRange": "12-15y", "tags": "การนอน,สมาธิ,สุขภาพ", "contentHtml": "<p>วัยรุ่นต้องการ 8–10 ชม./คืน จำกัดคาเฟอีน/จอก่อนนอน ปรับสภาพห้องนอนให้เหมาะ.</p>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 },
+  { "id": "t1_06", "title": "12–15 ปี: ป้องกันสารเสพติด/แอลกอฮอล์/บุหรี่", "ageRange": "12-15y", "tags": "ป้องกัน,สุขภาพ,ชุมชน", "contentHtml": "<p>พูดคุยเปิดกว้างเรื่องความเสี่ยง วิธีปฏิเสธอย่างมั่นใจ และแหล่งช่วยเหลือ.</p>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 },
+  { "id": "t1_07", "title": "12–15 ปี: เคารพตนเอง/ผู้อื่น–ขอบเขต–ความยินยอม", "ageRange": "12-15y", "tags": "ความสัมพันธ์,ทักษะชีวิต,ความปลอดภัย", "contentHtml": "<p>อธิบายขอบเขตส่วนบุคคล คำว่าไม่คือไม่ การยินยอมต้องชัดเจนและต่อเนื่อง.</p>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 },
+  { "id": "t1_08", "title": "12–15 ปี: การจัดเวลา/การบ้าน/กิจกรรม", "ageRange": "12-15y", "tags": "ทักษะชีวิต,การเรียน,บริหารเวลา", "contentHtml": "<p>วางแผนสัปดาห์ ใช้ปฏิทิน/ตัวช่วยจำ แบ่งงานเป็นส่วนเล็ก ๆ พร้อมช่วงพัก.</p>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 },
+  { "id": "t2_01", "title": "15–18 ปี: จัดการความเครียดสอบและเป้าหมาย", "ageRange": "15-18y", "tags": "การเรียน,สุขภาพจิต,เป้าหมาย", "contentHtml": "<p>เทคนิคหายใจ/ผ่อนคลาย ซ้อมข้อสอบเป็นรอบ ๆ ตั้งเป้าหมาย SMART และฉลองความก้าวหน้า.</p>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 },
+  { "id": "t2_02", "title": "15–18 ปี: ความปลอดภัยบนถนน/ขับขี่อย่างรับผิดชอบ", "ageRange": "15-18y", "tags": "ความปลอดภัย,ถนน,เดินทาง", "contentHtml": "<p>คาดเข็มขัดเสมอ ไม่ขับขณะง่วง/เมา/ใช้มือถือ วางแผนการเดินทางปลอดภัย.</p>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 },
+  { "id": "t2_03", "title": "15–18 ปี: ความสัมพันธ์ที่เคารพและปลอดภัย", "ageRange": "15-18y", "tags": "ความสัมพันธ์,สุขภาวะ,ความปลอดภัย", "contentHtml": "<p>ทักษะสื่อสารที่เคารพ ตั้งขอบเขต รับฟังกัน รู้จักสัญญาณความสัมพันธ์ไม่ปลอดภัยและแหล่งช่วยเหลือ.</p>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 },
+  { "id": "t2_04", "title": "15–18 ปี: วางแผนอาชีพ/มหาวิทยาลัย", "ageRange": "15-18y", "tags": "อาชีพ,การศึกษา,ทักษะชีวิต", "contentHtml": "<p>สำรวจความถนัด ฝึกงาน/กิจกรรม เสวนากับรุ่นพี่ วางแผนการสมัคร/ทุน.</p>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 },
+  { "id": "t2_05", "title": "15–18 ปี: การเงินพื้นฐานและงบประมาณ", "ageRange": "15-18y", "tags": "การเงินส่วนบุคคล,งบประมาณ,ทักษะชีวิต", "contentHtml": "<p>บันทึกรายรับ-รายจ่าย สร้างเงินออมฉุกเฉิน เข้าใจดอกเบี้ย/หนี้อย่างระมัดระวัง.</p>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 },
+  { "id": "t2_06", "title": "15–18 ปี: ความเป็นส่วนตัว/ตัวตนดิจิทัลขั้นสูง", "ageRange": "15-18y", "tags": "ดิจิทัล,ความปลอดภัย,อาชีพ", "contentHtml": "<p>จัดการรอยเท้าดิจิทัล ตั้งค่าความปลอดภัย 2 ชั้น แยกบัญชีส่วนตัว/สาธารณะอย่างเหมาะสม.</p>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 },
+  { "id": "ya_01", "title": "18–20 ปี: เปลี่ยนผ่านสู่มหาวิทยาลัย/งาน", "ageRange": "18-20y", "tags": "มหาวิทยาลัย,งานแรก,ทักษะชีวิต", "contentHtml": "<p>ทักษะจัดการเวลา การติดต่ออาจารย์/หัวหน้างาน ใช้ทรัพยากรสนับสนุนของสถานศึกษา/ที่ทำงาน.</p>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 },
+  { "id": "ya_02", "title": "18–20 ปี: การอยู่คนเดียว/รูมเมตอย่างราบรื่น", "ageRange": "18-20y", "tags": "ชีวิตประจำวัน,กติกาบ้าน,ความสัมพันธ์", "contentHtml": "<p>ข้อตกลงเรื่องความสะอาด เสียง ของส่วนกลาง ตารางชำระค่าใช้จ่าย/ของใช้ร่วม.</p>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 },
+  { "id": "ya_03", "title": "18–20 ปี: สุขภาพจิตและการดูแลตนเอง", "ageRange": "18-20y", "tags": "สุขภาพจิต,Self-care,สมดุลชีวิต", "contentHtml": "<p>สังเกตสัญญาณเครียด ตั้งกิจวัตรนอน-กิน-ออกกำลัง สร้างเครือข่ายเพื่อน/ผู้เชี่ยวชาญที่พึ่งได้.</p>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 },
+  { "id": "ya_04", "title": "18–20 ปี: แผนการเงิน/งบประมาณ/เครดิต", "ageRange": "18-20y", "tags": "การเงินส่วนบุคคล,งบประมาณ,เครดิต", "contentHtml": "<p>งบประมาณรายเดือน เป้าหมายออม หลีกเลี่ยงหนี้ดอกสูง จัดการบัตร/เครดิตอย่างรับผิดชอบ.</p>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 },
+  { "id": "ya_05", "title": "18–20 ปี: โปรไฟล์อาชีพ/รอยเท้าดิจิทัลมือโปร", "ageRange": "18-20y", "tags": "อาชีพ,ดิจิทัล,เครือข่าย", "contentHtml": "<p>จัด LinkedIn/พอร์ตโฟลิโอ ตรวจความเป็นส่วนตัวสื่อสังคม ใช้ภาษาเหมาะสมในที่สาธารณะออนไลน์.</p>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 },
+  { "id": "ya_06", "title": "18–20 ปี: วิถีสุขภาพ (อาหาร-ออกกำลัง-นอน)", "ageRange": "18-20y", "tags": "สุขภาพ,โภชนาการ,การนอน", "contentHtml": "<p>เมนูสมดุล โปรตีน/ผักผลไม้ กิจกรรมกายสม่ำเสมอ นอนเพียงพอ ลดคาเฟอีน/จอช่วงก่อนนอน.</p>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 },
+  { "id": "x_01", "title": "คู่มือฉุกเฉิน: เบอร์ติดต่อสำคัญในไทย", "ageRange": "all", "tags": "ความปลอดภัย,ฉุกเฉิน,ครอบครัว", "contentHtml": "<p>1610 สายด่วนกรมอนามัย, 1323 สุขภาพจิต, 1669 ฉุกเฉินการแพทย์, 1192 เด็กหาย/ค้ามนุษย์ (ตรวจอัปเดตหมายเลขในพื้นที่).</p>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 },
+  { "id": "x_02", "title": "แผนสุขภาพครอบครัว: สมุดวัคซีน/นัดหมาย", "ageRange": "all", "tags": "สาธารณสุข,วัคซีน,วางแผน", "contentHtml": "<p>รวมใบนัด/ตารางวัคซีน/ผลตรวจสุขภาพในแฟ้มเดียวหรือแอป ปรับเตือนล่วงหน้า.</p>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 },
+  { "id": "x_03", "title": "ความปลอดภัยในบ้าน: เช็กลิสต์รายฤดูกาล", "ageRange": "all", "tags": "ความปลอดภัย,บ้าน,เช็กลิสต์", "contentHtml": "<p>ตรวจปลั๊ก/สายไฟ สารเคมี/ยาลดความเสี่ยงเด็ก สำรองไฟฉาย/ยาสามัญ จัดชุดปฐมพยาบาล.</p>", "sources": "https://www.who.int/; https://www.unicef.org/parenting; https://www.healthychildren.org/; https://multimedia.anamai.moph.go.th/; https://www.cdc.gov/", "updatedAt": 1759243207000 }
+];
+
+document.addEventListener('DOMContentLoaded', () => {
+  const $ = (sel, el=document) => el.querySelector(sel);
+  const escapeHtml = (s='') => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const parseTags = (t) => (String(t||'')).split(/[|,;]+/).map(s=>s.trim()).filter(Boolean);
+  const stripHtml = (html='') => { const t=document.createElement('div'); t.innerHTML=html; return t.textContent||t.innerText||''; }
+
+  function sanitizeHtml(html=''){
+    const template = document.createElement('template');
+    template.innerHTML = html;
+    const allowed = new Set(['A','P','BR','HR','UL','OL','LI','STRONG','EM','B','I','U','BLOCKQUOTE','CODE','PRE','H1','H2','H3','H4','H5','H6','IMG','TABLE','THEAD','TBODY','TR','TH','TD','SPAN','DIV']);
+    (function walk(node){
+      [...node.children].forEach(ch=>{
+        if(!allowed.has(ch.tagName)){ ch.replaceWith(...ch.childNodes); return; }
+        [...ch.attributes].forEach(attr=>{
+          const n = attr.name.toLowerCase();
+          if(n.startsWith('on') || n==='style' || n==='srcdoc' || n==='srcset'){
+            ch.removeAttribute(attr.name);
+          }
+        });
+        if(ch.tagName==='A'){ ch.setAttribute('rel','noopener nofollow'); ch.setAttribute('target','_blank'); }
+        if(ch.tagName==='IMG'){ ch.setAttribute('loading','lazy'); ch.setAttribute('referrerpolicy','no-referrer'); }
+        walk(ch);
+      });
+    })(template.content);
+    return template.innerHTML;
+  }
+
+  let raw = [];
+  let view = [];
+  let page = 1;
+
+  function renderPage(){
+    const total = view.length;
+    const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+    page = Math.min(Math.max(1, page), totalPages);
+
+    const start = (page-1)*PAGE_SIZE;
+    const cur = view.slice(start, start+PAGE_SIZE);
+    const g = $('#grid');
+
+    if(!cur.length){
+      g.innerHTML = `<div style="grid-column:1/-1; text-align:center; color:var(--muted); padding:24px">ไม่พบบทความที่ตรงกับคำค้นหา</div>`;
+    }else{
+      g.innerHTML = cur.map(it=>{
+        const tags = it.tags.map(t=>`<span class="tag">${escapeHtml(t)}</span>`).join('');
+        return `
+          <article class="card" data-id="${escapeHtml(it.id)}">
+            <h3>📝 ${escapeHtml(it.title || '(ไม่มีชื่อ)')}</h3>
+            <div class="meta">
+              ${it.ageRange ? `<span class="pill">วัย: ${escapeHtml(it.ageRange)}</span>`:''}
+              <span class="pill">ID: ${escapeHtml(it.id)}</span>
+            </div>
+            <div class="excerpt">${escapeHtml(stripHtml(it.contentHtml)).slice(0,180)}${stripHtml(it.contentHtml).length>180?'…':''}</div>
+            <div class="tags">${tags}</div>
+            <button class="btn" onclick="openModal('${encodeURIComponent(it.id)}')">อ่านรายละเอียด</button>
+          </article>
+        `;
+      }).join('');
+    }
+
+    $('#pageInfo').textContent = `หน้า ${page} / ${totalPages}`;
+    $('#prevBtn').disabled = page<=1;
+    $('#nextBtn').disabled = page>=totalPages;
+  }
+
+  window.openModal = (encodedId) => {
+    const id = decodeURIComponent(encodedId);
+    const it = raw.find(x=>x.id===id); if(!it) return;
+    $('#mTitle').textContent = it.title || '(ไม่มีชื่อ)';
+    $('#mMeta').innerHTML = `
+      ${it.ageRange ? `<span class="pill">วัย: ${escapeHtml(it.ageRange)}</span>`:''}
+      <span class="pill">ID: ${escapeHtml(it.id)}</span>
+    `;
+    $('#mContent').innerHTML = sanitizeHtml(it.contentHtml || '');
+    const srcs = (it.sources||[]).map(s=>`<a href="${escapeHtml(s)}" target="_blank" rel="noopener nofollow">${escapeHtml(s)}</a>`).join('<br>');
+    $('#mSources').innerHTML = srcs ? `<strong>แหล่งอ้างอิง:</strong><br>${srcs}` : '';
+    
+    $('#modalBackdrop').classList.add('show');
+    document.body.style.overflow = 'hidden'; // --- JS ที่เพิ่มเข้ามา: ล็อคการเลื่อน
+    
+    const url = new URL(location.href);
+    url.hash = `id=${encodeURIComponent(id)}`;
+    history.replaceState(null,'',url);
+  }
+
+  function closeModal(){
+    $('#modalBackdrop').classList.remove('show');
+    document.body.style.overflow = ''; // --- JS ที่เพิ่มเข้ามา: ปลดล็อคการเลื่อน
+    
+    const url = new URL(location.href); url.hash=''; history.replaceState(null,'',url);
+  }
+  
+  function handleSearch(){
+    const query = $('#searchInput').value.toLowerCase().trim();
+    if (!query) {
+      view = raw.slice(0);
+    } else {
+      view = raw.filter(item => {
+        const titleMatch = item.title.toLowerCase().includes(query);
+        const contentMatch = stripHtml(item.contentHtml).toLowerCase().includes(query);
+        const tagMatch = item.tags.some(tag => tag.toLowerCase().includes(query));
+        return titleMatch || contentMatch || tagMatch;
+      });
+    }
+    page = 1;
+    renderPage();
+  }
+
+  function init(){
+    raw = ARTICLES_DATA.map(x=>({
+      id: String(x.id ?? '').trim(),
+      title: String(x.title ?? '').trim(),
+      ageRange: String(x.ageRange ?? '').trim(),
+      tags: parseTags(x.tags),
+      contentHtml: String(x.contentHtml ?? ''),
+      sources: parseTags(x.sources),
+    }));
+    
+    view = raw.slice(0);
+    renderPage();
+
+    $('#searchInput').addEventListener('input', handleSearch);
+    $('#closeModal').addEventListener('click', closeModal);
+    $('#modalBackdrop').addEventListener('click', (e)=>{ if(e.target.id==='modalBackdrop') closeModal(); });
+    $('#prevBtn').addEventListener('click', ()=>{ page=Math.max(1,page-1); renderPage(); });
+    $('#nextBtn').addEventListener('click', ()=>{ page=page+1; renderPage(); });
+
+    if(location.hash.startsWith('#id=')){
+      const id = decodeURIComponent(location.hash.slice(4));
+      if(raw.some(x=>x.id===id)) window.openModal(encodeURIComponent(id));
+    }
+  }
+
+  init();
+});
+</script>
+</body>
+</html>
