@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>สารบัญ — มิลินทปัญหา</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* ✅ โทนขาว-ดำ (Monochrome) */
+    --bg: #f8f9fa;        /* พื้นหลังเทาอ่อนมากๆ */
+    --ink: #111111;        /* ตัวอักษรดำเข้ม */
+    --muted: #555555;      /* ข้อความรองสีเทา */
+    --line: #eeeeee;        /* เส้นแบ่งเทาอ่อน */
+    --paper: #ffffff;       /* การ์ดพื้นขาว */
+    --radius: 14px;
+    --shadow: 0 8px 20px -8px rgba(0,0,0,.1);
+    --gap: 12px;
+    --cols: 1;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font-family:"Sarabun",system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans Thai",Arial,sans-serif}
+  h1{margin:18px 0 8px;font-size:22px;line-height:1.25}
+  .wrap{max-width:980px;margin:0 auto;padding:16px}
+  .toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:6px 0 14px;}
+  .search{
+    flex:1 1 260px;display:flex;align-items:center;gap:8px;
+    background:var(--paper);border:1px solid var(--line);border-radius:999px;padding:10px 14px;
+    box-shadow:0 1px 0 rgba(0,0,0,.02);
+  }
+  .search input{
+    border:none;outline:none;width:100%;font-size:14px;background:transparent;color:var(--ink)
+  }
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{
+    padding:8px 12px;border:1px solid var(--line);border-radius:999px;background:var(--paper);
+    font-size:13px;color:var(--muted);cursor:pointer;user-select:none;transition:.2s ease;white-space:nowrap
+  }
+  .chip:hover{transform:translateY(-1px); box-shadow: var(--shadow);}
+  .chip.active{
+    background: var(--ink); /* ปุ่ม Active เป็นสีดำ */
+    color: var(--paper); /* ตัวอักษรสีขาว */
+    border-color: var(--ink);
+  }
+  .grid{
+    display:grid;gap:var(--gap);
+    grid-template-columns:repeat(var(--cols), 1fr)
+  }
+  @media(min-width:480px){:root{--cols:2}}
+  @media(min-width:900px){:root{--cols:3}}
+  .card{
+    background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+    padding:14px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:8px
+  }
+  .title{display:flex;align-items:start;gap:10px}
+  .pill{
+    min-width:78px;text-align:center;padding:6px 10px;border-radius:999px;
+    background: #e9ecef; /* ✅ สี Pill เทาอ่อน */
+    color: #495057;      /* ✅ สีอักษรเทาเข้ม */
+    font-weight:700;font-size:13px;flex:0 0 auto
+  }
+  .name{font-weight:700;font-size:16px;line-height:1.35;display:flex;align-items:center;gap:8px}
+  .flower{
+    width:18px;height:18px;flex:0 0 auto;display:inline-block
+  }
+  .desc{color:var(--muted);font-size:13.5px}
+  .cta{margin-top:auto;display:flex;gap:8px;flex-wrap:wrap}
+
+  /* ✅ ปุ่มเงาทะลุ (Glassmorphism) */
+  .btn{
+    appearance:none; cursor:pointer;
+    padding:10px 12px;border-radius:10px;font-weight:700;font-size:14px;
+    background: rgba(255, 255, 255, 0.4);
+    color: var(--ink);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px); /* สำหรับ Safari */
+    transition: all 0.2s ease;
+  }
+  .btn:hover {
+    background: rgba(255, 255, 255, 0.6);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+    transform: translateY(-1px);
+  }
+  .btn.ghost{
+    background:transparent;
+    color:var(--muted);
+    border:1px solid var(--line);
+    backdrop-filter: none;
+    box-shadow: none;
+  }
+  .btn.ghost:hover {
+      background: #f0f0f0;
+      border-color: #ddd;
+      color: var(--ink);
+  }
+
+  .count{color:var(--muted);font-size:13px;margin:8px 2px}
+  .hint{color:var(--muted);font-size:12px;margin-top:2px}
+
+  /* ✅ ปรับสี Selection ให้เข้าธีม */
+  ::selection{background:#d4d4d4;color:var(--ink)}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>สารบัญ — มิลินทปัญหา</h1>
+    <div class="hint">แตะเพื่อเปิดอ่าน </div>
+
+    <div class="toolbar">
+      <div class="search" role="search">
+        <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79L20 21.5L21.5 20l-6-6zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5S14 7.01 14 9.5S11.99 14 9.5 14"/></svg>
+        <input id="q" type="search" placeholder="ค้นหาตอน / วรรค / คีย์เวิร์ด...">
+      </div>
+      <div class="chips" id="chips">
+        <div class="chip" data-range="all">ทั้งหมด</div>
+        <div class="chip" data-range="1-6">1–6</div>
+        <div class="chip" data-range="7-12">7–12</div>
+        <div class="chip" data-range="13-18">13–18</div>
+        <div class="chip" data-range="19-24">19–24</div>
+        <div class="chip" data-range="25-30">25–30</div>
+        <div class="chip" data-range="31-36">31–36</div>
+      </div>
+    </div>
+
+    <div class="count" id="count"></div>
+    <div class="grid" id="list" aria-live="polite"></div>
+  </div>
+
+<script>
+  const BASE_URL = "https://sites.google.com/view/milinder";
+
+  // ✅ ไอคอนดอกไม้แบบ SVG (ปรับเป็นสีเทา-ดำ)
+  const FLOWER_SVG = `
+  <svg class="flower" viewBox="0 0 24 24" aria-hidden="true">
+    <path fill="#333333" d="M12 8c-1.1-2.8-4.4-3.1-6.1-.9c-1.9 2.5-.4 5.2 2.6 5.7c-3-.5-4.5 3.2-2.1 5c2.2 1.7 4.9.3 5.6-2.2c-.7 2.5 2.1 4 4.1 2.6c2.4-1.7 1.7-4.8-1.1-5.5c2.8.7 4.9-2.3 3.2-4.6C16.8 5.9 13.7 6.1 12 8z"/>
+    <circle cx="12" cy="12" r="1.8" fill="#cccccc"/>
+  </svg>`;
+
+  function buildPath(no){
+    const slug = `ตอนท-${no}`;
+    return `${BASE_URL}/${encodeURI(slug)}`;
+  }
+
+  function openItem(no){
+    window.open(buildPath(no), "_blank", "noopener,noreferrer");
+  }
+
+  const EPISODES = [
+    {no:1,  name:"ตอนที่ 1", desc:"คำนมัสการพระรัตนตรัยของพระติปิฎกจุฬาภัยเถระ / พระอรหันต์ขึ้นไปเชิญมหาเสนะเทพบุตร"},
+    {no:2,  name:"ตอนที่ 2", desc:"มหาเสนะเทพบุตรจุติจากเทวโลก / พระโรหนะไปนำนาคเสนกุมารเพื่อจะให้บรรพชา / นาคเสนกุมารบรรพชา / นาคเสนอุปสมบท / พระนาคเสนแสดงธรรมเป็นครั้งแรก"},
+    {no:3,  name:"ตอนที่ 3", desc:"พระนาคเสนไปศึกษาพระไตรปิฏกกับพระธรรมรักขิต / พระนาคเสนสำเร็จพระอรหันต์ / พระเจ้ามิลินท์เสด็จไปถามปัญหาพระอายุบาล / พระนาคเสนไปถึงอสงไขยบริเวณ / พระเจ้ามิลินท์เสด็จไปหาพระนาคเสน"},
+    {no:4,  name:"ตอนที่ 4", desc:"วรรคที่ ๑ ปัญหาที่ ๑ ถามชื่อ / ปัญหาที่ ๒ ถามพรรษา / ปัญหาที่ ๓ ถามลองปัญญา / ปัญหาที่ ๔ ปัญหาของอันตกายอำมาตย์ / ปัญหาที่ ๕ ถามเรื่องบรรพชา / ปัญหาที่ ๖ ถามเรื่องปฏิสนธิ (เกิด)"},
+    {no:5,  name:"ตอนที่ 5", desc:"วรรคที่ ๑ ปัญหาที่ ๑๐ ถามลักษณะศรัทธา / ปัญหาที่ ๑๑ ถามลักษณะวิริยะ / ปัญหาที่ ๑๒ ถามลักษณะสติ / ปัญหาที่ ๑๓ ถามลักษณะสมาธิ / ปัญหาที่ ๑๔ ถามลักษณะปัญญา / ปัญหาที่ ๑๕ ถามหน้าที่แห่งธรรมต่างๆ กัน"},
+    {no:6,  name:"ตอนที่ 6", desc:"วรรคที่ ๒ ปัญหาที่ ๑ ถามความสืบต่อแห่งธรรม / ปัญหาที่ ๒ ถามความรู้สึกของผู้ไม่เกิดอีก / ปัญหาที่ ๓ ถามที่ดับปัญญา / ปัญหาที่ ๔ ถามเรื่องปรินิพพาน / ปัญหาที่ ๕ ถามเรื่องสุขเวทนา"},
+    {no:7,  name:"ตอนที่ 7", desc:"วรรคที่ ๒ ปัญหาที่ ๖ ถามการถือกำเนิดแห่งนามรูป / ปัญหาที่ ๗ ถามการเกิดอีกแห่งพระนาคเสน / ปัญหาที่ ๘ ถามเรื่องนามรูป / ปัญหาที่ ๙ ถามเรื่องกาลนานยืดยาว / วรรคที่ ๓ ปัญหาที่ ๑ ถามมูลเหตุแห่งกาลทั้ง ๓"},
+    {no:8,  name:"ตอนที่ 8", desc:"วรรคที่ ๓ ปัญหาที่ ๖ ถามเรื่องผู้ถึงเวทย์ / ปัญหาที่ ๗ ถามถึงความเกี่ยวข้องกันของจักขุวิญญาณกับมโนวิญญาณ / ปัญหาที่ ๘ ถามลักษณะผัสสะ / ปัญหาที่ ๙ ถามถึงลักษณะเวทนา"},
+    {no:9,  name:"ตอนที่ 9", desc:"วรรคที่ ๔ ปัญหาที่ ๓ ถามการเกิดแห่งอายตนะ ๕ / ปัญหาที่ ๔ ถามเหตุต่างๆ กันแห่งกรรม / ปัญหาที่ ๕ ถามถึงสาเหตุที่ควรให้รีบทำเสียก่อน / ปัญหาที่ ๖ ถามถึงความร้อนแห่งไฟนรก / ปัญหาที่ ๗ ถามถึงเรื่องเครื่องรองแผ่นดิน / ปัญหาที่ ๘ ถามถึงเรื่องนิโรธนิพพาน / ปัญหาที่ ๙ ถามเรื่องการได้นิพพาน"},
+    {no:10, name:"ตอนที่ 10",desc:"วรรคที่ ๖ ปัญหาที่ ๑ ถามถึงความรักร่างกายแห่งบรรพชิต / ปัญหาที่ ๒ ถามถึงเหตุที่ไม่ทรงบัญญัติสิกขาบทไว้ล่วงหน้า / ปัญหาที่ ๓ ถามถึงลักษณะมหาบุรุษ ๓๒ ของพระพุทธมารดาบิดา / ปัญหาที่ ๔ ถามถึงความเป็นพรหมจารีของพระพุทธเจ้า"},
+    {no:11, name:"ตอนที่ 11",desc:"วรรคที่ ๗ ปัญหาที่ ๔ ถามเรื่องความไกลแห่งพรหมโลก / ปัญหาที่ ๕ ถามถึงความไปเกิดในพรหมโลกและเมืองกัสมิระ / ปัญหาที่ ๖ ถามถึงวรรณะสัณฐานของผู้ไปเกิดในโลกอื่น / ปัญหาที่ ๗ ถามเรื่องถือกำเนิดในครรภ์มารดา"},
+    {no:12, name:"ตอนที่ 12",desc:"นอกวรรค โคตมีปัญหา เรื่องถวายผ้าของพระนางโคตมี / เริ่มเมณฑกปัญหา"},
+    {no:13, name:"ตอนที่ 13",desc:"เมณฑกปัญหาวรรคที่ ๑ ปัญหาที่ ๑ ว่าด้วยการบูชาพระพุทธเจ้า / ปัญหาที่ ๒ ถามถึงความเป็นพระสัพพัญญูของพระพุทธเจ้า"},
+    {no:14, name:"ตอนที่ 14",desc:"เมณฑกปัญหาวรรคที่ ๑ ปัญหาที่ ๓ ถามเรื่องโปรดให้พระเทวทัตบรรพชา / ปัญหาที่ ๔ ถามถึงเหตุให้แผ่นดินไหว"},
+    {no:15, name:"ตอนที่ 15",desc:"ตัวอย่างผู้ที่รับผลบุญเห็นทันตา — นายสุมนมาลาการ / พระนางมัลลิกาเทวี / พระนางโคปาลมาตาเทวี / นางสุปิยอุบาสิกา"},
+    {no:16, name:"ตอนที่ 16",desc:"เมณฑกปัญหาวรรคที่ ๑ ปัญหาที่ ๕ ตาทิพย์ของพระเจ้าสีวิราช / ปัญหาที่ ๖ ถามเรื่องการตั้งครรภ์"},
+    {no:17, name:"ตอนที่ 17",desc:"เมณฑกปัญหาวรรคที่ ๑ ปัญหาที่ ๗ เรื่องอายุพระพุทธศาสนา ๕,๐๐๐ ปี"},
+    {no:18, name:"ตอนที่ 18",desc:"เมณฑกปัญหาวรรคที่ ๑ ปัญหาที่ ๘ ถามเรื่องสำเร็จสัพพัญญุตญาณ"},
+    {no:19, name:"ตอนที่ 19",desc:"เมณฑกปัญหาวรรคที่ ๑ ปัญหาที่ ๙ ถามเรื่องสิ่งที่ควรทำยิ่งของพระพุทธเจ้า / ปัญหาที่ ๑๐ ถามเรื่องกำลังอิทธิบาท / เมณฑกปัญหาวรรคที่ ๒ ปัญหาที่ ๑ ถามเรื่องสิกขาบทเล็กน้อย"},
+    {no:20, name:"ตอนที่ 20",desc:"เมณฑกปัญหาวรรคที่ ๒ ปัญหาที่ ๒ ถามเรื่องปัญหาที่แก้ด้วยการพักไว้ / ปัญหาที่ ๓ ถามเรื่องมรณภัย"},
+    {no:21, name:"ตอนที่ 21",desc:"เมณฑกปัญหาวรรคที่ ๒ ปัญหาที่ ๔ ถามเรื่องพ้นจากบ่วงมรณะ / ปัญหาที่ ๕ ถามเรื่องอันตรายแห่งลาภของพระพุทธเจ้า"},
+    {no:22, name:"ตอนที่ 22",desc:"เมณฑกปัญหาวรรคที่ ๒ ปัญหาที่ ๖ ถามเรื่องทรงบำเพ็ญประโยชน์แก่สรรพสัตว์ / ปัญหาที่ ๗ ถามถึงธรรมอันประเสริฐสุด / ปัญหาที่ ๘ ถามถึงเรื่องความไม่แตกกันแห่งบริษัทของพระพุทธเจ้า"},
+    {no:23, name:"ตอนที่ 23",desc:"เมณฑกปัญหาวรรคที่ ๒ ปัญหาที่ ๙ ถามเรื่องการทำบาปของผู้ไม่รู้ / ปัญหาที่ ๑๐ ถามเรื่องความไม่ทรงห่วงพระภิกษุสงฆ์ / วรรคที่ ๓ ปัญหาที่ ๑ ถามเรื่องทรงแสดงของลับ / ปัญหาที่ ๒ ถามเรื่องผรุสวาจาของพระพุทธเจ้า"},
+    {no:24, name:"ตอนที่ 24",desc:"เมณฑกปัญหา วรรคที่ ๓ ปัญหาที่ ๖ ถามเรื่องสะเก็ดศิลาถูกพระบาท / ปัญหาที่ ๗ ถามเรื่องการถวายโภชนาหาร / ปัญหาที่ ๘ ถามเรื่องทรงขวนขวายน้อยในการแสดงธรรม / ปัญหาที่ ๙ ถามถึงความมีอาจารย์และไม่มีอาจารย์ของพระพุทธเจ้า"},
+    {no:25, name:"ตอนที่ 25",desc:"เมณฑกปัญหา วรรคที่ ๔ ปัญหาที่ ๔ ถามเรื่องความเป็นสัพพัญญูของพระพุทธเจ้า / ปัญหาที่ ๕ ถามเรื่องไม่มีที่อยู่ประจำและไม่มีอาลัย / ปัญหาที่ ๖ ถามเรื่องสำรวมท้อง / ปัญหาที่ ๗ ถามเรื่องปกปิดพระธรรมวินัย"},
+    {no:26, name:"ตอนที่ 26",desc:"เมณฑกปัญหา วรรคที่ ๕ ปัญหาที่ ๕ ถามถึงความเสมอกันและไม่เสมอกันแห่งกุศลและอกุศล / ปัญหาที่ ๖ ถามเกี่ยวกับนางอมราเทวีของมโหสถ"},
+    {no:27, name:"ตอนที่ 27",desc:"เมณฑกปัญหา วรรคที่ ๖ ปัญหาที่ ๓ ถามถึงความเป็นพระอรหันต์แห่งคฤหัสถ์ / ปัญหาที่ ๔ ถามเรื่องโลมกัสสปฤาษี / ปัญหาที่ ๕ ถามเรื่องพญาช้างฉัททันต์"},
+    {no:28, name:"ตอนที่ 28",desc:"เมณฑกปัญหา วรรคที่ ๗ ปัญหาที่ ๒ ถามเรื่องเวทนาทางกายทางใจของพระอรหันต์ / ปัญหาที่ ๓ ถามเรื่องอันตรายแห่งการสำเร็จธรรมของคฤหัสถ์ผู้ปาราชิก"},
+    {no:29, name:"ตอนที่ 29",desc:"เมณฑกปัญหา วรรคที่ ๘ ปัญหาที่ ๑ ถามถึงความตายแห่งยักษ์ / ปัญหาที่ ๒ ถามเรื่องไม่ทรงบัญญัติสิกขาบท / ปัญหาที่ ๓ ถามถึงมลทินแห่งดวงอาทิตย์ / ปัญหาที่ ๔ ถามเรื่องความร้อนแห่งดวงอาทิตย์ / ปัญหาที่ ๕ ถามถึงเรื่องทานของพระเวสสันดร"},
+    {no:30, name:"ตอนที่ 30",desc:"เมณฑกปัญหา วรรคที่ ๘ ปัญหาที่ ๖ ว่าด้วยการทรงทำทุกกรกิริยา / ปัญหาที่ ๗ ว่าด้วยกำลังแห่งกุศลอกุศล / ปัญหาที่ ๘ ว่าด้วยการทำบุญให้ผู้ตาย / ปัญหาที่ ๙ ว่าด้วยความใหญ่และไม่ใหญ่แห่งกุศลอกุศล"},
+    {no:31, name:"ตอนที่ 31",desc:"เมณฑกปัญหา วรรคที่ ๙ ปัญหาที่ ๑ ถามถึงกาลมรณะ อกาลมรณะ / ปัญหาที่ ๒ ถามถึงปาฏิหาริย์ในเจดีย์ของพระอรหันต์ / ปัญหาที่ ๓ ถามถึงการสำเร็จธรรมของบุคคล"},
+    {no:32, name:"ตอนที่ 32",desc:"เมณฑกปัญหา วรรคที่ ๙ ปัญหาที่ ๗ ถามถึงที่ตั้งนิพพาน / ปัญหาที่ ๘ ถามเรื่องสิ่งที่ควรรู้ด้วยอนุมาน"},
+    {no:33, name:"ตอนที่ 33",desc:"เมณฑกปัญหา วรรคที่ ๙ ปัญหาที่ ๙ ถามเกี่ยวกับธุดงค์ / อุปมาปัญหา บทมาติกา ว่าด้วยอุปมาต่างๆ / โฆรสวรรคที่ ๑ อุปมาองค์ ๑ แห่งลา / อุปมาองค์ ๕ แห่งไก่"},
+    {no:34, name:"ตอนที่ 34",desc:"อุปมาปัญหา โฆรสวรรคที่ ๑ อุปมาองค์ ๑ แห่งกระแต จนถึง องค์ ๒ แห่งวานร / ลาวุลตาวรรคที่ ๒ องค์ ๑ แห่งเครือน้ำเต้า จนถึง องค์ ๕ แห่งมหาสมุทร / จักกวัตติวรรคที่ ๓ องค์ ๕ แห่งแผ่นดิน จนถึง องค์ ๕ แห่งภูเขา"},
+    {no:35, name:"ตอนที่ 35",desc:"อุปมาปัญหา จักกวัตติวรรคที่ ๓ องค์ ๕ แห่งอากาศ จนถึง องค์ ๔ แห่งพระเจ้าจักรพรรดิ / กุญชรวรรคที่ ๔ องค์ ๑ แห่งปลวก จนถึง องค์ ๕ แห่งช้าง / สีหวรรคที่ ๕ องค์ ๗ แห่งราชสีห์ จนถึง องค์ ๑ แห่งงูเหลือม"},
+    {no:36, name:"ตอนที่ 36",desc:"อุปมาปัญหา มักกฏวรรคที่ ๖ องค์ ๑ แห่งแมงมุม จนถึง องค์ ๒ แห่งช่างไม้ / กุมภวรรคที่ ๗ องค์ ๑ แห่งหม้อน้ำ จนถึง องค์ ๔ แห่งนายขมังธนู / พระเจ้ามิลินท์เสด็จออกบรรพชาแล้วได้สำเร็จพระอรหันต์ / มิลินทปัญหา จบบริบูรณ์"}
+  ];
+
+  const listEl = document.getElementById('list');
+  const qEl = document.getElementById('q');
+  const countEl = document.getElementById('count');
+  const chipsEl = document.getElementById('chips');
+
+  function render(items){
+    listEl.innerHTML = "";
+    for(const it of items){
+      const card = document.createElement('article');
+      card.className = 'card';
+
+      const head = document.createElement('div');
+      head.className = 'title';
+
+      const pill = document.createElement('div');
+      pill.className = 'pill';
+      pill.textContent = `ตอนที่ ${it.no}`;
+
+      const nm = document.createElement('div');
+      nm.className = 'name';
+      nm.innerHTML = `${FLOWER_SVG}<span>${it.name}</span>`;
+
+      head.appendChild(pill);
+      head.appendChild(nm);
+
+      const desc = document.createElement('div');
+      desc.className = 'desc';
+      desc.textContent = it.desc;
+
+      const cta = document.createElement('div');
+      cta.className = 'cta';
+
+      const btn = document.createElement('button');
+      btn.className = 'btn';
+      btn.textContent = 'เปิดอ่าน';
+      btn.addEventListener('click', ()=>openItem(it.no));
+
+      const alt = document.createElement('button');
+      alt.className = 'btn ghost';
+      alt.textContent = 'คัดลอกลิงก์';
+      alt.addEventListener('click', ()=>{
+        const url = buildPath(it.no);
+        navigator.clipboard.writeText(url).then(()=>{
+          alt.textContent = 'คัดลอกแล้ว ✓';
+          setTimeout(()=>alt.textContent='คัดลอกลิงก์',1200);
+        });
+      });
+
+      cta.appendChild(btn);
+      cta.appendChild(alt);
+
+      card.appendChild(head);
+      card.appendChild(desc);
+      card.appendChild(cta);
+
+      card.style.cursor = 'pointer';
+      card.addEventListener('click', (e)=>{
+        if(e.target.closest('button')) return;
+        openItem(it.no);
+      });
+
+      listEl.appendChild(card);
+    }
+    countEl.textContent = `รายการที่พบ: ${items.length} / ${EPISODES.length}`;
+  }
+
+  let activeRange = "all";
+  function inRange(no){
+    if(activeRange==="all") return true;
+    const [a,b] = activeRange.split('-').map(n=>+n);
+    return no>=a && no<=b;
+  }
+
+  function applyFilter(){
+    const term = (qEl.value||"").trim().toLowerCase();
+    const out = EPISODES.filter(it=>{
+      if(!inRange(it.no)) return false;
+      if(!term) return true;
+      return (
+        it.name.toLowerCase().includes(term) ||
+        it.desc.toLowerCase().includes(term)
+      );
+    });
+    render(out);
+  }
+
+  chipsEl.addEventListener('click', (e)=>{
+    const chip = e.target.closest('.chip');
+    if(!chip) return;
+    [...chipsEl.children].forEach(c=>c.classList.remove('active'));
+    chip.classList.add('active');
+    activeRange = chip.dataset.range || "all";
+    applyFilter();
+  });
+  chipsEl.querySelector('[data-range="all"]').classList.add('active');
+
+  qEl.addEventListener('input', applyFilter);
+  render(EPISODES);
+</script>
+</body>
+</html>
