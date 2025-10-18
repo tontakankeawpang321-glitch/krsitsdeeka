@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>พระไตรปิฎก 45 เล่ม (Royal Blue Edition)</title>
+<link href="https://fonts.googleapis.com/css2?family=Kodchasan:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* ===== Royal Blue & Gold Theme ===== */
+    --bg: #f4f6f9;
+    --ink: #1a2a4d;
+    --muted: #5a6b8c;
+    --royal-blue: #0a2d6e;
+    --blue-shadow: #041a4a;
+    --gold-foil: #d4af37;
+    --gold-highlight: #fdeaa8;
+    
+    --shadow: 0 8px 16px -8px rgba(26, 42, 77, .25);
+    --shadow-hover: 0 12px 24px -10px rgba(26, 42, 77, .35);
+    --radius: 12px;
+    --gap: 14px;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  
+  body {
+    margin: 0;
+    padding: 20px;
+    font-family: "Kodchasan", system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans Thai", sans-serif;
+    color: var(--ink);
+    background-color: var(--bg);
+  }
+
+  header {
+    max-width: 1100px;
+    margin: 0 auto 20px;
+    text-align: center;
+  }
+  
+  h1 {
+    margin: 0 0 6px;
+    font-weight: 700;
+    font-size: clamp(22px, 4.5vw, 30px);
+    color: var(--ink);
+  }
+
+  .sub {
+    margin: 0;
+    color: var(--muted);
+    font-size: clamp(13px, 2.8vw, 15px);
+  }
+
+  /* --- Search Box --- */
+  .search-container {
+    margin: 20px auto;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    max-width: 400px;
+  }
+  #searchInput {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #ddd;
+    border-radius: var(--radius);
+    font-family: 'Kodchasan', sans-serif;
+    font-size: 14px;
+  }
+  #searchInput:focus {
+    outline: 2px solid var(--royal-blue);
+    border-color: transparent;
+  }
+
+  .grid {
+    display: grid;
+    /* ✅ มือถือเริ่มต้น 1 คอลัมน์ */
+    grid-template-columns: 1fr;
+    gap: 20px;
+    max-width: 1100px;
+    margin: 18px auto 0;
+  }
+  
+  @media(min-width: 768px) {
+    .grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  
+  @media(min-width: 1200px) {
+    .grid { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  /* --- New Grid Item Container --- */
+  .grid-item {
+    display: flex;
+    /* ✅ บนมือถือ: เรียงจากบนลงล่าง */
+    flex-direction: column;
+    align-items: center;
+    gap: var(--gap);
+    background-color: #fff;
+    padding: var(--gap);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    transition: box-shadow .2s ease;
+  }
+  .grid-item:hover {
+    box-shadow: var(--shadow-hover);
+  }
+
+  @media(min-width: 500px) {
+    .grid-item {
+      /* ✅ จอใหญ่: เรียงซ้ายไปขวา */
+      flex-direction: row;
+      align-items: flex-start;
+      text-align: left;
+    }
+  }
+
+  /* ===== New Book UI ===== */
+  a.volume {
+    position: relative;
+    display: block;
+    aspect-ratio: 3 / 4.2;
+    text-decoration: none;
+    border-radius: 8px 4px 4px 8px; /* Book-like corner radius */
+    background: linear-gradient(135deg, var(--royal-blue), var(--blue-shadow));
+    box-shadow: var(--shadow), inset -2px 0 2px rgba(0,0,0,.2);
+    color: var(--gold-foil);
+    overflow: hidden;
+    transition: transform .2s ease, box-shadow .2s ease;
+    /* ✅ กำหนดขนาดและความยืดหยุ่น */
+    flex-shrink: 0;
+    width: 120px;
+  }
+  @media(min-width: 500px) {
+    a.volume { width: 140px; }
+  }
+
+
+  a.volume:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: var(--shadow-hover), inset -2px 0 2px rgba(0,0,0,.2);
+  }
+  
+  a.volume:active {
+    transform: translateY(1px);
+  }
+  
+  a.volume:focus-visible {
+    outline: 3px solid var(--royal-blue);
+    outline-offset: 3px;
+  }
+
+  .spine {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 20px;
+    background-color: var(--blue-shadow);
+    box-shadow: inset -1px 0 0 rgba(255,255,255,.05), inset 2px 0 4px rgba(0,0,0,.4);
+  }
+  
+  /* Gold lines on spine */
+  .spine::before, .spine::after {
+    content: '';
+    position: absolute;
+    left: 4px;
+    right: 4px;
+    height: 1px;
+    background-color: var(--gold-foil);
+    opacity: .8;
+  }
+  .spine::before { top: 20px; }
+  .spine::after { bottom: 20px; }
+
+  .cover {
+    position: absolute;
+    top: 8px; right: 8px; bottom: 8px; left: 28px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 8px;
+    /* Elegant double border effect */
+    border: 1px solid var(--gold-foil);
+    box-shadow: inset 0 0 0 3px transparent, inset 0 0 0 4px var(--gold-foil);
+    border-radius: 3px;
+  }
+
+  .cover-title {
+    font-weight: 600;
+    font-size: clamp(8px, 2.2vw, 10px);
+    margin-bottom: 2px;
+    color: var(--gold-highlight);
+    letter-spacing: .5px;
+    opacity: .9;
+  }
+  
+  .cover-vol {
+    font-weight: 700;
+    font-size: clamp(14px, 4vw, 20px);
+    color: #fff;
+    text-shadow: 0 0 6px var(--gold-foil);
+    line-height: 1.1;
+  }
+  
+  .cover-cat {
+    font-size: clamp(7px, 2vw, 9px);
+    margin-top: 4px;
+    color: var(--gold-highlight);
+    opacity: .8;
+  }
+  
+  /* --- Description Box --- */
+  .description {
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .description h3 {
+      margin: 0 0 4px;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--royal-blue);
+  }
+  .description p {
+      margin: 0;
+      font-size: 13px;
+      color: var(--muted);
+  }
+
+  footer {
+    max-width: 1100px;
+    margin: 24px auto 0;
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+    opacity: .8;
+  }
+</style>
+</head>
+<body>
+  <header>
+    <h1>พระไตรปิฎก 45 เล่ม</h1>
+    <p class="sub">• แตะที่ปกหนังสือเพื่อเปิดอ่านในแท็บใหม่</p>
+    <div class="search-container">
+      <input type="text" id="searchInput" placeholder="ค้นหา เช่น พิมพ์ '1' หรือ '25'">
+    </div>
+  </header>
+
+  <div class="grid" id="grid" aria-label="รายการพระไตรปิฎก 45 เล่ม"></div>
+
+  <footer></footer>
+
+<script>
+  const links = [
+    "https://drive.google.com/file/d/1DS92iGBd8GI4ZSKhkKVMuAlwBNdgnMfT/view?usp=sharing",
+    "https://drive.google.com/file/d/1638kDq0hXXwjLPMozk1cAGt4qBSnk_xE/view?usp=sharing",
+    "https://drive.google.com/file/d/17sj3c-UF2IrCSbYqIf24Lj-vs2zOaXi0/view?usp=sharing",
+    "https://drive.google.com/file/d/12JPD1-eLAdPKeCCMaanF6SN9IZ7fDGg5/view?usp=sharing",
+    "https://drive.google.com/file/d/1Q6_ZqpAKYUG2ffpNss5tDjCLvPUTIJdN/view?usp=sharing",
+    "https://drive.google.com/file/d/1l782F_TESMPGXATyP86G2wvWH3fYJSXi/view?usp=sharing",
+    "https://drive.google.com/file/d/1Ji96yfJDvpHMVPy1sQu07RaXslG_Jagw/view?usp=sharing",
+    "https://drive.google.com/file/d/1sagLOlIrTHJSSRZHoHkB3CGOmqRsHesk/view?usp=drive_link",
+    "https://drive.google.com/file/d/1UpbGv2dcZM9qFPTo_dlSAiB60fDLj5dP/view?usp=drive_link",
+    "https://drive.google.com/file/d/1cR7FvuofyAw3PBvuI4wPTCZ6dEBEFdjQ/view?usp=drive_link",
+    "https://drive.google.com/file/d/1sFjBVFT4VnFsM-fzxmBUqx9iT96ramVC/view?usp=drive_link",
+    "https://drive.google.com/file/d/1KzPXthAWXOMBlTIqmP3N8hIeleScYXTn/view?usp=drive_link",
+    "https://drive.google.com/file/d/1UDt_Ss4ZnyS6I9A8GbxpX8rpDIl9QiYK/view?usp=drive_link",
+    "https://drive.google.com/file/d/14GfX0djPOAaxfl4WNThnQ6Vv9ZzQBQxp/view?usp=drive_link",
+    "https://drive.google.com/file/d/1zNj800FQArrtL-P27KFfL0jTPGVeqQLP/view?usp=drive_link",
+    "https://drive.google.com/file/d/1MmzizY6xg84V_Se1F7SsPfCzoIeECzLq/view?usp=drive_link",
+    "https://drive.google.com/file/d/1KcRsUSnS_rUSz4MSj2921MARRpUkNcsm/view?usp=drive_link",
+    "https://drive.google.com/file/d/1ZHaOi6yZtPBKBUDD4u5LKfH-euDOwvfd/view?usp=drive_link",
+    "https://drive.google.com/file/d/1UDQ2m7XwgltASrO8qM0JVzbO4E4XYyw1/view?usp=drive_link",
+    "https://drive.google.com/file/d/1tOLKO0HNmAa4MzDZPv2r4Q_BmEw_LsPw/view?usp=drive_link",
+    "https://drive.google.com/file/d/1CiwzHnuGX6asG5z3IRvqNiHUPqpcvFnH/view?usp=drive_link",
+    "https://drive.google.com/file/d/1dcixOg41U3waIoy7Epuvaw8t4OOY5S4A/view?usp=drive_link",
+    "https://drive.google.com/file/d/1Qyx4mGQK833evtnqK649ziMEMH7U39PG/view?usp=drive_link",
+    "https://drive.google.com/file/d/1chtA9Hp7UgUVsfHfdihyhjqZzSNLu2s_/view?usp=drive_link",
+    "https://drive.google.com/file/d/1kb0fw5yXBP7uZuiy-gEj18Ct0kEeye-d/view?usp=drive_link",
+    "https://drive.google.com/file/d/17glsqiMEhz4QZFKMhaYIXHw6B_yCS3Rn/view?usp=drive_link",
+    "https://drive.google.com/file/d/1I6_7NNxWDeFho4MHY3gvyPURaNTT9JQI/view?usp=drive_link",
+    "https://drive.google.com/file/d/1JprJquzq7bmBFC5lCIwebc9rH7aVR3Or/view?usp=drive_link",
+    "https://drive.google.com/file/d/1IX_X20BpfI_6RIJ_txCs0ZTl8370oSGB/view?usp=drive_link",
+    "https://drive.google.com/file/d/1CY370T9OSgZlqJn2znmpZiivABLtBXR7/view?usp=drive_link",
+    "https://drive.google.com/file/d/15qJr5WEq2_Hb6AZh7f47GofHazNwGGqj/view?usp=drive_link",
+    "https://drive.google.com/file/d/14TTYXHSRsBeFmgtT63SDQcRTMmnonAWT/view?usp=drive_link",
+    "https://drive.google.com/file/d/1PMAQZPLsYwtAgrLHV7HXoGgc3zcBU5Aw/view?usp=drive_link",
+    "https://drive.gdrive.google.com/file/d/1JC6jfY3sk5In2EUWeB5m6v4a2opuZiQD/view?usp=drive_link",
+    "https://drive.google.com/file/d/1Yiz_yOtFNvJYbhNclIBGCC4NvXdlZLmz/view?usp=drive_link",
+    "https://drive.google.com/file/d/1E2APLRr1Tm1pag0EZdbZIRAmOY7nbIgB/view?usp=drive_link",
+    "https://drive.google.com/file/d/169SjaiPXgBdBWsg1cEUZ-lR4O-yMpaVh/view?usp=drive_link",
+    "https://drive.google.com/file/d/1PXnxAhrbngagFFZVkRalGvSeKfNHYd1i/view?usp=drive_link",
+    "https://drive.google.com/file/d/1MOfGC_c0XQTd3qQdPKXOaEpIfuzxq-U5/view?usp=drive_link",
+    "https://drive.google.com/file/d/1GyVl8iq26-PocVA7uNQGTp0Z_XZ8s9dh/view?usp=drive_link",
+    "https://drive.google.com/file/d/1E0i4MRhwmFnKzdH0qlyQsjq3yqMzyvcY/view?usp=drive_link",
+    "https://drive.google.com/file/d/1Z9E731FVCY_SW5-PS0KyC4hWearJDeC2/view?usp=drive_link",
+    "https://drive.google.com/file/d/1X08279nx9-L39uoQ6iaBwUoQRqYZIpl5/view?usp=drive_link",
+    "https://drive.google.com/file/d/1_cEe2Ydlaw00WaewmOsV5ou_0k3RCPXl/view?usp=drive_link",
+    "https://drive.google.com/file/d/1ZGy1eDJGgKICw_08rKAwgjOm1YVN7hzA/view?usp=drive_link",
+  ];
+  
+  // ✅ เพิ่มข้อมูลย่อของแต่ละเล่ม (ตัวอย่าง)
+  const descriptions = [
+    "มหาวิภังค์ ภาค 1 ว่าด้วยปาราชิก สังฆาทิเสส และอนิยตสิกขาบท",
+    "มหาวิภังค์ ภาค 2 ว่าด้วยนิสสัคคิยปาจิตตีย์ ปาจิตตีย์ ปาฏิเทสนียะ และเสขิยวัตร",
+    "ภิกขุนีวิภังค์ ว่าด้วยสิกขาบทของภิกษุณี",
+    "มหาวรรค ภาค 1 ว่าด้วยการอุปสมบท อุโบสถ จำพรรษา และปวารณา",
+    "มหาวรรค ภาค 2 ว่าด้วยเรื่องเครื่องหนัง เภสัช กฐิน และจีวร",
+    "จูฬวรรค ภาค 1 ว่าด้วยเรื่องกรรม สังฆเภท และวัตรต่างๆ",
+    "จูฬวรรค ภาค 2 ว่าด้วยเสนาสนะ สังฆกรรม และการแตกสงฆ์",
+    "ปริวารวรรค ว่าด้วยข้อปลีกย่อย คำถามคำตอบสรุปพระวินัย",
+    "สีลขันธวรรค ว่าด้วยศีล จริยวัตร และข้อปฏิบัติของพระภิกษุ",
+    "มหาวรรค ว่าด้วยพระสูตรขนาดยาว 10 สูตร",
+    "ปาฏิกวรรค ว่าด้วยพระสูตรเบ็ดเตล็ดต่างๆ",
+    "มัชฌิมนิกาย มูลปัณณาสก์",
+    "มัชฌิมนิกาย มัชฌิมปัณณาสก์",
+    "มัชฌิมนิกาย อุปริปัณณาสก์",
+    "สังยุตตนิกาย สคาถวรรค",
+    "สังยุตตนิกาย นิทานวรรค",
+    "สังยุตตนิกาย ขันธวารวรรค",
+    "สังยุตตนิกาย สฬายตนวรรค",
+    "สังยุตตนิกาย มหาวารวรรค",
+    "อังคุตตรนิกาย เอก-ทุก-ติกนิบาต",
+    "อังคุตตรนิกาย จตุกกนิบาต",
+    "อังคุตตรนิกาย ปัญจก-ฉักกนิบาต",
+    "อังคุตตรนิกาย สัตตก-อัฏฐก-นวกนิบาต",
+    "อังคุตตรนิกาย ทสก-เอกาทสกนิบาต",
+    "ขุททกนิกาย ภาค 1 รวมคาถาธรรมบท เถรคาถา เถรีคาถา",
+    "ขุททกนิกาย ภาค 2 รวมชาดก",
+    "ขุททกนิกาย ภาค 3 รวมชาดก",
+    "ขุททกนิกาย ภาค 4 รวมชาดก",
+    "ขุททกนิกาย ภาค 5 รวมชาดก",
+    "ขุททกนิกาย ภาค 6 รวมชาดก",
+    "ขุททกนิกาย ภาค 7 รวมชาดก",
+    "ขุททกนิกาย ภาค 8 รวมชาดก",
+    "ขุททกนิกาย ภาค 9 รวมชาดก",
+    "ธัมมสังคณีปกรณ์",
+    "วิภังคปกรณ์",
+    "ธาตุกถา-ปุคคลบัญญัติปกรณ์",
+    "กถาวัตถุปกรณ์",
+    "ยมกปกรณ์ ภาค 1",
+    "ยมกปกรณ์ ภาค 2",
+    "ยมกปกรณ์ ภาค 3",
+    "ปัฏฐานปกรณ์ ภาค 1",
+    "ปัฏฐานปกรณ์ ภาค 2",
+    "ปัฏฐานปกรณ์ ภาค 3",
+    "ปัฏฐานปกรณ์ ภาค 4",
+    "ปัฏฐานปกรณ์ ภาค 5",
+  ];
+
+  const volumes = Array.from({length: 45}, (_, i) => {
+    const n = i + 1;
+    let cat_full;
+    if (n <= 8) {
+      cat_full = 'พระวินัยปิฎก';
+    } else if (n <= 33) {
+      cat_full = 'พระสุตตันตปิฎก';
+    } else {
+      cat_full = 'พระอภิธรรมปิฎก';
+    }
+    return { n, cat_full, link: links[i], description: descriptions[i] };
+  });
+
+  const grid = document.getElementById('grid');
+  const searchInput = document.getElementById('searchInput');
+
+  // ✅ ฟังก์ชันสำหรับวาดการ์ดหนังสือ
+  function renderBooks(bookData) {
+    grid.innerHTML = ''; // เคลียร์ของเก่าก่อน
+    for (const v of bookData) {
+      // สร้าง Container หลัก
+      const item = document.createElement('div');
+      item.className = 'grid-item';
+
+      // สร้างปกหนังสือ
+      const a = document.createElement('a');
+      a.className = 'volume';
+      a.href = v.link || '#';
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      a.setAttribute('aria-label', `เปิดอ่าน พระไตรปิฎก เล่มที่ ${v.n}`);
+      a.innerHTML = `
+        <div class="spine" aria-hidden="true"></div>
+        <div class="cover" aria-hidden="true">
+            <div class="cover-title">พระไตรปิฎก</div>
+            <div class="cover-vol">เล่ม ${v.n}</div>
+            <div class="cover-cat">${v.cat_full}</div>
+        </div>
+      `;
+      
+      // สร้างกล่องข้อความอธิบาย
+      const desc = document.createElement('div');
+      desc.className = 'description';
+      desc.innerHTML = `
+        <h3>${v.cat_full}</h3>
+        <p>${v.description || 'ไม่มีข้อมูลย่อสำหรับเล่มนี้'}</p>
+      `;
+
+      item.appendChild(a);
+      item.appendChild(desc);
+      grid.appendChild(item);
+    }
+  }
+
+  // ✅ ฟังก์ชันสำหรับค้นหา
+  function handleSearch() {
+    const query = searchInput.value.trim().toLowerCase();
+    if (query === '') {
+      renderBooks(volumes);
+    } else {
+      const filteredVolumes = volumes.filter(v => 
+        v.n.toString().includes(query)
+      );
+      renderBooks(filteredVolumes);
+    }
+  }
+
+  // ✅ Event Listener สำหรับการพิมพ์ในช่องค้นหา
+  searchInput.addEventListener('input', handleSearch);
+
+  // ✅ แสดงหนังสือทั้งหมดเมื่อเปิดหน้าเว็บครั้งแรก
+  renderBooks(volumes);
+
+</script>
+<a    class="tile"  href="https://sites.google.com/view/privacy-policy-pdpa-crow-studi/%E0%B8%AB%E0%B8%99%E0%B8%B2%E0%B9%81%E0%B8%A3%E0%B8%81" target="_blank"> <div class="title">นโยบายส่วนตัว Privacy policy
+</div>  </a>
+    </div>
+</body>
+</html>
