@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>เมนูแปรรูปอาหาร – Industrial UI</title>
+<link href="https://fonts.googleapis.com/css2?family=Kodchasan:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* ✅ Factory/Industrial Theme Color Palette */
+    --bg: #f5f7fa;          /* พื้นหลังสีเทาอ่อนเหมือนพื้นคอนกรีต */
+    --card: #ffffff;        /* การ์ดสีขาวสะอาด */
+    --ink: #111827;          /* ตัวอักษรสีดำเข้ม */
+    --muted: #6b7280;        /* ข้อความรองสีเทา */
+    --line: #e5e7eb;        /* เส้นแบ่งสีเทาอ่อน */
+    --accent: #facc15;      /* สีเหลืองอุตสาหกรรม (Industrial Yellow) */
+    --accent-dark: #eab308; /* สีเหลืองเข้มสำหรับ hover */
+    --radius: 8px;          /* ลดความโค้งลงให้ดูเหลี่ยมขึ้น */
+    --shadow: 0 4px 12px -6px rgba(0,0,0,.2);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Kodchasan', system-ui, sans-serif;
+  }
+  .wrap {
+    max-width: 1100px;
+    margin: auto;
+    padding: 18px 14px 80px;
+  }
+  .title {
+    font-weight: 700;
+    font-size: clamp(22px, 4vw, 28px);
+    margin: 6px 0 4px;
+    text-transform: uppercase; /* ทำให้ดูเหมือนป้ายในโรงงาน */
+    letter-spacing: 1px;
+  }
+  .hint {
+    color: var(--muted);
+    font-size: 14px;
+    margin: 0 0 16px;
+  }
+
+  /* ✅ Search Bar */
+  .search-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 10px 14px;
+    margin-bottom: 24px;
+    box-shadow: var(--shadow);
+  }
+  .search-bar svg {
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+  .search-bar input {
+    width: 100%;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-family: 'Kodchasan', sans-serif;
+    font-size: 15px;
+    color: var(--ink);
+  }
+
+  /* ✅ Grid Layout for Items */
+  .grid {
+    display: grid;
+    gap: 12px;
+    /* ทำให้ Grid ตอบสนองตามขนาดหน้าจออัตโนมัติ */
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+  
+  /* ✅ Item Button Style */
+  .item {
+    display: flex; /* ใช้ flex เพื่อจัดตำแหน่งตัวเลขและข้อความ */
+    align-items: center;
+    padding: 12px 14px;
+    border-radius: var(--radius);
+    border: 1px solid var(--line);
+    background: var(--card);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink);
+    box-shadow: var(--shadow);
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    text-align: left; /* จัดข้อความชิดซ้าย */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px -8px rgba(0,0,0,.3);
+    border-color: var(--accent);
+  }
+  .item:active {
+    transform: translateY(0);
+  }
+  .item:focus-visible {
+    outline: 2px solid var(--accent-dark);
+    outline-offset: 2px;
+    border-color: var(--accent);
+  }
+  
+  /* สไตล์ตัวเลขนำหน้า */
+  .num {
+    margin-right: 8px;
+    font-weight: 700;
+    color: var(--muted);
+    font-size: 14px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="title">เมนูแปรรูปอาหาร</div>
+  <p class="hint">ค้นหาเมนูที่ต้องการ | คลิกปุ่มเพื่อเปิดหน้าข้อมูลในแท็บใหม่</p>
+
+  <div class="search-bar">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+    <input type="search" id="searchInput" placeholder="ค้นหาชื่อเมนู เช่น เนื้อเค็ม, น้ำพริก...">
+  </div>
+
+  <div class="grid" id="grid"></div>
+</div>
+
+<script>
+const BASE_URL = "https://sites.google.com/view/panrobtang";
+
+const items = [
+  "ข้าวเกรียบฟักทอง","ข้าวเกรียบกุ้ง","เนื้อเค็ม","เนื้อสวรรค์","เนื้อแผ่น","น้ำพริกนรก","น้ำพริกเผามันเทศเพิ่มเติม",
+  "น้ำพริกเผากากถั่วเหลือง","ซอสพริก","ซอสมะเขือเทศ","เนื้อหยอง","ไก่หยอง","หมูหยอง","แหนม","ไส้กรอกเปี้ยว","กุนเชียง",
+  "ไข่เค็ม","ไข่เค็มพรอก","น้ำปลา","ปลาร้า","ปลาเจ่า","ปลาจ่อมหรือปลาส้ม","ขิงดอง","ผักดองผสม","มะหนาวดองเค็ม",
+  "มะหนาวดองหวาน","ผักกาดเขียวปลีดองเปรี๊ยว","หน่อไม้อัดขวด","มะม่วงดอง","เห็ดฟางดองสามรส","ตั้งฉ่าย","ตั้งฉ่ายมะละกอ",
+  "น้ำส้มสายชู","น้ำส้มสายชูจากน้ำมะพร้าว","น้ำส้มสายชูจากกากสัปปะรด","ไวน์สัปปะรด","ไวน์กระเจี๊ยบ","ไวน์องุ่น",
+  "แป้งเชื้อข้าวหมาก","มะขามแก้ว","สัปปะรดกวน","มะเขือเทศเชื่อมแห้ง","เผือกหรือมันกวน","มะละกอสุกกวน","ถั่วเคลือบโอวัลติน",
+  "มะม่วงสายรุ้ง","แยมสัปปะรด","แย้มมะละกอดิบ","แยมส้มเขียวหวาน","น้ำเต้าหู้","ฟองเต้าหู้","เต้าหู้แข็ง","เต้าฮวย",
+  "ข้าวตูจากกากถั่วเหลือง","กากถั่วเหลืองกวน","น้ำมะขามเปียก","น้ำมะยม","น้ำกระเจี๊ยบ","น้ำมะเขือเทศ","น้ำพุทรา","น้ำมะตูม",
+  "ปลาหวาน","ปลายอ","ปลาบดชุปขนมปังป่น","น้ำพริกเผาเห็ด","เห็ดสวรรค์","เยลลี่เห็ดหูหนู","ข้าวเกรียบเห็ด",
+  "กล้วยอบเนย","กล้วยสมุนไพร","กล้วยฉาบ","ขนุนทอดกรอบ"
+];
+
+const REMOVE_MARKS = /[\u0E31\u0E34-\u0E37\u0E38-\u0E39\u0E47\u0E4C\u0E48-\u0E4B]/g;
+function toSiteSlug(thaiName){
+  return thaiName.normalize('NFC')
+    .replace(REMOVE_MARKS,'')
+    .replace(/\s+/g,'');
+}
+
+const grid = document.getElementById('grid');
+const searchInput = document.getElementById('searchInput');
+
+/* render items */
+function render(list = items) {
+  if (list.length === 0) {
+    grid.innerHTML = `<p class="hint">ไม่พบเมนูที่ค้นหา</p>`;
+    return;
+  }
+  grid.innerHTML = list.map((name, i) => {
+    // หา index ดั้งเดิมเพื่อแสดงลำดับที่ถูกต้อง
+    const originalIndex = items.indexOf(name) + 1;
+    return `
+      <button class="item" data-name="${name}">
+        <span class="num">${originalIndex}.</span>${name}
+      </button>
+    `;
+  }).join('');
+}
+
+/* ✅ Function for handling search */
+function applySearch() {
+  const searchTerm = searchInput.value.trim().toLowerCase();
+  if (!searchTerm) {
+    render(items); // ถ้าช่องค้นหาว่าง ให้แสดงทั้งหมด
+    return;
+  }
+  const filteredItems = items.filter(item => 
+    item.toLowerCase().includes(searchTerm)
+  );
+  render(filteredItems);
+}
+
+// ✅ Event listener for the search input
+searchInput.addEventListener('input', applySearch);
+
+/* click item → open slug page (_blank) */
+grid.addEventListener('click', e => {
+  const btn = e.target.closest('.item'); 
+  if (!btn) return;
+  const name = btn.dataset.name;
+  const slug = toSiteSlug(name);
+  const url  = `${BASE_URL}/${slug}`;
+  window.open(url, '_blank');
+});
+
+// Initial render
+render();
+</script>
+</body>
+</html>
