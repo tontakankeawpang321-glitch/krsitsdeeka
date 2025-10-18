@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ศัพท์อังกฤษทางทหาร</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&family=Staatliches&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-bg: #f5f5dc; /* สีเบจ/สีทราย (Beige/Sand) */
+            --secondary-bg: #ffffff; /* สีขาว */
+            --header-bg: #e9ecef; /* สีเทาอ่อน */
+            --text-primary: #343a40; /* สีเทาเข้มเกือบดำ */
+            --text-secondary: #6c757d; /* สีเทา */
+            --accent-color: #556b2f; /* สีเขียวทหาร (Dark Olive Green) */
+            --border-color: #dee2e6; /* สีเทาสำหรับเส้นขอบ */
+        }
+
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: var(--primary-bg);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            margin: 20px auto;
+            background-color: var(--secondary-bg);
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+        }
+
+        header {
+            background-color: var(--secondary-bg);
+            padding: 25px 30px;
+            border-bottom: 2px solid var(--accent-color);
+            text-align: center;
+        }
+
+        h1 {
+            font-family: 'Staatliches', cursive;
+            color: var(--accent-color);
+            margin: 0;
+            font-size: 2.8em;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .controls {
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border-color);
+            background-color: #f8f9fa;
+        }
+
+        .search-container {
+            position: relative;
+        }
+
+        #search-input {
+            width: 100%;
+            padding: 12px 20px 12px 40px; /* เพิ่ม padding ด้านซ้ายสำหรับไอคอน */
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-family: 'Sarabun', sans-serif;
+            font-size: 1em;
+            box-sizing: border-box; /* ทำให้ padding ไม่ขยายขนาดกล่อง */
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        
+        #search-input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 2px rgba(85, 107, 47, 0.2);
+        }
+
+        .search-container::before {
+            content: '🔍'; /* ไอคอนแว่นขยาย */
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.2em;
+            color: var(--text-secondary);
+        }
+        
+        #loading-message, #no-results-message {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-secondary);
+            font-size: 1.2em;
+        }
+
+        .table-container {
+            padding: 0;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th, td {
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border-color);
+            white-space: nowrap;
+        }
+
+        thead th {
+            background-color: var(--header-bg);
+            color: var(--accent-color);
+            font-size: 1.1em;
+            font-weight: 700;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            text-transform: uppercase;
+        }
+        
+        tbody tr:nth-child(even) {
+             background-color: #f8f9fa;
+        }
+        
+        tbody tr:hover {
+            background-color: #d4d4be;
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .container { margin: 10px; }
+            h1 { font-size: 2em; }
+            th, td { padding: 12px 15px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Military Vocabulary</h1>
+        </header>
+
+        <div class="controls">
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="ค้นหาคำศัพท์ไทย หรือ English...">
+            </div>
+        </div>
+        
+        <div class="table-container">
+            <p id="loading-message">กำลังโหลดข้อมูล...</p>
+            <p id="no-results-message" style="display:none;">ไม่พบข้อมูลที่ตรงกัน</p>
+            <table id="vocab-table" style="display:none;">
+                <thead>
+                    <tr id="table-header">
+                        </tr>
+                </thead>
+                <tbody id="table-body">
+                    </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- URL ของไฟล์ JSON บน GITHUB ---
+            // !!! กรุณาเปลี่ยน URL ด้านล่างนี้เป็น Raw URL ของไฟล์ JSON บน GitHub ของคุณ !!!
+            const jsonUrl = '--- URL ของไฟล์ JSON บน GITHUB ---'; 
+
+            const loadingMessage = document.getElementById('loading-message');
+            const noResultsMessage = document.getElementById('no-results-message');
+            const vocabTable = document.getElementById('vocab-table');
+            const tableHeader = document.getElementById('table-header');
+            const tableBody = document.getElementById('table-body');
+            const searchInput = document.getElementById('search-input');
+
+            // Fetch data from URL
+            fetch(jsonUrl)
+                .then(response => {
+                    if (!response.ok) throw new Error('Network Error: ' + response.statusText);
+                    return response.json();
+                })
+                .then(data => {
+                    loadingMessage.style.display = 'none';
+                    vocabTable.style.display = 'table';
+                    populateTable(data);
+                })
+                .catch(error => {
+                    console.error('Fetch Error:', error);
+                    loadingMessage.textContent = 'เกิดข้อผิดพลาด: ' + error.message;
+                    loadingMessage.style.color = '#dc3545';
+                });
+
+            // Function to populate table with data
+            function populateTable(data) {
+                // Clear previous data
+                tableHeader.innerHTML = '';
+                tableBody.innerHTML = '';
+
+                if (data.length > 0) {
+                    const headers = Object.keys(data[0]);
+                    headers.forEach(headerText => {
+                        const header = document.createElement('th');
+                        header.textContent = headerText;
+                        tableHeader.appendChild(header);
+                    });
+                }
+
+                data.forEach(item => {
+                    const row = document.createElement('tr');
+                    Object.values(item).forEach(text => {
+                        const cell = document.createElement('td');
+                        cell.textContent = text === null ? '-' : text;
+                        row.appendChild(cell);
+                    });
+                    tableBody.appendChild(row);
+                });
+            }
+
+            // Search functionality
+            searchInput.addEventListener('keyup', () => {
+                const filter = searchInput.value.toLowerCase();
+                const rows = tableBody.getElementsByTagName('tr');
+                let found = false;
+
+                for (let i = 0; i < rows.length; i++) {
+                    let rowText = rows[i].textContent || rows[i].innerText;
+                    if (rowText.toLowerCase().indexOf(filter) > -1) {
+                        rows[i].style.display = '';
+                        found = true;
+                    } else {
+                        rows[i].style.display = 'none';
+                    }
+                }
+                
+                // Show or hide "no results" message
+                noResultsMessage.style.display = found ? 'none' : 'block';
+            });
+        });
+    </script>
+</body>
+</html>
