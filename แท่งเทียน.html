@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>📈 Candlestick Library – รวมแท่งเทียน + เทคนิค</title>
+
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
+<!-- PapaParse -->
+<script src="https://unpkg.com/papaparse@5.4.1/papaparse.min.js"></script>
+
+<style>
+  :root{
+    --bg:#0f172a;
+    --paper:#ffffff;
+    --ink:#0f172a;
+    --muted:#475569;
+    --line:#e2e8f0;
+    --brand:#0f766e;
+    --radius:16px;
+    --shadow:0 16px 40px -22px rgba(15,23,42,.25);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; font-family:"Sarabun",system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+    background:linear-gradient(180deg,#0f172a 0%, #0f172a 180px, #e2e8f0 180px, #e2e8f0 100%);
+    color:var(--ink);
+  }
+
+  header{
+    position:sticky; top:0; z-index:50;
+    background:rgba(15,23,42,.85);
+    backdrop-filter:blur(8px);
+    color:#fff; padding:14px 16px; box-shadow:0 10px 30px -20px rgba(0,0,0,.4)
+  }
+  header .wrap{
+    max-width:980px; margin:auto; display:flex; gap:12px; align-items:center; flex-wrap:wrap
+  }
+  .title{font-weight:700; font-size:1.25rem}
+  .search{
+    margin-left:auto; display:flex; align-items:center; gap:8px;
+    background:rgba(255,255,255,.12); padding:6px 10px; border-radius:999px; width:min(420px,100%)
+  }
+  .search input{border:none; outline:none; background:transparent; color:#fff; width:100%}
+  .search ::placeholder{color:rgba(255,255,255,.75)}
+
+  /* ปุ่มเลือกไฟล์ */
+  .filepick{
+    display:flex; gap:6px; align-items:center;
+    background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.08);
+    border-radius:999px; padding:4px 10px;
+    font-size:.78rem;
+  }
+  .filepick input{display:none;}
+  .filepick label{cursor:pointer;}
+
+  .layout{max-width:980px; margin:14px auto 30px; padding:0 16px}
+  #candles{
+    background:var(--paper); border-radius:var(--radius); box-shadow:var(--shadow);
+    border:1px solid rgba(15,118,110,.08);
+    padding:14px;
+  }
+  .card{
+    display:grid; grid-template-columns:82px 1fr; gap:12px;
+    border:1px solid var(--line); border-radius:14px;
+    margin:10px 0; background:#fff; cursor:pointer;
+    transition:transform .12s ease, box-shadow .12s ease;
+  }
+  .card:hover{transform:translateY(-2px); box-shadow:0 16px 30px -20px rgba(15,23,42,.2)}
+
+  .thumb{
+    width:100%; height:70px; border-radius:10px; object-fit:cover;
+    background:#e2e8f0;
+  }
+  .c-name{font-weight:700; color:#0f172a}
+  .c-meta{color:var(--muted); font-size:.75rem}
+  .tag{display:inline-block; background:#ecfdf3; border:1px solid #bbf7d0; color:#166534; font-size:.7rem; padding:3px 8px; border-radius:999px; margin-top:4px}
+  .tag.red{background:#fef2f2; border-color:#fecaca; color:#b91c1c}
+  .tag.blue{background:#eff6ff; border-color:#dbeafe; color:#1d4ed8}
+
+  .pager{display:flex; justify-content:center; gap:8px; margin-top:8px}
+  .pager .btn{
+    border:1px solid var(--line); background:#fff; border-radius:10px; padding:5px 10px; cursor:pointer
+  }
+  .pager .btn[disabled]{opacity:.5; cursor:not-allowed}
+  .pager .info{font-size:.85rem; color:#475569; padding:3px 0}
+
+  dialog{
+    width:min(880px, 94vw); border:none; border-radius:20px; overflow:hidden;
+    box-shadow:0 30px 70px -20px rgba(15,23,42,.5);
+  }
+  .modal-head{
+    display:flex; gap:12px; align-items:center; padding:14px 16px;
+    background:#0f172a; color:#fff;
+  }
+  .modal-body{
+    background:#fff; padding:16px; display:grid; grid-template-columns:280px 1fr; gap:16px;
+  }
+  .modal-body img{width:100%; border-radius:16px; border:1px solid #e2e8f0; background:#f8fafc; height:180px; object-fit:cover}
+  .close-btn{
+    margin-left:auto; background:#fff; color:#0f172a; border:none; border-radius:999px; padding:6px 14px; cursor:pointer; font-weight:600
+  }
+  pre.tip{
+    background:#f8fafc; border:1px solid #e2e8f0; border-radius:14px; padding:8px 10px; font-size:.78rem; line-height:1.5; white-space:pre-wrap
+  }
+
+  @media (max-width:620px){
+    .card{grid-template-columns:68px 1fr}
+    .thumb{height:64px}
+    .modal-body{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="title">📈 Candlestick Library – ดูแท่งเทียน + เทคนิค</div>
+    <div class="search">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+      <input id="q" type="search" placeholder="ค้นหา: bullish / bearish / engulfing / ดาวตก / 3 ตัว / 2 แท่ง ...">
+    </div>
+    <!-- ⭐ ปุ่มเลือกไฟล์ csv -->
+    <div class="filepick">
+      <label for="csvFile">📁 เลือก CSV</label>
+      <span id="fileName" style="opacity:.7">ยังไม่ได้เลือก</span>
+      <input type="file" id="csvFile" accept=".csv">
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+  <section id="candles" aria-label="candlestick patterns"></section>
+  <div id="pager" class="pager"></div>
+</div>
+
+<!-- Modal -->
+<dialog id="detailModal">
+  <div class="modal-head">
+    <h3 id="mTitle">Candlestick</h3>
+    <button class="close-btn" onclick="modal.close()">ปิด</button>
+  </div>
+  <div class="modal-body">
+    <img id="mImg" alt="">
+    <div>
+      <div id="mMeta" class="c-meta"></div>
+      <p style="margin:.1rem 0 .4rem;font-weight:700">คำอธิบาย</p>
+      <div id="mSummary" style="line-height:1.7"></div>
+      <p style="margin:.6rem 0 .4rem;font-weight:700">เทคนิคการใช้</p>
+      <pre id="mTip" class="tip"></pre>
+    </div>
+  </div>
+  <div class="modal-footer" style="background:#fff;border-top:1px solid #e2e8f0;padding:15px 16px">
+    <a id="mSource" class="btn-primary" target="_blank" rel="noopener">ดูตัวอย่างกราฟ</a>
+  </div>
+</dialog>
+
+<script>
+// ===== 1) ตั้งค่าชื่อไฟล์ csv ที่วางไว้โฟลเดอร์เดียวกับ html =====
+const SHEET_CSV_URL = "https://drive.google.com/file/d/10hWjeoeSjDsyi0oBaTIlwRiV7dSH6558/view?usp=sharing";   // ถ้าอัปขึ้นโฮสต์ก็ใช้ชื่อนี้ได้เลย
+
+let RAW = [];
+let CURRENT = [];
+let page = 1;
+const pageSize = 20;
+const PLACEHOLDER = 'https://dummyimage.com/240x160/e2e8f0/94a3b8&text=candle';
+
+// โหลดจาก URL ปกติ
+async function loadCSVFromUrl(){
+  return new Promise((resolve, reject)=>{
+    Papa.parse(SHEET_CSV_URL, {
+      download: true,
+      header: true,
+      skipEmptyLines: true,
+      complete: (res)=> resolve(res.data),
+      error: reject
+    });
+  });
+}
+
+// ⭐ โหลดจากไฟล์ที่ผู้ใช้เลือก
+function loadCSVFromFile(file){
+  return new Promise((resolve, reject)=>{
+    Papa.parse(file, {
+      header: true,
+      skipEmptyLines: true,
+      complete: (res)=> resolve(res.data),
+      error: reject
+    });
+  });
+}
+
+function applyFilters(){
+  const q = document.getElementById('q').value.trim().toLowerCase();
+  CURRENT = RAW.filter(r=>{
+    const hay = `${r.name||""} ${r.side||""} ${r.grouping||""} ${r.summary||""} ${r.tip||""}`.toLowerCase();
+    return q==="" ? true : hay.includes(q);
+  });
+  page = 1;
+  renderList();
+}
+
+function renderList(){
+  const host = document.getElementById('candles');
+  host.innerHTML = "";
+  if (CURRENT.length===0){
+    host.innerHTML = `<div style="padding:10px;color:#475569">ไม่พบรูปแบบแท่งเทียนที่ค้นหา</div>`;
+    document.getElementById('pager').innerHTML = "";
+    return;
+  }
+  const totalPages = Math.ceil(CURRENT.length / pageSize);
+  page = Math.min(page, totalPages);
+  const start = (page-1)*pageSize;
+  const end = start + pageSize;
+  const slice = CURRENT.slice(start, end);
+
+  slice.forEach(r=>{
+    const card = document.createElement('article');
+    card.className = 'card';
+
+    const img = document.createElement('img');
+    img.className = 'thumb';
+    img.loading = 'lazy';
+    img.src = r.image || PLACEHOLDER;
+    img.onerror = ()=>{img.src = PLACEHOLDER};
+
+    const right = document.createElement('div');
+    const tagColor = r.side==="Bullish" ? "" : (r.side==="Bearish" ? " red" : "");
+    right.innerHTML = `
+      <div class="c-name">${r.name||""}</div>
+      <div class="c-meta">${r.grouping||""} • ${r.side||""} • ${r.count ? (r.count+" แท่ง") : ""}</div>
+      <span class="tag${tagColor}">${r.side||"Pattern"}</span>
+      ${r.grouping? `<span class="tag blue">${r.grouping}</span>`:""}
+    `;
+
+    card.append(img, right);
+    card.addEventListener('click', ()=>openModal(r));
+    host.append(card);
+  });
+
+  // pager
+  const pager = document.getElementById('pager');
+  pager.innerHTML = "";
+  const total = CURRENT.length;
+
+  const btnPrev = document.createElement('button');
+  btnPrev.textContent = 'ย้อนกลับ';
+  btnPrev.className = 'btn';
+  btnPrev.disabled = page<=1;
+  btnPrev.onclick = ()=>{page = Math.max(1,page-1); renderList();};
+
+  const info = document.createElement('span');
+  info.className = 'info';
+  info.textContent = `${start+1}-${Math.min(end,total)} / ${total} รูปแบบ`;
+
+  const btnNext = document.createElement('button');
+  btnNext.textContent = 'ถัดไป';
+  btnNext.className = 'btn';
+  btnNext.disabled = page>=totalPages;
+  btnNext.onclick = ()=>{page = Math.min(totalPages,page+1); renderList();};
+
+  pager.append(btnPrev, info, btnNext);
+}
+
+const modal = document.getElementById('detailModal');
+function openModal(r){
+  document.getElementById('mTitle').textContent = r.name || "";
+  document.getElementById('mImg').src = r.image || PLACEHOLDER;
+  document.getElementById('mMeta').textContent = `${r.side||""} • ${r.grouping||""} • ${r.count? r.count+" แท่ง":""}`;
+  document.getElementById('mSummary').textContent = r.summary || "";
+  document.getElementById('mTip').textContent = r.tip || "ใช้ร่วมกับแนวรับแนวต้านและวอลุ่มจะชัดขึ้น";
+
+  const src = document.getElementById('mSource');
+  if (r.source_url){
+    src.href = r.source_url;
+    src.style.display = 'inline-block';
+  } else {
+    src.style.display = 'none';
+  }
+  modal.showModal();
+}
+
+// ค้นหาเรียลไทม์
+document.getElementById('q').addEventListener('input', applyFilters);
+
+// ⭐ ฟังโหลดไฟล์จากเครื่อง
+document.getElementById('csvFile').addEventListener('change', async (e)=>{
+  const file = e.target.files[0];
+  if (!file) return;
+  document.getElementById('fileName').textContent = file.name;
+  try{
+    RAW = await loadCSVFromFile(file);
+    applyFilters();
+  }catch(err){
+    alert("อ่านไฟล์ไม่สำเร็จ");
+    console.error(err);
+  }
+});
+
+// เริ่มต้น: พยายามโหลดจากไฟล์ในโฟลเดอร์ก่อน
+(async function init(){
+  try{
+    RAW = await loadCSVFromUrl();
+  }catch(err){
+    console.warn("โหลด candlestick_100.csv ไม่ได้ ให้เลือกไฟล์เองได้เลย", err);
+    RAW = [];
+  }
+  applyFilters();
+})();
+</script>
+
+</body>
+</html>
