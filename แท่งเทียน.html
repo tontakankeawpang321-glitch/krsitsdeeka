@@ -1,9 +1,9 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="th">
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
-<title>📈 Candlestick Library – ดูแท่งเทียน + เทคนิค</title>
+<title>📈 Candlestick Library – แท่งเทียน + เทคนิค</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/papaparse@5.4.1/papaparse.min.js"></script>
@@ -21,8 +21,6 @@ body{
   background:linear-gradient(180deg,#0f172a 0%, #0f172a 180px, #f1f5f9 180px, #f1f5f9 100%);
   color:var(--ink);
 }
-
-/* header */
 header{
   position:sticky; top:0; z-index:50;
   background:rgba(15,23,42,.9);
@@ -40,25 +38,22 @@ header .wrap{
 }
 .search input{border:none; outline:none; background:transparent; color:#fff; width:100%}
 .search ::placeholder{color:rgba(255,255,255,.75)}
-
-/* layout */
 .layout{max-width:980px; margin:14px auto 30px; padding:0 16px}
 
-/* category chips */
-.cats{
+/* category buttons */
+#filters{
   display:flex; gap:8px; margin-bottom:10px; flex-wrap:wrap;
 }
-.cat-btn{
-  border:1px solid rgba(15,118,110,.25);
+.filter-btn{
+  border:1px solid rgba(15,118,110,.2);
   background:#fff;
   color:#0f172a;
-  padding:4px 12px;
   border-radius:999px;
-  font-size:.78rem;
+  padding:5px 12px;
   cursor:pointer;
-  transition:.12s;
+  font-size:.78rem;
 }
-.cat-btn.active{
+.filter-btn.active{
   background:#0f766e;
   color:#fff;
   border-color:transparent;
@@ -69,44 +64,20 @@ header .wrap{
   border:1px solid rgba(15,118,110,.08); padding:14px;
 }
 .card{
-  display:grid; grid-template-columns:96px 1fr; gap:12px;
+  display:grid; grid-template-columns:76px 1fr; gap:12px;
   border:1px solid var(--line); border-radius:14px;
   margin:10px 0; background:#fff; cursor:pointer;
   transition:transform .12s ease, box-shadow .12s ease;
 }
 .card:hover{transform:translateY(-2px); box-shadow:0 16px 30px -20px rgba(15,23,42,.2)}
 
-/* thumb: ถ้าไม่มี image */
-.thumb-candle{
-  width:100%; height:70px;
-  border-radius:12px;
+.thumb{
+  width:100%; height:70px; border-radius:12px;
   background:#e2e8f0;
-  display:flex; align-items:center; justify-content:center; position:relative;
+  display:flex; align-items:center; justify-content:center;
+  overflow:hidden;
 }
-.thumb-candle .tc-body{width:14px;height:42px;background:#10b981;border-radius:4px;}
-.thumb-candle .tc-wick{position:absolute;width:2px;background:#10b981;left:50%;transform:translateX(-50%);}
-.thumb-candle .tc-wick.top{top:8px;height:18px;}
-.thumb-candle .tc-wick.bottom{bottom:6px;height:14px;}
-.thumb-hammer .tc-body{height:32px;}
-.thumb-hammer .tc-wick.top{height:6px;}
-.thumb-hammer .tc-wick.bottom{height:26px;}
-.thumb-inverted .tc-body{height:28px;}
-.thumb-inverted .tc-wick.top{height:28px;}
-.thumb-engulf .tc-body{height:50px;}
-.thumb-harami .tc-body{height:36px;}
-.thumb-harami::after{
-  content:"";
-  position:absolute;
-  right:10px;
-  width:10px; height:26px;
-  background:#ef4444;
-  border-radius:3px;
-}
-
-/* ถ้าเป็นรูปภาพ */
-.thumb-img{
-  width:100%; height:70px; border-radius:12px; object-fit:cover; background:#e2e8f0;
-}
+.thumb img{width:100%; height:100%; object-fit:contain}
 
 .c-name{font-weight:700; color:#0f172a}
 .c-meta{color:#475569; font-size:.75rem}
@@ -114,125 +85,47 @@ header .wrap{
 .tag.red{background:#fef2f2; border-color:#fecaca; color:#b91c1c}
 .tag.blue{background:#eff6ff; border-color:#dbeafe; color:#1d4ed8}
 
-.pager{display:flex; justify-content:center; gap:8px; margin-top:8px; align-items:center;}
+.pager{display:flex; justify-content:center; gap:8px; margin-top:8px; align-items:center}
 .pager .btn{border:1px solid var(--line); background:#fff; border-radius:10px; padding:5px 10px; cursor:pointer}
 .pager .btn[disabled]{opacity:.5; cursor:not-allowed}
 .pager .info{font-size:.85rem; color:#475569; padding:3px 0}
-
-/* dialog */
-dialog.candle-dialog{
-  width:min(720px, 95vw);
-  border:none;
-  border-radius:20px;
-  background:#0f172a;
-  color:#fff;
-  padding:0;
-  overflow:hidden;
-  box-shadow:0 30px 70px -20px rgba(0,0,0,.55);
-}
-.cd-head{display:flex; gap:12px; align-items:center; padding:16px 18px 6px;}
-.cd-title{font-size:1.4rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase;}
-.cd-close{margin-left:auto; background:rgba(255,255,255,.07); border:none; color:#fff; border-radius:999px; padding:6px 14px; cursor:pointer; font-weight:600;}
-.cd-body{padding:14px 18px 16px;}
-.cd-sub{color:rgba(255,255,255,.6);font-size:.78rem;margin-bottom:16px;}
-.cd-row{display:flex;gap:20px;align-items:center;}
-.cd-left{
-  width:180px;min-height:140px;
-  background:rgba(255,255,255,.02);
-  border:1px solid rgba(255,255,255,.03);
-  border-radius:16px;
-  display:flex;align-items:center;justify-content:center;overflow:hidden;
-}
-.cd-left img{max-width:100%;border-radius:12px;}
-.cd-right{flex:1;}
-.cd-right h4{margin:.2rem 0 .4rem;font-size:.85rem;text-transform:uppercase;}
-.cd-right p{margin:0 0 .5rem;font-size:.78rem;color:rgba(255,255,255,.75);}
-.cd-tip{background:rgba(15,118,110,.14);border:1px solid rgba(148,163,184,.16);border-radius:12px;padding:8px 10px;font-size:.72rem;white-space:pre-wrap;}
-.cd-footer{padding:10px 18px 16px;border-top:1px solid rgba(255,255,255,.05);text-align:right;}
-.cd-link{background:#0f766e;color:#fff;border:none;border-radius:10px;padding:6px 12px;font-weight:600;text-decoration:none;font-size:.72rem;}
-
-.candle-box{position:relative;width:54px;height:110px;display:flex;align-items:center;justify-content:center;}
-.cb-body{width:16px;height:46px;background:#10b981;border-radius:4px;}
-.cb-wick{position:absolute;width:2px;background:#10b981;left:50%;transform:translateX(-50%);}
-.cb-wick.top{top:6px;height:32px;}
-.cb-wick.bottom{bottom:4px;height:22px;}
-.candle-hammer .cb-body{height:50px;}
-.candle-hammer .cb-wick.top{height:12px;}
-.candle-hammer .cb-wick.bottom{height:30px;}
-.candle-inverted .cb-body{height:30px;}
-.candle-inverted .cb-wick.top{height:45px;}
-.candle-engulf .cb-body{height:70px;}
-.candle-harami .cb-body{height:46px;}
-.candle-harami::after{content:"";position:absolute;right:-14px;width:10px;height:32px;background:#ef4444;border-radius:3px;top:28px;}
-@media (max-width:600px){
-  .cd-row{flex-direction:column;align-items:flex-start;}
-  .cd-left{width:100%;justify-content:flex-start;padding-left:18px;}
-}
 </style>
 </head>
 <body>
 
 <header>
   <div class="wrap">
-    <div class="title">📈 Candlestick Library – ดูแท่งเทียน + เทคนิค</div>
+    <div class="title">📈 Candlestick Library – แท่งเทียน + เทคนิค</div>
     <div class="search">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
-      <input id="q" type="search" placeholder="ค้นหา: bullish / bearish / engulfing / ดาวตก / 3 ตัว / 2 แท่ง ...">
+      <input id="q" type="search" placeholder="ค้นหา: bullish / bearish / hammer / เทคนิค ..." />
     </div>
   </div>
 </header>
 
 <div class="layout">
-  <div class="cats" id="cats">
-    <button class="cat-btn active" data-side="all">ทั้งหมด</button>
-    <button class="cat-btn" data-side="Bullish">ขาขึ้น</button>
-    <button class="cat-btn" data-side="Bearish">ขาลง</button>
-    <button class="cat-btn" data-side="tech">เทคนิค</button>
+  <div id="filters">
+    <button class="filter-btn active" data-filter="all">ทั้งหมด</button>
+    <button class="filter-btn" data-filter="bullish">ขาขึ้น</button>
+    <button class="filter-btn" data-filter="bearish">ขาลง</button>
+    <button class="filter-btn" data-filter="tech">เทคนิค</button>
   </div>
 
   <section id="candles" aria-label="candlestick patterns"></section>
   <div id="pager" class="pager"></div>
 </div>
 
-<!-- dialog -->
-<dialog id="detailDialog" class="candle-dialog">
-  <div class="cd-head">
-    <div class="cd-title" id="dTitle">PATTERN</div>
-    <button class="cd-close" onclick="detailDialog.close()">ปิด</button>
-  </div>
-  <div class="cd-body">
-    <div class="cd-sub" id="dSubtitle">Pattern detail</div>
-    <div class="cd-row">
-      <div class="cd-left" id="dThumb">
-        <!-- ใส่รูปหรือเทียนใหญ่ -->
-      </div>
-      <div class="cd-right">
-        <h4>คำอธิบาย</h4>
-        <p id="dSummary"></p>
-        <h4>เทคนิคการใช้</h4>
-        <div id="dTip" class="cd-tip"></div>
-      </div>
-    </div>
-  </div>
-  <div class="cd-footer">
-    <a id="dLink" class="cd-link" target="_blank" rel="noopener">ดูตัวอย่างกราฟ</a>
-  </div>
-</dialog>
-
 <script>
-const SHEET_CSV_URL = "candlestick_100_full.csv"; // ต้องมี header: id,name,side,count,grouping,image,summary,tip,source_url
-const PLACEHOLDER_TEXT = "ยังไม่มีคำอธิบาย";
+const SHEET_CSV_URL = "candlestick_full_local_with_real_data.csv"; // ตัวที่พี่เพิ่งได้มา
 let RAW = [], CURRENT = [];
 let page = 1;
 const pageSize = 10;
-let currentSide = "all";
+let currentFilter = "all";
 
 async function loadCSV(){
   return new Promise((resolve,reject)=>{
     Papa.parse(SHEET_CSV_URL,{
-      download:true,
-      header:true,
-      skipEmptyLines:true,
+      download:true, header:true, skipEmptyLines:true,
       complete:res=>resolve(res.data),
       error:reject
     });
@@ -242,26 +135,14 @@ async function loadCSV(){
 function applyFilters(){
   const q = document.getElementById('q').value.trim().toLowerCase();
   CURRENT = RAW.filter(r=>{
-    // ป้องกัน null
-    const name = r.name || "";
-    const side = r.side || "";
-    const grouping = r.grouping || "";
-    const summary = r.summary || "";
-    const tip = r.tip || "";
+    // กรองตามหมวด
+    if (currentFilter === "bullish" && r.side !== "Bullish") return false;
+    if (currentFilter === "bearish" && r.side !== "Bearish") return false;
+    if (currentFilter === "tech" && r.grouping !== "เทคนิค") return false;
 
-    const hay = `${name} ${side} ${grouping} ${summary} ${tip}`.toLowerCase();
-    const matchText = q === "" ? true : hay.includes(q);
-
-    let matchSide = true;
-    if (currentSide === "Bullish" || currentSide === "Bearish"){
-      matchSide = (side === currentSide);
-    } else if (currentSide === "tech"){
-      // หมวดเทคนิค = มี tip หรือ grouping มีคำว่า เทคนิค / tech
-      const hasTip = tip.trim() !== "";
-      const inGroup = grouping.toLowerCase().includes("เทคนิค") || grouping.toLowerCase().includes("tech");
-      matchSide = hasTip || inGroup;
-    }
-    return matchText && matchSide;
+    // ค้นหา
+    const hay = `${r.name||""} ${r.side||""} ${r.grouping||""} ${r.summary||""} ${r.tip||""}`.toLowerCase();
+    return q === "" ? true : hay.includes(q);
   });
   page = 1;
   renderList();
@@ -271,10 +152,11 @@ function renderList(){
   const host = document.getElementById('candles');
   host.innerHTML = "";
   if (CURRENT.length === 0){
-    host.innerHTML = `<div style="padding:10px;color:#475569">ไม่พบรูปแบบแท่งเทียน</div>`;
+    host.innerHTML = `<div style="padding:10px;color:#475569">ไม่พบข้อมูล</div>`;
     document.getElementById('pager').innerHTML = "";
     return;
   }
+
   const totalPages = Math.ceil(CURRENT.length / pageSize);
   const start = (page-1)*pageSize;
   const end = start + pageSize;
@@ -283,34 +165,44 @@ function renderList(){
   slice.forEach(r=>{
     const card = document.createElement('article');
     card.className = 'card';
-    card.dataset.id = r.id || "";
 
-    // ซ้าย: ถ้ามี image ให้ใช้ภาพ ถ้าไม่มีก็วาดเทียน
-    let leftEl;
-    if (r.image && r.image.trim() !== ""){
+    // thumb
+    const thumb = document.createElement('div');
+    thumb.className = 'thumb';
+    if (r.image){
       const img = document.createElement('img');
-      img.src = r.image.trim();
-      img.alt = r.name || "candle";
-      img.className = "thumb-img";
-      leftEl = img;
+      img.src = r.image;
+      img.alt = r.name || "pattern";
+      img.onerror = () => {
+        // ถ้ารูปหาย วาดแท่งเทียนแทน
+        thumb.innerHTML = "";
+        const bar = document.createElement('div');
+        bar.style.width = "14px";
+        bar.style.height = "42px";
+        bar.style.borderRadius = "4px";
+        bar.style.background = r.side === "Bearish" ? "#ef4444" : (r.side === "Bullish" ? "#10b981" : "#94a3b8");
+        thumb.appendChild(bar);
+      };
+      thumb.appendChild(img);
     } else {
-      const thumb = document.createElement('div');
-      thumb.className = 'thumb-candle';
-      decorateThumbByName(thumb, r.name || "");
-      leftEl = thumb;
+      const bar = document.createElement('div');
+      bar.style.width = "14px";
+      bar.style.height = "42px";
+      bar.style.borderRadius = "4px";
+      bar.style.background = r.side === "Bearish" ? "#ef4444" : (r.side === "Bullish" ? "#10b981" : "#94a3b8");
+      thumb.appendChild(bar);
     }
 
     const right = document.createElement('div');
     const tagColor = r.side === "Bearish" ? " red" : "";
     right.innerHTML = `
       <div class="c-name">${r.name||""}</div>
-      <div class="c-meta">${r.grouping||""} • ${r.side||""} ${r.count? "• "+r.count+" แท่ง":""}</div>
-      <span class="tag${tagColor}">${r.side || "Pattern"}</span>
-      ${r.grouping? `<span class="tag blue">${r.grouping}</span>`:""}
+      <div class="c-meta">${r.grouping||""} ${r.side? "• "+r.side:""} ${r.count? "• "+r.count+" แท่ง":""}</div>
+      <span class="tag${tagColor}">${r.side||"Pattern"}</span>
+      ${r.grouping ? `<span class="tag blue">${r.grouping}</span>` : ""}
     `;
 
-    card.append(leftEl, right);
-    card.addEventListener('click', ()=>openDialogFromRecord(r));
+    card.append(thumb, right);
     host.append(card);
   });
 
@@ -321,127 +213,34 @@ function renderPager(totalPages){
   const pager = document.getElementById('pager');
   pager.innerHTML = "";
 
-  const btnPrev = document.createElement('button');
-  btnPrev.className = 'btn';
-  btnPrev.textContent = 'ก่อนหน้า';
-  btnPrev.disabled = page === 1;
-  btnPrev.onclick = ()=>{ if (page > 1){ page--; renderList(); } };
+  const prev = document.createElement('button');
+  prev.className = 'btn';
+  prev.textContent = 'ย้อนกลับ';
+  prev.disabled = page === 1;
+  prev.onclick = ()=>{ page--; renderList(); };
+
+  const next = document.createElement('button');
+  next.className = 'btn';
+  next.textContent = 'ถัดไป';
+  next.disabled = page === totalPages;
+  next.onclick = ()=>{ page++; renderList(); };
 
   const info = document.createElement('div');
   info.className = 'info';
-  info.textContent = `หน้า ${page} / ${totalPages}`;
+  info.textContent = `หน้า ${page} / ${totalPages} (ทั้งหมด ${CURRENT.length} รายการ)`;
 
-  const btnNext = document.createElement('button');
-  btnNext.className = 'btn';
-  btnNext.textContent = 'ถัดไป';
-  btnNext.disabled = page === totalPages;
-  btnNext.onclick = ()=>{ if (page < totalPages){ page++; renderList(); } };
-
-  pager.append(btnPrev, info, btnNext);
+  pager.append(prev, info, next);
 }
 
-const detailDialog = document.getElementById('detailDialog');
-
-function openDialogFromRecord(r){
-  document.getElementById('dTitle').textContent = (r.name || "PATTERN").toUpperCase();
-  document.getElementById('dSubtitle').textContent = r.side ? r.side + " candlestick pattern" : "Candlestick pattern";
-  document.getElementById('dSummary').textContent = r.summary || PLACEHOLDER_TEXT;
-  document.getElementById('dTip').textContent = r.tip || "ใช้ร่วมกับแนวรับแนวต้านและวอลุ่มจะชัดขึ้น";
-
-  // รูปใน dialog
-  const dThumb = document.getElementById('dThumb');
-  dThumb.innerHTML = "";
-  if (r.image && r.image.trim() !== ""){
-    const img = document.createElement('img');
-    img.src = r.image.trim();
-    img.alt = r.name || "candle";
-    dThumb.append(img);
-  } else {
-    // วาดเทียน
-    const box = document.createElement('div');
-    box.id = "dCandle";
-    box.className = "candle-box";
-    dThumb.append(box);
-    buildCandle(r.name || "");
-  }
-
-  // ลิงก์
-  const link = document.getElementById('dLink');
-  if (r.source_url && r.source_url.trim() !== ""){
-    link.href = r.source_url.trim();
-    link.style.display = "inline-block";
-  } else {
-    link.style.display = "none";
-  }
-
-  detailDialog.showModal();
-}
-
-function buildCandle(name){
-  const box = document.getElementById('dCandle');
-  if (!box) return;
-  box.className = "candle-box";
-  box.innerHTML = "";
-  const lower = name.toLowerCase();
-
-  const body = document.createElement('div');
-  body.className = "cb-body";
-  const wTop = document.createElement('div');
-  wTop.className = "cb-wick top";
-  const wBot = document.createElement('div');
-  wBot.className = "cb-wick bottom";
-
-  if (lower.includes("hammer") && !lower.includes("inverted")){
-    box.classList.add("candle-hammer");
-    box.append(body, wTop, wBot);
-  } else if (lower.includes("inverted hammer")){
-    box.classList.add("candle-inverted");
-    box.append(body, wTop);
-  } else if (lower.includes("engulf")){
-    box.classList.add("candle-engulf");
-    body.style.height = "70px";
-    box.append(body);
-  } else {
-    box.append(body, wTop, wBot);
-  }
-}
-
-function decorateThumbByName(el, name){
-  el.innerHTML = "";
-  const b = document.createElement('div');
-  b.className = "tc-body";
-  const wt = document.createElement('div');
-  wt.className = "tc-wick top";
-  const wb = document.createElement('div');
-  wb.className = "tc-wick bottom";
-
-  const lower = name.toLowerCase();
-  if (lower.includes("hammer") && !lower.includes("inverted")){
-    el.classList.add("thumb-hammer");
-    el.append(b, wt, wb);
-  } else if (lower.includes("inverted hammer")){
-    el.classList.add("thumb-inverted");
-    el.append(b, wt);
-  } else if (lower.includes("engulf")){
-    el.classList.add("thumb-engulf");
-    el.append(b);
-  } else if (lower.includes("harami")){
-    el.classList.add("thumb-harami");
-    el.append(b);
-  } else {
-    el.append(b, wt, wb);
-  }
-}
-
-// events
 document.getElementById('q').addEventListener('input', applyFilters);
-document.getElementById('cats').addEventListener('click', e=>{
-  if (e.target.matches('.cat-btn')){
-    document.querySelectorAll('.cat-btn').forEach(btn=>btn.classList.remove('active'));
-    e.target.classList.add('active');
-    currentSide = e.target.dataset.side;
+
+document.querySelectorAll('#filters .filter-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('#filters .filter-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    currentFilter = btn.dataset.filter;
     applyFilters();
-  }
+  });
 });
 
 (async function init(){
