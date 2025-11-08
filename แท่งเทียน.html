@@ -5,7 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>📈 Candlestick Library – ดูแท่งเทียน + เทคนิค</title>
 
+<!-- Font -->
 <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
+<!-- PapaParse -->
 <script src="https://unpkg.com/papaparse@5.4.1/papaparse.min.js"></script>
 
 <style>
@@ -38,7 +40,7 @@
   .title{font-weight:700; font-size:1.25rem}
   .search{
     margin-left:auto; display:flex; align-items:center; gap:8px;
-    background:rgba(255,255,255,.12); padding:6px 10px; border-radius:999px; width:min(420px,100%)
+    background:rgba(255,255,255,.12); padding:6px 10px; border-radius:999px; width:min(460px,100%)
   }
   .search input{border:none; outline:none; background:transparent; color:#fff; width:100%}
   .search ::placeholder{color:rgba(255,255,255,.75)}
@@ -76,25 +78,41 @@
   dialog{
     width:min(880px, 94vw); border:none; border-radius:20px; overflow:hidden;
     box-shadow:0 30px 70px -20px rgba(15,23,42,.5);
+    background:#fff;
   }
   .modal-head{
     display:flex; gap:12px; align-items:center; padding:14px 16px;
     background:#0f172a; color:#fff;
   }
-  .modal-body{
-    background:#fff; padding:16px; display:grid; grid-template-columns:280px 1fr; gap:16px;
-  }
-  .modal-body img{width:100%; border-radius:16px; border:1px solid #e2e8f0; background:#f8fafc; height:180px; object-fit:cover}
   .close-btn{
     margin-left:auto; background:#fff; color:#0f172a; border:none; border-radius:999px; padding:6px 14px; cursor:pointer; font-weight:600
   }
+  .modal-body{
+    display:grid; grid-template-columns: 1.05fr 1fr; gap:16px; padding:16px; background:#fff;
+  }
+  .modal-hero{
+    position:relative; background:linear-gradient(140deg,#bfd7ff 0%,#80a3ff 40%,#5071d8 100%);
+    border-radius:18px; overflow:hidden; min-height:180px; border:1px solid #dbeafe;
+  }
+  .modal-hero img{
+    width:100%; height:100%; object-fit:cover; display:block;
+  }
+  .modal-content .h4{margin:.2rem 0 .4rem; font-weight:700; color:#0f172a}
+  .modal-summary{line-height:1.6; font-size:.9rem; color:#0f172a; white-space:pre-wrap}
   pre.tip{
     background:#f8fafc; border:1px solid #e2e8f0; border-radius:14px; padding:8px 10px; font-size:.78rem; line-height:1.5; white-space:pre-wrap
   }
-  @media (max-width:620px){
-    .card{grid-template-columns:68px 1fr}
-    .thumb{height:64px}
+  .modal-footer{
+    padding:12px 16px 16px; border-top:1px solid #e2e8f0; background:#fff;
+  }
+  .btn-primary{
+    display:inline-flex; align-items:center; justify-content:center; gap:6px;
+    background:#0f766e; color:#fff; border:none; border-radius:12px; padding:9px 14px;
+    font-weight:600; text-decoration:none;
+  }
+  @media (max-width:720px){
     .modal-body{grid-template-columns:1fr}
+    .modal-hero{min-height:150px}
   }
 </style>
 </head>
@@ -118,36 +136,34 @@
 <!-- Modal -->
 <dialog id="detailModal">
   <div class="modal-head">
-    <h3 id="mTitle">Candlestick</h3>
+    <h3 id="mTitle">Pattern</h3>
     <button class="close-btn" onclick="modal.close()">ปิด</button>
   </div>
   <div class="modal-body">
-    <img id="mImg" alt="">
-    <div>
-      <div id="mMeta" class="c-meta"></div>
-      <p style="margin:.1rem 0 .4rem;font-weight:700">คำอธิบาย</p>
-      <div id="mSummary" style="line-height:1.7"></div>
-      <p style="margin:.6rem 0 .4rem;font-weight:700">เทคนิคการใช้</p>
+    <div class="modal-hero">
+      <img id="mImg" alt="">
+    </div>
+    <div class="modal-content">
+      <div id="mMeta" class="c-meta" style="margin-bottom:.5rem"></div>
+      <p class="h4">คำอธิบาย</p>
+      <div id="mSummary" class="modal-summary"></div>
+      <p class="h4" style="margin-top:.7rem">เทคนิคการใช้</p>
       <pre id="mTip" class="tip"></pre>
     </div>
   </div>
-  <div class="modal-footer" style="background:#fff;border-top:1px solid #e2e8f0;padding:15px 16px">
-    <a id="mSource" target="_blank" rel="noopener"
-       style="background:#0f766e;color:#fff;border-radius:12px;padding:10px 14px;text-decoration:none;font-weight:600;display:inline-block">
-       ดูตัวอย่างกราฟ
-    </a>
+  <div class="modal-footer">
+    <a id="mSource" class="btn-primary" target="_blank" rel="noopener">ดูตัวอย่างกราฟ</a>
   </div>
 </dialog>
 
 <script>
-const SHEET_CSV_URL = "candlestick_100_images.csv"; // ชื่อไฟล์ csv ที่จะวางคู่กัน
+const SHEET_CSV_URL = "candlestick_100_images.csv"; // ต้องมีไฟล์นี้อยู่โฟลเดอร์เดียวกัน
+const PLACEHOLDER = "https://placehold.co/640x360/9db7ff/0f172a?text=Candle";
 let RAW = [];
 let CURRENT = [];
 let page = 1;
 const pageSize = 20;
-const PLACEHOLDER = "https://placehold.co/240x160?text=Candle";
 
-// ตัดช่องว่างที่ปลาย URL
 function cleanUrl(u){
   if(!u) return "";
   return String(u).trim();
@@ -195,10 +211,9 @@ function renderList(){
 
     const img = document.createElement('img');
     img.className = 'thumb';
-    img.loading = 'lazy';
     const imgUrl = cleanUrl(r.image);
-    img.src = imgUrl || PLACEHOLDER;
-    img.onerror = ()=>{ img.src = PLACEHOLDER; };
+    img.src = imgUrl || "https://placehold.co/240x160/e2e8f0/94a3b8?text=Candle";
+    img.onerror = ()=>{ img.src = "https://placehold.co/240x160/e2e8f0/94a3b8?text=Candle"; };
 
     const right = document.createElement('div');
     const tagColor = r.side === "Bearish" ? " red" : (r.side === "Bullish" ? "" : "");
@@ -208,6 +223,7 @@ function renderList(){
       <span class="tag${tagColor}">${r.side||"Pattern"}</span>
       ${r.grouping ? `<span class="tag blue">${r.grouping}</span>` : ""}
     `;
+
     card.append(img, right);
     card.addEventListener('click', ()=>openModal(r));
     host.append(card);
@@ -216,6 +232,7 @@ function renderList(){
   const pager = document.getElementById('pager');
   pager.innerHTML = "";
   const total = CURRENT.length;
+
   const btnPrev = document.createElement('button');
   btnPrev.textContent = 'ย้อนกลับ';
   btnPrev.className = 'btn';
@@ -236,35 +253,38 @@ function renderList(){
 }
 
 const modal = document.getElementById('detailModal');
+
 function openModal(r){
-  const imgUrl = cleanUrl(r.image);
   document.getElementById('mTitle').textContent = r.name || "";
-  const modalImg = document.getElementById('mImg');
-  modalImg.src = imgUrl || PLACEHOLDER;
-  modalImg.onerror = ()=>{ modalImg.src = PLACEHOLDER; };
-  document.getElementById('mMeta').textContent = `${r.side||""} • ${r.grouping||""} • ${r.count ? r.count + " แท่ง" : ""}`;
+  const hero = document.getElementById('mImg');
+  const heroUrl = cleanUrl(r.image);
+  hero.src = heroUrl || PLACEHOLDER;
+  hero.onerror = ()=>{ hero.src = PLACEHOLDER; };
+
+  document.getElementById('mMeta').textContent =
+    `${r.side||""} • ${r.grouping||""} • ${r.count ? r.count + " แท่ง" : ""}`;
+
   document.getElementById('mSummary').textContent = r.summary || "";
   document.getElementById('mTip').textContent = r.tip || "ใช้ร่วมกับแนวรับแนวต้านและวอลุ่มจะชัดขึ้น";
 
   const src = document.getElementById('mSource');
   if (r.source_url){
     src.href = r.source_url;
-    src.style.display = "inline-block";
+    src.style.display = "inline-flex";
   }else{
     src.style.display = "none";
   }
+
   modal.showModal();
 }
 
-// ค้นหา
 document.getElementById('q').addEventListener('input', applyFilters);
 
-// init
 (async function init(){
-  try {
+  try{
     RAW = await loadCSV();
-  } catch(e) {
-    console.error("โหลด csv ไม่ได้", e);
+  }catch(e){
+    console.error("โหลด CSV ไม่ได้", e);
     RAW = [];
   }
   applyFilters();
