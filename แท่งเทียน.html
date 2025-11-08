@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="th">
 <head>
 <meta charset="utf-8"/>
@@ -41,46 +41,52 @@ header .wrap{
 .search input{border:none; outline:none; background:transparent; color:#fff; width:100%}
 .search ::placeholder{color:rgba(255,255,255,.75)}
 
-/* list */
+/* layout */
 .layout{max-width:980px; margin:14px auto 30px; padding:0 16px}
+
+/* category chips */
+.cats{
+  display:flex; gap:8px; margin-bottom:10px; flex-wrap:wrap;
+}
+.cat-btn{
+  border:1px solid rgba(15,118,110,.25);
+  background:#fff;
+  color:#0f172a;
+  padding:4px 12px;
+  border-radius:999px;
+  font-size:.78rem;
+  cursor:pointer;
+  transition:.12s;
+}
+.cat-btn.active{
+  background:#0f766e;
+  color:#fff;
+  border-color:transparent;
+}
+
 #candles{
   background:var(--paper); border-radius:var(--radius); box-shadow:var(--shadow);
   border:1px solid rgba(15,118,110,.08); padding:14px;
 }
 .card{
-  display:grid; grid-template-columns:76px 1fr; gap:12px;
+  display:grid; grid-template-columns:96px 1fr; gap:12px;
   border:1px solid var(--line); border-radius:14px;
   margin:10px 0; background:#fff; cursor:pointer;
   transition:transform .12s ease, box-shadow .12s ease;
 }
 .card:hover{transform:translateY(-2px); box-shadow:0 16px 30px -20px rgba(15,23,42,.2)}
 
-/* ==== thumbnail แบบเทียน ==== */
+/* thumb: ถ้าไม่มี image */
 .thumb-candle{
-  width:100%;
-  height:70px;
+  width:100%; height:70px;
   border-radius:12px;
   background:#e2e8f0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  position:relative;
+  display:flex; align-items:center; justify-content:center; position:relative;
 }
-.thumb-candle .tc-body{
-  width:14px;
-  height:42px;
-  background:#10b981;
-  border-radius:4px;
-}
-.thumb-candle .tc-wick{
-  position:absolute;
-  width:2px;
-  background:#10b981;
-  left:50%; transform:translateX(-50%);
-}
-.thumb-candle .tc-wick.top{top:8px; height:18px;}
-.thumb-candle .tc-wick.bottom{bottom:6px; height:14px;}
-/* variations for list */
+.thumb-candle .tc-body{width:14px;height:42px;background:#10b981;border-radius:4px;}
+.thumb-candle .tc-wick{position:absolute;width:2px;background:#10b981;left:50%;transform:translateX(-50%);}
+.thumb-candle .tc-wick.top{top:8px;height:18px;}
+.thumb-candle .tc-wick.bottom{bottom:6px;height:14px;}
 .thumb-hammer .tc-body{height:32px;}
 .thumb-hammer .tc-wick.top{height:6px;}
 .thumb-hammer .tc-wick.bottom{height:26px;}
@@ -97,19 +103,23 @@ header .wrap{
   border-radius:3px;
 }
 
-/* text in card */
+/* ถ้าเป็นรูปภาพ */
+.thumb-img{
+  width:100%; height:70px; border-radius:12px; object-fit:cover; background:#e2e8f0;
+}
+
 .c-name{font-weight:700; color:#0f172a}
 .c-meta{color:#475569; font-size:.75rem}
 .tag{display:inline-block; background:#ecfdf3; border:1px solid #bbf7d0; color:#166534; font-size:.7rem; padding:3px 8px; border-radius:999px; margin-top:4px}
 .tag.red{background:#fef2f2; border-color:#fecaca; color:#b91c1c}
 .tag.blue{background:#eff6ff; border-color:#dbeafe; color:#1d4ed8}
 
-.pager{display:flex; justify-content:center; gap:8px; margin-top:8px}
+.pager{display:flex; justify-content:center; gap:8px; margin-top:8px; align-items:center;}
 .pager .btn{border:1px solid var(--line); background:#fff; border-radius:10px; padding:5px 10px; cursor:pointer}
 .pager .btn[disabled]{opacity:.5; cursor:not-allowed}
 .pager .info{font-size:.85rem; color:#475569; padding:3px 0}
 
-/* ===== dialog แบบอินโฟต่อ 1 pattern ===== */
+/* dialog */
 dialog.candle-dialog{
   width:min(720px, 95vw);
   border:none;
@@ -120,33 +130,20 @@ dialog.candle-dialog{
   overflow:hidden;
   box-shadow:0 30px 70px -20px rgba(0,0,0,.55);
 }
-.cd-head{
-  display:flex; gap:12px; align-items:center;
-  padding:16px 18px 6px;
-}
-.cd-title{
-  font-size:1.4rem;
-  font-weight:700;
-  letter-spacing:.04em;
-  text-transform:uppercase;
-}
-.cd-close{
-  margin-left:auto;
-  background:rgba(255,255,255,.07);
-  border:none; color:#fff;
-  border-radius:999px; padding:6px 14px;
-  cursor:pointer; font-weight:600;
-}
+.cd-head{display:flex; gap:12px; align-items:center; padding:16px 18px 6px;}
+.cd-title{font-size:1.4rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase;}
+.cd-close{margin-left:auto; background:rgba(255,255,255,.07); border:none; color:#fff; border-radius:999px; padding:6px 14px; cursor:pointer; font-weight:600;}
 .cd-body{padding:14px 18px 16px;}
 .cd-sub{color:rgba(255,255,255,.6);font-size:.78rem;margin-bottom:16px;}
 .cd-row{display:flex;gap:20px;align-items:center;}
 .cd-left{
-  width:140px;height:140px;
+  width:180px;min-height:140px;
   background:rgba(255,255,255,.02);
   border:1px solid rgba(255,255,255,.03);
   border-radius:16px;
-  display:flex;align-items:center;justify-content:center;
+  display:flex;align-items:center;justify-content:center;overflow:hidden;
 }
+.cd-left img{max-width:100%;border-radius:12px;}
 .cd-right{flex:1;}
 .cd-right h4{margin:.2rem 0 .4rem;font-size:.85rem;text-transform:uppercase;}
 .cd-right p{margin:0 0 .5rem;font-size:.78rem;color:rgba(255,255,255,.75);}
@@ -154,7 +151,6 @@ dialog.candle-dialog{
 .cd-footer{padding:10px 18px 16px;border-top:1px solid rgba(255,255,255,.05);text-align:right;}
 .cd-link{background:#0f766e;color:#fff;border:none;border-radius:10px;padding:6px 12px;font-weight:600;text-decoration:none;font-size:.72rem;}
 
-/* big candle */
 .candle-box{position:relative;width:54px;height:110px;display:flex;align-items:center;justify-content:center;}
 .cb-body{width:16px;height:46px;background:#10b981;border-radius:4px;}
 .cb-wick{position:absolute;width:2px;background:#10b981;left:50%;transform:translateX(-50%);}
@@ -167,15 +163,7 @@ dialog.candle-dialog{
 .candle-inverted .cb-wick.top{height:45px;}
 .candle-engulf .cb-body{height:70px;}
 .candle-harami .cb-body{height:46px;}
-.candle-harami::after{
-  content:"";
-  position:absolute;
-  right:-14px;
-  width:10px; height:32px;
-  background:#ef4444;
-  border-radius:3px;
-  top:28px;
-}
+.candle-harami::after{content:"";position:absolute;right:-14px;width:10px;height:32px;background:#ef4444;border-radius:3px;top:28px;}
 @media (max-width:600px){
   .cd-row{flex-direction:column;align-items:flex-start;}
   .cd-left{width:100%;justify-content:flex-start;padding-left:18px;}
@@ -195,6 +183,13 @@ dialog.candle-dialog{
 </header>
 
 <div class="layout">
+  <div class="cats" id="cats">
+    <button class="cat-btn active" data-side="all">ทั้งหมด</button>
+    <button class="cat-btn" data-side="Bullish">ขาขึ้น</button>
+    <button class="cat-btn" data-side="Bearish">ขาลง</button>
+    <button class="cat-btn" data-side="tech">เทคนิค</button>
+  </div>
+
   <section id="candles" aria-label="candlestick patterns"></section>
   <div id="pager" class="pager"></div>
 </div>
@@ -208,10 +203,8 @@ dialog.candle-dialog{
   <div class="cd-body">
     <div class="cd-sub" id="dSubtitle">Pattern detail</div>
     <div class="cd-row">
-      <div class="cd-left">
-        <div id="dCandle" class="candle-box">
-          <div class="cb-body"></div>
-        </div>
+      <div class="cd-left" id="dThumb">
+        <!-- ใส่รูปหรือเทียนใหญ่ -->
       </div>
       <div class="cd-right">
         <h4>คำอธิบาย</h4>
@@ -227,16 +220,19 @@ dialog.candle-dialog{
 </dialog>
 
 <script>
-const SHEET_CSV_URL = "candlestick_100_full.csv";
+const SHEET_CSV_URL = "candlestick_100_full.csv"; // ต้องมี header: id,name,side,count,grouping,image,summary,tip,source_url
 const PLACEHOLDER_TEXT = "ยังไม่มีคำอธิบาย";
 let RAW = [], CURRENT = [];
 let page = 1;
-const pageSize = 20;
+const pageSize = 10;
+let currentSide = "all";
 
 async function loadCSV(){
   return new Promise((resolve,reject)=>{
     Papa.parse(SHEET_CSV_URL,{
-      download:true, header:true, skipEmptyLines:true,
+      download:true,
+      header:true,
+      skipEmptyLines:true,
       complete:res=>resolve(res.data),
       error:reject
     });
@@ -246,8 +242,26 @@ async function loadCSV(){
 function applyFilters(){
   const q = document.getElementById('q').value.trim().toLowerCase();
   CURRENT = RAW.filter(r=>{
-    const hay = `${r.name||""} ${r.side||""} ${r.grouping||""} ${r.summary||""} ${r.tip||""}`.toLowerCase();
-    return q==="" ? true : hay.includes(q);
+    // ป้องกัน null
+    const name = r.name || "";
+    const side = r.side || "";
+    const grouping = r.grouping || "";
+    const summary = r.summary || "";
+    const tip = r.tip || "";
+
+    const hay = `${name} ${side} ${grouping} ${summary} ${tip}`.toLowerCase();
+    const matchText = q === "" ? true : hay.includes(q);
+
+    let matchSide = true;
+    if (currentSide === "Bullish" || currentSide === "Bearish"){
+      matchSide = (side === currentSide);
+    } else if (currentSide === "tech"){
+      // หมวดเทคนิค = มี tip หรือ grouping มีคำว่า เทคนิค / tech
+      const hasTip = tip.trim() !== "";
+      const inGroup = grouping.toLowerCase().includes("เทคนิค") || grouping.toLowerCase().includes("tech");
+      matchSide = hasTip || inGroup;
+    }
+    return matchText && matchSide;
   });
   page = 1;
   renderList();
@@ -258,6 +272,7 @@ function renderList(){
   host.innerHTML = "";
   if (CURRENT.length === 0){
     host.innerHTML = `<div style="padding:10px;color:#475569">ไม่พบรูปแบบแท่งเทียน</div>`;
+    document.getElementById('pager').innerHTML = "";
     return;
   }
   const totalPages = Math.ceil(CURRENT.length / pageSize);
@@ -268,24 +283,61 @@ function renderList(){
   slice.forEach(r=>{
     const card = document.createElement('article');
     card.className = 'card';
+    card.dataset.id = r.id || "";
 
-    // thumbnail candle
-    const thumb = document.createElement('div');
-    thumb.className = 'thumb-candle';
-    decorateThumbByName(thumb, r.name || "");
+    // ซ้าย: ถ้ามี image ให้ใช้ภาพ ถ้าไม่มีก็วาดเทียน
+    let leftEl;
+    if (r.image && r.image.trim() !== ""){
+      const img = document.createElement('img');
+      img.src = r.image.trim();
+      img.alt = r.name || "candle";
+      img.className = "thumb-img";
+      leftEl = img;
+    } else {
+      const thumb = document.createElement('div');
+      thumb.className = 'thumb-candle';
+      decorateThumbByName(thumb, r.name || "");
+      leftEl = thumb;
+    }
 
     const right = document.createElement('div');
     const tagColor = r.side === "Bearish" ? " red" : "";
     right.innerHTML = `
       <div class="c-name">${r.name||""}</div>
-      <div class="c-meta">${r.grouping||""} • ${r.side||""} • ${r.count? r.count+" แท่ง":""}</div>
-      <span class="tag${tagColor}">${r.side||"Pattern"}</span>
+      <div class="c-meta">${r.grouping||""} • ${r.side||""} ${r.count? "• "+r.count+" แท่ง":""}</div>
+      <span class="tag${tagColor}">${r.side || "Pattern"}</span>
       ${r.grouping? `<span class="tag blue">${r.grouping}</span>`:""}
     `;
-    card.append(thumb, right);
+
+    card.append(leftEl, right);
     card.addEventListener('click', ()=>openDialogFromRecord(r));
     host.append(card);
   });
+
+  renderPager(totalPages);
+}
+
+function renderPager(totalPages){
+  const pager = document.getElementById('pager');
+  pager.innerHTML = "";
+
+  const btnPrev = document.createElement('button');
+  btnPrev.className = 'btn';
+  btnPrev.textContent = 'ก่อนหน้า';
+  btnPrev.disabled = page === 1;
+  btnPrev.onclick = ()=>{ if (page > 1){ page--; renderList(); } };
+
+  const info = document.createElement('div');
+  info.className = 'info';
+  info.textContent = `หน้า ${page} / ${totalPages}`;
+
+  const btnNext = document.createElement('button');
+  btnNext.className = 'btn';
+  btnNext.textContent = 'ถัดไป';
+  btnNext.disabled = page === totalPages;
+  btnNext.onclick = ()=>{ if (page < totalPages){ page++; renderList(); } };
+
+  pager.append(btnPrev, info, btnNext);
 }
 
 const detailDialog = document.getElementById('detailDialog');
@@ -296,28 +348,42 @@ function openDialogFromRecord(r){
   document.getElementById('dSummary').textContent = r.summary || PLACEHOLDER_TEXT;
   document.getElementById('dTip').textContent = r.tip || "ใช้ร่วมกับแนวรับแนวต้านและวอลุ่มจะชัดขึ้น";
 
+  // รูปใน dialog
+  const dThumb = document.getElementById('dThumb');
+  dThumb.innerHTML = "";
+  if (r.image && r.image.trim() !== ""){
+    const img = document.createElement('img');
+    img.src = r.image.trim();
+    img.alt = r.name || "candle";
+    dThumb.append(img);
+  } else {
+    // วาดเทียน
+    const box = document.createElement('div');
+    box.id = "dCandle";
+    box.className = "candle-box";
+    dThumb.append(box);
+    buildCandle(r.name || "");
+  }
+
   // ลิงก์
   const link = document.getElementById('dLink');
-  if (r.source_url){
-    link.href = r.source_url;
+  if (r.source_url && r.source_url.trim() !== ""){
+    link.href = r.source_url.trim();
     link.style.display = "inline-block";
   } else {
     link.style.display = "none";
   }
 
-  // วาดเทียนใน dialog
-  buildCandle(r.name || "");
   detailDialog.showModal();
 }
 
-// วาดเทียนใหญ่
 function buildCandle(name){
   const box = document.getElementById('dCandle');
+  if (!box) return;
   box.className = "candle-box";
   box.innerHTML = "";
   const lower = name.toLowerCase();
 
-  // default
   const body = document.createElement('div');
   body.className = "cb-body";
   const wTop = document.createElement('div');
@@ -335,42 +401,12 @@ function buildCandle(name){
     box.classList.add("candle-engulf");
     body.style.height = "70px";
     box.append(body);
-  } else if (lower.includes("harami")){
-    box.classList.add("candle-harami");
-    box.append(body);
-  } else if (lower.includes("piercing")){
-    const c1 = document.createElement('div');
-    const c2 = document.createElement('div');
-    c1.className = "cb-body"; c1.style.height="30px";
-    c2.className = "cb-body"; c2.style.height="46px";
-    box.style.display="flex"; box.style.gap="4px";
-    box.append(c1,c2);
-  } else if (lower.includes("morning star")){
-    const c1 = document.createElement('div');
-    const c2 = document.createElement('div');
-    const c3 = document.createElement('div');
-    c1.className="cb-body"; c1.style.height="20px";
-    c2.className="cb-body"; c2.style.height="30px";
-    c3.className="cb-body"; c3.style.height="48px";
-    box.style.display="flex"; box.style.gap="4px";
-    box.append(c1,c2,c3);
-  } else if (lower.includes("three white soldiers")){
-    const c1 = document.createElement('div');
-    const c2 = document.createElement('div');
-    const c3 = document.createElement('div');
-    c1.className="cb-body"; c1.style.height="34px";
-    c2.className="cb-body"; c2.style.height="44px";
-    c3.className="cb-body"; c3.style.height="54px";
-    box.style.display="flex"; box.style.gap="4px";
-    box.append(c1,c2,c3);
   } else {
     box.append(body, wTop, wBot);
   }
 }
 
-// วาดเทียนเล็กใน list
 function decorateThumbByName(el, name){
-  // base
   el.innerHTML = "";
   const b = document.createElement('div');
   b.className = "tc-body";
@@ -397,7 +433,16 @@ function decorateThumbByName(el, name){
   }
 }
 
+// events
 document.getElementById('q').addEventListener('input', applyFilters);
+document.getElementById('cats').addEventListener('click', e=>{
+  if (e.target.matches('.cat-btn')){
+    document.querySelectorAll('.cat-btn').forEach(btn=>btn.classList.remove('active'));
+    e.target.classList.add('active');
+    currentSide = e.target.dataset.side;
+    applyFilters();
+  }
+});
 
 (async function init(){
   RAW = await loadCSV();
