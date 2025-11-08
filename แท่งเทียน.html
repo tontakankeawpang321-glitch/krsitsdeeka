@@ -1,11 +1,409 @@
-id,name,side,count,grouping,image,summary,tip,source_url
-1,Bullish Engulfing,Bullish,2,ขาขึ้น 2 แท่ง,https://placehold.co/640x360/10b981/ffffff?text=Bullish+Engulfing,แท่งเขียวกลืนแท่งแดงก่อนหน้า สัญญาณกลับตัวขึ้น,ให้เกิดหลังจากขาลง ถ้าวอลุ่มมากยิ่งดี,https://www.investopedia.com/terms/b/bullishengulfingpattern.asp
-2,Hammer,Bullish,1,กลับตัว 1 แท่ง,https://placehold.co/640x360/10b981/ffffff?text=Hammer,แท่งเดียวหางยาวด้านล่าง บ่งชี้แรงซื้อกลับตัว,มักเจอในช่วงปลายขาลง,https://www.investopedia.com/terms/h/hammer.asp
-3,Morning Star,Bullish,3,กลับตัว 3 แท่ง,https://placehold.co/640x360/10b981/ffffff?text=Morning+Star,สามแท่งติดกัน ตัวกลางช่องว่าง บ่งชี้จุดเปลี่ยนแนวโน้ม,ยืนยันด้วยวอลุ่มและแท่งถัดไป,https://www.investopedia.com/terms/m/morningstar.asp
-4,Three White Soldiers,Bullish,3,ต่อเนื่อง 3 แท่ง,https://placehold.co/640x360/10b981/ffffff?text=Three+White+Soldiers,แท่งเขียวสามแท่งต่อกัน สัญญาณขึ้นแข็งแรง,ยืนยันเทรนด์ขาขึ้นต่อเนื่อง,https://www.investopedia.com/terms/t/three_white_soldiers.asp
-5,Bullish Harami,Bullish,2,กลับตัว 2 แท่ง,https://placehold.co/640x360/10b981/ffffff?text=Bullish+Harami,แท่งเขียวอยู่ในแท่งแดงก่อนหน้า แรงขายลดลง,ใช้ร่วมแนวรับและ RSI ต่ำ,https://www.investopedia.com/terms/h/harami.asp
-6,Piercing Pattern,Bullish,2,กลับตัว 2 แท่ง,https://placehold.co/640x360/10b981/ffffff?text=Piercing+Pattern,แท่งเขียวแทงทะลุครึ่งแท่งแดง สัญญาณกลับตัวขึ้น,ดูให้แท่งเขียวปิดเกินครึ่งแท่งแดง,https://www.investopedia.com/terms/p/piercingpattern.asp
-7,Inverted Hammer,Bullish,1,กลับตัว 1 แท่ง,https://placehold.co/640x360/10b981/ffffff?text=Inverted+Hammer,แท่งเดียวหางยาวด้านบน สัญญาณเริ่มกลับตัวขึ้น,ต้องยืนยันแท่งถัดไปปิดเขียว,https://www.investopedia.com/terms/i/invertedhammer.asp
-8,Bearish Engulfing,Bearish,2,ขาลง 2 แท่ง,https://placehold.co/640x360/ef4444/ffffff?text=Bearish+Engulfing,แท่งแดงกลืนแท่งเขียวก่อนหน้า สัญญาณกลับตัวลง,ถ้าวอลุ่มมากลงยาว,https://www.investopedia.com/terms/b/bearishengulfingpattern.asp
-9,Shooting Star,Bearish,1,กลับตัว 1 แท่ง,https://placehold.co/640x360/ef4444/ffffff?text=Shooting+Star,แท่งหางยาวบน คล้ายดาวตก แรงขายกลับตัว,ให้เกิดหลังขึ้นแรง,https://www.investopedia.com/terms/s/shootingstar.asp
-10,Evening Star,Bearish,3,กลับตัว 3 แท่ง,https://placehold.co/640x360/ef4444/ffffff?text=Evening+Star,สามแท่ง ตัวกลางช่องว่าง สัญญาณกลับตัวลง,แท่งสุดท้ายปิดต่ำกว่าแท่งแรก,https://www.investopedia.com/terms/e/eveningstar.asp
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>📈 Candlestick Library – ดูแท่งเทียน + เทคนิค</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/papaparse@5.4.1/papaparse.min.js"></script>
+
+<style>
+:root{
+  --bg:#0f172a; --paper:#fff; --ink:#0f172a;
+  --muted:#475569; --line:#e2e8f0; --brand:#0f766e;
+  --radius:16px; --shadow:0 16px 40px -22px rgba(15,23,42,.25);
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:"Sarabun",system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  background:linear-gradient(180deg,#0f172a 0%, #0f172a 180px, #f1f5f9 180px, #f1f5f9 100%);
+  color:var(--ink);
+}
+
+/* header */
+header{
+  position:sticky; top:0; z-index:50;
+  background:rgba(15,23,42,.9);
+  backdrop-filter:blur(8px);
+  color:#fff; padding:14px 16px;
+  box-shadow:0 10px 30px -20px rgba(0,0,0,.4)
+}
+header .wrap{
+  max-width:980px; margin:auto; display:flex; gap:12px; align-items:center; flex-wrap:wrap;
+}
+.title{font-weight:700; font-size:1.25rem}
+.search{
+  margin-left:auto; display:flex; align-items:center; gap:8px;
+  background:rgba(255,255,255,.12); padding:6px 10px; border-radius:999px; width:min(460px,100%)
+}
+.search input{border:none; outline:none; background:transparent; color:#fff; width:100%}
+.search ::placeholder{color:rgba(255,255,255,.75)}
+
+/* list */
+.layout{max-width:980px; margin:14px auto 30px; padding:0 16px}
+#candles{
+  background:var(--paper); border-radius:var(--radius); box-shadow:var(--shadow);
+  border:1px solid rgba(15,118,110,.08); padding:14px;
+}
+.card{
+  display:grid; grid-template-columns:82px 1fr; gap:12px;
+  border:1px solid var(--line); border-radius:14px;
+  margin:10px 0; background:#fff; cursor:pointer;
+  transition:transform .12s ease, box-shadow .12s ease;
+}
+.card:hover{transform:translateY(-2px); box-shadow:0 16px 30px -20px rgba(15,23,42,.2)}
+.thumb{width:100%; height:70px; border-radius:10px; object-fit:cover; background:#e2e8f0;}
+.c-name{font-weight:700; color:#0f172a}
+.c-meta{color:#475569; font-size:.75rem}
+.tag{display:inline-block; background:#ecfdf3; border:1px solid #bbf7d0; color:#166534; font-size:.7rem; padding:3px 8px; border-radius:999px; margin-top:4px}
+.tag.red{background:#fef2f2; border-color:#fecaca; color:#b91c1c}
+.tag.blue{background:#eff6ff; border-color:#dbeafe; color:#1d4ed8}
+
+.pager{display:flex; justify-content:center; gap:8px; margin-top:8px}
+.pager .btn{border:1px solid var(--line); background:#fff; border-radius:10px; padding:5px 10px; cursor:pointer}
+.pager .btn[disabled]{opacity:.5; cursor:not-allowed}
+.pager .info{font-size:.85rem; color:#475569; padding:3px 0}
+
+/* ===== dialog แบบอินโฟกราฟิกต่อ 1 pattern ===== */
+dialog.candle-dialog{
+  width:min(720px, 95vw);
+  border:none;
+  border-radius:20px;
+  background:#0f172a;
+  color:#fff;
+  padding:0;
+  overflow:hidden;
+  box-shadow:0 30px 70px -20px rgba(0,0,0,.55);
+}
+.cd-head{
+  display:flex; gap:12px; align-items:center;
+  padding:16px 18px 6px;
+}
+.cd-title{
+  font-size:1.4rem;
+  font-weight:700;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+}
+.cd-close{
+  margin-left:auto;
+  background:rgba(255,255,255,.07);
+  border:none; color:#fff;
+  border-radius:999px; padding:6px 14px;
+  cursor:pointer; font-weight:600;
+}
+.cd-body{
+  padding:14px 18px 16px;
+}
+.cd-sub{
+  color:rgba(255,255,255,.6);
+  font-size:.78rem;
+  margin-bottom:16px;
+}
+.cd-row{
+  display:flex;
+  gap:20px;
+  align-items:center;
+}
+.cd-left{
+  width:140px;
+  height:140px;
+  background:rgba(255,255,255,.02);
+  border:1px solid rgba(255,255,255,.03);
+  border-radius:16px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.cd-right{
+  flex:1;
+}
+.cd-right h4{
+  margin:.2rem 0 .4rem;
+  font-size:.85rem;
+  text-transform:uppercase;
+}
+.cd-right p{
+  margin:0 0 .5rem;
+  font-size:.78rem;
+  color:rgba(255,255,255,.75);
+}
+.cd-tip{
+  background:rgba(15,118,110,.14);
+  border:1px solid rgba(148,163,184,.16);
+  border-radius:12px;
+  padding:8px 10px;
+  font-size:.72rem;
+  white-space:pre-wrap;
+}
+.cd-footer{
+  padding:10px 18px 16px;
+  border-top:1px solid rgba(255,255,255,.05);
+  text-align:right;
+}
+.cd-link{
+  background:#0f766e;
+  color:#fff;
+  border:none;
+  border-radius:10px;
+  padding:6px 12px;
+  font-weight:600;
+  text-decoration:none;
+  font-size:.72rem;
+}
+
+/* วาดเทียนด้วย CSS */
+.candle-box{
+  position:relative;
+  width:54px;
+  height:110px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.cb-body{
+  width:16px;
+  height:46px;
+  background:#10b981;
+  border-radius:4px;
+}
+.cb-wick{
+  position:absolute;
+  width:2px;
+  background:#10b981;
+  left:50%; transform:translateX(-50%);
+}
+.cb-wick.top{top:6px; height:32px;}
+.cb-wick.bottom{bottom:4px; height:22px;}
+/* pattern เฉพาะ */
+.candle-hammer .cb-body{height:50px;}
+.candle-hammer .cb-wick.top{height:12px;}
+.candle-hammer .cb-wick.bottom{height:30px;}
+.candle-inverted .cb-body{height:30px;}
+.candle-inverted .cb-wick.top{height:45px;}
+.candle-engulf .cb-body{height:70px;}
+.candle-harami .cb-body{height:46px;}
+.candle-harami::after{
+  content:"";
+  position:absolute;
+  right:-14px;
+  width:10px; height:32px;
+  background:#ef4444;
+  border-radius:3px;
+  top:28px;
+}
+.candle-soldiers{
+  gap:3px;
+}
+@media (max-width:600px){
+  .cd-row{flex-direction:column; align-items:flex-start;}
+  .cd-left{width:100%; justify-content:flex-start; padding-left:18px;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="title">📈 Candlestick Library – ดูแท่งเทียน + เทคนิค</div>
+    <div class="search">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+      <input id="q" type="search" placeholder="ค้นหา: bullish / bearish / engulfing / ดาวตก / 3 ตัว / 2 แท่ง ...">
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+  <section id="candles" aria-label="candlestick patterns"></section>
+  <div id="pager" class="pager"></div>
+</div>
+
+<!-- dialog แบบอินโฟตามชื่อ -->
+<dialog id="detailDialog" class="candle-dialog">
+  <div class="cd-head">
+    <div class="cd-title" id="dTitle">PATTERN</div>
+    <button class="cd-close" onclick="detailDialog.close()">ปิด</button>
+  </div>
+  <div class="cd-body">
+    <div class="cd-sub" id="dSubtitle">Pattern detail</div>
+    <div class="cd-row">
+      <div class="cd-left">
+        <!-- จะสร้างเทียนจาก JS -->
+        <div id="dCandle" class="candle-box">
+          <div class="cb-body"></div>
+        </div>
+      </div>
+      <div class="cd-right">
+        <h4>คำอธิบาย</h4>
+        <p id="dSummary"></p>
+        <h4>เทคนิคการใช้</h4>
+        <div id="dTip" class="cd-tip"></div>
+      </div>
+    </div>
+  </div>
+  <div class="cd-footer">
+    <a id="dLink" class="cd-link" target="_blank" rel="noopener">ดูตัวอย่างกราฟ</a>
+  </div>
+</dialog>
+
+<script>
+const SHEET_CSV_URL = "candlestick_100_full.csv";
+const PLACEHOLDER_TEXT = "ยังไม่มีคำอธิบาย";
+let RAW = [], CURRENT = [];
+let page = 1;
+const pageSize = 20;
+
+async function loadCSV(){
+  return new Promise((resolve,reject)=>{
+    Papa.parse(SHEET_CSV_URL,{
+      download:true, header:true, skipEmptyLines:true,
+      complete:res=>resolve(res.data),
+      error:reject
+    });
+  });
+}
+
+function applyFilters(){
+  const q = document.getElementById('q').value.trim().toLowerCase();
+  CURRENT = RAW.filter(r=>{
+    const hay = `${r.name||""} ${r.side||""} ${r.grouping||""} ${r.summary||""} ${r.tip||""}`.toLowerCase();
+    return q==="" ? true : hay.includes(q);
+  });
+  page = 1;
+  renderList();
+}
+
+function renderList(){
+  const host = document.getElementById('candles');
+  host.innerHTML = "";
+  if (CURRENT.length === 0){
+    host.innerHTML = `<div style="padding:10px;color:#475569">ไม่พบรูปแบบแท่งเทียน</div>`;
+    return;
+  }
+  const totalPages = Math.ceil(CURRENT.length / pageSize);
+  const start = (page-1)*pageSize;
+  const end = start + pageSize;
+  const slice = CURRENT.slice(start, end);
+
+  slice.forEach(r=>{
+    const card = document.createElement('article');
+    card.className = 'card';
+    const img = document.createElement('img');
+    img.className = 'thumb';
+    // ใช้รูปเทาไว้ก่อน เพราะเราจะโชว์เทียนใน dialog
+    img.src = "https://placehold.co/240x160/e2e8f0/94a3b8?text=Candle";
+    const right = document.createElement('div');
+    const tagColor = r.side === "Bearish" ? " red" : "";
+    right.innerHTML = `
+      <div class="c-name">${r.name||""}</div>
+      <div class="c-meta">${r.grouping||""} • ${r.side||""} • ${r.count? r.count+" แท่ง":""}</div>
+      <span class="tag${tagColor}">${r.side||"Pattern"}</span>
+      ${r.grouping? `<span class="tag blue">${r.grouping}</span>`:""}
+    `;
+    card.append(img, right);
+    card.addEventListener('click', ()=>openDialogFromRecord(r));
+    host.append(card);
+  });
+}
+
+const detailDialog = document.getElementById('detailDialog');
+
+function openDialogFromRecord(r){
+  document.getElementById('dTitle').textContent = (r.name || "PATTERN").toUpperCase();
+  document.getElementById('dSubtitle').textContent = r.side ? r.side + " candlestick pattern" : "Candlestick pattern";
+  document.getElementById('dSummary').textContent = r.summary || PLACEHOLDER_TEXT;
+  document.getElementById('dTip').textContent = r.tip || "ใช้ร่วมกับแนวรับแนวต้านและวอลุ่มจะชัดขึ้น";
+
+  // ลิงก์
+  const link = document.getElementById('dLink');
+  if (r.source_url){
+    link.href = r.source_url;
+    link.style.display = "inline-block";
+  } else {
+    link.style.display = "none";
+  }
+
+  // วาดเทียนให้ตรงชื่อ
+  buildCandle(r.name || "");
+
+  detailDialog.showModal();
+}
+
+function buildCandle(name){
+  const box = document.getElementById('dCandle');
+  box.className = "candle-box"; // reset
+  const lower = name.toLowerCase();
+  // สร้างโครงพื้นฐาน
+  box.innerHTML = "";
+  const body = document.createElement('div');
+  const wickTop = document.createElement('div');
+  const wickBottom = document.createElement('div');
+  body.className = "cb-body";
+  wickTop.className = "cb-wick top";
+  wickBottom.className = "cb-wick bottom";
+
+  // กำหนดตามชื่อที่รู้จัก
+  if (lower.includes("hammer") && !lower.includes("inverted")){
+    box.classList.add("candle-hammer");
+    box.append(body, wickTop, wickBottom);
+  } else if (lower.includes("inverted hammer")){
+    box.classList.add("candle-inverted");
+    box.append(body, wickTop);
+  } else if (lower.includes("engulf")){
+    box.classList.add("candle-engulf");
+    body.style.height = "70px";
+    box.append(body);
+  } else if (lower.includes("harami")){
+    box.classList.add("candle-harami");
+    box.append(body);
+  } else if (lower.includes("three white soldiers")){
+    // ทำแบบง่าย: แท่งสามอันสูงต่างกัน
+    const c1 = document.createElement('div');
+    const c2 = document.createElement('div');
+    const c3 = document.createElement('div');
+    c1.className = "cb-body";
+    c1.style.height = "34px";
+    c2.className = "cb-body";
+    c2.style.height = "44px";
+    c3.className = "cb-body";
+    c3.style.height = "54px";
+    box.style.gap = "3px";
+    box.style.display = "flex";
+    box.append(c1,c2,c3);
+  } else if (lower.includes("piercing")){
+    const c1 = document.createElement('div');
+    const c2 = document.createElement('div');
+    c1.className = "cb-body";
+    c1.style.height = "30px";
+    c2.className = "cb-body";
+    c2.style.height = "46px";
+    box.style.display = "flex";
+    box.style.gap = "4px";
+    box.append(c1,c2);
+  } else if (lower.includes("morning star")){
+    const c1 = document.createElement('div');
+    const c2 = document.createElement('div');
+    const c3 = document.createElement('div');
+    c1.className = "cb-body"; c1.style.height="20px";
+    c2.className = "cb-body"; c2.style.height="30px";
+    c3.className = "cb-body"; c3.style.height="48px";
+    box.style.display = "flex"; box.style.gap="4px";
+    box.append(c1,c2,c3);
+  } else {
+    // default
+    box.append(body, wickTop, wickBottom);
+  }
+}
+
+document.getElementById('q').addEventListener('input', applyFilters);
+
+(async function init(){
+  RAW = await loadCSV();
+  applyFilters();
+})();
+</script>
+
+</body>
+</html>
