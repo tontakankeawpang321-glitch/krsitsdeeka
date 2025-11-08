@@ -19,6 +19,7 @@ body{
   background:linear-gradient(180deg,#0f172a 0%, #0f172a 180px, #f1f5f9 180px, #f1f5f9 100%);
   color:var(--ink);
 }
+/* header */
 header{
   position:sticky; top:0; z-index:50;
   background:rgba(15,23,42,.9);
@@ -36,21 +37,44 @@ header .wrap{
 }
 .search input{border:none; outline:none; background:transparent; color:#fff; width:100%}
 .search ::placeholder{color:rgba(255,255,255,.75)}
+
 .layout{max-width:980px; margin:14px auto 30px; padding:0 16px}
 
-/* filters */
+/* filter buttons */
 #filters{display:flex; gap:8px; margin-bottom:10px; flex-wrap:wrap;}
-.filter-btn{border:1px solid rgba(15,118,110,.2); background:#fff; color:#0f172a; border-radius:999px; padding:5px 12px; cursor:pointer; font-size:.78rem;}
-.filter-btn.active{background:#0f766e; color:#fff; border-color:transparent;}
+.filter-btn{
+  border:1px solid rgba(15,118,110,.2);
+  background:#fff;
+  color:#0f172a;
+  border-radius:999px;
+  padding:5px 12px;
+  cursor:pointer;
+  font-size:.78rem;
+}
+.filter-btn.active{
+  background:#0f766e;
+  color:#fff;
+  border-color:transparent;
+}
 
 /* list */
-#candles{background:var(--paper); border-radius:var(--radius); box-shadow:var(--shadow); border:1px solid rgba(15,118,110,.08); padding:14px;}
-.card{display:grid; grid-template-columns:76px 1fr; gap:12px; border:1px solid var(--line); border-radius:14px; margin:10px 0; background:#fff; cursor:pointer; transition:transform .12s ease, box-shadow .12s ease;}
+#candles{
+  background:var(--paper); border-radius:var(--radius); box-shadow:var(--shadow);
+  border:1px solid rgba(15,118,110,.08); padding:14px;
+}
+.card{
+  display:grid; grid-template-columns:76px 1fr; gap:12px;
+  border:1px solid var(--line); border-radius:14px;
+  margin:10px 0; background:#fff; cursor:pointer;
+  transition:transform .12s ease, box-shadow .12s ease;
+}
 .card:hover{transform:translateY(-2px); box-shadow:0 16px 30px -20px rgba(15,23,42,.2)}
 
-.thumb{width:100%; height:70px; border-radius:12px; background:#e2e8f0; display:flex; align-items:center; justify-content:center; overflow:hidden;}
-.thumb img{width:100%; height:100%; object-fit:contain}
-
+.thumb{
+  width:100%; height:70px; border-radius:12px; background:#e2e8f0;
+  display:flex; align-items:center; justify-content:center; overflow:hidden;
+}
+.thumb img{width:100%; height:100%; object-fit:contain;}
 .c-name{font-weight:700; color:#0f172a}
 .c-meta{color:#475569; font-size:.75rem}
 .tag{display:inline-block; background:#ecfdf3; border:1px solid #bbf7d0; color:#166534; font-size:.7rem; padding:3px 8px; border-radius:999px; margin-top:4px}
@@ -74,14 +98,37 @@ dialog.candle-dialog{
   overflow:hidden;
   box-shadow:0 30px 70px -20px rgba(0,0,0,.55);
 }
-.cd-head{display:flex; gap:12px; align-items:center; padding:16px 18px 6px;}
-.cd-title{font-size:1.2rem; font-weight:700;}
-.cd-close{margin-left:auto; background:rgba(255,255,255,.07); border:none; color:#fff; border-radius:999px; padding:6px 14px; cursor:pointer; font-weight:600;}
+.cd-head{
+  display:flex; gap:12px; align-items:center;
+  padding:16px 18px 6px;
+}
+.cd-title{
+  font-size:1.2rem;
+  font-weight:700;
+}
+.cd-close{
+  margin-left:auto;
+  background:rgba(255,255,255,.07);
+  border:none; color:#fff;
+  border-radius:999px; padding:6px 14px;
+  cursor:pointer; font-weight:600;
+}
 .cd-body{padding:14px 18px 16px;}
 .cd-sub{color:rgba(255,255,255,.6);font-size:.76rem;margin-bottom:14px;}
 .cd-row{display:flex;gap:20px;align-items:center;}
-.cd-left{width:120px;height:120px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.03);border-radius:16px;display:flex;align-items:center;justify-content:center;overflow:hidden;}
-.cd-left img{max-width:100%;max-height:100%;object-fit:contain}
+.cd-left{
+  width:120px;height:120px;
+  background:rgba(255,255,255,.02);
+  border:1px solid rgba(255,255,255,.03);
+  border-radius:16px;
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;
+}
+.cd-candle{
+  position:relative;
+  width:52px; height:100px;
+  display:flex; align-items:center; justify-content:center;
+}
 .cd-right{flex:1;}
 .cd-right h4{margin:.2rem 0 .4rem;font-size:.8rem;text-transform:uppercase;}
 .cd-right p{margin:0 0 .5rem;font-size:.78rem;color:rgba(255,255,255,.75);}
@@ -95,6 +142,7 @@ dialog.candle-dialog{
 </style>
 </head>
 <body>
+
 <header>
   <div class="wrap">
     <div class="title">📈 Candlestick Library – แท่งเทียน + เทคนิค</div>
@@ -125,8 +173,8 @@ dialog.candle-dialog{
   <div class="cd-body">
     <div class="cd-sub" id="dSubtitle"></div>
     <div class="cd-row">
-      <div class="cd-left">
-        <img id="dImage" alt="">
+      <div class="cd-left" id="dCandleBox">
+        <!-- เราจะวาดแท่งเทียนด้วย JS -->
       </div>
       <div class="cd-right">
         <h4>คำอธิบาย</h4>
@@ -200,16 +248,14 @@ function renderList(){
     const thumb = document.createElement('div');
     thumb.className = 'thumb';
 
-    const img = document.createElement('img');
-    img.src = r.image || "";
-    img.alt = r.name || "pattern";
-    img.onerror = () => {
-      const slug = slugify(r.name || "pattern");
-      const remote = (r.grouping === "เทคนิค")
-        ? `https://raw.githubusercontent.com/open-candlestick/library/main/techniques/${slug}.png`
-        : `https://raw.githubusercontent.com/open-candlestick/library/main/patterns/${slug}.png`;
+    // ลองใช้รูปจาก csv ถ้ามี
+    if (r.image){
+      const img = document.createElement('img');
+      img.src = r.image;
+      img.alt = r.name || "pattern";
       img.onerror = () => {
-        thumb.innerHTML = "";
+        // ถ้ารูปไม่มา ให้โชว์แท่งง่ายๆ
+        thumb.innerHTML = '';
         const bar = document.createElement('div');
         bar.style.width = "14px";
         bar.style.height = "42px";
@@ -217,9 +263,15 @@ function renderList(){
         bar.style.background = r.side === "Bearish" ? "#ef4444" : (r.side === "Bullish" ? "#10b981" : "#94a3b8");
         thumb.appendChild(bar);
       };
-      img.src = remote;
-    };
-    thumb.appendChild(img);
+      thumb.appendChild(img);
+    } else {
+      const bar = document.createElement('div');
+      bar.style.width = "14px";
+      bar.style.height = "42px";
+      bar.style.borderRadius = "4px";
+      bar.style.background = r.side === "Bearish" ? "#ef4444" : (r.side === "Bullish" ? "#10b981" : "#94a3b8");
+      thumb.appendChild(bar);
+    }
 
     const right = document.createElement('div');
     const tagColor = r.side === "Bearish" ? " red" : "";
@@ -229,11 +281,9 @@ function renderList(){
       <span class="tag${tagColor}">${r.side||"Pattern"}</span>
       ${r.grouping ? `<span class="tag blue">${r.grouping}</span>` : ""}
     `;
+
     card.append(thumb, right);
-
-    // ➜ ผูกคลิกเปิด dialog
     card.addEventListener('click', ()=>openDialogFromRecord(r));
-
     host.append(card);
   });
 
@@ -262,32 +312,84 @@ function renderPager(totalPages){
   pager.append(prev, info, next);
 }
 
+// ฟังก์ชันวาดแท่งเทียนแบบ 100% ใน dialog
+function buildDialogCandle(container, rec){
+  container.innerHTML = "";
+  const wrap = document.createElement('div');
+  wrap.className = "cd-candle";
+
+  // wick
+  const wickTop = document.createElement('div');
+  wickTop.style.position = "absolute";
+  wickTop.style.top = "5px";
+  wickTop.style.left = "50%";
+  wickTop.style.transform = "translateX(-50%)";
+  wickTop.style.width = "4px";
+  wickTop.style.height = "38px";
+  wickTop.style.background = "#fff";
+  wickTop.style.borderRadius = "99px";
+
+  const wickBottom = document.createElement('div');
+  wickBottom.style.position = "absolute";
+  wickBottom.style.bottom = "3px";
+  wickBottom.style.left = "50%";
+  wickBottom.style.transform = "translateX(-50%)";
+  wickBottom.style.width = "4px";
+  wickBottom.style.height = "22px";
+  wickBottom.style.background = "#fff";
+  wickBottom.style.borderRadius = "99px";
+
+  // body
+  const body = document.createElement('div');
+  body.style.width = "22px";
+  body.style.height = "46px";
+  body.style.borderRadius = "6px";
+  // ฝั่งไหนก็ลงสีตามนั้น
+  if (rec.side === "Bearish"){
+    body.style.background = "#ef4444";
+  } else if (rec.side === "Bullish"){
+    body.style.background = "#10b981";
+  } else {
+    body.style.background = "#94a3b8";
+  }
+
+  // ปรับบาง pattern ให้ต่างนิดนึง
+  const n = (rec.name||"").toLowerCase();
+  if (n.includes("hammer") && !n.includes("inverted")){
+    wickTop.style.height = "6px";
+    wickBottom.style.height = "40px";
+    body.style.height = "32px";
+  } else if (n.includes("inverted hammer") || n.includes("shooting star")){
+    wickTop.style.height = "40px";
+    wickBottom.style.height = "6px";
+    body.style.height = "28px";
+  } else if (n.includes("engulfing")){
+    body.style.height = "58px";
+    wickTop.style.height = "20px";
+    wickBottom.style.height = "12px";
+  }
+
+  wrap.append(wickTop, body, wickBottom);
+  container.append(wrap);
+}
+
 function openDialogFromRecord(r){
   document.getElementById('dTitle').textContent = r.name || "PATTERN";
   document.getElementById('dSubtitle').textContent = r.grouping ? `${r.grouping} • ${r.side||""}` : (r.side||"");
-  document.getElementById('dSummary').textContent = r.summary || "ยังไม่ได้ใส่คำอธิบาย";
+  document.getElementById('dSummary').textContent = r.summary || "ยังไม่มีคำอธิบาย";
   document.getElementById('dTip').textContent = r.tip || "ใช้ร่วมกับแนวรับแนวต้านจะชัดขึ้น";
-
-  const dImg = document.getElementById('dImage');
-  dImg.src = r.image || "";
-  dImg.alt = r.name || "pattern";
-  dImg.onerror = () => {
-    const slug = slugify(r.name || "pattern");
-    const remote = (r.grouping === "เทคนิค")
-      ? `https://raw.githubusercontent.com/open-candlestick/library/main/techniques/${slug}.png`
-      : `https://raw.githubusercontent.com/open-candlestick/library/main/patterns/${slug}.png`;
-    dImg.onerror = () => { dImg.style.display = 'none'; };
-    dImg.style.display = 'block';
-    dImg.src = remote;
-  };
 
   const link = document.getElementById('dLink');
   if (r.source_url){
     link.href = r.source_url;
-    link.style.display = 'inline-block';
+    link.style.display = "inline-block";
   } else {
-    link.style.display = 'none';
+    link.style.display = "none";
   }
+
+  // วาดเทียนให้ตรง 100%
+  const box = document.getElementById('dCandleBox');
+  buildDialogCandle(box, r);
 
   if (typeof detailDialog.showModal === "function") {
     detailDialog.showModal();
