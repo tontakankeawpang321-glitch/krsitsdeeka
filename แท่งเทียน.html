@@ -4,10 +4,8 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
 <title>📈 Candlestick Library – แท่งเทียน + เทคนิค</title>
-
 <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/papaparse@5.4.1/papaparse.min.js"></script>
-
 <style>
 :root{
   --bg:#0f172a; --paper:#fff; --ink:#0f172a;
@@ -39,52 +37,19 @@ header .wrap{
 .search input{border:none; outline:none; background:transparent; color:#fff; width:100%}
 .search ::placeholder{color:rgba(255,255,255,.75)}
 .layout{max-width:980px; margin:14px auto 30px; padding:0 16px}
-
-/* category buttons */
-#filters{
-  display:flex; gap:8px; margin-bottom:10px; flex-wrap:wrap;
-}
-.filter-btn{
-  border:1px solid rgba(15,118,110,.2);
-  background:#fff;
-  color:#0f172a;
-  border-radius:999px;
-  padding:5px 12px;
-  cursor:pointer;
-  font-size:.78rem;
-}
-.filter-btn.active{
-  background:#0f766e;
-  color:#fff;
-  border-color:transparent;
-}
-
-#candles{
-  background:var(--paper); border-radius:var(--radius); box-shadow:var(--shadow);
-  border:1px solid rgba(15,118,110,.08); padding:14px;
-}
-.card{
-  display:grid; grid-template-columns:76px 1fr; gap:12px;
-  border:1px solid var(--line); border-radius:14px;
-  margin:10px 0; background:#fff; cursor:pointer;
-  transition:transform .12s ease, box-shadow .12s ease;
-}
+#filters{display:flex; gap:8px; margin-bottom:10px; flex-wrap:wrap;}
+.filter-btn{border:1px solid rgba(15,118,110,.2); background:#fff; color:#0f172a; border-radius:999px; padding:5px 12px; cursor:pointer; font-size:.78rem;}
+.filter-btn.active{background:#0f766e; color:#fff; border-color:transparent;}
+#candles{background:var(--paper); border-radius:var(--radius); box-shadow:var(--shadow); border:1px solid rgba(15,118,110,.08); padding:14px;}
+.card{display:grid; grid-template-columns:76px 1fr; gap:12px; border:1px solid var(--line); border-radius:14px; margin:10px 0; background:#fff; cursor:pointer; transition:transform .12s ease, box-shadow .12s ease;}
 .card:hover{transform:translateY(-2px); box-shadow:0 16px 30px -20px rgba(15,23,42,.2)}
-
-.thumb{
-  width:100%; height:70px; border-radius:12px;
-  background:#e2e8f0;
-  display:flex; align-items:center; justify-content:center;
-  overflow:hidden;
-}
+.thumb{width:100%; height:70px; border-radius:12px; background:#e2e8f0; display:flex; align-items:center; justify-content:center; overflow:hidden;}
 .thumb img{width:100%; height:100%; object-fit:contain}
-
 .c-name{font-weight:700; color:#0f172a}
 .c-meta{color:#475569; font-size:.75rem}
 .tag{display:inline-block; background:#ecfdf3; border:1px solid #bbf7d0; color:#166534; font-size:.7rem; padding:3px 8px; border-radius:999px; margin-top:4px}
 .tag.red{background:#fef2f2; border-color:#fecaca; color:#b91c1c}
 .tag.blue{background:#eff6ff; border-color:#dbeafe; color:#1d4ed8}
-
 .pager{display:flex; justify-content:center; gap:8px; margin-top:8px; align-items:center}
 .pager .btn{border:1px solid var(--line); background:#fff; border-radius:10px; padding:5px 10px; cursor:pointer}
 .pager .btn[disabled]{opacity:.5; cursor:not-allowed}
@@ -92,13 +57,12 @@ header .wrap{
 </style>
 </head>
 <body>
-
 <header>
   <div class="wrap">
     <div class="title">📈 Candlestick Library – แท่งเทียน + เทคนิค</div>
     <div class="search">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
-      <input id="q" type="search" placeholder="ค้นหา: bullish / bearish / hammer / เทคนิค ..." />
+      <input id="q" type="search" placeholder="ค้นหา: bullish / bearish / hammer / เทคนิค ...">
     </div>
   </div>
 </header>
@@ -110,17 +74,25 @@ header .wrap{
     <button class="filter-btn" data-filter="bearish">ขาลง</button>
     <button class="filter-btn" data-filter="tech">เทคนิค</button>
   </div>
-
-  <section id="candles" aria-label="candlestick patterns"></section>
+  <section id="candles"></section>
   <div id="pager" class="pager"></div>
 </div>
 
 <script>
-const SHEET_CSV_URL = "candlestick_100_full.csv"; // ตัวที่พี่เพิ่งได้มา
+const SHEET_CSV_URL = "candlestick_full_local_with_real_data.csv"; // อันที่พี่มี
 let RAW = [], CURRENT = [];
 let page = 1;
 const pageSize = 10;
 let currentFilter = "all";
+
+// ฟังก์ชันแปลงชื่อเป็น slug เพื่อใช้ fallback ออนไลน์
+function slugify(name='pattern'){
+  return name.toLowerCase()
+    .replace(/[\(\)\/]/g,' ')
+    .replace(/[^a-z0-9ก-๙]+/g,'-')
+    .replace(/-+/g,'-')
+    .replace(/^-|-$/g,'');
+}
 
 async function loadCSV(){
   return new Promise((resolve,reject)=>{
@@ -135,12 +107,9 @@ async function loadCSV(){
 function applyFilters(){
   const q = document.getElementById('q').value.trim().toLowerCase();
   CURRENT = RAW.filter(r=>{
-    // กรองตามหมวด
-    if (currentFilter === "bullish" && r.side !== "Bullish") return false;
-    if (currentFilter === "bearish" && r.side !== "Bearish") return false;
-    if (currentFilter === "tech" && r.grouping !== "เทคนิค") return false;
-
-    // ค้นหา
+    if (currentFilter === 'bullish' && r.side !== 'Bullish') return false;
+    if (currentFilter === 'bearish' && r.side !== 'Bearish') return false;
+    if (currentFilter === 'tech' && r.grouping !== 'เทคนิค') return false;
     const hay = `${r.name||""} ${r.side||""} ${r.grouping||""} ${r.summary||""} ${r.tip||""}`.toLowerCase();
     return q === "" ? true : hay.includes(q);
   });
@@ -156,7 +125,6 @@ function renderList(){
     document.getElementById('pager').innerHTML = "";
     return;
   }
-
   const totalPages = Math.ceil(CURRENT.length / pageSize);
   const start = (page-1)*pageSize;
   const end = start + pageSize;
@@ -166,15 +134,23 @@ function renderList(){
     const card = document.createElement('article');
     card.className = 'card';
 
-    // thumb
     const thumb = document.createElement('div');
     thumb.className = 'thumb';
-    if (r.image){
-      const img = document.createElement('img');
-      img.src = r.image;
-      img.alt = r.name || "pattern";
+
+    const img = document.createElement('img');
+    // แหล่งที่ 1: เอาจาก CSV (images/patterns/... หรือ images/techniques/...)
+    img.src = r.image || "";
+    img.alt = r.name || "pattern";
+
+    // ถ้าโหลดรูปในเครื่องไม่ได้ → ลองโหลดจาก path ออนไลน์ที่เราตั้งชื่อไว้
+    img.onerror = () => {
+      const slug = slugify(r.name || "pattern");
+      // แหล่งที่ 2: ออนไลน์สไตล์ open-source
+      const remote = (r.grouping === "เทคนิค")
+        ? `https://raw.githubusercontent.com/open-candlestick/library/main/techniques/${slug}.png`
+        : `https://raw.githubusercontent.com/open-candlestick/library/main/patterns/${slug}.png`;
       img.onerror = () => {
-        // ถ้ารูปหาย วาดแท่งเทียนแทน
+        // ถ้ายังไม่ได้อีก → วาดแท่งสี
         thumb.innerHTML = "";
         const bar = document.createElement('div');
         bar.style.width = "14px";
@@ -183,15 +159,10 @@ function renderList(){
         bar.style.background = r.side === "Bearish" ? "#ef4444" : (r.side === "Bullish" ? "#10b981" : "#94a3b8");
         thumb.appendChild(bar);
       };
-      thumb.appendChild(img);
-    } else {
-      const bar = document.createElement('div');
-      bar.style.width = "14px";
-      bar.style.height = "42px";
-      bar.style.borderRadius = "4px";
-      bar.style.background = r.side === "Bearish" ? "#ef4444" : (r.side === "Bullish" ? "#10b981" : "#94a3b8");
-      thumb.appendChild(bar);
-    }
+      img.src = remote;
+    };
+
+    thumb.appendChild(img);
 
     const right = document.createElement('div');
     const tagColor = r.side === "Bearish" ? " red" : "";
@@ -212,7 +183,6 @@ function renderList(){
 function renderPager(totalPages){
   const pager = document.getElementById('pager');
   pager.innerHTML = "";
-
   const prev = document.createElement('button');
   prev.className = 'btn';
   prev.textContent = 'ย้อนกลับ';
@@ -233,7 +203,6 @@ function renderPager(totalPages){
 }
 
 document.getElementById('q').addEventListener('input', applyFilters);
-
 document.querySelectorAll('#filters .filter-btn').forEach(btn=>{
   btn.addEventListener('click', ()=>{
     document.querySelectorAll('#filters .filter-btn').forEach(b=>b.classList.remove('active'));
@@ -248,7 +217,5 @@ document.querySelectorAll('#filters .filter-btn').forEach(btn=>{
   applyFilters();
 })();
 </script>
-
 </body>
 </html>
-
