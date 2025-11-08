@@ -48,13 +48,56 @@ header .wrap{
   border:1px solid rgba(15,118,110,.08); padding:14px;
 }
 .card{
-  display:grid; grid-template-columns:82px 1fr; gap:12px;
+  display:grid; grid-template-columns:76px 1fr; gap:12px;
   border:1px solid var(--line); border-radius:14px;
   margin:10px 0; background:#fff; cursor:pointer;
   transition:transform .12s ease, box-shadow .12s ease;
 }
 .card:hover{transform:translateY(-2px); box-shadow:0 16px 30px -20px rgba(15,23,42,.2)}
-.thumb{width:100%; height:70px; border-radius:10px; object-fit:cover; background:#e2e8f0;}
+
+/* ==== thumbnail แบบเทียน ==== */
+.thumb-candle{
+  width:100%;
+  height:70px;
+  border-radius:12px;
+  background:#e2e8f0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+}
+.thumb-candle .tc-body{
+  width:14px;
+  height:42px;
+  background:#10b981;
+  border-radius:4px;
+}
+.thumb-candle .tc-wick{
+  position:absolute;
+  width:2px;
+  background:#10b981;
+  left:50%; transform:translateX(-50%);
+}
+.thumb-candle .tc-wick.top{top:8px; height:18px;}
+.thumb-candle .tc-wick.bottom{bottom:6px; height:14px;}
+/* variations for list */
+.thumb-hammer .tc-body{height:32px;}
+.thumb-hammer .tc-wick.top{height:6px;}
+.thumb-hammer .tc-wick.bottom{height:26px;}
+.thumb-inverted .tc-body{height:28px;}
+.thumb-inverted .tc-wick.top{height:28px;}
+.thumb-engulf .tc-body{height:50px;}
+.thumb-harami .tc-body{height:36px;}
+.thumb-harami::after{
+  content:"";
+  position:absolute;
+  right:10px;
+  width:10px; height:26px;
+  background:#ef4444;
+  border-radius:3px;
+}
+
+/* text in card */
 .c-name{font-weight:700; color:#0f172a}
 .c-meta{color:#475569; font-size:.75rem}
 .tag{display:inline-block; background:#ecfdf3; border:1px solid #bbf7d0; color:#166534; font-size:.7rem; padding:3px 8px; border-radius:999px; margin-top:4px}
@@ -66,7 +109,7 @@ header .wrap{
 .pager .btn[disabled]{opacity:.5; cursor:not-allowed}
 .pager .info{font-size:.85rem; color:#475569; padding:3px 0}
 
-/* ===== dialog แบบอินโฟกราฟิกต่อ 1 pattern ===== */
+/* ===== dialog แบบอินโฟต่อ 1 pattern ===== */
 dialog.candle-dialog{
   width:min(720px, 95vw);
   border:none;
@@ -94,90 +137,29 @@ dialog.candle-dialog{
   border-radius:999px; padding:6px 14px;
   cursor:pointer; font-weight:600;
 }
-.cd-body{
-  padding:14px 18px 16px;
-}
-.cd-sub{
-  color:rgba(255,255,255,.6);
-  font-size:.78rem;
-  margin-bottom:16px;
-}
-.cd-row{
-  display:flex;
-  gap:20px;
-  align-items:center;
-}
+.cd-body{padding:14px 18px 16px;}
+.cd-sub{color:rgba(255,255,255,.6);font-size:.78rem;margin-bottom:16px;}
+.cd-row{display:flex;gap:20px;align-items:center;}
 .cd-left{
-  width:140px;
-  height:140px;
+  width:140px;height:140px;
   background:rgba(255,255,255,.02);
   border:1px solid rgba(255,255,255,.03);
   border-radius:16px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  display:flex;align-items:center;justify-content:center;
 }
-.cd-right{
-  flex:1;
-}
-.cd-right h4{
-  margin:.2rem 0 .4rem;
-  font-size:.85rem;
-  text-transform:uppercase;
-}
-.cd-right p{
-  margin:0 0 .5rem;
-  font-size:.78rem;
-  color:rgba(255,255,255,.75);
-}
-.cd-tip{
-  background:rgba(15,118,110,.14);
-  border:1px solid rgba(148,163,184,.16);
-  border-radius:12px;
-  padding:8px 10px;
-  font-size:.72rem;
-  white-space:pre-wrap;
-}
-.cd-footer{
-  padding:10px 18px 16px;
-  border-top:1px solid rgba(255,255,255,.05);
-  text-align:right;
-}
-.cd-link{
-  background:#0f766e;
-  color:#fff;
-  border:none;
-  border-radius:10px;
-  padding:6px 12px;
-  font-weight:600;
-  text-decoration:none;
-  font-size:.72rem;
-}
+.cd-right{flex:1;}
+.cd-right h4{margin:.2rem 0 .4rem;font-size:.85rem;text-transform:uppercase;}
+.cd-right p{margin:0 0 .5rem;font-size:.78rem;color:rgba(255,255,255,.75);}
+.cd-tip{background:rgba(15,118,110,.14);border:1px solid rgba(148,163,184,.16);border-radius:12px;padding:8px 10px;font-size:.72rem;white-space:pre-wrap;}
+.cd-footer{padding:10px 18px 16px;border-top:1px solid rgba(255,255,255,.05);text-align:right;}
+.cd-link{background:#0f766e;color:#fff;border:none;border-radius:10px;padding:6px 12px;font-weight:600;text-decoration:none;font-size:.72rem;}
 
-/* วาดเทียนด้วย CSS */
-.candle-box{
-  position:relative;
-  width:54px;
-  height:110px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-.cb-body{
-  width:16px;
-  height:46px;
-  background:#10b981;
-  border-radius:4px;
-}
-.cb-wick{
-  position:absolute;
-  width:2px;
-  background:#10b981;
-  left:50%; transform:translateX(-50%);
-}
-.cb-wick.top{top:6px; height:32px;}
-.cb-wick.bottom{bottom:4px; height:22px;}
-/* pattern เฉพาะ */
+/* big candle */
+.candle-box{position:relative;width:54px;height:110px;display:flex;align-items:center;justify-content:center;}
+.cb-body{width:16px;height:46px;background:#10b981;border-radius:4px;}
+.cb-wick{position:absolute;width:2px;background:#10b981;left:50%;transform:translateX(-50%);}
+.cb-wick.top{top:6px;height:32px;}
+.cb-wick.bottom{bottom:4px;height:22px;}
 .candle-hammer .cb-body{height:50px;}
 .candle-hammer .cb-wick.top{height:12px;}
 .candle-hammer .cb-wick.bottom{height:30px;}
@@ -194,12 +176,9 @@ dialog.candle-dialog{
   border-radius:3px;
   top:28px;
 }
-.candle-soldiers{
-  gap:3px;
-}
 @media (max-width:600px){
-  .cd-row{flex-direction:column; align-items:flex-start;}
-  .cd-left{width:100%; justify-content:flex-start; padding-left:18px;}
+  .cd-row{flex-direction:column;align-items:flex-start;}
+  .cd-left{width:100%;justify-content:flex-start;padding-left:18px;}
 }
 </style>
 </head>
@@ -220,7 +199,7 @@ dialog.candle-dialog{
   <div id="pager" class="pager"></div>
 </div>
 
-<!-- dialog แบบอินโฟตามชื่อ -->
+<!-- dialog -->
 <dialog id="detailDialog" class="candle-dialog">
   <div class="cd-head">
     <div class="cd-title" id="dTitle">PATTERN</div>
@@ -230,7 +209,6 @@ dialog.candle-dialog{
     <div class="cd-sub" id="dSubtitle">Pattern detail</div>
     <div class="cd-row">
       <div class="cd-left">
-        <!-- จะสร้างเทียนจาก JS -->
         <div id="dCandle" class="candle-box">
           <div class="cb-body"></div>
         </div>
@@ -290,10 +268,12 @@ function renderList(){
   slice.forEach(r=>{
     const card = document.createElement('article');
     card.className = 'card';
-    const img = document.createElement('img');
-    img.className = 'thumb';
-    // ใช้รูปเทาไว้ก่อน เพราะเราจะโชว์เทียนใน dialog
-    img.src = "https://placehold.co/240x160/e2e8f0/94a3b8?text=Candle";
+
+    // thumbnail candle
+    const thumb = document.createElement('div');
+    thumb.className = 'thumb-candle';
+    decorateThumbByName(thumb, r.name || "");
+
     const right = document.createElement('div');
     const tagColor = r.side === "Bearish" ? " red" : "";
     right.innerHTML = `
@@ -302,7 +282,7 @@ function renderList(){
       <span class="tag${tagColor}">${r.side||"Pattern"}</span>
       ${r.grouping? `<span class="tag blue">${r.grouping}</span>`:""}
     `;
-    card.append(img, right);
+    card.append(thumb, right);
     card.addEventListener('click', ()=>openDialogFromRecord(r));
     host.append(card);
   });
@@ -325,32 +305,32 @@ function openDialogFromRecord(r){
     link.style.display = "none";
   }
 
-  // วาดเทียนให้ตรงชื่อ
+  // วาดเทียนใน dialog
   buildCandle(r.name || "");
-
   detailDialog.showModal();
 }
 
+// วาดเทียนใหญ่
 function buildCandle(name){
   const box = document.getElementById('dCandle');
-  box.className = "candle-box"; // reset
-  const lower = name.toLowerCase();
-  // สร้างโครงพื้นฐาน
+  box.className = "candle-box";
   box.innerHTML = "";
-  const body = document.createElement('div');
-  const wickTop = document.createElement('div');
-  const wickBottom = document.createElement('div');
-  body.className = "cb-body";
-  wickTop.className = "cb-wick top";
-  wickBottom.className = "cb-wick bottom";
+  const lower = name.toLowerCase();
 
-  // กำหนดตามชื่อที่รู้จัก
+  // default
+  const body = document.createElement('div');
+  body.className = "cb-body";
+  const wTop = document.createElement('div');
+  wTop.className = "cb-wick top";
+  const wBot = document.createElement('div');
+  wBot.className = "cb-wick bottom";
+
   if (lower.includes("hammer") && !lower.includes("inverted")){
     box.classList.add("candle-hammer");
-    box.append(body, wickTop, wickBottom);
+    box.append(body, wTop, wBot);
   } else if (lower.includes("inverted hammer")){
     box.classList.add("candle-inverted");
-    box.append(body, wickTop);
+    box.append(body, wTop);
   } else if (lower.includes("engulf")){
     box.classList.add("candle-engulf");
     body.style.height = "70px";
@@ -358,42 +338,62 @@ function buildCandle(name){
   } else if (lower.includes("harami")){
     box.classList.add("candle-harami");
     box.append(body);
-  } else if (lower.includes("three white soldiers")){
-    // ทำแบบง่าย: แท่งสามอันสูงต่างกัน
-    const c1 = document.createElement('div');
-    const c2 = document.createElement('div');
-    const c3 = document.createElement('div');
-    c1.className = "cb-body";
-    c1.style.height = "34px";
-    c2.className = "cb-body";
-    c2.style.height = "44px";
-    c3.className = "cb-body";
-    c3.style.height = "54px";
-    box.style.gap = "3px";
-    box.style.display = "flex";
-    box.append(c1,c2,c3);
   } else if (lower.includes("piercing")){
     const c1 = document.createElement('div');
     const c2 = document.createElement('div');
-    c1.className = "cb-body";
-    c1.style.height = "30px";
-    c2.className = "cb-body";
-    c2.style.height = "46px";
-    box.style.display = "flex";
-    box.style.gap = "4px";
+    c1.className = "cb-body"; c1.style.height="30px";
+    c2.className = "cb-body"; c2.style.height="46px";
+    box.style.display="flex"; box.style.gap="4px";
     box.append(c1,c2);
   } else if (lower.includes("morning star")){
     const c1 = document.createElement('div');
     const c2 = document.createElement('div');
     const c3 = document.createElement('div');
-    c1.className = "cb-body"; c1.style.height="20px";
-    c2.className = "cb-body"; c2.style.height="30px";
-    c3.className = "cb-body"; c3.style.height="48px";
-    box.style.display = "flex"; box.style.gap="4px";
+    c1.className="cb-body"; c1.style.height="20px";
+    c2.className="cb-body"; c2.style.height="30px";
+    c3.className="cb-body"; c3.style.height="48px";
+    box.style.display="flex"; box.style.gap="4px";
+    box.append(c1,c2,c3);
+  } else if (lower.includes("three white soldiers")){
+    const c1 = document.createElement('div');
+    const c2 = document.createElement('div');
+    const c3 = document.createElement('div');
+    c1.className="cb-body"; c1.style.height="34px";
+    c2.className="cb-body"; c2.style.height="44px";
+    c3.className="cb-body"; c3.style.height="54px";
+    box.style.display="flex"; box.style.gap="4px";
     box.append(c1,c2,c3);
   } else {
-    // default
-    box.append(body, wickTop, wickBottom);
+    box.append(body, wTop, wBot);
+  }
+}
+
+// วาดเทียนเล็กใน list
+function decorateThumbByName(el, name){
+  // base
+  el.innerHTML = "";
+  const b = document.createElement('div');
+  b.className = "tc-body";
+  const wt = document.createElement('div');
+  wt.className = "tc-wick top";
+  const wb = document.createElement('div');
+  wb.className = "tc-wick bottom";
+
+  const lower = name.toLowerCase();
+  if (lower.includes("hammer") && !lower.includes("inverted")){
+    el.classList.add("thumb-hammer");
+    el.append(b, wt, wb);
+  } else if (lower.includes("inverted hammer")){
+    el.classList.add("thumb-inverted");
+    el.append(b, wt);
+  } else if (lower.includes("engulf")){
+    el.classList.add("thumb-engulf");
+    el.append(b);
+  } else if (lower.includes("harami")){
+    el.classList.add("thumb-harami");
+    el.append(b);
+  } else {
+    el.append(b, wt, wb);
   }
 }
 
