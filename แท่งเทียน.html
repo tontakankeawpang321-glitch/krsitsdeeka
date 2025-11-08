@@ -69,7 +69,6 @@
     transition:transform .12s ease, box-shadow .12s ease;
   }
   .card:hover{transform:translateY(-2px); box-shadow:0 16px 30px -20px rgba(15,23,42,.2)}
-
   .thumb{
     width:100%; height:70px; border-radius:10px; object-fit:contain;
     background:#e2e8f0;
@@ -124,7 +123,7 @@
     </div>
     <div class="filepick">
       <label for="csvFile">📁 เลือก CSV</label>
-      <span id="fileName" style="opacity:.7">candlestick_100_images.csv</span>
+      <span id="fileName" style="opacity:.7">ยังไม่ได้เลือก</span>
       <input type="file" id="csvFile" accept=".csv">
     </div>
   </div>
@@ -152,19 +151,22 @@
     </div>
   </div>
   <div class="modal-footer" style="background:#fff;border-top:1px solid #e2e8f0;padding:15px 16px">
-    <a id="mSource" class="btn-primary" target="_blank" rel="noopener" style="background:#0f766e;color:#fff;border-radius:12px;padding:10px 14px;text-decoration:none;font-weight:600;display:inline-block">ดูตัวอย่างกราฟ</a>
+    <a id="mSource" class="btn-primary" target="_blank" rel="noopener"
+       style="background:#0f766e;color:#fff;border-radius:12px;padding:10px 14px;text-decoration:none;font-weight:600;display:inline-block">
+       ดูตัวอย่างกราฟ
+    </a>
   </div>
 </dialog>
 
 <script>
-const SHEET_CSV_URL = "candlestick_100_images.csv"; // ชี้ไฟล์ที่คุณมีอยู่
+const SHEET_CSV_URL = "candlestick_100_images.csv"; // ชื่อไฟล์ที่อยู่โฟลเดอร์เดียวกับ index.html
 let RAW = [];
 let CURRENT = [];
 let page = 1;
 const pageSize = 20;
 const PLACEHOLDER = "https://placehold.co/240x160?text=Candle";
 
-// โหลดจาก URL
+// โหลดจาก URL ปกติ (ใช้ได้ตอนเปิดผ่าน server หรือโฮสต์)
 async function loadCSVFromUrl(){
   return new Promise((resolve, reject)=>{
     Papa.parse(SHEET_CSV_URL, {
@@ -177,7 +179,7 @@ async function loadCSVFromUrl(){
   });
 }
 
-// โหลดจากไฟล์ที่ผู้ใช้เลือก
+// โหลดจากไฟล์ที่ user เลือก
 function loadCSVFromFile(file){
   return new Promise((resolve, reject)=>{
     Papa.parse(file, {
@@ -187,6 +189,12 @@ function loadCSVFromFile(file){
       error: reject
     });
   });
+}
+
+// ตัดช่องว่าง/ตัวเว้นวรรคที่ทำให้รูปโหลดไม่ได้
+function cleanUrl(u){
+  if(!u) return "";
+  return String(u).trim().replace(/\s+/g, "");
 }
 
 function applyFilters(){
@@ -221,8 +229,9 @@ function renderList(){
     const img = document.createElement('img');
     img.className = 'thumb';
     img.loading = 'lazy';
-    img.src = r.image || PLACEHOLDER;
-    img.onerror = ()=>{img.src = PLACEHOLDER};
+    const imgUrl = cleanUrl(r.image);
+    img.src = imgUrl || PLACEHOLDER;
+    img.onerror = ()=>{ img.src = PLACEHOLDER; };
 
     const right = document.createElement('div');
     const tagColor = r.side === "Bearish" ? " red" : (r.side === "Bullish" ? "" : "");
@@ -238,6 +247,7 @@ function renderList(){
     host.append(card);
   });
 
+  // pager
   const pager = document.getElementById('pager');
   pager.innerHTML = "";
   const total = CURRENT.length;
@@ -263,11 +273,16 @@ function renderList(){
 
 const modal = document.getElementById('detailModal');
 function openModal(r){
+  const imgUrl = cleanUrl(r.image);
   document.getElementById('mTitle').textContent = r.name || "";
-  document.getElementById('mImg').src = r.image || PLACEHOLDER;
+  const modalImg = document.getElementById('mImg');
+  modalImg.src = imgUrl || PLACEHOLDER;
+  modalImg.onerror = ()=>{ modalImg.src = PLACEHOLDER; };
+
   document.getElementById('mMeta').textContent = `${r.side||""} • ${r.grouping||""} • ${r.count ? r.count + " แท่ง" : ""}`;
   document.getElementById('mSummary').textContent = r.summary || "";
   document.getElementById('mTip').textContent = r.tip || "ใช้ร่วมกับแนวรับแนวต้านและวอลุ่มจะชัดขึ้น";
+
   const src = document.getElementById('mSource');
   if (r.source_url){
     src.href = r.source_url;
@@ -278,10 +293,10 @@ function openModal(r){
   modal.showModal();
 }
 
-// search realtime
+// ค้นหา
 document.getElementById('q').addEventListener('input', applyFilters);
 
-// upload csv
+// โหลดจากไฟล์ที่เลือกเอง
 document.getElementById('csvFile').addEventListener('change', async (e)=>{
   const file = e.target.files[0];
   if (!file) return;
@@ -290,10 +305,11 @@ document.getElementById('csvFile').addEventListener('change', async (e)=>{
   applyFilters();
 });
 
-// init
+// เริ่มต้น: พยายามโหลดจากไฟล์ที่อยู่โฟลเดอร์เดียวกันก่อน
 (async function init(){
   try{
     RAW = await loadCSVFromUrl();
+    document.getElementById('fileName').textContent = "candlestick_100_images.csv";
   }catch(err){
     console.warn("โหลด candlestick_100_images.csv ไม่ได้ ให้เลือกไฟล์ด้วยปุ่มด้านบนแทน", err);
     RAW = [];
