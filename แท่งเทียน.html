@@ -1,119 +1,97 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
 <title>📈 Candlestick Library – ดูแท่งเทียน + เทคนิค</title>
 
-<!-- Font -->
 <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
-<!-- PapaParse -->
 <script src="https://unpkg.com/papaparse@5.4.1/papaparse.min.js"></script>
 
 <style>
-  :root{
-    --bg:#0f172a;
-    --paper:#ffffff;
-    --ink:#0f172a;
-    --muted:#475569;
-    --line:#e2e8f0;
-    --brand:#0f766e;
-    --radius:16px;
-    --shadow:0 16px 40px -22px rgba(15,23,42,.25);
-  }
-  *{box-sizing:border-box}
-  body{
-    margin:0;
-    font-family:"Sarabun",system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-    background:linear-gradient(180deg,#0f172a 0%, #0f172a 180px, #e2e8f0 180px, #e2e8f0 100%);
-    color:var(--ink);
-  }
-  header{
-    position:sticky; top:0; z-index:50;
-    background:rgba(15,23,42,.85);
-    backdrop-filter:blur(8px);
-    color:#fff; padding:14px 16px; box-shadow:0 10px 30px -20px rgba(0,0,0,.4)
-  }
-  header .wrap{
-    max-width:980px; margin:auto; display:flex; gap:12px; align-items:center; flex-wrap:wrap
-  }
-  .title{font-weight:700; font-size:1.25rem}
-  .search{
-    margin-left:auto; display:flex; align-items:center; gap:8px;
-    background:rgba(255,255,255,.12); padding:6px 10px; border-radius:999px; width:min(460px,100%)
-  }
-  .search input{border:none; outline:none; background:transparent; color:#fff; width:100%}
-  .search ::placeholder{color:rgba(255,255,255,.75)}
+:root{
+  --bg:#0f172a; --paper:#fff; --ink:#0f172a;
+  --muted:#475569; --line:#e2e8f0; --brand:#0f766e;
+  --radius:16px; --shadow:0 16px 40px -22px rgba(15,23,42,.25);
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:"Sarabun",system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  background:linear-gradient(180deg,#0f172a 0%, #0f172a 180px, #f1f5f9 180px, #f1f5f9 100%);
+  color:var(--ink);
+}
 
-  .layout{max-width:980px; margin:14px auto 30px; padding:0 16px}
-  #candles{
-    background:var(--paper); border-radius:var(--radius); box-shadow:var(--shadow);
-    border:1px solid rgba(15,118,110,.08);
-    padding:14px;
-  }
-  .card{
-    display:grid; grid-template-columns:82px 1fr; gap:12px;
-    border:1px solid var(--line); border-radius:14px;
-    margin:10px 0; background:#fff; cursor:pointer;
-    transition:transform .12s ease, box-shadow .12s ease;
-  }
-  .card:hover{transform:translateY(-2px); box-shadow:0 16px 30px -20px rgba(15,23,42,.2)}
-  .thumb{
-    width:100%; height:70px; border-radius:10px; object-fit:cover;
-    background:#e2e8f0;
-  }
-  .c-name{font-weight:700; color:#0f172a}
-  .c-meta{color:#475569; font-size:.75rem}
-  .tag{display:inline-block; background:#ecfdf3; border:1px solid #bbf7d0; color:#166534; font-size:.7rem; padding:3px 8px; border-radius:999px; margin-top:4px}
-  .tag.red{background:#fef2f2; border-color:#fecaca; color:#b91c1c}
-  .tag.blue{background:#eff6ff; border-color:#dbeafe; color:#1d4ed8}
+/* Header */
+header{
+  position:sticky; top:0; z-index:50;
+  background:rgba(15,23,42,.9);
+  backdrop-filter:blur(8px);
+  color:#fff; padding:14px 16px;
+  box-shadow:0 10px 30px -20px rgba(0,0,0,.4)
+}
+header .wrap{
+  max-width:980px; margin:auto; display:flex; gap:12px; align-items:center; flex-wrap:wrap;
+}
+.title{font-weight:700; font-size:1.25rem}
+.search{
+  margin-left:auto; display:flex; align-items:center; gap:8px;
+  background:rgba(255,255,255,.12); padding:6px 10px; border-radius:999px; width:min(460px,100%)
+}
+.search input{border:none; outline:none; background:transparent; color:#fff; width:100%}
+.search ::placeholder{color:rgba(255,255,255,.75)}
 
-  .pager{display:flex; justify-content:center; gap:8px; margin-top:8px}
-  .pager .btn{
-    border:1px solid var(--line); background:#fff; border-radius:10px; padding:5px 10px; cursor:pointer
-  }
-  .pager .btn[disabled]{opacity:.5; cursor:not-allowed}
-  .pager .info{font-size:.85rem; color:#475569; padding:3px 0}
+/* Card List */
+.layout{max-width:980px; margin:14px auto 30px; padding:0 16px}
+#candles{
+  background:var(--paper); border-radius:var(--radius); box-shadow:var(--shadow);
+  border:1px solid rgba(15,118,110,.08); padding:14px;
+}
+.card{
+  display:grid; grid-template-columns:82px 1fr; gap:12px;
+  border:1px solid var(--line); border-radius:14px;
+  margin:10px 0; background:#fff; cursor:pointer;
+  transition:transform .12s ease, box-shadow .12s ease;
+}
+.card:hover{transform:translateY(-2px); box-shadow:0 16px 30px -20px rgba(15,23,42,.2)}
+.thumb{width:100%; height:70px; border-radius:10px; object-fit:cover; background:#e2e8f0;}
+.c-name{font-weight:700; color:#0f172a}
+.c-meta{color:#475569; font-size:.75rem}
+.tag{display:inline-block; background:#ecfdf3; border:1px solid #bbf7d0; color:#166534; font-size:.7rem; padding:3px 8px; border-radius:999px; margin-top:4px}
+.tag.red{background:#fef2f2; border-color:#fecaca; color:#b91c1c}
+.tag.blue{background:#eff6ff; border-color:#dbeafe; color:#1d4ed8}
 
-  dialog{
-    width:min(880px, 94vw); border:none; border-radius:20px; overflow:hidden;
-    box-shadow:0 30px 70px -20px rgba(15,23,42,.5);
-    background:#fff;
-  }
-  .modal-head{
-    display:flex; gap:12px; align-items:center; padding:14px 16px;
-    background:#0f172a; color:#fff;
-  }
-  .close-btn{
-    margin-left:auto; background:#fff; color:#0f172a; border:none; border-radius:999px; padding:6px 14px; cursor:pointer; font-weight:600
-  }
-  .modal-body{
-    display:grid; grid-template-columns: 1.05fr 1fr; gap:16px; padding:16px; background:#fff;
-  }
-  .modal-hero{
-    position:relative; background:linear-gradient(140deg,#bfd7ff 0%,#80a3ff 40%,#5071d8 100%);
-    border-radius:18px; overflow:hidden; min-height:180px; border:1px solid #dbeafe;
-  }
-  .modal-hero img{
-    width:100%; height:100%; object-fit:cover; display:block;
-  }
-  .modal-content .h4{margin:.2rem 0 .4rem; font-weight:700; color:#0f172a}
-  .modal-summary{line-height:1.6; font-size:.9rem; color:#0f172a; white-space:pre-wrap}
-  pre.tip{
-    background:#f8fafc; border:1px solid #e2e8f0; border-radius:14px; padding:8px 10px; font-size:.78rem; line-height:1.5; white-space:pre-wrap
-  }
-  .modal-footer{
-    padding:12px 16px 16px; border-top:1px solid #e2e8f0; background:#fff;
-  }
-  .btn-primary{
-    display:inline-flex; align-items:center; justify-content:center; gap:6px;
-    background:#0f766e; color:#fff; border:none; border-radius:12px; padding:9px 14px;
-    font-weight:600; text-decoration:none;
-  }
-  @media (max-width:720px){
-    .modal-body{grid-template-columns:1fr}
-    .modal-hero{min-height:150px}
-  }
+/* Pager */
+.pager{display:flex; justify-content:center; gap:8px; margin-top:8px}
+.pager .btn{border:1px solid var(--line); background:#fff; border-radius:10px; padding:5px 10px; cursor:pointer}
+.pager .btn[disabled]{opacity:.5; cursor:not-allowed}
+.pager .info{font-size:.85rem; color:#475569; padding:3px 0}
+
+/* Modal */
+dialog{
+  width:min(920px, 95vw); border:none; border-radius:20px; overflow:hidden;
+  background:#fff; box-shadow:0 30px 70px -20px rgba(15,23,42,.45);
+}
+.modal-head{
+  display:flex; gap:12px; align-items:center;
+  background:#0f172a; color:#fff; padding:14px 16px;
+}
+.modal-body{
+  display:grid; grid-template-columns:280px 1fr; gap:18px; padding:16px; background:#fff;
+}
+.modal-left img{
+  width:100%; height:200px; object-fit:cover;
+  background:#e2e8f0; border-radius:16px; border:1px solid #e2e8f0;
+}
+.img-caption{font-size:.7rem; color:#64748b; margin-top:6px;}
+.modal-right h4{margin:.4rem 0 .3rem; font-size:.78rem; color:#0f172a;}
+.text-block{line-height:1.6; font-size:.85rem; color:#0f172a; white-space:pre-wrap;}
+.meta-line{font-size:.75rem; color:#475569; margin-bottom:.4rem;}
+.tip{background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:8px 10px; font-size:.75rem; line-height:1.5; white-space:pre-wrap;}
+.btn-link{display:inline-block; background:#0f766e; color:#fff; padding:7px 12px; border-radius:10px; font-size:.75rem; text-decoration:none;}
+.modal-footer{padding:10px 16px 14px; background:#fff; border-top:1px solid #e2e8f0; text-align:right; font-size:.7rem; color:#94a3b8;}
+.close-btn{margin-left:auto; background:#fff; color:#0f172a; border:none; border-radius:999px; padding:6px 14px; cursor:pointer; font-weight:600;}
+@media (max-width:650px){.modal-body{grid-template-columns:1fr}.modal-left img{height:220px}}
 </style>
 </head>
 <body>
@@ -140,43 +118,35 @@
     <button class="close-btn" onclick="modal.close()">ปิด</button>
   </div>
   <div class="modal-body">
-    <div class="modal-hero">
+    <div class="modal-left">
       <img id="mImg" alt="">
+      <div id="mImgCaption" class="img-caption"></div>
     </div>
-    <div class="modal-content">
-      <div id="mMeta" class="c-meta" style="margin-bottom:.5rem"></div>
-      <p class="h4">คำอธิบาย</p>
-      <div id="mSummary" class="modal-summary"></div>
-      <p class="h4" style="margin-top:.7rem">เทคนิคการใช้</p>
+    <div class="modal-right">
+      <div id="mMeta" class="meta-line"></div>
+      <h4>คำอธิบาย</h4>
+      <div id="mSummary" class="text-block"></div>
+      <h4>เทคนิคการใช้</h4>
       <pre id="mTip" class="tip"></pre>
+      <h4>แหล่งอ้างอิง / ตัวอย่างกราฟ</h4>
+      <a id="mSource" class="btn-link" target="_blank" rel="noopener">เปิดลิงก์</a>
     </div>
   </div>
-  <div class="modal-footer">
-    <a id="mSource" class="btn-primary" target="_blank" rel="noopener">ดูตัวอย่างกราฟ</a>
-  </div>
+  <div class="modal-footer"><small>กดปิดเพื่อกลับ</small></div>
 </dialog>
 
 <script>
-const SHEET_CSV_URL = "candlestick_100_images.csv"; // ต้องมีไฟล์นี้อยู่โฟลเดอร์เดียวกัน
-const PLACEHOLDER = "https://placehold.co/640x360/9db7ff/0f172a?text=Candle";
-let RAW = [];
-let CURRENT = [];
+const SHEET_CSV_URL = "candlestick_100_full.csv";
+let RAW = [], CURRENT = [];
 let page = 1;
 const pageSize = 20;
-
-function cleanUrl(u){
-  if(!u) return "";
-  return String(u).trim();
-}
+const PLACEHOLDER = "https://placehold.co/640x360/e2e8f0/94a3b8?text=Candle";
 
 async function loadCSV(){
-  return new Promise((resolve, reject)=>{
-    Papa.parse(SHEET_CSV_URL, {
-      download:true,
-      header:true,
-      skipEmptyLines:true,
-      complete: res => resolve(res.data),
-      error: reject
+  return new Promise((resolve,reject)=>{
+    Papa.parse(SHEET_CSV_URL,{
+      download:true, header:true, skipEmptyLines:true,
+      complete:res=>resolve(res.data), error:reject
     });
   });
 }
@@ -187,109 +157,56 @@ function applyFilters(){
     const hay = `${r.name||""} ${r.side||""} ${r.grouping||""} ${r.summary||""} ${r.tip||""}`.toLowerCase();
     return q==="" ? true : hay.includes(q);
   });
-  page = 1;
-  renderList();
+  page=1; renderList();
 }
 
 function renderList(){
-  const host = document.getElementById('candles');
-  host.innerHTML = "";
-  if (CURRENT.length === 0){
-    host.innerHTML = `<div style="padding:10px;color:#475569">ไม่พบรูปแบบแท่งเทียนที่ค้นหา</div>`;
-    document.getElementById('pager').innerHTML = "";
-    return;
-  }
-  const totalPages = Math.ceil(CURRENT.length / pageSize);
-  page = Math.min(page, totalPages);
-  const start = (page-1)*pageSize;
-  const end = start + pageSize;
-  const slice = CURRENT.slice(start, end);
-
+  const host=document.getElementById('candles'); host.innerHTML="";
+  if(CURRENT.length===0){host.innerHTML=`<div style='padding:10px;color:#475569'>ไม่พบรูปแบบแท่งเทียน</div>`;return;}
+  const totalPages=Math.ceil(CURRENT.length/pageSize);
+  const start=(page-1)*pageSize, end=start+pageSize;
+  const slice=CURRENT.slice(start,end);
   slice.forEach(r=>{
-    const card = document.createElement('article');
-    card.className = 'card';
-
-    const img = document.createElement('img');
-    img.className = 'thumb';
-    const imgUrl = cleanUrl(r.image);
-    img.src = imgUrl || "https://placehold.co/240x160/e2e8f0/94a3b8?text=Candle";
-    img.onerror = ()=>{ img.src = "https://placehold.co/240x160/e2e8f0/94a3b8?text=Candle"; };
-
-    const right = document.createElement('div');
-    const tagColor = r.side === "Bearish" ? " red" : (r.side === "Bullish" ? "" : "");
-    right.innerHTML = `
+    const card=document.createElement('article'); card.className='card';
+    const img=document.createElement('img');
+    img.className='thumb'; img.src=r.image||PLACEHOLDER;
+    img.onerror=()=>img.src=PLACEHOLDER;
+    const right=document.createElement('div');
+    const tagColor=r.side==="Bearish"?" red":(r.side==="Bullish"?"":"");
+    right.innerHTML=`
       <div class="c-name">${r.name||""}</div>
-      <div class="c-meta">${r.grouping||""} • ${r.side||""} • ${r.count ? (r.count + " แท่ง") : ""}</div>
+      <div class="c-meta">${r.grouping||""} • ${r.side||""} • ${r.count?r.count+" แท่ง":""}</div>
       <span class="tag${tagColor}">${r.side||"Pattern"}</span>
-      ${r.grouping ? `<span class="tag blue">${r.grouping}</span>` : ""}
+      ${r.grouping?`<span class="tag blue">${r.grouping}</span>`:""}
     `;
-
-    card.append(img, right);
-    card.addEventListener('click', ()=>openModal(r));
+    card.append(img,right);
+    card.addEventListener('click',()=>openModal(r));
     host.append(card);
   });
-
-  const pager = document.getElementById('pager');
-  pager.innerHTML = "";
-  const total = CURRENT.length;
-
-  const btnPrev = document.createElement('button');
-  btnPrev.textContent = 'ย้อนกลับ';
-  btnPrev.className = 'btn';
-  btnPrev.disabled = page <= 1;
-  btnPrev.onclick = ()=>{ page = Math.max(1, page-1); renderList(); };
-
-  const info = document.createElement('span');
-  info.className = 'info';
-  info.textContent = `${start+1}-${Math.min(end,total)} / ${total} รูปแบบ`;
-
-  const btnNext = document.createElement('button');
-  btnNext.textContent = 'ถัดไป';
-  btnNext.className = 'btn';
-  btnNext.disabled = page >= totalPages;
-  btnNext.onclick = ()=>{ page = Math.min(totalPages, page+1); renderList(); };
-
-  pager.append(btnPrev, info, btnNext);
 }
 
-const modal = document.getElementById('detailModal');
-
+const modal=document.getElementById('detailModal');
 function openModal(r){
-  document.getElementById('mTitle').textContent = r.name || "";
-  const hero = document.getElementById('mImg');
-  const heroUrl = cleanUrl(r.image);
-  hero.src = heroUrl || PLACEHOLDER;
-  hero.onerror = ()=>{ hero.src = PLACEHOLDER; };
-
-  document.getElementById('mMeta').textContent =
-    `${r.side||""} • ${r.grouping||""} • ${r.count ? r.count + " แท่ง" : ""}`;
-
-  document.getElementById('mSummary').textContent = r.summary || "";
-  document.getElementById('mTip').textContent = r.tip || "ใช้ร่วมกับแนวรับแนวต้านและวอลุ่มจะชัดขึ้น";
-
-  const src = document.getElementById('mSource');
-  if (r.source_url){
-    src.href = r.source_url;
-    src.style.display = "inline-flex";
-  }else{
-    src.style.display = "none";
-  }
-
+  document.getElementById('mTitle').textContent=r.name||"ไม่ระบุชื่อ";
+  const imgEl=document.getElementById('mImg');
+  imgEl.src=(r.image||"").trim()||PLACEHOLDER;
+  imgEl.onerror=()=>{imgEl.src=PLACEHOLDER};
+  document.getElementById('mImgCaption').textContent=r.side?`รูปแบบฝั่ง ${r.side}`:"";
+  const metaParts=[];
+  if(r.side)metaParts.push(r.side);
+  if(r.grouping)metaParts.push(r.grouping);
+  if(r.count)metaParts.push(r.count+" แท่ง");
+  document.getElementById('mMeta').textContent=metaParts.join(" • ");
+  document.getElementById('mSummary').textContent=r.summary||"ยังไม่มีคำอธิบาย";
+  document.getElementById('mTip').textContent=r.tip||"ใช้ร่วมกับแนวรับแนวต้านและวอลุ่ม";
+  const linkEl=document.getElementById('mSource');
+  if(r.source_url){linkEl.href=r.source_url;linkEl.style.display="inline-block";}
+  else linkEl.style.display="none";
   modal.showModal();
 }
 
-document.getElementById('q').addEventListener('input', applyFilters);
-
-(async function init(){
-  try{
-    RAW = await loadCSV();
-  }catch(e){
-    console.error("โหลด CSV ไม่ได้", e);
-    RAW = [];
-  }
-  applyFilters();
-})();
+document.getElementById('q').addEventListener('input',applyFilters);
+(async function init(){RAW=await loadCSV();applyFilters();})();
 </script>
-
 </body>
 </html>
