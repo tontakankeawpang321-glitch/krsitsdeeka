@@ -3,11 +3,9 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>📈 Candlestick Library – รวมแท่งเทียน + เทคนิค</title>
+<title>📈 Candlestick Library – ดูแท่งเทียน + เทคนิค</title>
 
-<!-- Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
-<!-- PapaParse -->
 <script src="https://unpkg.com/papaparse@5.4.1/papaparse.min.js"></script>
 
 <style>
@@ -28,7 +26,6 @@
     background:linear-gradient(180deg,#0f172a 0%, #0f172a 180px, #e2e8f0 180px, #e2e8f0 100%);
     color:var(--ink);
   }
-
   header{
     position:sticky; top:0; z-index:50;
     background:rgba(15,23,42,.85);
@@ -46,16 +43,6 @@
   .search input{border:none; outline:none; background:transparent; color:#fff; width:100%}
   .search ::placeholder{color:rgba(255,255,255,.75)}
 
-  .filepick{
-    display:flex; gap:6px; align-items:center;
-    background:rgba(255,255,255,.08);
-    border:1px solid rgba(255,255,255,.05);
-    border-radius:999px; padding:4px 10px;
-    font-size:.78rem;
-  }
-  .filepick input{display:none;}
-  .filepick label{cursor:pointer;}
-
   .layout{max-width:980px; margin:14px auto 30px; padding:0 16px}
   #candles{
     background:var(--paper); border-radius:var(--radius); box-shadow:var(--shadow);
@@ -70,11 +57,11 @@
   }
   .card:hover{transform:translateY(-2px); box-shadow:0 16px 30px -20px rgba(15,23,42,.2)}
   .thumb{
-    width:100%; height:70px; border-radius:10px; object-fit:contain;
+    width:100%; height:70px; border-radius:10px; object-fit:cover;
     background:#e2e8f0;
   }
   .c-name{font-weight:700; color:#0f172a}
-  .c-meta{color:var(--muted); font-size:.75rem}
+  .c-meta{color:#475569; font-size:.75rem}
   .tag{display:inline-block; background:#ecfdf3; border:1px solid #bbf7d0; color:#166534; font-size:.7rem; padding:3px 8px; border-radius:999px; margin-top:4px}
   .tag.red{background:#fef2f2; border-color:#fecaca; color:#b91c1c}
   .tag.blue{background:#eff6ff; border-color:#dbeafe; color:#1d4ed8}
@@ -97,14 +84,13 @@
   .modal-body{
     background:#fff; padding:16px; display:grid; grid-template-columns:280px 1fr; gap:16px;
   }
-  .modal-body img{width:100%; border-radius:16px; border:1px solid #e2e8f0; background:#f8fafc; height:180px; object-fit:contain}
+  .modal-body img{width:100%; border-radius:16px; border:1px solid #e2e8f0; background:#f8fafc; height:180px; object-fit:cover}
   .close-btn{
     margin-left:auto; background:#fff; color:#0f172a; border:none; border-radius:999px; padding:6px 14px; cursor:pointer; font-weight:600
   }
   pre.tip{
     background:#f8fafc; border:1px solid #e2e8f0; border-radius:14px; padding:8px 10px; font-size:.78rem; line-height:1.5; white-space:pre-wrap
   }
-
   @media (max-width:620px){
     .card{grid-template-columns:68px 1fr}
     .thumb{height:64px}
@@ -120,11 +106,6 @@
     <div class="search">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
       <input id="q" type="search" placeholder="ค้นหา: bullish / bearish / engulfing / ดาวตก / 3 ตัว / 2 แท่ง ...">
-    </div>
-    <div class="filepick">
-      <label for="csvFile">📁 เลือก CSV</label>
-      <span id="fileName" style="opacity:.7">ยังไม่ได้เลือก</span>
-      <input type="file" id="csvFile" accept=".csv">
     </div>
   </div>
 </header>
@@ -151,7 +132,7 @@
     </div>
   </div>
   <div class="modal-footer" style="background:#fff;border-top:1px solid #e2e8f0;padding:15px 16px">
-    <a id="mSource" class="btn-primary" target="_blank" rel="noopener"
+    <a id="mSource" target="_blank" rel="noopener"
        style="background:#0f766e;color:#fff;border-radius:12px;padding:10px 14px;text-decoration:none;font-weight:600;display:inline-block">
        ดูตัวอย่างกราฟ
     </a>
@@ -159,15 +140,20 @@
 </dialog>
 
 <script>
-const SHEET_CSV_URL = "candlestick_100_images.csv"; // ชื่อไฟล์ที่อยู่โฟลเดอร์เดียวกับ index.html
+const SHEET_CSV_URL = "candlestick_100_images.csv"; // ชื่อไฟล์ csv ที่จะวางคู่กัน
 let RAW = [];
 let CURRENT = [];
 let page = 1;
 const pageSize = 20;
 const PLACEHOLDER = "https://placehold.co/240x160?text=Candle";
 
-// โหลดจาก URL ปกติ (ใช้ได้ตอนเปิดผ่าน server หรือโฮสต์)
-async function loadCSVFromUrl(){
+// ตัดช่องว่างที่ปลาย URL
+function cleanUrl(u){
+  if(!u) return "";
+  return String(u).trim();
+}
+
+async function loadCSV(){
   return new Promise((resolve, reject)=>{
     Papa.parse(SHEET_CSV_URL, {
       download:true,
@@ -177,24 +163,6 @@ async function loadCSVFromUrl(){
       error: reject
     });
   });
-}
-
-// โหลดจากไฟล์ที่ user เลือก
-function loadCSVFromFile(file){
-  return new Promise((resolve, reject)=>{
-    Papa.parse(file, {
-      header:true,
-      skipEmptyLines:true,
-      complete: res => resolve(res.data),
-      error: reject
-    });
-  });
-}
-
-// ตัดช่องว่าง/ตัวเว้นวรรคที่ทำให้รูปโหลดไม่ได้
-function cleanUrl(u){
-  if(!u) return "";
-  return String(u).trim().replace(/\s+/g, "");
 }
 
 function applyFilters(){
@@ -215,10 +183,9 @@ function renderList(){
     document.getElementById('pager').innerHTML = "";
     return;
   }
-
   const totalPages = Math.ceil(CURRENT.length / pageSize);
   page = Math.min(page, totalPages);
-  const start = (page - 1) * pageSize;
+  const start = (page-1)*pageSize;
   const end = start + pageSize;
   const slice = CURRENT.slice(start, end);
 
@@ -241,17 +208,14 @@ function renderList(){
       <span class="tag${tagColor}">${r.side||"Pattern"}</span>
       ${r.grouping ? `<span class="tag blue">${r.grouping}</span>` : ""}
     `;
-
     card.append(img, right);
     card.addEventListener('click', ()=>openModal(r));
     host.append(card);
   });
 
-  // pager
   const pager = document.getElementById('pager');
   pager.innerHTML = "";
   const total = CURRENT.length;
-
   const btnPrev = document.createElement('button');
   btnPrev.textContent = 'ย้อนกลับ';
   btnPrev.className = 'btn';
@@ -278,7 +242,6 @@ function openModal(r){
   const modalImg = document.getElementById('mImg');
   modalImg.src = imgUrl || PLACEHOLDER;
   modalImg.onerror = ()=>{ modalImg.src = PLACEHOLDER; };
-
   document.getElementById('mMeta').textContent = `${r.side||""} • ${r.grouping||""} • ${r.count ? r.count + " แท่ง" : ""}`;
   document.getElementById('mSummary').textContent = r.summary || "";
   document.getElementById('mTip').textContent = r.tip || "ใช้ร่วมกับแนวรับแนวต้านและวอลุ่มจะชัดขึ้น";
@@ -286,9 +249,9 @@ function openModal(r){
   const src = document.getElementById('mSource');
   if (r.source_url){
     src.href = r.source_url;
-    src.style.display = 'inline-block';
-  } else {
-    src.style.display = 'none';
+    src.style.display = "inline-block";
+  }else{
+    src.style.display = "none";
   }
   modal.showModal();
 }
@@ -296,22 +259,12 @@ function openModal(r){
 // ค้นหา
 document.getElementById('q').addEventListener('input', applyFilters);
 
-// โหลดจากไฟล์ที่เลือกเอง
-document.getElementById('csvFile').addEventListener('change', async (e)=>{
-  const file = e.target.files[0];
-  if (!file) return;
-  document.getElementById('fileName').textContent = file.name;
-  RAW = await loadCSVFromFile(file);
-  applyFilters();
-});
-
-// เริ่มต้น: พยายามโหลดจากไฟล์ที่อยู่โฟลเดอร์เดียวกันก่อน
+// init
 (async function init(){
-  try{
-    RAW = await loadCSVFromUrl();
-    document.getElementById('fileName').textContent = "candlestick_100_images.csv";
-  }catch(err){
-    console.warn("โหลด candlestick_100_images.csv ไม่ได้ ให้เลือกไฟล์ด้วยปุ่มด้านบนแทน", err);
+  try {
+    RAW = await loadCSV();
+  } catch(e) {
+    console.error("โหลด csv ไม่ได้", e);
     RAW = [];
   }
   applyFilters();
