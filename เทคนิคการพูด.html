@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>🗣️ Speaking Techniques Library – รวม 100 เทคนิคการพูด</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/papaparse@5.4.1/papaparse.min.js"></script>
+<style>
+:root{
+  --bg:#f3f4f6;
+  --paper:#fff;
+  --ink:#0f172a;
+  --muted:#6b7280;
+  --line:#e5e7eb;
+  --brand:#6366f1;
+  --accent:#f97316;
+  --radius:18px;
+  --shadow:0 16px 40px -22px rgba(15,23,42,.15);
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:"Sarabun",system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  background:linear-gradient(160deg,#eef2ff 0%, #f8fafc 40%, #fff 100%);
+  color:var(--ink);
+  min-height:100vh;
+}
+body.modal-open{overflow:hidden;}
+header{
+  position:sticky; top:0; z-index:50;
+  background:rgba(255,255,255,.9);
+  backdrop-filter:blur(8px);
+  border-bottom:1px solid rgba(99,102,241,.08);
+}
+header .wrap{
+  max-width:1000px; margin:auto;
+  display:flex; gap:12px; align-items:center; flex-wrap:wrap;
+  padding:14px 16px;
+}
+.title{
+  font-weight:700; font-size:1.2rem;
+  display:flex; gap:6px; align-items:center;
+}
+.badge{
+  background:rgba(99,102,241,.12);
+  color:#312e81;
+  font-size:.7rem;
+  padding:2px 12px;
+  border-radius:999px;
+}
+.search{
+  margin-left:auto;
+  display:flex; align-items:center; gap:8px;
+  background:rgba(99,102,241,.06);
+  border:1px solid rgba(99,102,241,.15);
+  padding:5px 12px;
+  border-radius:999px;
+  width:min(420px,100%);
+}
+.search input{
+  border:none; outline:none; background:transparent;
+  width:100%; font-size:.82rem; color:var(--ink);
+}
+.search ::placeholder{color:rgba(15,23,42,.45)}
+.layout{
+  max-width:1000px; margin:16px auto 40px; padding:0 16px;
+}
+#filters{
+  display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap;
+}
+.filter-btn{
+  background:#fff;
+  border:1px solid rgba(99,102,241,.18);
+  border-radius:999px;
+  padding:5px 12px 5px 10px;
+  display:flex; gap:6px; align-items:center;
+  font-size:.74rem;
+  cursor:pointer;
+  transition:.12s ease;
+}
+.filter-dot{
+  width:6px; height:6px; border-radius:999px; background:var(--brand);
+}
+.filter-btn[data-filter="intro"] .filter-dot{background:#f97316;}
+.filter-btn[data-filter="pitch"] .filter-dot{background:#22c55e;}
+.filter-btn[data-filter="followup"] .filter-dot{background:#0ea5e9;}
+.filter-btn[data-filter="problem"] .filter-dot{background:#ef4444;}
+.filter-btn.active{
+  background:var(--brand);
+  color:#fff;
+  border-color:transparent;
+}
+#listWrap{
+  background:transparent;
+}
+.tech-card{
+  background:var(--paper);
+  border:1px solid rgba(148,163,184,.12);
+  border-radius:16px;
+  padding:14px 14px 12px;
+  display:flex; gap:12px; align-items:flex-start;
+  margin-bottom:12px;
+  box-shadow:0 12px 28px -16px rgba(15,23,42,.12);
+  cursor:pointer;
+  transition:transform .12s ease, box-shadow .12s ease;
+}
+.tech-card:hover{
+  transform:translateY(-2px);
+  box-shadow:0 18px 36px -18px rgba(15,23,42,.14);
+}
+.tech-icon{
+  width:42px; height:42px; border-radius:16px;
+  background:radial-gradient(circle at 10% 10%, #6366f1 0%, #a855f7 40%, #f97316 100%);
+  display:flex; align-items:center; justify-content:center;
+  color:#fff; font-weight:700; font-size:.75rem;
+  flex:none;
+}
+.tech-body{flex:1;}
+.tech-title{font-weight:700; font-size:.9rem; margin-bottom:2px;}
+.tech-meta{font-size:.68rem; color:var(--muted); margin-bottom:6px;}
+.tech-preview{font-size:.72rem; color:#374151; line-height:1.35; max-height:3.1rem; overflow:hidden;}
+.tag{
+  display:inline-block; background:rgba(99,102,241,.08);
+  border:1px solid rgba(99,102,241,.14);
+  color:#312e81; font-size:.63rem;
+  padding:2px 8px; border-radius:999px; margin-top:6px; margin-right:4px;
+}
+.pager{
+  display:flex; justify-content:center; gap:8px; margin-top:14px; align-items:center;
+}
+.pager .btn{
+  border:1px solid var(--line);
+  background:#fff;
+  border-radius:9px;
+  padding:5px 11px;
+  cursor:pointer;
+  font-size:.7rem;
+}
+.pager .btn[disabled]{opacity:.4; cursor:not-allowed;}
+.pager .info{font-size:.7rem; color:var(--muted);}
+dialog.tech-dialog{
+  width:min(720px,96vw);
+  border:none;
+  border-radius:18px;
+  overflow:hidden;
+  background:#fff;
+  box-shadow:0 28px 44px -26px rgba(15,23,42,.5);
+  padding:0;
+}
+.td-head{
+  background:linear-gradient(140deg,#4f46e5 0%, #6366f1 30%, #f97316 100%);
+  padding:14px 16px 12px;
+  display:flex; gap:8px; align-items:center;
+  color:#fff;
+}
+.td-title{font-weight:700;}
+.td-close{
+  margin-left:auto;
+  background:rgba(255,255,255,.1);
+  border:1px solid rgba(255,255,255,.12);
+  color:#fff; border-radius:999px; padding:5px 12px; cursor:pointer; font-size:.68rem;
+}
+.td-body{
+  padding:16px 16px 14px; background:#fff;
+}
+.td-sub{font-size:.7rem; color:#6b7280; margin-bottom:10px;}
+.section-title{
+  font-size:.72rem; font-weight:600; margin-bottom:4px; color:#111827;
+  text-transform:uppercase; letter-spacing:.01em;
+}
+.section-box{
+  background:#f9fafb; border:1px solid #eef2ff;
+  border-radius:12px; padding:10px 12px; font-size:.75rem; line-height:1.45; white-space:pre-wrap;
+}
+.td-footer{
+  padding:9px 16px 14px; background:#fff; border-top:1px solid #eef2ff; text-align:right;
+}
+.td-link{
+  background:#6366f1; border:none; color:#fff; border-radius:999px;
+  padding:5px 12px; font-size:.68rem; font-weight:600; text-decoration:none;
+}
+footer{
+  text-align:center; font-size:.7rem; color:#94a3b8; margin:16px 0 28px;
+}
+footer a{color:#6366f1; text-decoration:none;}
+@media(max-width:640px){
+  .tech-card{flex-direction:row;}
+  .search{width:100%; margin-left:0;}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="title">🗣️ Speaking Techniques Library <span class="badge" id="countBadge">0 เทคนิค</span></div>
+    <div class="search">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="#4b5563" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <input id="q" type="search" placeholder="ค้นหา: เปิดบทสนทนา / ปิดการขาย / ต่อรอง / พูดในที่ประชุม ...">
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+  <div id="filters">
+    <button class="filter-btn active" data-filter="all"><span class="filter-dot"></span> ทั้งหมด</button>
+    <button class="filter-btn" data-filter="intro"><span class="filter-dot"></span> เปิดบทสนทนา</button>
+    <button class="filter-btn" data-filter="pitch"><span class="filter-dot"></span> นำเสนอ/ขาย</button>
+    <button class="filter-btn" data-filter="followup"><span class="filter-dot"></span> ติดตามงาน</button>
+    <button class="filter-btn" data-filter="problem"><span class="filter-dot"></span> แก้ปัญหา/ข้อโต้แย้ง</button>
+  </div>
+  <section id="listWrap"></section>
+  <div id="pager" class="pager"></div>
+</div>
+
+<dialog id="detailDialog" class="tech-dialog">
+  <div class="td-head">
+    <div>
+      <div class="td-title" id="dTitle">เทคนิคการพูด</div>
+      <div style="font-size:.68rem; opacity:.8;" id="dCat">หมวด</div>
+    </div>
+    <button id="dClose" class="td-close">ปิด</button>
+  </div>
+  <div class="td-body">
+    <div class="td-sub" id="dScenario"></div>
+    <div class="section-title">ตัวอย่างประโยค</div>
+    <div class="section-box" id="dScript"></div>
+    <div style="height:10px"></div>
+    <div class="section-title">เคล็ดลับ</div>
+    <div class="section-box" id="dTip"></div>
+  </div>
+  <div class="td-footer">
+    <a id="dLink" class="td-link" target="_blank" rel="noopener">ดูแหล่งอ้างอิง</a>
+  </div>
+</dialog>
+
+<script>
+const CSV_URL = "speaking_techniques.csv"; // ชื่อไฟล์ที่คุณจะวางไว้
+let RAW = [], CURRENT = [];
+let page = 1;
+const pageSize = 12;
+let currentFilter = "all";
+const dialogEl = document.getElementById("detailDialog");
+const dClose = document.getElementById("dClose");
+
+// โหลด CSV
+async function loadCSV(){
+  return new Promise((resolve, reject)=>{
+    Papa.parse(CSV_URL, {
+      download:true,
+      header:true,
+      skipEmptyLines:true,
+      complete:res=>resolve(res.data),
+      error:reject
+    });
+  });
+}
+
+function applyFilters(){
+  const q = document.getElementById("q").value.trim().toLowerCase();
+  CURRENT = RAW.filter(r=>{
+    // กรองตามหมวด
+    if(currentFilter !== "all"){
+      if((r.category||"").toLowerCase() !== mapFilterToCategory(currentFilter).toLowerCase())
+        return false;
+    }
+    // กรองตามคำค้น
+    const hay = `${r.title||""} ${r.category||""} ${r.scenario||""} ${r.script||""} ${r.tip||""}`.toLowerCase();
+    return q === "" ? true : hay.includes(q);
+  });
+  page = 1;
+  renderList();
+}
+
+function mapFilterToCategory(filterKey){
+  switch(filterKey){
+    case "intro": return "เปิดบทสนทนา";
+    case "pitch": return "นำเสนอ/ปิดการขาย";
+    case "followup": return "ติดตามงาน";
+    case "problem": return "ตอบข้อโต้แย้ง/แก้ปัญหา";
+    default: return "";
+  }
+}
+
+function renderList(){
+  const host = document.getElementById("listWrap");
+  host.innerHTML = "";
+  document.getElementById("countBadge").textContent = `${RAW.length} เทคนิค`;
+  if(CURRENT.length === 0){
+    host.innerHTML = `<div style="padding:10px;color:#6b7280;font-size:.8rem;">ไม่พบเทคนิคที่ตรงกับการค้นหา</div>`;
+    document.getElementById("pager").innerHTML = "";
+    return;
+  }
+  const totalPages = Math.ceil(CURRENT.length / pageSize);
+  const start = (page-1)*pageSize;
+  const end = start + pageSize;
+  const slice = CURRENT.slice(start, end);
+
+  slice.forEach(r=>{
+    const card = document.createElement("article");
+    card.className = "tech-card";
+
+    const icon = document.createElement("div");
+    icon.className = "tech-icon";
+    icon.textContent = (r.id || "?").toString().padStart(2,"0");
+
+    const body = document.createElement("div");
+    body.className = "tech-body";
+    body.innerHTML = `
+      <div class="tech-title">${r.title || "เทคนิคการพูด"}</div>
+      <div class="tech-meta">${r.category || ""}${r.scenario ? " • " + r.scenario : ""}</div>
+      <div class="tech-preview">${r.script || ""}</div>
+      ${r.category ? `<span class="tag">${r.category}</span>` : ""}
+    `;
+
+    card.append(icon, body);
+    card.addEventListener("click", ()=>openDialog(r));
+    host.append(card);
+  });
+
+  renderPager(totalPages);
+}
+
+function renderPager(totalPages){
+  const pager = document.getElementById("pager");
+  pager.innerHTML = "";
+  const prev = document.createElement("button");
+  prev.className = "btn";
+  prev.textContent = "ย้อนกลับ";
+  prev.disabled = page === 1;
+  prev.onclick = ()=>{ page--; renderList(); };
+
+  const next = document.createElement("button");
+  next.className = "btn";
+  next.textContent = "ถัดไป";
+  next.disabled = page === totalPages;
+  next.onclick = ()=>{ page++; renderList(); };
+
+  const info = document.createElement("div");
+  info.className = "info";
+  info.textContent = `หน้า ${page} / ${totalPages} (ทั้งหมด ${CURRENT.length} รายการ)`;
+
+  pager.append(prev, info, next);
+}
+
+function openDialog(r){
+  document.getElementById("dTitle").textContent = r.title || "เทคนิคการพูด";
+  document.getElementById("dCat").textContent = r.category || "";
+  document.getElementById("dScenario").textContent = r.scenario || "";
+  document.getElementById("dScript").textContent = r.script || "ยังไม่ได้ระบุประโยคตัวอย่าง";
+  document.getElementById("dTip").textContent = r.tip || "ใช้โทนเสียงสุภาพ และปรับคำให้เข้ากับผู้ฟัง";
+  const link = document.getElementById("dLink");
+  if(r.source_url){
+    link.style.display = "inline-block";
+    link.href = r.source_url;
+  } else {
+    link.style.display = "none";
+  }
+  if(typeof dialogEl.showModal === "function"){
+    dialogEl.showModal();
+    document.body.classList.add("modal-open");
+  } else {
+    dialogEl.style.display = "block";
+  }
+}
+
+dClose.addEventListener("click", ()=>{
+  dialogEl.close();
+  document.body.classList.remove("modal-open");
+});
+dialogEl.addEventListener("close", ()=>{
+  document.body.classList.remove("modal-open");
+});
+
+document.getElementById("q").addEventListener("input", applyFilters);
+document.querySelectorAll("#filters .filter-btn").forEach(btn=>{
+  btn.onclick = ()=>{
+    document.querySelectorAll("#filters .filter-btn").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    currentFilter = btn.dataset.filter;
+    applyFilters();
+  };
+});
+
+(async function init(){
+  RAW = await loadCSV();
+  applyFilters();
+})();
+</script>
+
+<footer>
+  © 2025 Crow Studio • คลังเทคนิคการพูด
+</footer>
+</body>
+</html>
