@@ -19,6 +19,9 @@ body{
   background:linear-gradient(180deg,#0f172a 0%, #0f172a 180px, #f1f5f9 180px, #f1f5f9 100%);
   color:var(--ink);
 }
+body.modal-open{
+  overflow:hidden;
+}
 /* header */
 header{
   position:sticky; top:0; z-index:50;
@@ -37,7 +40,6 @@ header .wrap{
 }
 .search input{border:none; outline:none; background:transparent; color:#fff; width:100%}
 .search ::placeholder{color:rgba(255,255,255,.75)}
-
 .layout{max-width:980px; margin:14px auto 30px; padding:0 16px}
 
 /* filter buttons */
@@ -70,11 +72,29 @@ header .wrap{
 }
 .card:hover{transform:translateY(-2px); box-shadow:0 16px 30px -20px rgba(15,23,42,.2)}
 
+/* เราวาดเทียนใน list ด้วยกล่องนี้ */
 .thumb{
   width:100%; height:70px; border-radius:12px; background:#e2e8f0;
   display:flex; align-items:center; justify-content:center; overflow:hidden;
 }
-.thumb img{width:100%; height:100%; object-fit:contain;}
+.list-candle{
+  position:relative;
+  width:32px; height:56px;
+  display:flex; align-items:center; justify-content:center;
+}
+.list-candle .wick-top,
+.list-candle .wick-bottom{
+  position:absolute;
+  width:3px; background:#0f172a; left:50%; transform:translateX(-50%);
+  border-radius:99px;
+}
+.list-candle .wick-top{top:4px; height:20px; background:#0f172a;}
+.list-candle .wick-bottom{bottom:4px; height:14px; background:#0f172a;}
+.list-candle .body{
+  width:16px; height:32px; border-radius:6px; background:#10b981;
+}
+
+/* text */
 .c-name{font-weight:700; color:#0f172a}
 .c-meta{color:#475569; font-size:.75rem}
 .tag{display:inline-block; background:#ecfdf3; border:1px solid #bbf7d0; color:#166534; font-size:.7rem; padding:3px 8px; border-radius:999px; margin-top:4px}
@@ -102,27 +122,20 @@ dialog.candle-dialog{
   display:flex; gap:12px; align-items:center;
   padding:16px 18px 6px;
 }
-.cd-title{
-  font-size:1.2rem;
-  font-weight:700;
-}
+.cd-title{font-size:1.2rem; font-weight:700;}
 .cd-close{
-  margin-left:auto;
-  background:rgba(255,255,255,.07);
-  border:none; color:#fff;
-  border-radius:999px; padding:6px 14px;
-  cursor:pointer; font-weight:600;
+  margin-left:auto; background:rgba(255,255,255,.07);
+  border:none; color:#fff; border-radius:999px; padding:6px 14px; cursor:pointer; font-weight:600;
 }
 .cd-body{padding:14px 18px 16px;}
 .cd-sub{color:rgba(255,255,255,.6);font-size:.76rem;margin-bottom:14px;}
 .cd-row{display:flex;gap:20px;align-items:center;}
 .cd-left{
-  width:120px;height:120px;
+  width:140px;height:140px;
   background:rgba(255,255,255,.02);
   border:1px solid rgba(255,255,255,.03);
   border-radius:16px;
   display:flex;align-items:center;justify-content:center;
-  overflow:hidden;
 }
 .cd-candle{
   position:relative;
@@ -168,14 +181,12 @@ dialog.candle-dialog{
 <dialog id="detailDialog" class="candle-dialog">
   <div class="cd-head">
     <div class="cd-title" id="dTitle">PATTERN</div>
-    <button class="cd-close" onclick="detailDialog.close()">ปิด</button>
+    <button class="cd-close" id="dClose">ปิด</button>
   </div>
   <div class="cd-body">
     <div class="cd-sub" id="dSubtitle"></div>
     <div class="cd-row">
-      <div class="cd-left" id="dCandleBox">
-        <!-- เราจะวาดแท่งเทียนด้วย JS -->
-      </div>
+      <div class="cd-left" id="dCandleBox"></div>
       <div class="cd-right">
         <h4>คำอธิบาย</h4>
         <p id="dSummary"></p>
@@ -196,13 +207,61 @@ let page = 1;
 const pageSize = 10;
 let currentFilter = "all";
 const detailDialog = document.getElementById('detailDialog');
+const dClose = document.getElementById('dClose');
 
-function slugify(name='pattern'){
-  return name.toLowerCase()
-    .replace(/[\(\)\/]/g,' ')
-    .replace(/[^a-z0-9ก-๙]+/g,'-')
-    .replace(/-+/g,'-')
-    .replace(/^-|-$/g,'');
+// ช่วยวาดเทียนแบบเดียวกันทั้ง list และ dialog
+function makeCandleElement(side, name){
+  const lower = (name||"").toLowerCase();
+  const wrap = document.createElement('div');
+  wrap.className = 'cd-candle'; // ใช้คลาสเดียวกันให้หน้าตาใกล้เคียง
+
+  // wick
+  const wickTop = document.createElement('div');
+  wickTop.style.position = "absolute";
+  wickTop.style.top = "6px";
+  wickTop.style.left = "50%";
+  wickTop.style.transform = "translateX(-50%)";
+  wickTop.style.width = "4px";
+  wickTop.style.height = "36px";
+  wickTop.style.background = "#fff";
+  wickTop.style.borderRadius = "99px";
+
+  const wickBottom = document.createElement('div');
+  wickBottom.style.position = "absolute";
+  wickBottom.style.bottom = "6px";
+  wickBottom.style.left = "50%";
+  wickBottom.style.transform = "translateX(-50%)";
+  wickBottom.style.width = "4px";
+  wickBottom.style.height = "22px";
+  wickBottom.style.background = "#fff";
+  wickBottom.style.borderRadius = "99px";
+
+  const body = document.createElement('div');
+  body.style.width = "20px";
+  body.style.height = "48px";
+  body.style.borderRadius = "7px";
+
+  if (side === "Bearish") body.style.background = "#ef4444";
+  else if (side === "Bullish") body.style.background = "#10b981";
+  else body.style.background = "#94a3b8";
+
+  // ปรับตามชื่อ pattern
+  if (lower.includes("hammer") && !lower.includes("inverted")){
+    // hammer
+    wickTop.style.height = "8px";
+    wickBottom.style.height = "42px";
+    body.style.height = "30px";
+  } else if (lower.includes("inverted") || lower.includes("shooting star")){
+    // inverted
+    wickTop.style.height = "44px";
+    wickBottom.style.height = "6px";
+    body.style.height = "28px";
+  } else if (lower.includes("engulf")){
+    body.style.height = "58px";
+  }
+
+  wrap.append(wickTop, body, wickBottom);
+  return wrap;
 }
 
 async function loadCSV(){
@@ -248,30 +307,11 @@ function renderList(){
     const thumb = document.createElement('div');
     thumb.className = 'thumb';
 
-    // ลองใช้รูปจาก csv ถ้ามี
-    if (r.image){
-      const img = document.createElement('img');
-      img.src = r.image;
-      img.alt = r.name || "pattern";
-      img.onerror = () => {
-        // ถ้ารูปไม่มา ให้โชว์แท่งง่ายๆ
-        thumb.innerHTML = '';
-        const bar = document.createElement('div');
-        bar.style.width = "14px";
-        bar.style.height = "42px";
-        bar.style.borderRadius = "4px";
-        bar.style.background = r.side === "Bearish" ? "#ef4444" : (r.side === "Bullish" ? "#10b981" : "#94a3b8");
-        thumb.appendChild(bar);
-      };
-      thumb.appendChild(img);
-    } else {
-      const bar = document.createElement('div');
-      bar.style.width = "14px";
-      bar.style.height = "42px";
-      bar.style.borderRadius = "4px";
-      bar.style.background = r.side === "Bearish" ? "#ef4444" : (r.side === "Bullish" ? "#10b981" : "#94a3b8");
-      thumb.appendChild(bar);
-    }
+    // ✨ ใช้ตัววาดเทียนเดียวกับ dialog
+    const listCandle = makeCandleElement(r.side, r.name);
+    // ย่อไซซ์นิดหนึ่งให้เข้า 70px
+    listCandle.style.transform = "scale(.7)";
+    thumb.appendChild(listCandle);
 
     const right = document.createElement('div');
     const tagColor = r.side === "Bearish" ? " red" : "";
@@ -281,7 +321,6 @@ function renderList(){
       <span class="tag${tagColor}">${r.side||"Pattern"}</span>
       ${r.grouping ? `<span class="tag blue">${r.grouping}</span>` : ""}
     `;
-
     card.append(thumb, right);
     card.addEventListener('click', ()=>openDialogFromRecord(r));
     host.append(card);
@@ -312,67 +351,6 @@ function renderPager(totalPages){
   pager.append(prev, info, next);
 }
 
-// ฟังก์ชันวาดแท่งเทียนแบบ 100% ใน dialog
-function buildDialogCandle(container, rec){
-  container.innerHTML = "";
-  const wrap = document.createElement('div');
-  wrap.className = "cd-candle";
-
-  // wick
-  const wickTop = document.createElement('div');
-  wickTop.style.position = "absolute";
-  wickTop.style.top = "5px";
-  wickTop.style.left = "50%";
-  wickTop.style.transform = "translateX(-50%)";
-  wickTop.style.width = "4px";
-  wickTop.style.height = "38px";
-  wickTop.style.background = "#fff";
-  wickTop.style.borderRadius = "99px";
-
-  const wickBottom = document.createElement('div');
-  wickBottom.style.position = "absolute";
-  wickBottom.style.bottom = "3px";
-  wickBottom.style.left = "50%";
-  wickBottom.style.transform = "translateX(-50%)";
-  wickBottom.style.width = "4px";
-  wickBottom.style.height = "22px";
-  wickBottom.style.background = "#fff";
-  wickBottom.style.borderRadius = "99px";
-
-  // body
-  const body = document.createElement('div');
-  body.style.width = "22px";
-  body.style.height = "46px";
-  body.style.borderRadius = "6px";
-  // ฝั่งไหนก็ลงสีตามนั้น
-  if (rec.side === "Bearish"){
-    body.style.background = "#ef4444";
-  } else if (rec.side === "Bullish"){
-    body.style.background = "#10b981";
-  } else {
-    body.style.background = "#94a3b8";
-  }
-
-  // ปรับบาง pattern ให้ต่างนิดนึง
-  const n = (rec.name||"").toLowerCase();
-  if (n.includes("hammer") && !n.includes("inverted")){
-    wickTop.style.height = "6px";
-    wickBottom.style.height = "40px";
-    body.style.height = "32px";
-  } else if (n.includes("inverted hammer") || n.includes("shooting star")){
-    wickTop.style.height = "40px";
-    wickBottom.style.height = "6px";
-    body.style.height = "28px";
-  } else if (n.includes("engulfing")){
-    body.style.height = "58px";
-    wickTop.style.height = "20px";
-    wickBottom.style.height = "12px";
-  }
-
-  wrap.append(wickTop, body, wickBottom);
-  container.append(wrap);
-}
-
 function openDialogFromRecord(r){
   document.getElementById('dTitle').textContent = r.name || "PATTERN";
   document.getElementById('dSubtitle').textContent = r.grouping ? `${r.grouping} • ${r.side||""}` : (r.side||"");
@@ -387,25 +365,47 @@ function openDialogFromRecord(r){
     link.style.display = "none";
   }
 
-  // วาดเทียนให้ตรง 100%
+  // วาดเทียนใน dialog
   const box = document.getElementById('dCandleBox');
-  buildDialogCandle(box, r);
+  box.innerHTML = "";
+  box.appendChild(makeCandleElement(r.side, r.name));
 
   if (typeof detailDialog.showModal === "function") {
     detailDialog.showModal();
   } else {
     detailDialog.style.display = "block";
   }
+
+  // ล็อก scroll
+  document.body.classList.add('modal-open');
 }
+
+// ปิด dialog
+dClose.addEventListener('click', () => {
+  detailDialog.close();
+  document.body.classList.remove('modal-open');
+});
+detailDialog.addEventListener('close', () => {
+  document.body.classList.remove('modal-open');
+});
 
 document.getElementById('q').addEventListener('input', applyFilters);
 document.querySelectorAll('#filters .filter-btn').forEach(btn=>{
   btn.addEventListener('click', ()=>{
     document.querySelectorAll('#filters .filter-btn').forEach(b=>b.classList.remove('active'));
+    btn.addEventListener
+    currentFilter = btn.dataset.filter;
+    applyFilters();
+  }, {once:false});
+});
+// แก้บั๊กอีเวนต์ด้านบนแบบง่าย
+document.querySelectorAll('#filters .filter-btn').forEach(btn=>{
+  btn.onclick = () => {
+    document.querySelectorAll('#filters .filter-btn').forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');
     currentFilter = btn.dataset.filter;
     applyFilters();
-  });
+  }
 });
 
 (async function init(){
