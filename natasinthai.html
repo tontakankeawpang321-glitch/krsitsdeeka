@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>นาฏศิลป์ไทย – ปุ่มลายไทย & เมนูย่อยเปิดถาวร (ลิงก์ _blank)</title>
+
+<!-- Hints ช่วยโหลดฟอนต์ไวขึ้น -->
+<link rel="dns-prefetch" href="https://fonts.googleapis.com">
+<link rel="dns-prefetch" href="https://fonts.gstatic.com">
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kodchasan:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{--bg:#fffdf7;--ink:#241a08;--muted:#6b5b3a;--line:#efe8da;--gold1:#f7e5b2;--gold2:#e4c96d;--gold3:#c89e4a;--thai:#b38728;--radius:18px;--shadow:0 12px 24px -14px rgba(0,0,0,.25)}
+  *{box-sizing:border-box}body{margin:0;font-family:"Kodchasan",system-ui,-apple-system,Segoe UI,Roboto,"Noto Sans Thai",sans-serif;background:var(--bg);color:var(--ink)}
+  .wrap{max-width:900px;margin:auto;padding:20px}
+  h1{font-size:clamp(24px,5vw,36px);font-weight:700;margin-bottom:12px;text-align:center;color:var(--thai)}
+  .thai-btn{position:relative;display:block;width:100%;margin:8px 0;padding:14px 16px;font-size:18px;font-weight:700;color:#3a2a09;text-align:left;border:none;cursor:default;border-radius:var(--radius);
+    background:linear-gradient(180deg,var(--gold1),var(--gold2) 60%,var(--gold3));box-shadow:0 2px 0 #fff inset,0 10px 20px -12px rgba(0,0,0,.25),0 4px 0 0 var(--gold3)}
+  .thai-btn .d{font-size:14px;color:var(--muted)}
+  .submenu{display:grid;grid-template-columns:1fr;gap:10px;margin-top:16px}
+  .mini{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:14px;background:#fff;box-shadow:0 8px 16px -14px rgba(0,0,0,.25);text-decoration:none;color:inherit}
+  .dot{width:12px;height:12px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#f5cf6a,#b38728);flex:0 0 12px}
+  .t{font-weight:600}.u{font-size:12px;color:var(--muted)}
+  .quiz-btn{margin-top:22px;display:inline-block;text-decoration:none;padding:14px 20px;font-weight:700;font-size:18px;border-radius:var(--radius);
+    background:linear-gradient(180deg,#fff6d4,#f4d97a 70%,#e6c049);color:#3a2a09;box-shadow:0 2px 0 #fff inset,0 10px 20px -12px rgba(0,0,0,.25),0 4px 0 0 #b38728;transition:transform .08s ease}
+  .quiz-btn:active{transform:translateY(2px)}
+  .quiz-btn span{background:#3a2a09;color:#fff;padding:3px 8px;border-radius:999px;font-size:13px;margin-left:6px}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>นาฏศิลป์ไทย</h1>
+    <button class="thai-btn"><div class="h">บทเรียนความรู้</div><div class="d">หัวข้อย่อยทั้งหมดแสดงด้านล่าง</div></button>
+    <div id="submenu" class="submenu"></div>
+    <a id="btnQuiz" class="quiz-btn" href="https://sites.google.com/view/nardtasinthai/%E0%B9%81%E0%B8%9A%E0%B8%9A%E0%B8%97%E0%B8%94%E0%B8%AA%E0%B8%AD%E0%B8%9A%E0%B8%99%E0%B8%B2%E0%B8%8F%E0%B8%A8%E0%B8%A5%E0%B8%9B-500-%E0%B8%82%E0%B8%AD?authuser=0" target="_blank" rel="noopener">บททดสอบความรู้<span>500 ข้อ</span></a>
+  </div>
+
+<script defer>
+const QUIZ_URL="https://sites.google.com/view/nardtasinthai/%E0%B9%81%E0%B8%9A%E0%B8%9A%E0%B8%97%E0%B8%94%E0%B8%AA%E0%B8%AD%E0%B8%9A%E0%B8%99%E0%B8%B2%E0%B8%8F%E0%B8%A8%E0%B8%A5%E0%B8%9B-500-%E0%B8%82%E0%B8%AD";
+const L=[
+  ["ที่มาและความสําคัญของนาฏศิลป์ไทย","https://sites.google.com/view/nardtasinthai/%E0%B8%97%E0%B8%A1%E0%B8%B2%E0%B9%81%E0%B8%A5%E0%B8%B0%E0%B8%84%E0%B8%A7%E0%B8%B2%E0%B8%A1%E0%B8%AA%E0%B8%B2%E0%B8%84%E0%B8%8D%E0%B8%82%E0%B8%AD%E0%B8%87%E0%B8%99%E0%B8%B2%E0%B8%8F%E0%B8%A8%E0%B8%A5%E0%B8%9B%E0%B9%84%E0%B8%97%E0%B8%A2"],
+  ["ประเภท","https://sites.google.com/view/nardtasinthai/%E0%B8%9B%E0%B8%A3%E0%B8%B0%E0%B9%80%E0%B8%A0%E0%B8%97"],
+  ["พิธีไหว้ครูนาฏศิลป์","https://sites.google.com/view/nardtasinthai/%E0%B8%9E%E0%B8%98%E0%B9%84%E0%B8%AB%E0%B8%A7%E0%B8%84%E0%B8%A3%E0%B8%99%E0%B8%B2%E0%B8%8F%E0%B8%A8%E0%B8%A5%E0%B8%9B?authuser=0"],
+  ["เพลงหน้าพาทย์","https://sites.google.com/view/nardtasinthai/%E0%B9%80%E0%B8%9E%E0%B8%A5%E0%B8%87%E0%B8%AB%E0%B8%99%E0%B8%B2%E0%B8%9E%E0%B8%B2%E0%B8%97%E0%B8%A2"],
+  ["นาฏยศัพท์ ภาษาท่า และการรําตีบท","https://sites.google.com/view/nardtasinthai/%E0%B8%99%E0%B8%B2%E0%B8%8F%E0%B8%A2%E0%B8%A8%E0%B8%9E%E0%B8%97-%E0%B8%A0%E0%B8%B2%E0%B8%A9%E0%B8%B2%E0%B8%97%E0%B8%B2-%E0%B9%81%E0%B8%A5%E0%B8%B0%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%A3%E0%B8%B2%E0%B8%95%E0%B8%9A%E0%B8%97"],
+  ["หัวโขน ละคร และการแต่งกาย","https://sites.google.com/view/nardtasinthai/%E0%B8%AB%E0%B8%A7%E0%B9%82%E0%B8%82%E0%B8%99-%E0%B8%A5%E0%B8%B0%E0%B8%84%E0%B8%A3-%E0%B9%81%E0%B8%A5%E0%B8%B0%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B9%81%E0%B8%95%E0%B8%87%E0%B8%81%E0%B8%B2%E0%B8%A2"],
+  ["การแสดงโขน","https://sites.google.com/view/nardtasinthai/%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B9%81%E0%B8%AA%E0%B8%94%E0%B8%87%E0%B9%82%E0%B8%82%E0%B8%99"],
+  ["การละครไทยและละครสร้างสรรค์","https://sites.google.com/view/nardtasinthai/%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%A5%E0%B8%B0%E0%B8%84%E0%B8%A3%E0%B9%84%E0%B8%97%E0%B8%A2%E0%B9%81%E0%B8%A5%E0%B8%B0%E0%B8%A5%E0%B8%B0%E0%B8%84%E0%B8%A3%E0%B8%AA%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%87%E0%B8%AA%E0%B8%A3%E0%B8%A3%E0%B8%84"],
+  ["รําและระบํา","https://sites.google.com/view/nardtasinthai/%E0%B8%A3%E0%B8%B2%E0%B9%81%E0%B8%A5%E0%B8%B0%E0%B8%A3%E0%B8%B0%E0%B8%9A%E0%B8%B2"],
+  ["ระบํามาตรฐาน","https://sites.google.com/view/nardtasinthai/%E0%B8%A3%E0%B8%B0%E0%B8%9A%E0%B8%B2%E0%B8%A1%E0%B8%B2%E0%B8%95%E0%B8%A3%E0%B8%90%E0%B8%B2%E0%B8%99"],
+  ["ระบําโบราณคดี","https://sites.google.com/view/nardtasinthai/%E0%B8%A3%E0%B8%B0%E0%B8%9A%E0%B8%B2%E0%B9%82%E0%B8%9A%E0%B8%A3%E0%B8%B2%E0%B8%93%E0%B8%84%E0%B8%94"],
+  ["รําวงมาตรฐาน","https://sites.google.com/view/nardtasinthai/%E0%B8%A3%E0%B8%B2%E0%B8%A7%E0%B8%87%E0%B8%A1%E0%B8%B2%E0%B8%95%E0%B8%A3%E0%B8%90%E0%B8%B2%E0%B8%99"],
+  ["การละเล่นของหลวง","https://sites.google.com/view/nardtasinthai/%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%A5%E0%B8%B0%E0%B9%80%E0%B8%A5%E0%B8%99%E0%B8%82%E0%B8%AD%E0%B8%87%E0%B8%AB%E0%B8%A5%E0%B8%A7%E0%B8%87"],
+  ["การแสดงพื้นเมือง","https://sites.google.com/view/nardtasinthai/%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B9%81%E0%B8%AA%E0%B8%94%E0%B8%87%E0%B8%9E%E0%B8%99%E0%B9%80%E0%B8%A1%E0%B8%AD%E0%B8%87"],
+  ["บุคคลสําคัญทางด้านนาฏศิลป์ไทย","https://sites.google.com/view/nardtasinthai/%E0%B8%9A%E0%B8%84%E0%B8%84%E0%B8%A5%E0%B8%AA%E0%B8%B2%E0%B8%84%E0%B8%8D%E0%B8%97%E0%B8%B2%E0%B8%87%E0%B8%94%E0%B8%B2%E0%B8%99%E0%B8%99%E0%B8%B2%E0%B8%8F%E0%B8%A8%E0%B8%A5%E0%B8%9B%E0%B9%84%E0%B8%97%E0%B8%A2"],
+  ["นาฏศิลป์สากลและต่างประเทศ","https://sites.google.com/view/nardtasinthai/%E0%B8%99%E0%B8%B2%E0%B8%8F%E0%B8%A8%E0%B8%A5%E0%B8%9B%E0%B8%AA%E0%B8%B2%E0%B8%81%E0%B8%A5%E0%B9%81%E0%B8%A5%E0%B8%B0%E0%B8%95%E0%B9%88%E0%B8%B2%E0%B8%87%E0%B8%9B%E0%B8%A3%E0%B8%B0%E0%B9%80%E0%B8%97%E0%B8%A8"],
+  ["นาฏศิลป์อาเซียน","https://sites.google.com/view/nardtasinthai/%E0%B8%99%E0%B8%B2%E0%B8%8F%E0%B8%A8%E0%B8%A5%E0%B8%9B%E0%B8%AD%E0%B8%B2%E0%B9%80%E0%B8%8B%E0%B8%A2%E0%B8%99"],
+  ["หุ่นไทย","https://sites.google.com/view/nardtasinthai/%E0%B8%AB%E0%B8%99%E0%B9%84%E0%B8%97%E0%B8%A2"],
+  ["จารีตนาฏศิลป์ไทย","https://sites.google.com/view/nardtasinthai/%E0%B8%88%E0%B8%B2%E0%B8%A3%E0%B8%95%E0%B8%99%E0%B8%B2%E0%B8%8F%E0%B8%A8%E0%B8%A5%E0%B8%9B%E0%B9%84%E0%B8%97%E0%B8%A2"]
+];
+const el=document.getElementById('submenu');
+el.innerHTML=L.map((x,i)=>`<a class="mini" href="${x[1]}" target="_blank" rel="noopener"><span class="dot"></span><div><div class="t">${i+1}. ${x[0]}</div><div class="u">เปิดอ่าน</div></div></a>`).join('');
+document.getElementById('btnQuiz').href=QUIZ_URL;
+</script>
+<center <footer>
+  © 2025 Crow Studio • 
+</footer> </center>
+</body>
+</html>
