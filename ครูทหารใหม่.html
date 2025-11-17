@@ -134,6 +134,39 @@
     .manual-item { transition: none; }
     .manual-item:hover, .manual-item:active { transform: none; }
   }
+     .fab-chatbot {
+    position: fixed;
+    bottom: 70px;
+    right: 50px;
+    width: 40px;
+    height: 40px;
+    background-color: #000000;
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 21px; /* ปรับขนาดสำหรับ emoji */
+    text-decoration: none;
+    box-shadow: var(--shadow);
+    transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+    z-index: 1000;
+  }
+
+  .fab-chatbot:hover {
+    background-color: var(--blue-shadow);
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: var(--shadow-hover);
+  }
+
+  .fab-chatbot:active {
+    transform: scale(0.98);
+  }
+
+  .fab-chatbot:focus-visible {
+    outline: 3px solid var(--royal-blue);
+    outline-offset: 3px;
+  }
 </style>
 </head>
 <body>
