@@ -1,3 +1,8 @@
+แน่นอนครับ นี่คือโค้ด HTML ที่อัปเดตแล้ว โดยเพิ่มปุ่ม FAB (Floating Action Button) สำหรับแชทบอทที่มุมขวาล่างตามที่คุณต้องการครับ
+
+ผมได้เพิ่ม CSS ใหม่เข้าไปในส่วน `<style>` และเพิ่ม HTML ของปุ่มเข้าไปก่อนปิดแท็ก `</body>` ครับ
+
+```html
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -236,6 +241,43 @@
     color: var(--muted);
     opacity: .8;
   }
+
+  /* === FAB Chatbot Button (เพิ่มส่วนนี้) === */
+  .fab-chatbot {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    width: 60px;
+    height: 60px;
+    background-color: var(--royal-blue);
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px; /* ปรับขนาดสำหรับ emoji */
+    text-decoration: none;
+    box-shadow: var(--shadow);
+    transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+    z-index: 1000;
+  }
+
+  .fab-chatbot:hover {
+    background-color: var(--blue-shadow);
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: var(--shadow-hover);
+  }
+
+  .fab-chatbot:active {
+    transform: scale(0.98);
+  }
+
+  .fab-chatbot:focus-visible {
+    outline: 3px solid var(--royal-blue);
+    outline-offset: 3px;
+  }
+  /* === End FAB Chatbot Button === */
+
 </style>
 </head>
 <body>
@@ -430,5 +472,10 @@
     <a href="ลิงก์ข้อตกลง">ข้อตกลงการใช้งาน</a>
   </p>
 </footer>
+
+<a href="#" class="fab-chatbot" title="แชทบอทพระไตรปิฎก" aria-label="แชทบอทพระไตรปิฎก">
+  Ai
+</a>
+
 </body>
 </html>
