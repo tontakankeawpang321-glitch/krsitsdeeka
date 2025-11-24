@@ -1,6 +1,6 @@
 id	name	side	count	grouping	image	summary	tip	source_url
-001	แนวโน้มขาขึ้น	Neutral	1	เทคนิค	images/bulishpatherns.png ดูแท่งเทียน อินดิเคเตอร์ สังเกต แล้วค่อยเลือกจุดเข้า	จังหวะตัวถัดไปกดทันทีด้วย	https://drive.google.com/file/d/1AaW1oY1gby65w6BMQVSMFGCmgPKhfRXS/view?usp=sharing/
-002	แนวโน้มขาลง	Neutral	1	เทคนิค	images/images/bearlishpatterns.png	ดูแท่งเทียน อินดิเคเตอร์ สังเกต แล้วค่อยเลือกจุดเข้า	จังหวะตัวถัดไปกดทันทีด้วย	https://drive.google.com/file/d/1p6gdTm42BNIGYsJazdRJOnNurF6x8lp8/view?usp=sharing/
+001	แนวโน้มขาขึ้น	Neutral	1	เทคนิค	images/bulishpatherns.png  ดูแท่งเทียน อินดิเคเตอร์ สังเกต แล้วค่อยเลือกจุดเข้า	จังหวะตัวถัดไปกดทันทีด้วย	https://drive.google.com/file/d/1AaW1oY1gby65w6BMQVSMFGCmgPKhfRXS/view?usp=sharing/
+002	แนวโน้มขาลง	Neutral	1	เทคนิค	images/bearlishpatterns.png  ดูแท่งเทียน อินดิเคเตอร์ สังเกต แล้วค่อยเลือกจุดเข้า	จังหวะตัวถัดไปกดทันทีด้วย	https://drive.google.com/file/d/1p6gdTm42BNIGYsJazdRJOnNurF6x8lp8/view?usp=sharing/
 1	Bullish Engulfing	Bullish	2	ขาขึ้น 2 แท่ง	images/bulishengufin.png	แท่งเขียวกลืนแท่งแดงก่อนหน้า สัญญาณกลับตัวขึ้น	ให้เกิดหลังขาลง ถ้าวอลุ่มมากยิ่งดี	https://www.xs.com/en/blog/bullish-engulfing-candlestick/
 2	Bearish Engulfing	Bearish	2	ขาลง 2 แท่ง	images/bearlishengufin.png	แท่งแดงกลืนแท่งเขียวก่อนหน้า สัญญาณกลับตัวลง	ให้เกิดหลังขึ้นแรงจะน่าเชื่อถือ	https://www.xs.com/en/blog/bearish-engulfing-candlestick-pattern/
 3	Hammer	Bullish	1	กลับตัว 1 แท่ง	images/patterns/hammer.png	แท่งเดียวหางล่างยาว ตัวเทียนเล็ก บอกแรงซื้อกลับ	รอดูแท่งถัดไปปิดเขียวค่อยยืนยัน	https://www.investopedia.com/terms/h/hammer.asp
@@ -101,6 +101,7 @@ id	name	side	count	grouping	image	summary	tip	source_url
 98	การใช้ Profile ดู Value Area	Neutral	1	เทคนิค	images/techniques/การใช้-profile-ดู-value-area.png	Value Area บอกโซนที่ตลาดยอมรับราคา	เข้าใกล้ VAH/VAL + สัญญาณกลับตัว	https://www.investopedia.com/
 99	การเทรดตามระบบอัตโนมัติ (Algo Idea)	Neutral	1	เทคนิค	images/techniques/การเทรดตามระบบอัตโนมัติ-algo-idea.png	สร้างกฎจากอินดิเคเตอร์แล้วให้ระบบยิงคำสั่ง	ลดอารมณ์ระหว่างเทรด	https://www.investopedia.com/terms/a/algorithmic-trading.asp
 100	การวิเคราะห์ภาพรวมก่อนเทรด	Neutral	1	เทคนิค	images/techniques/การวิเคราะห์ภาพรวมก่อนเทรด.png	ดูเทรนด์ใหญ่ อินดิเคเตอร์ ข่าว แล้วค่อยเลือกจุดเข้า	ช่วยกรองเทรดไม่ดีออก	https://www.investopedia.com/
+
 
 
 
