@@ -151,40 +151,40 @@ dialog.candle-dialog{
 @media(max-width:600px){
   .cd-row{flex-direction:column;align-items:flex-start;}
   .cd-left{width:100%;justify-content:flex-start;}
-}  .fab-chatbot {
-    position: fixed;
-    bottom: 100px;
-    right: 25px;
-    width: 40px;
-    height: 40px;
-    background-color: #000000;
-    color: #fff;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 21px; /* ปรับขนาดสำหรับ emoji */
-    text-decoration: none;
-    box-shadow: var(--shadow);
-    transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
-    z-index: 1000;
-  }
+}
 
-  .fab-chatbot:hover {
-    background-color: var(--blue-shadow);
-    transform: translateY(-3px) scale(1.05);
-    box-shadow: var(--shadow-hover);
-  }
-
-  .fab-chatbot:active {
-    transform: scale(0.98);
-  }
-
-  .fab-chatbot:focus-visible {
-    outline: 3px solid var(--royal-blue);
-    outline-offset: 3px;
-  }
-  /* === End FAB Chatbot Button === */
+/* === FAB Chatbot Button === */
+.fab-chatbot {
+  position: fixed;
+  bottom: 100px;
+  right: 25px;
+  width: 40px;
+  height: 40px;
+  background-color: #000000;
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 21px;
+  text-decoration: none;
+  box-shadow: var(--shadow);
+  transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+  z-index: 1000;
+}
+.fab-chatbot:hover {
+  background-color: var(--blue-shadow);
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: var(--shadow-hover);
+}
+.fab-chatbot:active {
+  transform: scale(0.98);
+}
+.fab-chatbot:focus-visible {
+  outline: 3px solid var(--royal-blue);
+  outline-offset: 3px;
+}
+/* === End FAB Chatbot Button === */
 </style>
 </head>
 <body>
@@ -242,11 +242,11 @@ let currentFilter = "all";
 const detailDialog = document.getElementById('detailDialog');
 const dClose = document.getElementById('dClose');
 
-// ช่วยวาดเทียนแบบเดียวกันทั้ง list และ dialog
+// ช่วยวาดเทียนแบบเดียวกันทั้ง list และ dialog (ใช้เป็น fallback ถ้าไม่มีรูปใน CSV)
 function makeCandleElement(side, name){
   const lower = (name||"").toLowerCase();
   const wrap = document.createElement('div');
-  wrap.className = 'cd-candle'; // ใช้คลาสเดียวกันให้หน้าตาใกล้เคียง
+  wrap.className = 'cd-candle';
 
   // wick
   const wickTop = document.createElement('div');
@@ -278,14 +278,11 @@ function makeCandleElement(side, name){
   else if (side === "Bullish") body.style.background = "#10b981";
   else body.style.background = "#94a3b8";
 
-  // ปรับตามชื่อ pattern
   if (lower.includes("hammer") && !lower.includes("inverted")){
-    // hammer
     wickTop.style.height = "8px";
     wickBottom.style.height = "42px";
     body.style.height = "30px";
   } else if (lower.includes("inverted") || lower.includes("shooting star")){
-    // inverted
     wickTop.style.height = "44px";
     wickBottom.style.height = "6px";
     body.style.height = "28px";
@@ -340,9 +337,8 @@ function renderList(){
     const thumb = document.createElement('div');
     thumb.className = 'thumb';
 
-    // ✨ ใช้ตัววาดเทียนเดียวกับ dialog
+    // ใช้ตัววาดเทียนเดียวกับ dialog (ย่อไซซ์ให้เข้า 70px)
     const listCandle = makeCandleElement(r.side, r.name);
-    // ย่อไซซ์นิดหนึ่งให้เข้า 70px
     listCandle.style.transform = "scale(.7)";
     thumb.appendChild(listCandle);
 
@@ -384,6 +380,7 @@ function renderPager(totalPages){
   pager.append(prev, info, next);
 }
 
+/* ✅ แก้ฟังก์ชันนี้ให้ดึงรูปจาก CSV มาแสดงใน dialog */
 function openDialogFromRecord(r){
   document.getElementById('dTitle').textContent = r.name || "PATTERN";
   document.getElementById('dSubtitle').textContent = r.grouping ? `${r.grouping} • ${r.side||""}` : (r.side||"");
@@ -398,10 +395,25 @@ function openDialogFromRecord(r){
     link.style.display = "none";
   }
 
-  // วาดเทียนใน dialog
   const box = document.getElementById('dCandleBox');
   box.innerHTML = "";
-  box.appendChild(makeCandleElement(r.side, r.name));
+
+  // ลองอ่าน path รูปจากหลายชื่อคอลัมน์ใน CSV: image, img, img_path, picture
+  const imgPath = r.image || r.img || r.img_path || r.picture || "";
+
+  if (imgPath){
+    const img = document.createElement('img');
+    img.src = imgPath;                 // เช่น "images/bulishengufin.png"
+    img.alt = r.name || "candlestick pattern";
+    img.style.maxWidth = "100%";
+    img.style.maxHeight = "100%";
+    img.style.borderRadius = "12px";
+    img.loading = "lazy";
+    box.appendChild(img);
+  } else {
+    // ถ้าไม่มีคอลัมน์รูป ให้ fallback เป็นแท่งเทียนวาดเองเหมือนเดิม
+    box.appendChild(makeCandleElement(r.side, r.name));
+  }
 
   if (typeof detailDialog.showModal === "function") {
     detailDialog.showModal();
@@ -409,7 +421,6 @@ function openDialogFromRecord(r){
     detailDialog.style.display = "block";
   }
 
-  // ล็อก scroll
   document.body.classList.add('modal-open');
 }
 
@@ -446,21 +457,21 @@ document.querySelectorAll('#filters .filter-btn').forEach(btn=>{
   applyFilters();
 })();
 </script>
-  	<footer>
+
+<footer>
   <p class="footer-links">
     © 2025 Crow Studio |
     <a href="https://sites.google.com/view/privacy-policy-pdpa-crow-studi/%E0%B8%AB%E0%B8%99%E0%B8%B2%E0%B9%81%E0%B8%A3%E0%B8%81">นโยบายความเป็นส่วนตัว</a> |
     <a href="ลิงก์ข้อตกลง">ข้อตกลงการใช้งาน</a>
   </p>
 </footer>
- <a href="https://raw.githack.com/tontakankeawpang321-glitch/krsitsdeeka/main/%E0%B8%95%E0%B8%B1%E0%B8%A7%E0%B8%8A%E0%B9%88%E0%B8%A7%E0%B8%A2%E0%B9%81%E0%B8%97%E0%B9%88%E0%B8%87%E0%B9%80%E0%B8%97%E0%B8%B5%E0%B8%A2%E0%B8%99/index.html" class="fab-chatbot" title="แชทบอทพระไตรปิฎก" aria-label="แชทบอทพระไตรปิฎก">
+
+<a href="https://raw.githack.com/tontakankeawpang321-glitch/krsitsdeeka/main/%E0%B8%95%E0%B8%B1%E0%B8%A7%E0%B8%8A%E0%B9%88%E0%B8%A7%E0%B8%A2%E0%B9%81%E0%B8%97%E0%B9%88%E0%B8%87%E0%B9%80%E0%B8%97%E0%B8%B5%E0%B8%A2%E0%B8%99/index.html"
+   class="fab-chatbot"
+   title="แชทบอทพระไตรปิฎก"
+   aria-label="แชทบอทพระไตรปิฎก">
   Ai
-</a></body>
+</a>
+
+</body>
 </html>
-
-
-
-
-
-
-
