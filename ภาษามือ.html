@@ -4,571 +4,615 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>พจนานุกรมภาษามือไทย (TSL) + AI</title>
-    
-    <!-- Tailwind CSS -->
+
+    <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
+
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    
-    <!-- Font Noto Sans Thai -->
+
+    <!-- Font -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Markdown Parser (สำหรับ AI อธิบายท่าทาง) -->
+
+    <!-- Markdown Parser -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
     <style>
         body { font-family: 'Noto Sans Thai', sans-serif; }
+
+        /* ==== 3D Card Effects ==== */
+        .card-3d {
+            background: linear-gradient(145deg, #ffffff, #e6e6e6);
+            box-shadow: 8px 8px 20px #d1d1d1, -8px -8px 20px #ffffff;
+            transition: 0.2s;
+        }
+        .card-3d:active {
+            transform: scale(0.96);
+            box-shadow: inset 5px 5px 15px #cfcfcf, inset -5px -5px 15px #ffffff;
+        }
+        .btn-3d {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            box-shadow: 4px 4px 12px rgba(99,102,241,0.4);
+            transition: 0.2s;
+        }
+        .btn-3d:active {
+            transform: scale(0.95);
+            box-shadow: inset 4px 4px 10px rgba(0,0,0,0.2);
+        }
+
+        /* Glass */
+        .glass {
+            background: rgba(255,255,255,0.7);
+            backdrop-filter: blur(10px);
+        }
+
+        /* Scrollbar Hide */
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes zoomIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        .animate-fade-in { animation: fadeIn 0.2s ease-out forwards; }
-        .animate-zoom-in { animation: zoomIn 0.2s ease-out forwards; }
-        
-        /* Consonant Card Style mimics the poster */
+        @keyframes zoomIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .animate-fade-in { animation: fadeIn 0.25s ease-out forwards; }
+        .animate-zoom-in { animation: zoomIn 0.25s ease-out forwards; }
+
+        /* Consonant Card Style */
         .consonant-card {
-            aspect-ratio: 3/4; /* Vertical rectangular shape like cards */
-            transition: all 0.2s;
+            aspect-ratio: 3/4;
+            background: linear-gradient(145deg, #ffffff, #e6e6e6);
+            border-radius: 16px;
+            box-shadow: 6px 6px 16px #d1d1d1, -6px -6px 16px #ffffff;
+            overflow: hidden;
+            transition: 0.2s;
         }
-        .consonant-card:active { transform: scale(0.95); }
-        
-        /* Loading Skeleton Animation */
-        .skeleton {
-            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-            background-size: 200% 100%;
-            animation: loading 1.5s infinite;
-        }
-        @keyframes loading {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
+        .consonant-card:active {
+            transform: scale(0.95);
         }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 pb-10">
 
-    <!-- Header -->
-    <header class="bg-blue-600 text-white shadow-lg sticky top-0 z-30">
-        <div class="max-w-5xl mx-auto px-4 py-4 md:py-6 flex justify-between items-center">
-            <div class="flex items-center gap-3">
-                <i data-lucide="hand" class="w-8 h-8 text-yellow-300"></i>
-                <div>
-                    <h1 class="text-xl md:text-2xl font-bold leading-tight">ภาษามือไทย (TSL)</h1>
-                    <p class="text-blue-100 text-xs md:text-sm opacity-90">คู่มือและพจนานุกรมฉบับพกพา</p>
-                </div>
+<body class="bg-slate-100 text-slate-800 pb-10">
+
+<!-- Header -->
+<header class="sticky top-0 z-40 shadow-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
+    <div class="max-w-5xl mx-auto px-4 py-5 flex items-center gap-4">
+        <div class="p-2 bg-white/20 rounded-xl shadow-inner">
+            <i data-lucide="hand" class="w-8 h-8 text-yellow-300"></i>
+        </div>
+        <div>
+            <h1 class="text-2xl font-bold drop-shadow">พจนานุกรมภาษามือไทย (TSL)</h1>
+            <p class="text-blue-100 text-sm opacity-90">AI + คู่มือท่าทาง</p>
+        </div>
+    </div>
+</header>
+
+<main class="max-w-5xl mx-auto px-4 py-6 space-y-6">
+
+    <!-- Search Section -->
+    <div class="sticky top-[72px] z-30 bg-slate-100/80 backdrop-blur-md py-4 px-2 -mx-4 border-b border-slate-200 shadow-sm">
+
+        <!-- Search Bar -->
+        <div class="relative max-w-lg mx-auto md:mx-0">
+            <div class="absolute left-3 top-0 bottom-0 flex items-center text-slate-400">
+                <i data-lucide="search" class="w-5 h-5"></i>
             </div>
-        </div>
-    </header>
-
-    <main class="max-w-5xl mx-auto px-4 py-6 space-y-6">
-        
-        <!-- Search & Filter (Sticky) -->
-        <div class="sticky top-[72px] z-20 space-y-3 bg-slate-50/95 backdrop-blur-sm py-3 -mx-4 px-4 border-b border-slate-200">
-            <!-- Search -->
-            <div class="relative shadow-sm max-w-lg mx-auto md:mx-0 md:max-w-full">
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <i data-lucide="search" class="h-5 w-5 text-slate-400"></i>
-                </div>
-                <input
-                    type="text"
-                    id="searchInput"
-                    class="block w-full pl-10 pr-3 py-3 border border-slate-200 rounded-xl leading-5 bg-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
-                    placeholder="ค้นหา (เช่น ก, ข, สวัสดี, ครอบครัว...)"
-                />
-            </div>
-
-            <!-- Categories & AI Button -->
-            <div class="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
-                <button onclick="openAiModal()" class="flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-md hover:shadow-lg transition-all">
-                    <i data-lucide="sparkles" class="w-4 h-4 text-yellow-200"></i>
-                    AI แปลภาษา
-                </button>
-                <div class="w-px h-6 bg-slate-300 mx-1 flex-shrink-0"></div>
-                <div id="categoryContainer" class="flex gap-2"></div>
-            </div>
+            <input
+                id="searchInput"
+                type="text"
+                placeholder="ค้นหา เช่น สวัสดี , ครอบครัว , อารมณ์ …"
+                class="w-full pl-10 pr-4 py-3 rounded-2xl border border-slate-200 shadow-md glass focus:ring-2 focus:ring-indigo-400 outline-none transition"
+            />
         </div>
 
-        <!-- Loading State for Data Fetching -->
-        <div id="dataLoadingState" class="hidden py-12 text-center">
-            <div class="animate-spin w-8 h-8 border-4 border-blue-200 border-t-blue-600 rounded-full mx-auto mb-3"></div>
-            <p class="text-slate-500 text-sm">กำลังโหลดข้อมูล...</p>
-        </div>
+        <!-- Category & AI -->
+        <div class="flex items-center gap-2 overflow-x-auto scrollbar-hide mt-3 pb-1">
 
-        <!-- Grid Container -->
-        <div id="gridContainer" class="grid gap-3 min-h-[50vh]">
-            <!-- Items injected by JS -->
-        </div>
-
-        <!-- Not Found -->
-        <div id="notFoundMessage" class="hidden py-12 text-center text-slate-400">
-            <i data-lucide="search" class="w-12 h-12 mx-auto mb-3 opacity-20"></i>
-            <p>ไม่พบคำศัพท์ที่คุณค้นหา</p>
-        </div>
-    </main>
-
-    <!-- Modal: Word Detail -->
-    <div id="modalOverlay" class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fade-in" onclick="handleModalClick(event)">
-        <div class="bg-white rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden relative animate-zoom-in max-h-[90vh] flex flex-col">
-            
-            <!-- Close Button -->
-            <button onclick="closeModal()" class="absolute top-4 right-4 z-20 p-2 bg-black/30 hover:bg-black/50 text-white rounded-full transition-colors backdrop-blur-md">
-                <i data-lucide="x" class="w-5 h-5"></i>
+            <!-- AI Button -->
+            <button onclick="openAiModal()"
+                class="flex-shrink-0 btn-3d px-4 py-2 rounded-full text-white font-semibold flex items-center gap-2">
+                <i data-lucide="sparkles" class="w-4 h-4"></i>
+                AI แปลภาษา
             </button>
 
-            <!-- Scrollable Content -->
-            <div class="overflow-y-auto">
-                <!-- Image Header -->
-                <div class="relative w-full aspect-video bg-slate-100 flex items-center justify-center">
-                    <img id="modalImage" src="" alt="" class="w-full h-full object-cover hidden">
-                    <div id="modalNoImage" class="flex flex-col items-center gap-2 text-slate-400">
-                        <i data-lucide="image-off" class="w-10 h-10 opacity-50"></i>
-                        <span class="text-sm">ไม่มีรูปภาพ</span>
-                    </div>
-                    <!-- Badge -->
-                    <div class="absolute bottom-3 left-3">
-                        <span id="modalCategoryBadge" class="px-3 py-1 rounded-full text-xs font-bold text-white shadow-sm"></span>
-                    </div>
-                </div>
+            <div class="w-px h-6 bg-slate-300"></div>
 
-                <!-- Content Body -->
-                <div class="p-6 space-y-6">
-                    <!-- Title -->
-                    <div class="flex items-center gap-4">
-                        <div id="modalIconContainer" class="w-14 h-14 rounded-xl flex items-center justify-center text-3xl font-bold shrink-0 text-white shadow-sm"></div>
-                        <div>
-                            <h2 id="modalWord" class="text-2xl font-bold text-slate-800 leading-none mb-1"></h2>
-                            <p class="text-sm text-slate-500">วิธีการทำท่าภาษามือ</p>
-                        </div>
-                    </div>
-
-                    <!-- Description Box -->
-                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                        <p id="modalDescription" class="text-slate-700 text-lg leading-relaxed font-medium"></p>
-                    </div>
-
-                    <!-- Tip Box -->
-                    <div id="modalTipContainer" class="hidden gap-3 items-start bg-amber-50 p-4 rounded-xl border border-amber-100 text-amber-900">
-                        <i data-lucide="lightbulb" class="w-5 h-5 flex-shrink-0 mt-0.5 text-amber-500"></i>
-                        <div>
-                            <span class="font-bold block text-sm mb-1 text-amber-700">เทคนิคการจำ:</span>
-                            <p id="modalTip" class="text-sm"></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Footer Action -->
-            <div class="p-4 border-t border-slate-100 bg-white z-10">
-                <a id="modalYoutubeLink" href="#" target="_blank" class="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl font-bold transition-all active:scale-[0.98]">
-                    <i data-lucide="youtube" class="w-5 h-5"></i>
-                    <span id="modalYoutubeText">ดูวิดีโอ</span>
-                </a>
-            </div>
+            <div id="categoryContainer" class="flex gap-2"></div>
         </div>
     </div>
+    <!-- Loading -->
+    <div id="dataLoadingState" class="hidden py-10 text-center">
+        <div class="animate-spin w-10 h-10 border-4 border-indigo-200 border-t-indigo-600 rounded-full mx-auto mb-3"></div>
+        <p class="text-slate-500 text-sm">กำลังโหลดข้อมูล…</p>
+    </div>
 
-    <!-- Modal: AI Translator -->
-    <div id="aiModalOverlay" class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fade-in" onclick="handleAiModalClick(event)">
-        <div class="bg-white rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden relative animate-zoom-in max-h-[90vh] flex flex-col border border-indigo-100">
-            <!-- Header -->
-            <div class="bg-gradient-to-r from-indigo-600 to-purple-700 p-5 text-white flex justify-between items-start">
-                <div class="flex items-center gap-3">
-                    <div class="bg-white/20 p-2 rounded-lg">
-                        <i data-lucide="sparkles" class="w-6 h-6 text-yellow-300"></i>
-                    </div>
-                    <div>
-                        <h2 class="text-lg font-bold">AI แปลประโยค</h2>
-                        <p class="text-indigo-100 text-xs">เปลี่ยนประโยคไทย -> ไวยากรณ์ภาษามือ</p>
-                    </div>
+    <!-- Grid -->
+    <div id="gridContainer" class="grid gap-4 min-h-[60vh]">
+        <!-- JS inject -->
+    </div>
+
+    <!-- Not Found -->
+    <div id="notFoundMessage" class="hidden py-12 text-center text-slate-400">
+        <i data-lucide="search" class="w-12 h-12 mx-auto mb-3 opacity-20"></i>
+        <p>ไม่พบคำที่ค้นหา</p>
+    </div>
+</main>
+
+<!-- ===========================
+      MODAL: Word Detail (3D UI)
+     =========================== -->
+<div id="modalOverlay"
+    class="hidden fixed inset-0 z-[60] bg-black/60 backdrop-blur-md flex items-center justify-center px-4 animate-fade-in"
+    onclick="handleModalClick(event)">
+    
+    <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden animate-zoom-in max-h-[90vh] flex flex-col border border-slate-200">
+
+        <!-- Header Image -->
+        <div class="relative w-full aspect-video bg-slate-200 flex items-center justify-center">
+            <img id="modalImage" src="" class="w-full h-full object-cover hidden" />
+            
+            <div id="modalNoImage" class="text-slate-400 text-center">
+                <i data-lucide="image-off" class="w-10 h-10 mx-auto opacity-50"></i>
+                <p class="text-sm">ไม่มีรูปภาพ</p>
+            </div>
+
+            <!-- Category Badge -->
+            <span id="modalCategoryBadge"
+                class="absolute bottom-3 left-3 px-3 py-1 rounded-full text-xs font-bold text-white shadow-lg">
+            </span>
+
+            <!-- Close -->
+            <button onclick="closeModal()"
+                class="absolute top-3 right-3 p-2 bg-black/40 hover:bg-black/60 text-white rounded-full backdrop-blur-sm transition">
+                <i data-lucide="x"></i>
+            </button>
+        </div>
+
+        <!-- Body -->
+        <div class="p-6 space-y-6 overflow-y-auto">
+
+            <!-- Title -->
+            <div class="flex gap-4 items-center">
+                <div id="modalIconContainer"
+                    class="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl font-bold text-white shadow-xl">
                 </div>
-                <button onclick="closeAiModal()" class="p-1.5 bg-white/10 hover:bg-white/20 rounded-full transition-colors">
-                    <i data-lucide="x" class="w-5 h-5"></i>
+                <div>
+                    <h2 id="modalWord" class="text-2xl font-extrabold text-slate-800 mb-1"></h2>
+                    <p class="text-sm text-slate-500">วิธีทำท่าภาษามือ</p>
+                </div>
+            </div>
+
+            <!-- Description -->
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 shadow-inner">
+                <p id="modalDescription" class="text-slate-700 leading-relaxed"></p>
+            </div>
+
+            <!-- Tip -->
+            <div id="modalTipContainer"
+                class="hidden bg-amber-50 border border-amber-200 p-4 rounded-xl flex gap-3 items-start shadow-inner">
+                
+                <i data-lucide="lightbulb" class="text-amber-500 w-6 h-6"></i>
+                
+                <div>
+                    <span class="font-bold text-amber-700 text-sm block mb-1">เทคนิคจำง่าย:</span>
+                    <p id="modalTip" class="text-sm text-amber-800"></p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+        <div class="p-5 border-t border-slate-200 bg-white">
+            <a id="modalYoutubeLink" href="#" target="_blank"
+                class="w-full py-3 text-center rounded-xl font-bold flex items-center justify-center gap-2 transition active:scale-95">
+                <i data-lucide="youtube"></i>
+                <span id="modalYoutubeText">ดูวิดีโอ</span>
+            </a>
+        </div>
+
+    </div>
+</div>
+
+<!-- ========================
+     MODAL: AI TRANSLATOR (3D)
+     ======================== -->
+<div id="aiModalOverlay"
+    class="hidden fixed inset-0 z-[60] bg-black/60 backdrop-blur-md flex items-center justify-center px-4 animate-fade-in"
+    onclick="handleAiModalClick(event)">
+
+    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden animate-zoom-in max-h-[90vh] flex flex-col border border-slate-200">
+
+        <!-- Header -->
+        <div class="p-5 bg-gradient-to-r from-indigo-600 to-purple-700 text-white flex justify-between items-center shadow-lg">
+            <div class="flex items-center gap-3">
+                <div class="p-2 bg-white/20 rounded-xl">
+                    <i data-lucide="sparkles" class="w-6 h-6 text-yellow-300"></i>
+                </div>
+                <div>
+                    <h2 class="text-xl font-bold">AI แปลประโยค</h2>
+                    <p class="text-indigo-200 text-xs">เปลี่ยนไทย → ภาษามือ (Gloss)</p>
+                </div>
+            </div>
+
+            <button onclick="closeAiModal()" class="p-2 bg-white/10 hover:bg-white/20 rounded-full transition">
+                <i data-lucide="x"></i>
+            </button>
+        </div>
+
+        <!-- Body -->
+        <div class="p-5 space-y-4 overflow-y-auto bg-slate-50 flex-1">
+
+            <!-- Input -->
+            <div class="relative">
+                <input id="aiInput" placeholder="พิมพ์ประโยค เช่น ฉันรักแม่"
+                    class="w-full p-4 pr-12 rounded-xl border border-slate-300 shadow-md focus:ring-2 focus:ring-indigo-400 outline-none transition bg-white" />
+
+                <button onclick="generateSignTranslation()"
+                    class="absolute right-2 top-2 bottom-2 px-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg flex items-center justify-center transition">
+                    <i data-lucide="arrow-right"></i>
                 </button>
             </div>
 
-            <!-- Body -->
-            <div class="p-5 overflow-y-auto bg-slate-50 flex-1">
-                <div class="relative">
-                    <input type="text" id="aiInput" class="w-full p-4 pr-12 rounded-xl border-slate-200 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all outline-none" placeholder="พิมพ์ประโยค (เช่น ฉันรักแม่)" onkeypress="handleAiEnter(event)">
-                    <button onclick="generateSignTranslation()" class="absolute right-2 top-2 bottom-2 bg-indigo-600 hover:bg-indigo-700 text-white px-3 rounded-lg transition-colors">
-                        <i data-lucide="arrow-right" class="w-5 h-5"></i>
-                    </button>
-                </div>
+            <!-- Loading -->
+            <div id="aiLoading" class="hidden py-6 text-center space-y-3">
+                <div class="animate-spin w-8 h-8 border-4 border-indigo-200 border-t-indigo-600 rounded-full mx-auto"></div>
+                <p class="text-slate-500 text-sm">กำลังประมวลผล…</p>
+            </div>
 
-                <div id="aiLoading" class="hidden py-8 text-center space-y-3">
-                    <div class="animate-spin w-8 h-8 border-4 border-indigo-200 border-t-indigo-600 rounded-full mx-auto"></div>
-                    <p class="text-slate-500 text-sm">กำลังประมวลผล...</p>
-                </div>
-
-                <div id="aiResultArea" class="hidden mt-6 space-y-4">
-                    <div class="bg-white p-4 rounded-xl border border-indigo-100 shadow-sm">
-                        <h3 class="text-xs font-bold text-indigo-500 uppercase mb-2 flex items-center gap-1">
-                            <i data-lucide="git-branch" class="w-3 h-3"></i> ไวยากรณ์ (Gloss)
-                        </h3>
-                        <p id="glossOutput" class="text-xl font-bold text-slate-800 text-center"></p>
-                    </div>
-                    <div class="bg-white p-4 rounded-xl border border-indigo-100 shadow-sm">
-                        <h3 class="text-xs font-bold text-indigo-500 uppercase mb-2">
-                            <i data-lucide="book" class="w-3 h-3"></i> คำอธิบายท่าทาง
-                        </h3>
-                        <div id="explanationOutput" class="markdown-body text-sm text-slate-600 space-y-2"></div>
-                    </div>
-                </div>
+            <!-- Result -->
+            <div id="aiResultArea" class="hidden space-y-4">
                 
-                <div id="aiError" class="hidden mt-4 p-3 bg-red-50 text-red-600 text-sm rounded-lg text-center border border-red-100">
-                    เกิดข้อผิดพลาด โปรดลองใหม่
+                <!-- Gloss -->
+                <div class="bg-white p-4 rounded-xl border border-indigo-200 shadow">
+                    <h3 class="text-xs font-bold text-indigo-600 uppercase mb-1 flex items-center gap-1">
+                        <i data-lucide="git-branch" class="w-3 h-3"></i>
+                        ไวยากรณ์ Gloss
+                    </h3>
+                    <p id="glossOutput" class="text-xl font-extrabold text-center"></p>
+                </div>
+
+                <!-- Explanation -->
+                <div class="bg-white p-4 rounded-xl border border-indigo-200 shadow space-y-2">
+                    <h3 class="text-xs font-bold text-indigo-600 uppercase mb-1">คำอธิบายท่าทาง</h3>
+                    <div id="explanationOutput" class="text-sm text-slate-700 space-y-2"></div>
                 </div>
             </div>
+
+            <!-- Error -->
+            <div id="aiError"
+                class="hidden p-3 bg-red-50 border border-red-200 text-red-600 rounded-xl text-center">
+                เกิดข้อผิดพลาด กรุณาลองใหม่
+            </div>
+
         </div>
     </div>
+</div>
+<script>
+/* =========================
+    CONFIG & GLOBAL STATE
+   ========================= */
 
-    <!-- JavaScript Logic -->
-    <script>
-        // API Key (Runtime Injected / ตั้งทีหลัง)
-        const apiKey = "AIzaSyD_9mzuoLZT-tka_73IpHJWpSsBWLEM8b4"; 
+const apiKey = "AIzaSyD_9mzuoLZT-tka_73IpHJWpSsBWLEM8b4";
 
-        // ข้อมูลจากไฟล์ JSON ภายนอก
-        let signData = [];
+let signData = [];
+let searchTerm = "";
+let activeCategory = "all";
 
-        // หมวดหมู่ (รองรับหมวดใหม่ครบ)
-        const categories = [
-            { id: 'all',           label: 'ทั้งหมด',             icon: 'book-open' },
-            { id: 'consonant',     label: 'พยัญชนะ (ก-ฮ)',       icon: 'type' },
-            { id: 'number',        label: 'ตัวเลข',              icon: 'hash' },
-            { id: 'daily',         label: 'คำพื้นฐาน',           icon: 'heart' },
-            { id: 'daily_life',    label: 'ชีวิตประจำวัน',       icon: 'sun' },
-            { id: 'family',        label: 'ครอบครัว',            icon: 'users' },
-            { id: 'emotion',       label: 'อารมณ์',              icon: 'smile' },
-            { id: 'place',         label: 'สถานที่',             icon: 'map-pin' },
-            { id: 'object',        label: 'สิ่งของ',             icon: 'box' },
-            { id: 'food',          label: 'อาหาร / เครื่องดื่ม', icon: 'cup-soda' },
-            { id: 'action',        label: 'การกระทำ',            icon: 'zap' },
-            { id: 'conversation',  label: 'บทสนทนา',             icon: 'message-circle' }
-        ];
+/* หมวดหมู่ */
+const categories = [
+    { id: "all",          label: "ทั้งหมด",          icon: "book-open" },
+    { id: "consonant",    label: "พยัญชนะ (ก-ฮ)",   icon: "type" },
+    { id: "number",       label: "ตัวเลข",           icon: "hash" },
+    { id: "daily",        label: "คำพื้นฐาน",       icon: "heart" },
+    { id: "daily_life",   label: "ชีวิตประจำวัน",    icon: "sun" },
+    { id: "family",       label: "ครอบครัว",         icon: "users" },
+    { id: "emotion",      label: "อารมณ์",           icon: "smile" },
+    { id: "place",        label: "สถานที่",          icon: "map-pin" },
+    { id: "object",       label: "สิ่งของ",           icon: "box" },
+    { id: "food",         label: "อาหาร/เครื่องดื่ม", icon: "cup-soda" },
+    { id: "action",       label: "การกระทำ",        icon: "zap" },
+    { id: "conversation", label: "บทสนทนา",         icon: "message-circle" },
+];
 
-        let searchTerm = '';
-        let activeCategory = 'all';
 
-        // Elements
-        const gridContainer = document.getElementById('gridContainer');
-        const searchInput = document.getElementById('searchInput');
-        const categoryContainer = document.getElementById('categoryContainer');
-        const notFoundMessage = document.getElementById('notFoundMessage');
-        const modalOverlay = document.getElementById('modalOverlay');
-        const aiModalOverlay = document.getElementById('aiModalOverlay');
+/* =========================
+    CATEGORY COLOR SYSTEM
+   ========================= */
+function getCategoryStyles(c) {
+    switch (c) {
+        case "consonant": return { badge: "bg-orange-500", cardColor: "bg-orange-400", text: "text-white" };
+        case "number": return { badge: "bg-green-500", cardColor: "bg-green-400", text: "text-white" };
+        case "daily": return { badge: "bg-purple-500", cardColor: "bg-purple-400", text: "text-white" };
+        case "daily_life": return { badge: "bg-indigo-500", cardColor: "bg-indigo-400", text: "text-white" };
+        case "family": return { badge: "bg-blue-500", cardColor: "bg-blue-400", text: "text-white" };
+        case "emotion": return { badge: "bg-pink-500", cardColor: "bg-pink-400", text: "text-white" };
+        case "place": return { badge: "bg-emerald-500", cardColor: "bg-emerald-400", text: "text-white" };
+        case "object": return { badge: "bg-slate-500", cardColor: "bg-slate-400", text: "text-white" };
+        case "food": return { badge: "bg-amber-500", cardColor: "bg-amber-400", text: "text-white" };
+        case "action": return { badge: "bg-cyan-500", cardColor: "bg-cyan-400", text: "text-white" };
+        case "conversation": return { badge: "bg-red-500", cardColor: "bg-red-400", text: "text-white" };
+        default: return { badge: "bg-sky-500", cardColor: "bg-sky-400", text: "text-white" };
+    }
+}
 
-        // ====== Helper: mapping สีตามหมวด ======
-        function getCategoryStyles(category) {
-            switch (category) {
-                case 'consonant':
-                    return { badgeLabel: 'พยัญชนะ', badgeClass: 'bg-orange-500', cardColor: 'bg-orange-100 text-orange-700' };
-                case 'number':
-                    return { badgeLabel: 'ตัวเลข', badgeClass: 'bg-green-500', cardColor: 'bg-green-100 text-green-700' };
-                case 'daily':
-                    return { badgeLabel: 'คำศัพท์พื้นฐาน', badgeClass: 'bg-purple-500', cardColor: 'bg-purple-100 text-purple-700' };
-                case 'daily_life':
-                    return { badgeLabel: 'ชีวิตประจำวัน', badgeClass: 'bg-indigo-500', cardColor: 'bg-indigo-100 text-indigo-700' };
-                case 'family':
-                    return { badgeLabel: 'ครอบครัว', badgeClass: 'bg-blue-500', cardColor: 'bg-blue-100 text-blue-700' };
-                case 'emotion':
-                    return { badgeLabel: 'อารมณ์', badgeClass: 'bg-pink-500', cardColor: 'bg-pink-100 text-pink-700' };
-                case 'place':
-                    return { badgeLabel: 'สถานที่', badgeClass: 'bg-emerald-500', cardColor: 'bg-emerald-100 text-emerald-700' };
-                case 'object':
-                    return { badgeLabel: 'สิ่งของ', badgeClass: 'bg-slate-500', cardColor: 'bg-slate-100 text-slate-700' };
-                case 'food':
-                    return { badgeLabel: 'อาหาร / เครื่องดื่ม', badgeClass: 'bg-amber-500', cardColor: 'bg-amber-100 text-amber-700' };
-                case 'action':
-                    return { badgeLabel: 'การกระทำ', badgeClass: 'bg-cyan-500', cardColor: 'bg-cyan-100 text-cyan-700' };
-                case 'conversation':
-                    return { badgeLabel: 'บทสนทนา', badgeClass: 'bg-red-500', cardColor: 'bg-red-100 text-red-700' };
-                default:
-                    return { badgeLabel: 'คำศัพท์', badgeClass: 'bg-sky-500', cardColor: 'bg-sky-100 text-sky-700' };
-            }
-        }
+/* =========================
+    LOAD JSON DATA
+   ========================= */
+async function fetchSignData() {
+    document.getElementById("dataLoadingState").classList.remove("hidden");
+    document.getElementById("gridContainer").classList.add("hidden");
 
-        // ====== Fetch Data จากไฟล์ JSON ภายนอก ======
-        async function fetchSignData() {
-            document.getElementById('dataLoadingState').classList.remove('hidden');
-            document.getElementById('gridContainer').classList.add('hidden');
+    try {
+        const res = await fetch("signs500.json");
+        signData = await res.json();
+        renderGrid();
+    } catch (err) {
+        gridContainer.innerHTML =
+            `<div class='text-center text-red-500 col-span-full'>ไม่พบไฟล์ <b>signs500.json</b></div>`;
+    }
 
-            try {
-                // IMPORTANT: ต้องมีไฟล์ signs_500.json อยู่โฟลเดอร์เดียวกับไฟล์นี้
-                const response = await fetch('signs500.json');
-                if (!response.ok) throw new Error('Failed to load data');
+    document.getElementById("dataLoadingState").classList.add("hidden");
+    document.getElementById("gridContainer").classList.remove("hidden");
+}
 
-                signData = await response.json();
-                renderGrid();
-            } catch (error) {
-                console.error('Error loading JSON:', error);
-                gridContainer.innerHTML = `
-                    <div class="text-center col-span-full text-red-500">
-                        ไม่สามารถโหลดข้อมูลได้ (ตรวจสอบไฟล์ <strong>signs500.json</strong>)
-                    </div>`;
-            } finally {
-                document.getElementById('dataLoadingState').classList.add('hidden');
-                document.getElementById('gridContainer').classList.remove('hidden');
-            }
-        }
 
-        // ====== Category UI ======
-        function setActiveCategory(id) {
-            activeCategory = id;
-            renderCategories();
-            renderGrid();
-        }
+/* =========================
+       CATEGORY BUTTON UI
+   ========================= */
+function renderCategories() {
+    const ctn = document.getElementById("categoryContainer");
+    ctn.innerHTML = categories.map(c => {
+        const active = (activeCategory === c.id);
 
-        function renderCategories() {
-            categoryContainer.innerHTML = categories.map(cat => {
-                const isActive = activeCategory === cat.id;
-                const baseClass = "flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all select-none border";
-                const activeClass = "bg-blue-600 border-blue-600 text-white shadow-md";
-                const inactiveClass = "bg-white border-slate-200 text-slate-600 hover:bg-slate-50";
+        return `
+        <button onclick="setActiveCategory('${c.id}')"
+            class="px-4 py-2 whitespace-nowrap rounded-full border shadow 
+                   ${active ? "bg-indigo-600 text-white border-indigo-600 shadow-lg" : "bg-white text-slate-600 border-slate-300 hover:bg-slate-50"} 
+                   flex items-center gap-2 transition">
+            <i data-lucide="${c.icon}" class="w-4 h-4"></i>
+            ${c.label}
+        </button>`;
+    }).join("");
+
+    lucide.createIcons();
+}
+
+function setActiveCategory(id) {
+    activeCategory = id;
+    renderCategories();
+    renderGrid();
+}
+
+
+/* =========================
+        RENDER GRID
+   ========================= */
+function renderGrid() {
+    const grid = document.getElementById("gridContainer");
+    const term = searchTerm.toLowerCase();
+
+    const filtered = signData.filter(item => {
+        const w = (item.word || "").toLowerCase();
+        const d = (item.description || "").toLowerCase();
+
+        const matchSearch = w.includes(term) || d.includes(term);
+        const matchCategory = activeCategory === "all" || item.category === activeCategory;
+
+        return matchSearch && matchCategory;
+    });
+
+    /* Layout */
+    grid.className =
+        activeCategory === "consonant"
+            ? "grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3"
+            : "grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-4";
+
+    if (!filtered.length) {
+        notFoundMessage.classList.remove("hidden");
+        grid.innerHTML = "";
+        return;
+    }
+
+    notFoundMessage.classList.add("hidden");
+
+    grid.innerHTML = filtered.map(item => {
+        const styles = getCategoryStyles(item.category);
+        const short = (item.word || "").split(" ")[0];
+
+        /* ==============
+            Consonant Card
+           ============== */
+        if (item.category === "consonant") {
+            return `
+            <div onclick="openModal('${item.id}')"
+                class="consonant-card cursor-pointer group">
                 
-                return `
-                    <button onclick="setActiveCategory('${cat.id}')" class="${baseClass} ${isActive ? activeClass : inactiveClass}">
-                        <i data-lucide="${cat.icon}" class="w-4 h-4"></i>
-                        ${cat.label}
-                    </button>
-                `;
-            }).join('');
-            lucide.createIcons();
+                <div class="w-full h-[75%] overflow-hidden bg-slate-200">
+                    <img src="${item.imageUrl || ""}" 
+                         class="w-full h-full object-cover group-hover:scale-110 transition">
+                </div>
+
+                <div class="h-[25%] flex items-center justify-center text-2xl font-bold text-slate-800">
+                    ${short}
+                </div>
+            </div>`;
         }
 
-        // ====== Grid Rendering ======
-        function renderGrid() {
-            const filteredData = signData.filter(item => {
-                const word = (item.word || '').toLowerCase();
-                const desc = (item.description || '').toLowerCase();
-                const term = (searchTerm || '').toLowerCase();
+        /* ==============
+            Standard Card (3D Small)
+           ============== */
+        return `
+        <div onclick="openModal('${item.id}')"
+            class="card-3d cursor-pointer flex items-center gap-3 p-3 rounded-xl border border-slate-200 hover:shadow-xl transition">
 
-                const matchesSearch =
-                    !term ||
-                    word.includes(term) ||
-                    desc.includes(term);
-                
-                const matchesCategory =
-                    activeCategory === 'all' ||
-                    item.category === activeCategory;
+            <div class="w-12 h-12 rounded-xl flex items-center justify-center text-xl font-bold ${styles.cardColor} ${styles.text} shadow">
+                ${short}
+            </div>
 
-                return matchesSearch && matchesCategory;
-            });
+            <div class="flex-1 min-w-0">
+                <h3 class="font-bold text-slate-800 truncate">${item.word}</h3>
+                <p class="text-[11px] text-slate-500 truncate">${item.description || ""}</p>
+            </div>
+        </div>`;
+    }).join("");
+}
 
-            // Layout: พยัญชนะแบบตารางแน่น, หมวดอื่นเป็นการ์ด
-            if (activeCategory === 'consonant') {
-                gridContainer.className = "grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3";
-            } else {
-                gridContainer.className = "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4";
+
+/* =========================
+         OPEN MODAL
+   ========================= */
+function openModal(id) {
+    const item = signData.find(i => i.id == id);
+    if (!item) return;
+
+    document.body.style.overflow = "hidden";
+    modalOverlay.classList.remove("hidden");
+
+    const img = document.getElementById("modalImage");
+    const noImg = document.getElementById("modalNoImage");
+
+    if (item.imageUrl) {
+        img.src = item.imageUrl;
+        img.classList.remove("hidden");
+        noImg.classList.add("hidden");
+    } else {
+        img.classList.add("hidden");
+        noImg.classList.remove("hidden");
+    }
+
+    const styles = getCategoryStyles(item.category);
+
+    modalCategoryBadge.textContent = styles.badgeLabel;
+    modalCategoryBadge.className = `px-3 py-1 rounded-full text-xs font-bold text-white shadow-lg ${styles.badge}`;
+
+    modalIconContainer.textContent = (item.word || "").charAt(0);
+    modalIconContainer.className = `w-16 h-16 rounded-2xl flex items-center justify-center text-3xl font-bold shadow-lg ${styles.cardColor} ${styles.text}`;
+
+    modalWord.textContent = item.word;
+    modalDescription.textContent = item.description || "";
+
+    if (item.tip) {
+        modalTipContainer.classList.remove("hidden");
+        modalTip.textContent = item.tip;
+    } else {
+        modalTipContainer.classList.add("hidden");
+    }
+
+    /* Youtube Button */
+    if (item.youtubeUrl) {
+        modalYoutubeLink.href = item.youtubeUrl;
+        modalYoutubeLink.className = "bg-red-600 hover:bg-red-700 text-white rounded-xl py-3 flex items-center justify-center gap-2 shadow-md";
+        modalYoutubeText.textContent = "ดูวิดีโอสาธิต";
+    } else {
+        const q = encodeURIComponent("ภาษามือไทย " + item.word);
+        modalYoutubeLink.href = `https://www.youtube.com/results?search_query=${q}`;
+        modalYoutubeLink.className = "bg-slate-100 hover:bg-slate-200 rounded-xl py-3 text-slate-700 flex items-center justify-center gap-2";
+        modalYoutubeText.textContent = "ค้นหาใน YouTube";
+    }
+
+    lucide.createIcons();
+}
+
+function closeModal() {
+    modalOverlay.classList.add("hidden");
+    document.body.style.overflow = "";
+}
+
+function handleModalClick(e) {
+    if (e.target.id === "modalOverlay") closeModal();
+}
+
+
+/* =========================
+       AI TRANSLATION
+   ========================= */
+function openAiModal() {
+    aiModalOverlay.classList.remove("hidden");
+    document.body.style.overflow = "hidden";
+    aiInput.focus();
+}
+
+function closeAiModal() {
+    aiModalOverlay.classList.add("hidden");
+    document.body.style.overflow = "";
+}
+
+function handleAiModalClick(e) {
+    if (e.target.id === "aiModalOverlay") closeAiModal();
+}
+
+function handleAiEnter(e) {
+    if (e.key === "Enter") generateSignTranslation();
+}
+
+async function generateSignTranslation() {
+    const text = aiInput.value.trim();
+    if (!text) return;
+
+    aiLoading.classList.remove("hidden");
+    aiResultArea.classList.add("hidden");
+    aiError.classList.add("hidden");
+
+    try {
+        const prompt = `
+            Convert Thai sentence to Thai Sign Language Gloss (TSL).
+            Then list gesture explanations.
+            Output JSON:
+            {
+                "gloss":"",
+                "explanations":[{"word":"","desc":""}]
             }
+            Input: "${text}"
+        `;
 
-            if (filteredData.length === 0) {
-                gridContainer.innerHTML = '';
-                if (signData.length > 0) notFoundMessage.classList.remove('hidden');
-            } else {
-                notFoundMessage.classList.add('hidden');
-                gridContainer.innerHTML = filteredData.map(item => {
-                    const shortLabel = (item.word || '').split(' ')[0] || '';
-                    const styles = getCategoryStyles(item.category);
+        const res = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`,
+          {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                  contents: [{ parts: [{ text: prompt }] }],
+                  generationConfig: { responseMimeType: "application/json" }
+              })
+          }
+        );
 
-                    // Layout A: Consonant chart card
-                    if (item.category === 'consonant') {
-                        return `
-                            <div onclick="openModal('${item.id}')" class="consonant-card relative bg-white rounded-lg border border-slate-200 shadow-sm hover:shadow-md hover:border-orange-400 cursor-pointer overflow-hidden group">
-                                <div class="w-full h-[75%] bg-slate-100 overflow-hidden">
-                                    <img src="${item.imageUrl || ''}" loading="lazy" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110" alt="${item.word || ''}">
-                                </div>
-                                <div class="h-[25%] flex items-center justify-center bg-white border-t border-slate-100">
-                                    <span class="text-xl md:text-2xl font-bold text-slate-800">${shortLabel}</span>
-                                </div>
-                                <div class="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors pointer-events-none"></div>
-                            </div>
-                        `;
-                    }
+        const data = await res.json();
+        const json = JSON.parse(data.candidates[0].content.parts[0].text);
 
-                    // Layout B: Standard card
-                    return `
-                        <div onclick="openModal('${item.id}')" class="bg-white rounded-xl p-4 shadow-sm hover:shadow-md border border-slate-100 hover:border-blue-300 transition-all cursor-pointer flex items-center gap-4 group">
-                            <div class="w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold shrink-0 ${styles.cardColor}">
-                                ${shortLabel}
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <h3 class="text-lg font-bold text-slate-800 truncate">${item.word || ''}</h3>
-                                <p class="text-xs text-slate-400 truncate">${item.description || ''}</p>
-                                <div class="mt-2 text-xs font-medium text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    แตะเพื่อดูรายละเอียด
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-            }
-        }
+        glossOutput.textContent = json.gloss || "";
+        explanationOutput.innerHTML = (json.explanations || [])
+            .map(ex => `
+                <div class="bg-white border border-slate-200 p-3 rounded-xl shadow-sm flex gap-3">
+                    <div class="font-bold text-indigo-600 min-w-[60px]">${ex.word}</div>
+                    <div>${ex.desc}</div>
+                </div>
+            `).join("");
 
-        // ====== Modal Logic ======
-        function openModal(id) {
-            const item = signData.find(i => i.id === id);
-            if (!item) return;
+        aiLoading.classList.add("hidden");
+        aiResultArea.classList.remove("hidden");
 
-            document.body.style.overflow = 'hidden';
+    } catch (err) {
+        aiLoading.classList.add("hidden");
+        aiError.classList.remove("hidden");
+        console.error(err);
+    }
+}
 
-            const imageEl = document.getElementById('modalImage');
-            const noImageEl = document.getElementById('modalNoImage');
-            if (item.imageUrl) {
-                imageEl.src = item.imageUrl;
-                imageEl.classList.remove('hidden');
-                noImageEl.classList.add('hidden');
-            } else {
-                imageEl.src = '';
-                imageEl.classList.add('hidden');
-                noImageEl.classList.remove('hidden');
-            }
 
-            const badge = document.getElementById('modalCategoryBadge');
-            const iconContainer = document.getElementById('modalIconContainer');
-            const styles = getCategoryStyles(item.category);
+/* =========================
+         SEARCH LISTENER
+   ========================= */
+document.getElementById("searchInput").addEventListener("input", e => {
+    searchTerm = e.target.value;
+    renderGrid();
+});
 
-            badge.textContent = styles.badgeLabel;
-            badge.className = `px-3 py-1 rounded-full text-xs font-bold text-white shadow-sm ${styles.badgeClass}`;
 
-            iconContainer.textContent = (item.word || '').split(' ')[0] || '';
-            iconContainer.className = `w-14 h-14 rounded-xl flex items-center justify-center text-3xl font-bold shrink-0 text-white shadow-sm ${styles.badgeClass}`;
-
-            document.getElementById('modalWord').textContent = item.word || '';
-            document.getElementById('modalDescription').textContent = item.description || '';
-
-            const tipContainer = document.getElementById('modalTipContainer');
-            const tipEl = document.getElementById('modalTip');
-            if (item.tip) {
-                tipEl.textContent = item.tip;
-                tipContainer.classList.remove('hidden');
-                tipContainer.classList.add('flex');
-            } else {
-                tipContainer.classList.add('hidden');
-                tipContainer.classList.remove('flex');
-            }
-
-            const ytLink = document.getElementById('modalYoutubeLink');
-            const ytText = document.getElementById('modalYoutubeText');
-            
-            if (item.youtubeUrl) {
-                ytLink.href = item.youtubeUrl;
-                ytText.textContent = "ดูวิดีโอสาธิต";
-                ytLink.className = "flex items-center justify-center gap-2 w-full py-3.5 rounded-xl font-bold transition-all active:scale-[0.98] bg-red-600 hover:bg-red-700 text-white shadow-lg shadow-red-200";
-            } else {
-                const query = encodeURIComponent(`ภาษามือไทย คำว่า ${item.word || ''}`);
-                ytLink.href = `https://www.youtube.com/results?search_query=${query}`;
-                ytText.textContent = "ค้นหาบน YouTube";
-                ytLink.className = "flex items-center justify-center gap-2 w-full py-3.5 rounded-xl font-bold transition-all active:scale-[0.98] bg-slate-100 hover:bg-slate-200 text-slate-700";
-            }
-
-            modalOverlay.classList.remove('hidden');
-            lucide.createIcons();
-        }
-
-        function closeModal() {
-            document.body.style.overflow = '';
-            modalOverlay.classList.add('hidden');
-        }
-
-        function handleModalClick(e) {
-            if (e.target.id === 'modalOverlay') closeModal();
-        }
-
-        // ====== AI Logic ======
-        function openAiModal() {
-            document.body.style.overflow = 'hidden';
-            aiModalOverlay.classList.remove('hidden');
-            document.getElementById('aiInput').focus();
-        }
-        
-        function closeAiModal() {
-            document.body.style.overflow = '';
-            aiModalOverlay.classList.add('hidden');
-        }
-
-        function handleAiModalClick(e) {
-            if (e.target.id === 'aiModalOverlay') closeAiModal();
-        }
-
-        function handleAiEnter(event) {
-            if (event.key === 'Enter') generateSignTranslation();
-        }
-
-        async function generateSignTranslation() {
-            const text = document.getElementById('aiInput').value.trim();
-            if (!text) return;
-
-            const loading = document.getElementById('aiLoading');
-            const resultArea = document.getElementById('aiResultArea');
-            const errorMsg = document.getElementById('aiError');
-
-            loading.classList.remove('hidden');
-            resultArea.classList.add('hidden');
-            errorMsg.classList.add('hidden');
-
-            try {
-                const prompt = `Act as a Thai Sign Language (TSL) expert. Convert "${text}" into TSL Grammar/Gloss. List key words with gestures. Output JSON: {"gloss": "...", "explanations": [{"word": "...", "desc": "..."}]}`;
-                
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: [{ parts: [{ text: prompt }] }],
-                        generationConfig: { responseMimeType: "application/json" }
-                    })
-                });
-
-                if (!response.ok) throw new Error('API Error');
-
-                const data = await response.json();
-                const resultJson = JSON.parse(data.candidates[0].content.parts[0].text);
-
-                document.getElementById('glossOutput').textContent = resultJson.gloss || '';
-
-                document.getElementById('explanationOutput').innerHTML =
-                    (resultJson.explanations || []).map(item => `
-                        <div class="flex gap-3 p-3 bg-white rounded-lg border border-slate-100">
-                            <div class="font-bold text-indigo-600 whitespace-nowrap min-w-[60px]">
-                                ${item.word || ''}
-                            </div>
-                            <div class="text-slate-600">
-                                ${item.desc || ''}
-                            </div>
-                        </div>
-                    `).join('');
-
-                loading.classList.add('hidden');
-                resultArea.classList.remove('hidden');
-
-            } catch (error) {
-                console.error(error);
-                loading.classList.add('hidden');
-                errorMsg.classList.remove('hidden');
-            }
-        }
-
-        // Search Input Listener
-        searchInput.addEventListener('input', (e) => {
-            searchTerm = e.target.value;
-            renderGrid();
-        });
-
-        // Initialize
-        renderCategories();
-        fetchSignData();
-        lucide.createIcons();
-
-        // Expose global functions for HTML inline handlers
-        window.openModal = openModal;
-        window.closeModal = closeModal;
-        window.openAiModal = openAiModal;
-        window.closeAiModal = closeAiModal;
-        window.setActiveCategory = setActiveCategory;
-        window.handleModalClick = handleModalClick;
-        window.handleAiModalClick = handleAiModalClick;
-        window.handleAiEnter = handleAiEnter;
-        window.generateSignTranslation = generateSignTranslation;
-    </script>
+/* =========================
+           INIT
+   ========================= */
+renderCategories();
+fetchSignData();
+lucide.createIcons();
+</script>
 </body>
 </html>
-
