@@ -110,7 +110,7 @@
             <button onclick="openAiModal()"
                 class="flex-shrink-0 btn-3d px-4 py-2 rounded-full text-white font-semibold flex items-center gap-2">
                 <i data-lucide="sparkles" class="w-4 h-4"></i>
-                ถาม AI 
+                AI แปลภาษา
             </button>
 
             <div class="w-px h-6 bg-slate-300"></div>
@@ -290,7 +290,7 @@
     CONFIG & GLOBAL STATE
    ========================= */
 
-const apiKey = "AIzaSyCPvk55YExFG9qwTT6dk_F02D7WwstETS4";
+const apiKey = "AIzaSyD_9mzuoLZT-tka_73IpHJWpSsBWLEM8b4";
 
 let signData = [];
 let searchTerm = "";
@@ -564,7 +564,7 @@ async function generateSignTranslation() {
         `;
 
         const res = await fetch(
-          const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.0-flash::generateContent?key=${API_KEY}`;,
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.0-flash:generateContent?key=${apiKey}`,
           {
               method: "POST",
               headers: { "Content-Type": "application/json" },
@@ -614,18 +614,5 @@ renderCategories();
 fetchSignData();
 lucide.createIcons();
 </script>
-    <footer>
-  <p class="footer-links">
-    © 2025 Crow Studio |
-    <a href="https://sites.google.com/view/privacy-policy-pdpa-crow-studi/%E0%B8%AB%E0%B8%99%E0%B8%B2%E0%B9%81%E0%B8%A3%E0%B8%81">นโยบายความเป็นส่วนตัว</a> |
-    <a href="ลิงก์ข้อตกลง">ข้อตกลงการใช้งาน</a>
-  </p>
-</footer>
 </body>
 </html>
-
-
-
-
-
-
