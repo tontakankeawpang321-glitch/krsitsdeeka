@@ -3,9 +3,10 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>รายชื่อยารักษาโรค – จากชีต</title>
+<title>รายชื่อยารักษาโรค (AI Pharmacist)</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&family=Kodchasan:wght@600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
 
 <style>
   :root{
@@ -91,7 +92,7 @@
   .pager button{ border:1px solid var(--line); background:var(--paper); border-radius:999px; padding:8px 12px; cursor:pointer; }
   .pager .info{ font-size:13px; color:var(--muted); padding:0 8px; }
 
-  /* Modal */
+  /* Modal (Drug Details) */
   .modal-backdrop{
     position:fixed; inset:0; background:rgba(0,0,0,.42); display:none; place-items:center; padding:16px; z-index:100;
     touch-action:none; /* ป้องกันสกอร์หน้าใต้ modal บนอุปกรณ์สัมผัส */
@@ -121,44 +122,55 @@
 
   /* ====== สีข้อความตามหมวดหมู่ยา ====== */
   .cat-analgesic .drug-name{ color:#b45309 }      
-  .cat-antipyretic .drug-name{ color:#2563eb }   
+  .cat-antipyretic .drug-name{ color:#2563eb }    
   .cat-antibiotic .drug-name{ color:#dc2626 }    
   .cat-antihistamine .drug-name{ color:#0f766e } 
   .cat-antacid .drug-name{ color:#7c3aed }        
-  .cat-cough .drug-name{ color:#1e40af }         
-  .cat-vitamin .drug-name{ color:#166534 }      
-	   .fab-chatbot {
-    position: fixed;
-    bottom: 70px;
-    right: 50px;
-    width: 40px;
-    height: 40px;
-    background-color: #000000;
-    color: #fff;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 21px; /* ปรับขนาดสำหรับ emoji */
-    text-decoration: none;
-    box-shadow: var(--shadow);
-    transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
-    z-index: 1000;
-  }
+  .cat-cough .drug-name{ color:#1e40af }          
+  .cat-vitamin .drug-name{ color:#166534 }       
 
-  .fab-chatbot:hover {
-    background-color: var(--blue-shadow);
-    transform: translateY(-3px) scale(1.05);
-    box-shadow: var(--shadow-hover);
+  /* ===== CSS ของ Chatbot UI (Pharmacist Theme) ===== */
+  .chat-bubble::before { content: ''; position: absolute; width: 0; height: 0; border-style: solid; }
+  .chat-bubble-user::before {
+    border-width: 0 12px 12px 12px; border-color: transparent transparent #50b5a5 transparent; /* สีเขียวมิ้นต์ */
+    top: -10px; right: 12px;
   }
-
-  .fab-chatbot:active {
-    transform: scale(0.98);
+  .chat-bubble-model::before {
+    border-width: 0 12px 12px 12px; border-color: transparent transparent #f3f4f6 transparent;
+    top: -10px; left: 12px;
   }
-
-  .fab-chatbot:focus-visible {
-    outline: 3px solid var(--royal-blue);
-    outline-offset: 3px;
+  .gemini-thinking-bar {
+    position: relative; width: 100%; height: 4px; background-color: #e0e0e0;
+    border-radius: 2px; overflow: hidden;
+  }
+  .gemini-thinking-bar::before {
+    content: ''; position: absolute; top: 0; left: 0; height: 100%; width: 100%;
+    background: linear-gradient(90deg, #50b5a5, #2f8f80, #50b5a5);
+    background-size: 200% 100%; animation: thinking-gradient 2s linear infinite;
+  }
+  @keyframes thinking-gradient { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+  
+  #fab-chat-toggle {
+    position: fixed; bottom: 25px; right: 25px;
+    width: 60px; height: 60px;
+    background-color: #064e43; /* เขียวเข้ม */
+    color: white;
+    border: none; border-radius: 50%;
+    font-size: 28px; line-height: 60px; text-align: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    cursor: pointer; z-index: 998;
+    transition: transform 0.2s, opacity 0.3s;
+    font-family: 'Kodchasan', sans-serif;
+  }
+  #fab-chat-toggle:hover { transform: scale(1.05); background-color: #50b5a5; }
+  
+  #chatbot-modal {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    z-index: 1000; transition: opacity 0.3s, transform 0.3s;
+    opacity: 1; transform: translateY(0); pointer-events: auto;
+  }
+  #chatbot-modal.chatbot-hidden {
+    opacity: 0; transform: translateY(100%); pointer-events: none;
   }
 </style>
 </head>
@@ -213,88 +225,114 @@
     </div>
   </div>
 
+  <footer>
+    <p class="footer-links" style="text-align: center; color: #475569; margin-top: 20px;">
+      © 2025 Crow Studio |
+      <a href="https://sites.google.com/view/privacy-policy-pdpa-crow-studi/%E0%B8%AB%E0%B8%99%E0%B8%B2%E0%B9%81%E0%B8%A3%E0%B8%81">นโยบายความเป็นส่วนตัว</a> |
+      <a href="ลิงก์ข้อตกลง">ข้อตกลงการใช้งาน</a>
+    </p>
+  </footer>
+
+  <button id="fab-chat-toggle" title="ถามเภสัชกร AI">Ai</button>
+
+  <div id="chatbot-modal" class="chatbot-hidden">
+    <div class="flex flex-col h-screen bg-gray-100">
+      <header class="bg-[#50b5a5] text-white p-4 flex justify-between items-center shadow-md">
+        <div class="flex items-center gap-2">
+            <span class="text-2xl">💊</span>
+            <h1 class="text-lg font-bold font-sans text-white m-0">AI เภสัชกร</h1>
+        </div>
+        <div>
+          <button id="new-chat-btn" class="bg-[#ddfff8] hover:bg-[#baf3ea] text-[#064e43] font-bold py-1 px-3 rounded mr-2 text-sm">
+            เริ่มใหม่
+          </button>
+          <button id="chatbot-close-btn" class="bg-gray-700 hover:bg-gray-900 text-white font-bold py-1 px-3 rounded text-sm">
+            ปิด
+          </button>
+        </div>
+      </header>
+
+      <main id="chat-history" class="flex-1 overflow-y-auto p-4 space-y-4 bg-[#f0fdfa]">
+        <div class="flex items-start space-x-2">
+          <span class="text-2xl">🤖</span>
+          <div class="chat-bubble chat-bubble-model bg-white text-gray-800 p-3 rounded-lg max-w-lg relative border border-gray-200 shadow-sm">
+            <p>สวัสดีครับ ผมคือ AI ผู้ช่วยเภสัชกร มีหน้าที่ให้ข้อมูลเกี่ยวกับยารักษาโรค สรรพคุณ และวิธีใช้เบื้องต้นครับ<br><br><small style="color:#d97706">*คำเตือน: ข้อมูลนี้เป็นเพียงคำแนะนำเบื้องต้น ไม่สามารถทดแทนการวินิจฉัยของแพทย์ได้ หากมีอาการรุนแรงโปรดพบแพทย์ทันที</small></p>
+          </div>
+        </div>
+      </main>
+
+      <div id="thinking-indicator" class="p-4 hidden bg-[#f0fdfa]">
+        <div class="flex items-center space-x-2">
+          <span class="text-2xl">🤖</span>
+          <div class="chat-bubble chat-bubble-model bg-white text-gray-800 p-3 rounded-lg max-w-lg relative border border-gray-200">
+            <div class="gemini-thinking-bar"></div>
+          </div>
+        </div>
+      </div>
+
+      <footer class="bg-white p-3 shadow-inner border-t border-gray-200 m-0 w-full max-w-full">
+        <div class="flex space-x-2">
+          <input id="user-input" type="text" placeholder="พิมพ์ชื่อยา หรืออาการป่วย..." class="flex-1 p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#50b5a5] font-sans text-base">
+          <button id="send-btn" class="bg-[#50b5a5] hover:bg-[#2f8f80] text-white font-bold py-2 px-4 rounded-xl shadow-sm">
+            ส่ง
+          </button>
+        </div>
+      </footer>
+    </div>
+  </div>
+
 <script>
 /** ================== CONFIG ================== **/
-// !!! กรุณาเปลี่ยน URL ด้านล่างนี้เป็น Raw URL ของไฟล์ JSON บน GitHub ของคุณ !!!
 const API_JSON_URL = 'https://raw.githubusercontent.com/tontakankeawpang321-glitch/krsitsdeeka/main/drugs.json';
-const PAGE_SIZE = 12; // เพิ่มจำนวนรายการต่อหน้า
+const PAGE_SIZE = 12;
 
 /** =============== Utilities =============== **/
 const $$ = (sel, el=document)=>el.querySelector(sel);
-const escapeHtml = (s='') =>
-  String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const escapeHtml = (s='') => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const stripHtml = (html='') => { const t=document.createElement('div'); t.innerHTML=html; return t.textContent||t.innerText||''; };
 
-/** หมวดไทย -> key (ให้สีหัวเรื่อง) */
 const CAT_TH_TO_KEY = {
-  'ยาแก้ปวด': 'analgesic',
-  'ยาลดไข้': 'antipyretic',
-  'ยาฆ่าเชื้อ': 'antibiotic',
-  'ยาแก้แพ้': 'antihistamine',
-  'ยาลดกรด/กระเพาะ': 'antacid',
-  'ยาแก้ไอ/ขับเสมหะ': 'cough',
-  'วิตามิน/อาหารเสริม': 'vitamin'
+  'ยาแก้ปวด': 'analgesic', 'ยาลดไข้': 'antipyretic', 'ยาฆ่าเชื้อ': 'antibiotic',
+  'ยาแก้แพ้': 'antihistamine', 'ยาลดกรด/กระเพาะ': 'antacid',
+  'ยาแก้ไอ/ขับเสมหะ': 'cough', 'วิตามิน/อาหารเสริม': 'vitamin'
 };
 
-/** รองรับ 2 สคีมา → รวมให้อยู่รูปเดียวที่หน้าเว็บใช้ */
 function normalizeDrug(x={}){
-  // full-schema
   if (x.name || x.generic || x.category || x.contentHtml) {
     return {
-      id: String(x.id || ''),
-      name: String(x.name || ''),
-      generic: String(x.generic || ''),
-      category: String(x.category || ''),
-      descHtml: String(x.contentHtml || ''),
-      caution: String(x.caution || ''),
-      sources: Array.isArray(x.sources) ? x.sources : String(x.sources||'').split(/[|,;]+/).map(s=>s.trim()).filter(Boolean),
+      id: String(x.id || ''), name: String(x.name || ''), generic: String(x.generic || ''),
+      category: String(x.category || ''), descHtml: String(x.contentHtml || ''),
+      caution: String(x.caution || ''), sources: Array.isArray(x.sources) ? x.sources : String(x.sources||'').split(/[|,;]+/).map(s=>s.trim()).filter(Boolean),
       updatedAt: String(x.updatedAt || '')
     };
   }
-
-  // slim-schema (ภาษาไทย)
-  const thaiName = x['ชื่อยา'];
-  const thaiCat = x['หมวด'];
-  const thaiDesc = x['รายละเอียดยาแบบพอเข้าใจ'];
-  const thaiCaution = x['คำเตือนคำแนะนำ'];
+  const thaiName = x['ชื่อยา']; const thaiCat = x['หมวด'];
+  const thaiDesc = x['รายละเอียดยาแบบพอเข้าใจ']; const thaiCaution = x['คำเตือนคำแนะนำ'];
   const thaiSrc = x['อ้างอิง url'];
-
   const key = CAT_TH_TO_KEY[thaiCat] || (String(thaiCat||'').toLowerCase()) || '';
   return {
-    id: String(x.id || ''), // อาจว่างใน slim
-    name: String(thaiName || ''),
-    generic: '',
-    category: key, // ใช้ key เพื่อให้ class สีทำงาน
-    descHtml: escapeHtml(String(thaiDesc || '')).replace(/\n/g, '<br>'), // เปลี่ยน \n เป็น <br>
-    caution: String(thaiCaution || ''),
-    sources: String(thaiSrc||'').split(/[|,;]+/).map(s=>s.trim()).filter(Boolean),
+    id: String(x.id || ''), name: String(thaiName || ''), generic: '',
+    category: key, descHtml: escapeHtml(String(thaiDesc || '')).replace(/\n/g, '<br>'),
+    caution: String(thaiCaution || ''), sources: String(thaiSrc||'').split(/[|,;]+/).map(s=>s.trim()).filter(Boolean),
     updatedAt: ''
   };
 }
 
-/** =============== Fetch =============== **/
+/** =============== Fetch & Render =============== **/
 async function fetchData(){
   const res = await fetch(API_JSON_URL, {cache:'no-store'});
   if(!res.ok) throw new Error(`โหลดข้อมูลไม่ได้ (status: ${res.status})`);
   const json = await res.json();
   const arr = Array.isArray(json) ? json : (Array.isArray(json.data) ? json.data : []);
-  // กรองรายการที่ไม่มีชื่อยาออก
   return arr.map(normalizeDrug).filter(drug => drug.name && drug.name.trim() !== '');
 }
 
-/** =============== State/Render =============== **/
-let raw = [];
-let view = [];
-let page = 1;
+let raw = []; let view = []; let page = 1;
 
 function renderPage(){
-  const total = view.length;
-  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  const total = view.length; const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
   page = Math.min(Math.max(1, page), totalPages);
-
-  const start = (page-1)*PAGE_SIZE;
-  const cur = view.slice(start, start+PAGE_SIZE);
-
+  const start = (page-1)*PAGE_SIZE; const cur = view.slice(start, start+PAGE_SIZE);
   const g = document.getElementById('grid');
   if(!cur.length){
     g.innerHTML = `<div style="grid-column:1/-1; text-align:center; color:#475569; padding:24px">ไม่พบรายการยา</div>`;
@@ -313,7 +351,7 @@ function renderPage(){
           </div>
           <div class="excerpt">${escapeHtml(excerpt)}${excerpt.length>=180?'…':''}</div>
           <div class="tags">${srcs}</div>
-          <button class="btn" onclick="openModal('${encodeURIComponent(it.id)}','${encodeURIComponent(it.name)}')">ดูรายละเอียด</button>
+          <button class="btn" onclick="openDrugModal('${encodeURIComponent(it.id)}','${encodeURIComponent(it.name)}')">ดูรายละเอียด</button>
         </article>
       `;
     }).join('');
@@ -323,28 +361,22 @@ function renderPage(){
   document.getElementById('nextBtn').disabled = page>=totalPages;
 }
 
-/** =============== Modal + Scroll Lock =============== **/
+/** =============== Modal Logic =============== **/
 let scrollY = 0;
 function lockBody(){
   scrollY = window.scrollY || document.documentElement.scrollTop;
-  document.body.classList.add('no-scroll');
-  document.body.style.position = 'fixed';
-  document.body.style.top = `-${scrollY}px`;
-  document.body.style.left = '0';
-  document.body.style.right = '0';
+  document.body.classList.add('no-scroll'); document.body.style.position = 'fixed';
+  document.body.style.top = `-${scrollY}px`; document.body.style.left = '0'; document.body.style.right = '0';
   document.getElementById('mainContent').setAttribute('inert','');
 }
 function unlockBody(){
-  document.body.classList.remove('no-scroll');
-  document.body.style.position = '';
-  document.body.style.top = '';
-  document.body.style.left = '';
-  document.body.style.right = '';
-  window.scrollTo(0, scrollY);
-  document.getElementById('mainContent').removeAttribute('inert');
+  document.body.classList.remove('no-scroll'); document.body.style.position = '';
+  document.body.style.top = ''; document.body.style.left = ''; document.body.style.right = '';
+  window.scrollTo(0, scrollY); document.getElementById('mainContent').removeAttribute('inert');
 }
 
-function openModal(encodedId, encodedName){
+// เปลี่ยนชื่อฟังก์ชันเป็น openDrugModal เพื่อไม่ให้ชนกับ Chatbot
+function openDrugModal(encodedId, encodedName){
   const id = decodeURIComponent(encodedId || '');
   const name = decodeURIComponent(encodedName || '');
   const it = raw.find(x=> (x.id && x.id===id) || (x.name===name)) || {};
@@ -356,7 +388,6 @@ function openModal(encodedId, encodedName){
   document.getElementById('mContent').innerHTML = it.descHtml || '';
   const srcs = (it.sources||[]).map(s=>`<a href="${escapeHtml(s)}" target="_blank" rel="noopener nofollow">${escapeHtml(s)}</a>`).join('<br>');
   document.getElementById('mSources').innerHTML = srcs ? `<strong>แหล่งอ้างอิง:</strong><br>${srcs}` : '';
-
   document.getElementById('modalBackdrop').classList.add('show');
   lockBody();
 }
@@ -366,25 +397,19 @@ function closeModal(){
 }
 document.getElementById('closeModal').addEventListener('click', closeModal);
 document.getElementById('modalBackdrop').addEventListener('click', (e)=>{ if(e.target.id==='modalBackdrop') closeModal(); });
-document.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && document.getElementById('modalBackdrop').classList.contains('show')) closeModal(); });
 
-/** =============== Pager / Search =============== **/
+/** =============== Search & Pager =============== **/
 document.getElementById('prevBtn').addEventListener('click', ()=>{ page=Math.max(1,page-1); renderPage(); });
 document.getElementById('nextBtn').addEventListener('click', ()=>{ page=page+1; renderPage(); });
-
 function applySearch(){
   const q = document.getElementById('q').value.trim().toLowerCase();
   const category = document.getElementById('cat').value.trim().toLowerCase();
-
   view = raw.filter(it=>{
-    const hitQ = !q || [
-      it.name, it.generic, stripHtml(it.descHtml||''), it.caution, (it.sources||[]).join(' ')
-    ].join(' | ').toLowerCase().includes(q);
+    const hitQ = !q || [it.name, it.generic, stripHtml(it.descHtml||''), it.caution, (it.sources||[]).join(' ')].join(' | ').toLowerCase().includes(q);
     const hitCat = !category || (String(it.category||'').toLowerCase() === category);
     return hitQ && hitCat;
   });
-  page = 1;
-  renderPage();
+  page = 1; renderPage();
 }
 document.getElementById('searchBtn').addEventListener('click', applySearch);
 document.getElementById('clearBtn').addEventListener('click', ()=>{
@@ -394,39 +419,140 @@ document.getElementById('clearBtn').addEventListener('click', ()=>{
 document.getElementById('q').addEventListener('keydown', e=>{ if(e.key==='Enter') applySearch(); });
 document.getElementById('cat').addEventListener('change', applySearch);
 
-/** =============== Init =============== **/
 (async function init(){
-  // skeleton
-  document.getElementById('grid').innerHTML = Array.from({length:6}).map(()=>`
-    <div class="card">
-      <div class="skeleton" style="height:18px; width:70%; border-radius:8px"></div>
-      <div class="skeleton" style="height:10px; width:50%; border-radius:8px"></div>
-      <div class="skeleton" style="height:70px; border-radius:12px"></div>
-      <div class="skeleton" style="height:28px; width:120px; border-radius:10px"></div>
-    </div>
-  `).join('');
-
-  try{
-    raw = await fetchData();
-    view = raw.slice(0);
-    renderPage();
-  }catch(e){
-    document.getElementById('grid').innerHTML =
-      `<div style="grid-column:1/-1; text-align:center; padding:24px; color:#b91c1c">
-        เกิดข้อผิดพลาดในการโหลดข้อมูล: ${escapeHtml(e.message||String(e))}
-      </div>`;
-  }
+  try{ raw = await fetchData(); view = raw.slice(0); renderPage(); }
+  catch(e){ document.getElementById('grid').innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:24px; color:#b91c1c">Error: ${escapeHtml(e.message)}</div>`; }
 })();
+
+
+/** =========================================
+    3. ส่วน Chatbot AI (Backend)
+    ========================================= */
+const BACKEND_URL = 'https://us-central1-law-ai-14740.cloudfunctions.net/api/chat';
+
+// System Prompt: ปรับบุคลิกให้เป็นเภสัชกร
+const SYSTEM_PROMPT = {
+    role: "user",
+    parts: [{ text: "System Instruction: คุณคือ AI เภสัชกรผู้ช่วย (Pharmacist AI) มีหน้าที่ให้ข้อมูลเกี่ยวกับยา สรรพคุณ วิธีใช้ ผลข้างเคียง และคำแนะนำเบื้องต้นเกี่ยวกับสุขภาพ ตอบด้วยภาษาที่สุภาพ เข้าใจง่าย และต้องระบุเสมอว่า 'ข้อมูลนี้เป็นเพียงคำแนะนำเบื้องต้น ควรปรึกษาแพทย์หรือเภสัชกรก่อนใช้ยา' ห้ามตอบเรื่องกฎหมายหรือเรื่องอื่นที่ไม่เกี่ยวข้องกับสุขภาพ" }]
+};
+const SYSTEM_ACK = {
+    role: "model",
+    parts: [{ text: "รับทราบครับ ผมพร้อมให้ข้อมูลเรื่องยาและสุขภาพแล้วครับ" }]
+};
+
+let chatHistory = [SYSTEM_PROMPT, SYSTEM_ACK];
+
+const chatHistoryEl = document.getElementById('chat-history');
+const userInput = document.getElementById('user-input');
+const sendBtn = document.getElementById('send-btn');
+const newChatBtn = document.getElementById('new-chat-btn');
+const thinkingIndicator = document.getElementById('thinking-indicator');
+
+function addChatBubble(message, isUser = true) {
+    const bubbleType = isUser ? 'user' : 'model';
+    const icon = isUser ? '👤' : '🤖';
+    const bgClass = isUser ? 'bg-[#50b5a5] text-white' : 'bg-white text-gray-800 border border-gray-200'; // สีเขียวมิ้นต์
+    
+    const wrap = document.createElement('div');
+    wrap.className = `flex items-start space-x-2 ${isUser ? 'flex-row-reverse space-x-reverse' : ''}`;
+    
+    const bubble = document.createElement('div');
+    bubble.className = `chat-bubble chat-bubble-${bubbleType} ${bgClass} p-3 rounded-lg max-w-lg relative shadow-sm`;
+    bubble.innerHTML = `<p>${message.replace(/\n/g, '<br>')}</p>`;
+    
+    wrap.innerHTML = `<span class="text-2xl">${icon}</span>`;
+    wrap.appendChild(bubble);
+    
+    chatHistoryEl.appendChild(wrap);
+    chatHistoryEl.scrollTop = chatHistoryEl.scrollHeight;
+}
+
+function addChatError(message) {
+    const w = document.createElement('div');
+    w.className = 'flex justify-center my-2';
+    w.innerHTML = `<span class="bg-red-100 text-red-700 text-xs font-semibold px-3 py-1 rounded-full">${message}</span>`;
+    chatHistoryEl.appendChild(w);
+    chatHistoryEl.scrollTop = chatHistoryEl.scrollHeight;
+}
+
+function setThinking(on) {
+    thinkingIndicator.classList.toggle('hidden', !on);
+    if (on) chatHistoryEl.scrollTop = chatHistoryEl.scrollHeight;
+}
+
+async function handleSend() {
+    const message = (userInput.value || '').trim();
+    if (!message) return;
+
+    addChatBubble(message, true);
+    userInput.value = '';
+    setThinking(true);
+    sendBtn.disabled = true;
+
+    chatHistory.push({ role: "user", parts: [{ text: message }] });
+
+    try {
+        const response = await fetch(BACKEND_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ history: chatHistory }) 
+        });
+
+        if (!response.ok) {
+            const errData = await response.json();
+            throw new Error(errData.error || `Server error: ${response.status}`);
+        }
+
+        const data = await response.json(); 
+        const aiReply = data.reply;
+
+        chatHistory.push({ role: "model", parts: [{ text: aiReply }] });
+        setThinking(false);
+        addChatBubble(aiReply, false);
+
+    } catch (err) {
+        console.error("Fetch Error:", err);
+        setThinking(false);
+        addChatError(`เกิดข้อผิดพลาด: ${err.message}`);
+        chatHistory.pop();
+    } finally {
+        sendBtn.disabled = false;
+    }
+}
+
+sendBtn.addEventListener('click', handleSend);
+userInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter') handleSend();
+});
+
+// Reset Chat
+newChatBtn.addEventListener('click', () => {
+    chatHistory = [SYSTEM_PROMPT, SYSTEM_ACK];
+    chatHistoryEl.innerHTML = `
+        <div class="flex items-start space-x-2">
+        <span class="text-2xl">🤖</span>
+        <div class="chat-bubble chat-bubble-model bg-white text-gray-800 p-3 rounded-lg max-w-lg relative border border-gray-200 shadow-sm">
+            <p>สวัสดีครับ ผมคือ AI ผู้ช่วยเภสัชกร สอบถามเรื่องยาใหม่ได้เลยครับ</p>
+        </div>
+        </div>`;
+    userInput.value = '';
+    setThinking(false);
+});
+
+// Modal Control
+const fabToggle = document.getElementById('fab-chat-toggle');
+const chatModal = document.getElementById('chatbot-modal');
+const chatbotCloseBtn = document.getElementById('chatbot-close-btn');
+
+fabToggle.addEventListener('click', () => {
+    chatModal.classList.remove('chatbot-hidden');
+    fabToggle.style.opacity = '0';
+});
+chatbotCloseBtn.addEventListener('click', () => {
+    chatModal.classList.add('chatbot-hidden');
+    fabToggle.style.opacity = '1';
+});
+
 </script>
-	<footer>
-  <p class="footer-links">
-    © 2025 Crow Studio |
-    <a href="https://sites.google.com/view/privacy-policy-pdpa-crow-studi/%E0%B8%AB%E0%B8%99%E0%B8%B2%E0%B9%81%E0%B8%A3%E0%B8%81">นโยบายความเป็นส่วนตัว</a> |
-    <a href="ลิงก์ข้อตกลง">ข้อตกลงการใช้งาน</a>
-  </p>
-</footer>
-	<a href="https://raw.githack.com/tontakankeawpang321-glitch/krsitsdeeka/main/%E0%B8%95%E0%B8%B1%E0%B8%A7%E0%B8%8A%E0%B9%88%E0%B8%A7%E0%B8%A2%E0%B8%A2%E0%B8%B2/index.html" class="fab-chatbot" title="แชทบอทพระไตรปิฎก" aria-label="แชทบอทพระไตรปิฎก">
-  Ai
-</a>
 </body>
 </html>
