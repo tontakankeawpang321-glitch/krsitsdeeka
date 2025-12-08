@@ -3,9 +3,11 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
-<title>📈 Candlestick Library – แท่งเทียน + เทคนิค</title>
+<title>📈 Candlestick Library – แท่งเทียน + เทคนิค (AI Analyst)</title>
 <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/papaparse@5.4.1/papaparse.min.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+
 <style>
 :root{
   --bg:#0f172a; --paper:#fff; --ink:#0f172a;
@@ -153,38 +155,49 @@ dialog.candle-dialog{
   .cd-left{width:100%;justify-content:flex-start;}
 }
 
-/* === FAB Chatbot Button === */
-.fab-chatbot {
-  position: fixed;
-  bottom: 100px;
-  right: 25px;
-  width: 40px;
-  height: 40px;
-  background-color: #000000;
-  color: #fff;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 21px;
-  text-decoration: none;
-  box-shadow: var(--shadow);
-  transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
-  z-index: 1000;
+/* === CSS ของ Chatbot UI (Trading/Dark Theme) === */
+.chat-bubble::before { content: ''; position: absolute; width: 0; height: 0; border-style: solid; }
+.chat-bubble-user::before {
+  border-width: 0 12px 12px 12px; border-color: transparent transparent #0f766e transparent; /* Teal */
+  top: -10px; right: 12px;
 }
-.fab-chatbot:hover {
-  background-color: var(--blue-shadow);
-  transform: translateY(-3px) scale(1.05);
-  box-shadow: var(--shadow-hover);
+.chat-bubble-model::before {
+  border-width: 0 12px 12px 12px; border-color: transparent transparent #e5e7eb transparent;
+  top: -10px; left: 12px;
 }
-.fab-chatbot:active {
-  transform: scale(0.98);
+.gemini-thinking-bar {
+  position: relative; width: 100%; height: 4px; background-color: #e0e0e0;
+  border-radius: 2px; overflow: hidden;
 }
-.fab-chatbot:focus-visible {
-  outline: 3px solid var(--royal-blue);
-  outline-offset: 3px;
+.gemini-thinking-bar::before {
+  content: ''; position: absolute; top: 0; left: 0; height: 100%; width: 100%;
+  background: linear-gradient(90deg, #0f766e, #14b8a6, #0f766e);
+  background-size: 200% 100%; animation: thinking-gradient 2s linear infinite;
 }
-/* === End FAB Chatbot Button === */
+@keyframes thinking-gradient { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+#fab-chat-toggle {
+  position: fixed; bottom: 25px; right: 25px;
+  width: 60px; height: 60px;
+  background-color: #0f766e; /* Teal */
+  color: white;
+  border: none; border-radius: 50%;
+  font-size: 28px; line-height: 60px; text-align: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  cursor: pointer; z-index: 998;
+  transition: transform 0.2s, opacity 0.3s;
+  font-family: 'Sarabun', sans-serif;
+}
+#fab-chat-toggle:hover { transform: scale(1.05); background-color: #115e59; }
+
+#chatbot-modal {
+  position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+  z-index: 1000; transition: opacity 0.3s, transform 0.3s;
+  opacity: 1; transform: translateY(0); pointer-events: auto;
+}
+#chatbot-modal.chatbot-hidden {
+  opacity: 0; transform: translateY(100%); pointer-events: none;
+}
 </style>
 </head>
 <body>
@@ -210,7 +223,6 @@ dialog.candle-dialog{
   <div id="pager" class="pager"></div>
 </div>
 
-<!-- dialog -->
 <dialog id="detailDialog" class="candle-dialog">
   <div class="cd-head">
     <div class="cd-title" id="dTitle">PATTERN</div>
@@ -233,6 +245,65 @@ dialog.candle-dialog{
   </div>
 </dialog>
 
+<footer>
+  <p class="footer-links" style="text-align:center; color:#475569; margin-top:20px;">
+    © 2025 Crow Studio |
+    <a href="https://sites.google.com/view/privacy-policy-pdpa-crow-studi/%E0%B8%AB%E0%B8%99%E0%B8%B2%E0%B9%81%E0%B8%A3%E0%B8%81">นโยบายความเป็นส่วนตัว</a> |
+    <a href="ลิงก์ข้อตกลง">ข้อตกลงการใช้งาน</a>
+  </p>
+</footer>
+
+<button id="fab-chat-toggle" title="ถาม AI เทรดเดอร์">Ai</button>
+
+<div id="chatbot-modal" class="chatbot-hidden">
+  <div class="flex flex-col h-screen bg-gray-100">
+    <header class="bg-[#0f172a] text-white p-4 flex justify-between items-center shadow-md">
+      <div class="flex items-center gap-2">
+          <span class="text-2xl">📈</span>
+          <h1 class="text-lg font-bold font-sans text-white m-0">AI เทรดเดอร์</h1>
+      </div>
+      <div>
+        <button id="new-chat-btn" class="bg-[#0f766e] hover:bg-[#115e59] text-white font-bold py-1 px-3 rounded mr-2 text-sm">
+          เริ่มใหม่
+        </button>
+        <button id="chatbot-close-btn" class="bg-gray-700 hover:bg-gray-900 text-white font-bold py-1 px-3 rounded text-sm">
+          ปิด
+        </button>
+      </div>
+    </header>
+
+    <main id="chat-history" class="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
+      <div class="flex items-start space-x-2">
+        <span class="text-2xl">🤖</span>
+        <div class="chat-bubble chat-bubble-model bg-white text-gray-800 p-3 rounded-lg max-w-lg relative border border-gray-200 shadow-sm">
+          <p>สวัสดีครับ ผมคือ AI Technical Analyst ช่วยวิเคราะห์กราฟแท่งเทียนและเทคนิคการเทรด 
+
+[Image of candlestick chart analysis]
+ สอบถามเรื่อง Pattern หรือแนวโน้มตลาดได้เลยครับ</p>
+        </div>
+      </div>
+    </main>
+
+    <div id="thinking-indicator" class="p-4 hidden bg-gray-50">
+      <div class="flex items-center space-x-2">
+        <span class="text-2xl">🤖</span>
+        <div class="chat-bubble chat-bubble-model bg-white text-gray-800 p-3 rounded-lg max-w-lg relative border border-gray-200">
+          <div class="gemini-thinking-bar"></div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="bg-white p-3 shadow-inner border-t border-gray-200 m-0 w-full max-w-full">
+      <div class="flex space-x-2">
+        <input id="user-input" type="text" placeholder="พิมพ์คำถาม (เช่น Hammer คืออะไร)..." class="flex-1 p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0f766e] font-sans text-base">
+        <button id="send-btn" class="bg-[#0f766e] hover:bg-[#115e59] text-white font-bold py-2 px-4 rounded-xl shadow-sm">
+          ส่ง
+        </button>
+      </div>
+    </footer>
+  </div>
+</div>
+
 <script>
 const SHEET_CSV_URL = "candlestick_full_local_with_real_data.csv";
 let RAW = [], CURRENT = [];
@@ -242,65 +313,33 @@ let currentFilter = "all";
 const detailDialog = document.getElementById('detailDialog');
 const dClose = document.getElementById('dClose');
 
-// ช่วยวาดเทียนแบบเดียวกันทั้ง list และ dialog (ใช้เป็น fallback ถ้าไม่มีรูปใน CSV)
 function makeCandleElement(side, name){
   const lower = (name||"").toLowerCase();
   const wrap = document.createElement('div');
   wrap.className = 'cd-candle';
-
-  // wick
   const wickTop = document.createElement('div');
-  wickTop.style.position = "absolute";
-  wickTop.style.top = "6px";
-  wickTop.style.left = "50%";
-  wickTop.style.transform = "translateX(-50%)";
-  wickTop.style.width = "4px";
-  wickTop.style.height = "36px";
-  wickTop.style.background = "#fff";
-  wickTop.style.borderRadius = "99px";
-
+  wickTop.style.position = "absolute"; wickTop.style.top = "6px"; wickTop.style.left = "50%"; wickTop.style.transform = "translateX(-50%)";
+  wickTop.style.width = "4px"; wickTop.style.height = "36px"; wickTop.style.background = "#fff"; wickTop.style.borderRadius = "99px";
   const wickBottom = document.createElement('div');
-  wickBottom.style.position = "absolute";
-  wickBottom.style.bottom = "6px";
-  wickBottom.style.left = "50%";
-  wickBottom.style.transform = "translateX(-50%)";
-  wickBottom.style.width = "4px";
-  wickBottom.style.height = "22px";
-  wickBottom.style.background = "#fff";
-  wickBottom.style.borderRadius = "99px";
-
+  wickBottom.style.position = "absolute"; wickBottom.style.bottom = "6px"; wickBottom.style.left = "50%"; wickBottom.style.transform = "translateX(-50%)";
+  wickBottom.style.width = "4px"; wickBottom.style.height = "22px"; wickBottom.style.background = "#fff"; wickBottom.style.borderRadius = "99px";
   const body = document.createElement('div');
-  body.style.width = "20px";
-  body.style.height = "48px";
-  body.style.borderRadius = "7px";
-
+  body.style.width = "20px"; body.style.height = "48px"; body.style.borderRadius = "7px";
   if (side === "Bearish") body.style.background = "#ef4444";
   else if (side === "Bullish") body.style.background = "#10b981";
   else body.style.background = "#94a3b8";
-
   if (lower.includes("hammer") && !lower.includes("inverted")){
-    wickTop.style.height = "8px";
-    wickBottom.style.height = "42px";
-    body.style.height = "30px";
+    wickTop.style.height = "8px"; wickBottom.style.height = "42px"; body.style.height = "30px";
   } else if (lower.includes("inverted") || lower.includes("shooting star")){
-    wickTop.style.height = "44px";
-    wickBottom.style.height = "6px";
-    body.style.height = "28px";
-  } else if (lower.includes("engulf")){
-    body.style.height = "58px";
-  }
-
+    wickTop.style.height = "44px"; wickBottom.style.height = "6px"; body.style.height = "28px";
+  } else if (lower.includes("engulf")){ body.style.height = "58px"; }
   wrap.append(wickTop, body, wickBottom);
   return wrap;
 }
 
 async function loadCSV(){
   return new Promise((resolve,reject)=>{
-    Papa.parse(SHEET_CSV_URL,{
-      download:true, header:true, skipEmptyLines:true,
-      complete:res=>resolve(res.data),
-      error:reject
-    });
+    Papa.parse(SHEET_CSV_URL,{ download:true, header:true, skipEmptyLines:true, complete:res=>resolve(res.data), error:reject });
   });
 }
 
@@ -313,165 +352,196 @@ function applyFilters(){
     const hay = `${r.name||""} ${r.side||""} ${r.grouping||""} ${r.summary||""} ${r.tip||""}`.toLowerCase();
     return q === "" ? true : hay.includes(q);
   });
-  page = 1;
-  renderList();
+  page = 1; renderList();
 }
 
 function renderList(){
   const host = document.getElementById('candles');
   host.innerHTML = "";
-  if (CURRENT.length === 0){
-    host.innerHTML = `<div style="padding:10px;color:#475569">ไม่พบข้อมูล</div>`;
-    document.getElementById('pager').innerHTML = "";
-    return;
-  }
+  if (CURRENT.length === 0){ host.innerHTML = `<div style="padding:10px;color:#475569">ไม่พบข้อมูล</div>`; document.getElementById('pager').innerHTML = ""; return; }
   const totalPages = Math.ceil(CURRENT.length / pageSize);
-  const start = (page-1)*pageSize;
-  const end = start + pageSize;
+  const start = (page-1)*pageSize; const end = start + pageSize;
   const slice = CURRENT.slice(start, end);
-
   slice.forEach(r=>{
-    const card = document.createElement('article');
-    card.className = 'card';
-
-    const thumb = document.createElement('div');
-    thumb.className = 'thumb';
-
-    // ใช้ตัววาดเทียนเดียวกับ dialog (ย่อไซซ์ให้เข้า 70px)
-    const listCandle = makeCandleElement(r.side, r.name);
-    listCandle.style.transform = "scale(.7)";
-    thumb.appendChild(listCandle);
-
+    const card = document.createElement('article'); card.className = 'card';
+    const thumb = document.createElement('div'); thumb.className = 'thumb';
+    const listCandle = makeCandleElement(r.side, r.name); listCandle.style.transform = "scale(.7)"; thumb.appendChild(listCandle);
     const right = document.createElement('div');
     const tagColor = r.side === "Bearish" ? " red" : "";
-    right.innerHTML = `
-      <div class="c-name">${r.name||""}</div>
-      <div class="c-meta">${r.grouping||""} ${r.side? "• "+r.side:""} ${r.count? "• "+r.count+" แท่ง":""}</div>
-      <span class="tag${tagColor}">${r.side||"Pattern"}</span>
-      ${r.grouping ? `<span class="tag blue">${r.grouping}</span>` : ""}
-    `;
-    card.append(thumb, right);
-    card.addEventListener('click', ()=>openDialogFromRecord(r));
-    host.append(card);
+    right.innerHTML = `<div class="c-name">${r.name||""}</div><div class="c-meta">${r.grouping||""} ${r.side? "• "+r.side:""} ${r.count? "• "+r.count+" แท่ง":""}</div><span class="tag${tagColor}">${r.side||"Pattern"}</span>${r.grouping ? `<span class="tag blue">${r.grouping}</span>` : ""}`;
+    card.append(thumb, right); card.addEventListener('click', ()=>openDialogFromRecord(r)); host.append(card);
   });
-
   renderPager(totalPages);
 }
 
 function renderPager(totalPages){
-  const pager = document.getElementById('pager');
-  pager.innerHTML = "";
-  const prev = document.createElement('button');
-  prev.className = 'btn';
-  prev.textContent = 'ย้อนกลับ';
-  prev.disabled = page === 1;
-  prev.onclick = ()=>{ page--; renderList(); };
-
-  const next = document.createElement('button');
-  next.className = 'btn';
-  next.textContent = 'ถัดไป';
-  next.disabled = page === totalPages;
-  next.onclick = ()=>{ page++; renderList(); };
-
-  const info = document.createElement('div');
-  info.className = 'info';
-  info.textContent = `หน้า ${page} / ${totalPages} (ทั้งหมด ${CURRENT.length} รายการ)`;
-
+  const pager = document.getElementById('pager'); pager.innerHTML = "";
+  const prev = document.createElement('button'); prev.className = 'btn'; prev.textContent = 'ย้อนกลับ'; prev.disabled = page === 1; prev.onclick = ()=>{ page--; renderList(); };
+  const next = document.createElement('button'); next.className = 'btn'; next.textContent = 'ถัดไป'; next.disabled = page === totalPages; next.onclick = ()=>{ page++; renderList(); };
+  const info = document.createElement('div'); info.className = 'info'; info.textContent = `หน้า ${page} / ${totalPages} (ทั้งหมด ${CURRENT.length} รายการ)`;
   pager.append(prev, info, next);
 }
 
-/* ✅ แก้ฟังก์ชันนี้ให้ดึงรูปจาก CSV มาแสดงใน dialog */
 function openDialogFromRecord(r){
   document.getElementById('dTitle').textContent = r.name || "PATTERN";
   document.getElementById('dSubtitle').textContent = r.grouping ? `${r.grouping} • ${r.side||""}` : (r.side||"");
   document.getElementById('dSummary').textContent = r.summary || "ยังไม่มีคำอธิบาย";
   document.getElementById('dTip').textContent = r.tip || "ใช้ร่วมกับแนวรับแนวต้านจะชัดขึ้น";
-
   const link = document.getElementById('dLink');
-  if (r.source_url){
-    link.href = r.source_url;
-    link.style.display = "inline-block";
-  } else {
-    link.style.display = "none";
-  }
-
-  const box = document.getElementById('dCandleBox');
-  box.innerHTML = "";
-
-  // ลองอ่าน path รูปจากหลายชื่อคอลัมน์ใน CSV: image, img, img_path, picture
+  if (r.source_url){ link.href = r.source_url; link.style.display = "inline-block"; } else { link.style.display = "none"; }
+  const box = document.getElementById('dCandleBox'); box.innerHTML = "";
   const imgPath = r.image || r.img || r.img_path || r.picture || "";
-
   if (imgPath){
-    const img = document.createElement('img');
-    img.src = imgPath;                 // เช่น "images/bulishengufin.png"
-    img.alt = r.name || "candlestick pattern";
-    img.style.maxWidth = "100%";
-    img.style.maxHeight = "100%";
-    img.style.borderRadius = "12px";
-    img.loading = "lazy";
+    const img = document.createElement('img'); img.src = imgPath; img.alt = r.name;
+    img.style.maxWidth = "100%"; img.style.maxHeight = "100%"; img.style.borderRadius = "12px"; img.loading = "lazy";
     box.appendChild(img);
-  } else {
-    // ถ้าไม่มีคอลัมน์รูป ให้ fallback เป็นแท่งเทียนวาดเองเหมือนเดิม
-    box.appendChild(makeCandleElement(r.side, r.name));
-  }
-
-  if (typeof detailDialog.showModal === "function") {
-    detailDialog.showModal();
-  } else {
-    detailDialog.style.display = "block";
-  }
-
+  } else { box.appendChild(makeCandleElement(r.side, r.name)); }
+  if (typeof detailDialog.showModal === "function") { detailDialog.showModal(); } else { detailDialog.style.display = "block"; }
   document.body.classList.add('modal-open');
 }
 
-// ปิด dialog
-dClose.addEventListener('click', () => {
-  detailDialog.close();
-  document.body.classList.remove('modal-open');
-});
-detailDialog.addEventListener('close', () => {
-  document.body.classList.remove('modal-open');
-});
+dClose.addEventListener('click', () => { detailDialog.close(); document.body.classList.remove('modal-open'); });
+detailDialog.addEventListener('close', () => { document.body.classList.remove('modal-open'); });
 
 document.getElementById('q').addEventListener('input', applyFilters);
 document.querySelectorAll('#filters .filter-btn').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    document.querySelectorAll('#filters .filter-btn').forEach(b=>b.classList.remove('active'));
-    btn.addEventListener
-    currentFilter = btn.dataset.filter;
-    applyFilters();
-  }, {once:false});
-});
-// แก้บั๊กอีเวนต์ด้านบนแบบง่าย
-document.querySelectorAll('#filters .filter-btn').forEach(btn=>{
   btn.onclick = () => {
     document.querySelectorAll('#filters .filter-btn').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    currentFilter = btn.dataset.filter;
-    applyFilters();
+    btn.classList.add('active'); currentFilter = btn.dataset.filter; applyFilters();
   }
 });
 
-(async function init(){
-  RAW = await loadCSV();
-  applyFilters();
-})();
+(async function init(){ RAW = await loadCSV(); applyFilters(); })();
+
+
+/* =========================================
+    ส่วน Chatbot AI (Backend)
+   ========================================= */
+const BACKEND_URL = 'https://us-central1-law-ai-14740.cloudfunctions.net/api/chat';
+
+// System Prompt: นักวิเคราะห์เทคนิค
+const SYSTEM_PROMPT = {
+    role: "user",
+    parts: [{ text: "System Instruction: คุณคือ AI นักวิเคราะห์กราฟเทคนิค (Technical Analyst) เชี่ยวชาญเรื่อง Candlestick Patterns, Price Action และ Indicators ต่างๆ หน้าที่ของคุณคืออธิบายรูปแบบกราฟ แนวโน้มตลาด และกลยุทธ์การเทรดด้วยภาษาที่เข้าใจง่าย สำหรับเทรดเดอร์มือใหม่และมืออาชีพ ห้ามให้คำแนะนำทางการเงินแบบเจาะจง (Financial Advice) ให้เน้นที่ความรู้ทางเทคนิค" }]
+};
+const SYSTEM_ACK = {
+    role: "model",
+    parts: [{ text: "รับทราบครับ ผมพร้อมช่วยวิเคราะห์กราฟและให้ข้อมูลทางเทคนิคแล้วครับ" }]
+};
+
+let chatHistory = [SYSTEM_PROMPT, SYSTEM_ACK];
+
+const chatHistoryEl = document.getElementById('chat-history');
+const userInput = document.getElementById('user-input');
+const sendBtn = document.getElementById('send-btn');
+const newChatBtn = document.getElementById('new-chat-btn');
+const thinkingIndicator = document.getElementById('thinking-indicator');
+
+function addChatBubble(message, isUser = true) {
+    const bubbleType = isUser ? 'user' : 'model';
+    const icon = isUser ? '👤' : '🤖';
+    const bgClass = isUser ? 'bg-[#0f766e] text-white' : 'bg-white text-gray-800 border border-gray-200';
+    
+    const wrap = document.createElement('div');
+    wrap.className = `flex items-start space-x-2 ${isUser ? 'flex-row-reverse space-x-reverse' : ''}`;
+    
+    const bubble = document.createElement('div');
+    bubble.className = `chat-bubble chat-bubble-${bubbleType} ${bgClass} p-3 rounded-lg max-w-lg relative shadow-sm`;
+    bubble.innerHTML = `<p>${message.replace(/\n/g, '<br>')}</p>`;
+    
+    wrap.innerHTML = `<span class="text-2xl">${icon}</span>`;
+    wrap.appendChild(bubble);
+    
+    chatHistoryEl.appendChild(wrap);
+    chatHistoryEl.scrollTop = chatHistoryEl.scrollHeight;
+}
+
+function addChatError(message) {
+    const w = document.createElement('div');
+    w.className = 'flex justify-center my-2';
+    w.innerHTML = `<span class="bg-red-100 text-red-700 text-xs font-semibold px-3 py-1 rounded-full">${message}</span>`;
+    chatHistoryEl.appendChild(w);
+    chatHistoryEl.scrollTop = chatHistoryEl.scrollHeight;
+}
+
+function setThinking(on) {
+    thinkingIndicator.classList.toggle('hidden', !on);
+    if (on) chatHistoryEl.scrollTop = chatHistoryEl.scrollHeight;
+}
+
+async function handleSend() {
+    const message = (userInput.value || '').trim();
+    if (!message) return;
+
+    addChatBubble(message, true);
+    userInput.value = '';
+    setThinking(true);
+    sendBtn.disabled = true;
+
+    chatHistory.push({ role: "user", parts: [{ text: message }] });
+
+    try {
+        const response = await fetch(BACKEND_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ history: chatHistory }) 
+        });
+
+        if (!response.ok) {
+            const errData = await response.json();
+            throw new Error(errData.error || `Server error: ${response.status}`);
+        }
+
+        const data = await response.json(); 
+        const aiReply = data.reply;
+
+        chatHistory.push({ role: "model", parts: [{ text: aiReply }] });
+        setThinking(false);
+        addChatBubble(aiReply, false);
+
+    } catch (err) {
+        console.error("Fetch Error:", err);
+        setThinking(false);
+        addChatError(`เกิดข้อผิดพลาด: ${err.message}`);
+        chatHistory.pop();
+    } finally {
+        sendBtn.disabled = false;
+    }
+}
+
+sendBtn.addEventListener('click', handleSend);
+userInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter') handleSend();
+});
+
+// Reset Chat
+newChatBtn.addEventListener('click', () => {
+    chatHistory = [SYSTEM_PROMPT, SYSTEM_ACK];
+    chatHistoryEl.innerHTML = `
+        <div class="flex items-start space-x-2">
+        <span class="text-2xl">🤖</span>
+        <div class="chat-bubble chat-bubble-model bg-white text-gray-800 p-3 rounded-lg max-w-lg relative border border-gray-200 shadow-sm">
+            <p>สวัสดีครับ ผมคือ AI Technical Analyst เริ่มวิเคราะห์กราฟใหม่ได้เลยครับ</p>
+        </div>
+        </div>`;
+    userInput.value = '';
+    setThinking(false);
+});
+
+// Modal Control
+const fabToggle = document.getElementById('fab-chat-toggle');
+const chatModal = document.getElementById('chatbot-modal');
+const chatbotCloseBtn = document.getElementById('chatbot-close-btn');
+
+fabToggle.addEventListener('click', () => {
+    chatModal.classList.remove('chatbot-hidden');
+    fabToggle.style.opacity = '0';
+});
+chatbotCloseBtn.addEventListener('click', () => {
+    chatModal.classList.add('chatbot-hidden');
+    fabToggle.style.opacity = '1';
+});
+
 </script>
-
-<footer>
-  <p class="footer-links">
-    © 2025 Crow Studio |
-    <a href="https://sites.google.com/view/privacy-policy-pdpa-crow-studi/%E0%B8%AB%E0%B8%99%E0%B8%B2%E0%B9%81%E0%B8%A3%E0%B8%81">นโยบายความเป็นส่วนตัว</a> |
-    <a href="ลิงก์ข้อตกลง">ข้อตกลงการใช้งาน</a>
-  </p>
-</footer>
-
-<a href="https://raw.githack.com/tontakankeawpang321-glitch/krsitsdeeka/main/%E0%B8%95%E0%B8%B1%E0%B8%A7%E0%B8%8A%E0%B9%88%E0%B8%A7%E0%B8%A2%E0%B9%81%E0%B8%97%E0%B9%88%E0%B8%87%E0%B9%80%E0%B8%97%E0%B8%B5%E0%B8%A2%E0%B8%99/index.html"
-   class="fab-chatbot"
-   title="แชทบอทพระไตรปิฎก"
-   aria-label="แชทบอทพระไตรปิฎก">
-  Ai
-</a>
-
 </body>
 </html>
