@@ -5,16 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>พจนานุกรมภาษามือไทย (TSL) + AI</title>
 
-    <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
-    <!-- Font -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
 
-    <!-- Markdown Parser -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
     <style>
@@ -67,12 +63,54 @@
         .consonant-card:active {
             transform: scale(0.95);
         }
+
+        /* ===== CSS ของ Chatbot UI (Indigo Theme) ===== */
+        .chat-bubble::before { content: ''; position: absolute; width: 0; height: 0; border-style: solid; }
+        .chat-bubble-user::before {
+            border-width: 0 12px 12px 12px; border-color: transparent transparent #4f46e5 transparent; /* Indigo-600 */
+            top: -10px; right: 12px;
+        }
+        .chat-bubble-model::before {
+            border-width: 0 12px 12px 12px; border-color: transparent transparent #e5e7eb transparent;
+            top: -10px; left: 12px;
+        }
+        .gemini-thinking-bar {
+            position: relative; width: 100%; height: 4px; background-color: #e0e0e0;
+            border-radius: 2px; overflow: hidden;
+        }
+        .gemini-thinking-bar::before {
+            content: ''; position: absolute; top: 0; left: 0; height: 100%; width: 100%;
+            background: linear-gradient(90deg, #4f46e5, #818cf8, #4f46e5);
+            background-size: 200% 100%; animation: thinking-gradient 2s linear infinite;
+        }
+        @keyframes thinking-gradient { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+        
+        #fab-chat-toggle {
+            position: fixed; bottom: 25px; right: 25px;
+            width: 60px; height: 60px;
+            background-color: #4f46e5; /* Indigo */
+            color: white;
+            border: none; border-radius: 50%;
+            font-size: 28px; line-height: 60px; text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            cursor: pointer; z-index: 998;
+            transition: transform 0.2s, opacity 0.3s;
+        }
+        #fab-chat-toggle:hover { transform: scale(1.05); background-color: #4338ca; }
+        
+        #chatbot-modal {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: 1000; transition: opacity 0.3s, transform 0.3s;
+            opacity: 1; transform: translateY(0); pointer-events: auto;
+        }
+        #chatbot-modal.chatbot-hidden {
+            opacity: 0; transform: translateY(100%); pointer-events: none;
+        }
     </style>
 </head>
 
 <body class="bg-slate-100 text-slate-800 pb-10">
 
-<!-- Header -->
 <header class="sticky top-0 z-40 shadow-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
     <div class="max-w-5xl mx-auto px-4 py-5 flex items-center gap-4">
         <div class="p-2 bg-white/20 rounded-xl shadow-inner">
@@ -87,10 +125,8 @@
 
 <main class="max-w-5xl mx-auto px-4 py-6 space-y-6">
 
-    <!-- Search Section -->
     <div class="sticky top-[72px] z-30 bg-slate-100/80 backdrop-blur-md py-4 px-2 -mx-4 border-b border-slate-200 shadow-sm">
 
-        <!-- Search Bar -->
         <div class="relative max-w-lg mx-auto md:mx-0">
             <div class="absolute left-3 top-0 bottom-0 flex items-center text-slate-400">
                 <i data-lucide="search" class="w-5 h-5"></i>
@@ -103,49 +139,31 @@
             />
         </div>
 
-        <!-- Category & AI -->
         <div class="flex items-center gap-2 overflow-x-auto scrollbar-hide mt-3 pb-1">
-
-            <!-- AI Button -->
-            <button onclick="openAiModal()"
-                class="flex-shrink-0 btn-3d px-4 py-2 rounded-full text-white font-semibold flex items-center gap-2">
-                <i data-lucide="sparkles" class="w-4 h-4"></i>
-                ถาม AI 
-            </button>
-
-            <div class="w-px h-6 bg-slate-300"></div>
-
             <div id="categoryContainer" class="flex gap-2"></div>
         </div>
     </div>
-    <!-- Loading -->
+    
     <div id="dataLoadingState" class="hidden py-10 text-center">
         <div class="animate-spin w-10 h-10 border-4 border-indigo-200 border-t-indigo-600 rounded-full mx-auto mb-3"></div>
         <p class="text-slate-500 text-sm">กำลังโหลดข้อมูล…</p>
     </div>
 
-    <!-- Grid -->
     <div id="gridContainer" class="grid gap-4 min-h-[60vh]">
-        <!-- JS inject -->
-    </div>
+        </div>
 
-    <!-- Not Found -->
     <div id="notFoundMessage" class="hidden py-12 text-center text-slate-400">
         <i data-lucide="search" class="w-12 h-12 mx-auto mb-3 opacity-20"></i>
         <p>ไม่พบคำที่ค้นหา</p>
     </div>
 </main>
 
-<!-- ===========================
-      MODAL: Word Detail (3D UI)
-     =========================== -->
 <div id="modalOverlay"
     class="hidden fixed inset-0 z-[60] bg-black/60 backdrop-blur-md flex items-center justify-center px-4 animate-fade-in"
     onclick="handleModalClick(event)">
     
     <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden animate-zoom-in max-h-[90vh] flex flex-col border border-slate-200">
 
-        <!-- Header Image -->
         <div class="relative w-full aspect-video bg-slate-200 flex items-center justify-center">
             <img id="modalImage" src="" class="w-full h-full object-cover hidden" />
             
@@ -154,22 +172,18 @@
                 <p class="text-sm">ไม่มีรูปภาพ</p>
             </div>
 
-            <!-- Category Badge -->
             <span id="modalCategoryBadge"
                 class="absolute bottom-3 left-3 px-3 py-1 rounded-full text-xs font-bold text-white shadow-lg">
             </span>
 
-            <!-- Close -->
             <button onclick="closeModal()"
                 class="absolute top-3 right-3 p-2 bg-black/40 hover:bg-black/60 text-white rounded-full backdrop-blur-sm transition">
                 <i data-lucide="x"></i>
             </button>
         </div>
 
-        <!-- Body -->
         <div class="p-6 space-y-6 overflow-y-auto">
 
-            <!-- Title -->
             <div class="flex gap-4 items-center">
                 <div id="modalIconContainer"
                     class="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl font-bold text-white shadow-xl">
@@ -180,12 +194,10 @@
                 </div>
             </div>
 
-            <!-- Description -->
             <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 shadow-inner">
                 <p id="modalDescription" class="text-slate-700 leading-relaxed"></p>
             </div>
 
-            <!-- Tip -->
             <div id="modalTipContainer"
                 class="hidden bg-amber-50 border border-amber-200 p-4 rounded-xl flex gap-3 items-start shadow-inner">
                 
@@ -199,7 +211,6 @@
 
         </div>
 
-        <!-- Footer -->
         <div class="p-5 border-t border-slate-200 bg-white">
             <a id="modalYoutubeLink" href="#" target="_blank"
                 class="w-full py-3 text-center rounded-xl font-bold flex items-center justify-center gap-2 transition active:scale-95">
@@ -211,86 +222,70 @@
     </div>
 </div>
 
-<!-- ========================
-     MODAL: AI TRANSLATOR (3D)
-     ======================== -->
-<div id="aiModalOverlay"
-    class="hidden fixed inset-0 z-[60] bg-black/60 backdrop-blur-md flex items-center justify-center px-4 animate-fade-in"
-    onclick="handleAiModalClick(event)">
+<footer>
+    <p class="footer-links" style="text-align:center; margin-top:40px; color:#64748b; font-size:0.9rem;">
+      © 2025 Crow Studio |
+      <a href="https://sites.google.com/view/privacy-policy-pdpa-crow-studi/%E0%B8%AB%E0%B8%99%E0%B8%B2%E0%B9%81%E0%B8%A3%E0%B8%81">นโยบายความเป็นส่วนตัว</a> |
+      <a href="ลิงก์ข้อตกลง">ข้อตกลงการใช้งาน</a>
+    </p>
+</footer>
 
-    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden animate-zoom-in max-h-[90vh] flex flex-col border border-slate-200">
+<button id="fab-chat-toggle" title="ถาม AI ภาษามือ">Ai</button>
 
-        <!-- Header -->
-        <div class="p-5 bg-gradient-to-r from-indigo-600 to-purple-700 text-white flex justify-between items-center shadow-lg">
-            <div class="flex items-center gap-3">
-                <div class="p-2 bg-white/20 rounded-xl">
-                    <i data-lucide="sparkles" class="w-6 h-6 text-yellow-300"></i>
-                </div>
-                <div>
-                    <h2 class="text-xl font-bold">AI แปลประโยค</h2>
-                    <p class="text-indigo-200 text-xs">เปลี่ยนไทย → ภาษามือ (Gloss)</p>
-                </div>
-            </div>
+<div id="chatbot-modal" class="chatbot-hidden">
+  <div class="flex flex-col h-screen bg-gray-100">
+    <header class="bg-[#4f46e5] text-white p-4 flex justify-between items-center shadow-md">
+      <div class="flex items-center gap-2">
+          <span class="text-2xl">🖐️</span>
+          <h1 class="text-lg font-bold font-sans text-white m-0">AI ภาษามือ</h1>
+      </div>
+      <div>
+        <button id="new-chat-btn" class="bg-[#e0e7ff] hover:bg-[#c7d2fe] text-[#4f46e5] font-bold py-1 px-3 rounded mr-2 text-sm">
+          เริ่มใหม่
+        </button>
+        <button id="chatbot-close-btn" class="bg-gray-700 hover:bg-gray-900 text-white font-bold py-1 px-3 rounded text-sm">
+          ปิด
+        </button>
+      </div>
+    </header>
 
-            <button onclick="closeAiModal()" class="p-2 bg-white/10 hover:bg-white/20 rounded-full transition">
-                <i data-lucide="x"></i>
-            </button>
+    <main id="chat-history" class="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
+      <div class="flex items-start space-x-2">
+        <span class="text-2xl">🤖</span>
+        <div class="chat-bubble chat-bubble-model bg-white text-gray-800 p-3 rounded-lg max-w-lg relative border border-gray-200 shadow-sm">
+          <p>สวัสดีครับ ผมคือ AI ผู้เชี่ยวชาญภาษามือไทย (TSL) สอบถามวิธีทำท่าทาง ความหมาย หรือไวยากรณ์ได้เลยครับ</p>
         </div>
+      </div>
+    </main>
 
-        <!-- Body -->
-        <div class="p-5 space-y-4 overflow-y-auto bg-slate-50 flex-1">
-
-            <!-- Input -->
-            <div class="relative">
-                <input id="aiInput" placeholder="พิมพ์ประโยค เช่น ฉันรักแม่"
-                    class="w-full p-4 pr-12 rounded-xl border border-slate-300 shadow-md focus:ring-2 focus:ring-indigo-400 outline-none transition bg-white" />
-
-                <button onclick="generateSignTranslation()"
-                    class="absolute right-2 top-2 bottom-2 px-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg flex items-center justify-center transition">
-                    <i data-lucide="arrow-right"></i>
-                </button>
-            </div>
-
-            <!-- Loading -->
-            <div id="aiLoading" class="hidden py-6 text-center space-y-3">
-                <div class="animate-spin w-8 h-8 border-4 border-indigo-200 border-t-indigo-600 rounded-full mx-auto"></div>
-                <p class="text-slate-500 text-sm">กำลังประมวลผล…</p>
-            </div>
-
-            <!-- Result -->
-            <div id="aiResultArea" class="hidden space-y-4">
-                
-                <!-- Gloss -->
-                <div class="bg-white p-4 rounded-xl border border-indigo-200 shadow">
-                    <h3 class="text-xs font-bold text-indigo-600 uppercase mb-1 flex items-center gap-1">
-                        <i data-lucide="git-branch" class="w-3 h-3"></i>
-                        ไวยากรณ์ Gloss
-                    </h3>
-                    <p id="glossOutput" class="text-xl font-extrabold text-center"></p>
-                </div>
-
-                <!-- Explanation -->
-                <div class="bg-white p-4 rounded-xl border border-indigo-200 shadow space-y-2">
-                    <h3 class="text-xs font-bold text-indigo-600 uppercase mb-1">คำอธิบายท่าทาง</h3>
-                    <div id="explanationOutput" class="text-sm text-slate-700 space-y-2"></div>
-                </div>
-            </div>
-
-            <!-- Error -->
-            <div id="aiError"
-                class="hidden p-3 bg-red-50 border border-red-200 text-red-600 rounded-xl text-center">
-                เกิดข้อผิดพลาด กรุณาลองใหม่
-            </div>
-
+    <div id="thinking-indicator" class="p-4 hidden bg-gray-50">
+      <div class="flex items-center space-x-2">
+        <span class="text-2xl">🤖</span>
+        <div class="chat-bubble chat-bubble-model bg-white text-gray-800 p-3 rounded-lg max-w-lg relative border border-gray-200">
+          <div class="gemini-thinking-bar"></div>
         </div>
+      </div>
     </div>
+
+    <footer class="bg-white p-3 shadow-inner border-t border-gray-200 m-0 w-full max-w-full">
+      <div class="flex space-x-2">
+        <input id="user-input" type="text" placeholder="พิมพ์คำถาม (เช่น ท่ารักทำอย่างไร)..." class="flex-1 p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#4f46e5] font-sans text-base text-gray-800">
+        <button id="send-btn" class="bg-[#4f46e5] hover:bg-[#4338ca] text-white font-bold py-2 px-4 rounded-xl shadow-sm">
+          ส่ง
+        </button>
+      </div>
+    </footer>
+  </div>
 </div>
+
 <script>
 /* =========================
     CONFIG & GLOBAL STATE
    ========================= */
 
-const apiKey = "AIzaSyD_9mzuoLZT-tka_73IpHJWpSsBWLEM8b4";
+// ⚠️ Note: The client-side translation feature (existing logic) still relies on client key.
+// But the new Chatbot connects to the secure Backend.
+const apiKey = "AIzaSyD_9mzuoLZT-tka_73IpHJWpSsBWLEM8b4"; // Key เดิมสำหรับการแปล Gloss (ถ้ายังใช้อยู่)
 
 let signData = [];
 let searchTerm = "";
@@ -299,17 +294,17 @@ let activeCategory = "all";
 /* หมวดหมู่ */
 const categories = [
     { id: "all",          label: "ทั้งหมด",          icon: "book-open" },
-    { id: "consonant",    label: "พยัญชนะ (ก-ฮ)",   icon: "type" },
-    { id: "number",       label: "ตัวเลข",           icon: "hash" },
-    { id: "daily",        label: "คำพื้นฐาน",       icon: "heart" },
-    { id: "daily_life",   label: "ชีวิตประจำวัน",    icon: "sun" },
+    { id: "consonant",    label: "พยัญชนะ (ก-ฮ)",    icon: "type" },
+    { id: "number",       label: "ตัวเลข",            icon: "hash" },
+    { id: "daily",        label: "คำพื้นฐาน",        icon: "heart" },
+    { id: "daily_life",   label: "ชีวิตประจำวัน",     icon: "sun" },
     { id: "family",       label: "ครอบครัว",         icon: "users" },
-    { id: "emotion",      label: "อารมณ์",           icon: "smile" },
-    { id: "place",        label: "สถานที่",          icon: "map-pin" },
+    { id: "emotion",      label: "อารมณ์",            icon: "smile" },
+    { id: "place",        label: "สถานที่",           icon: "map-pin" },
     { id: "object",       label: "สิ่งของ",           icon: "box" },
     { id: "food",         label: "อาหาร/เครื่องดื่ม", icon: "cup-soda" },
-    { id: "action",       label: "การกระทำ",        icon: "zap" },
-    { id: "conversation", label: "บทสนทนา",         icon: "message-circle" },
+    { id: "action",       label: "การกระทำ",         icon: "zap" },
+    { id: "conversation", label: "บทสนทนา",          icon: "message-circle" },
 ];
 
 
@@ -520,84 +515,6 @@ function handleModalClick(e) {
     if (e.target.id === "modalOverlay") closeModal();
 }
 
-
-/* =========================
-       AI TRANSLATION
-   ========================= */
-function openAiModal() {
-    aiModalOverlay.classList.remove("hidden");
-    document.body.style.overflow = "hidden";
-    aiInput.focus();
-}
-
-function closeAiModal() {
-    aiModalOverlay.classList.add("hidden");
-    document.body.style.overflow = "";
-}
-
-function handleAiModalClick(e) {
-    if (e.target.id === "aiModalOverlay") closeAiModal();
-}
-
-function handleAiEnter(e) {
-    if (e.key === "Enter") generateSignTranslation();
-}
-
-async function generateSignTranslation() {
-    const text = aiInput.value.trim();
-    if (!text) return;
-
-    aiLoading.classList.remove("hidden");
-    aiResultArea.classList.add("hidden");
-    aiError.classList.add("hidden");
-
-    try {
-        const prompt = `
-            Convert Thai sentence to Thai Sign Language Gloss (TSL).
-            Then list gesture explanations.
-            Output JSON:
-            {
-                "gloss":"",
-                "explanations":[{"word":"","desc":""}]
-            }
-            Input: "${text}"
-        `;
-
-        const res = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
-          {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                  contents: [{ parts: [{ text: prompt }] }],
-                  generationConfig: { responseMimeType: "application/json" }
-              })
-          }
-        );
-
-        const data = await res.json();
-        const json = JSON.parse(data.candidates[0].content.parts[0].text);
-
-        glossOutput.textContent = json.gloss || "";
-        explanationOutput.innerHTML = (json.explanations || [])
-            .map(ex => `
-                <div class="bg-white border border-slate-200 p-3 rounded-xl shadow-sm flex gap-3">
-                    <div class="font-bold text-indigo-600 min-w-[60px]">${ex.word}</div>
-                    <div>${ex.desc}</div>
-                </div>
-            `).join("");
-
-        aiLoading.classList.add("hidden");
-        aiResultArea.classList.remove("hidden");
-
-    } catch (err) {
-        aiLoading.classList.add("hidden");
-        aiError.classList.remove("hidden");
-        console.error(err);
-    }
-}
-
-
 /* =========================
          SEARCH LISTENER
    ========================= */
@@ -608,20 +525,140 @@ document.getElementById("searchInput").addEventListener("input", e => {
 
 
 /* =========================
-           INIT
+            INIT
    ========================= */
 renderCategories();
 fetchSignData();
 lucide.createIcons();
+
+
+/* =========================================
+    ส่วน Chatbot AI (Backend)
+   ========================================= */
+const BACKEND_URL = 'https://us-central1-law-ai-14740.cloudfunctions.net/api/chat';
+
+// System Prompt: ผู้เชี่ยวชาญภาษามือไทย
+const SYSTEM_PROMPT = {
+    role: "user",
+    parts: [{ text: "System Instruction: คุณคือ AI ผู้เชี่ยวชาญด้าน 'ภาษามือไทย (TSL)' มีหน้าที่อธิบายลักษณะท่าทาง ความหมาย และไวยากรณ์ของภาษามือไทย (Gloss) ให้กับผู้เริ่มต้นเรียน หรือคนหูหนวก สามารถแปลงประโยคภาษาไทยเป็นลำดับคำในภาษามือ (Gloss) ได้ ตอบด้วยภาษาสุภาพ และเป็นกันเอง" }]
+};
+const SYSTEM_ACK = {
+    role: "model",
+    parts: [{ text: "รับทราบครับ ผมพร้อมช่วยอธิบายและแปลภาษามือไทยแล้วครับ" }]
+};
+
+let chatHistory = [SYSTEM_PROMPT, SYSTEM_ACK];
+
+const chatHistoryEl = document.getElementById('chat-history');
+const userInput = document.getElementById('user-input');
+const sendBtn = document.getElementById('send-btn');
+const newChatBtn = document.getElementById('new-chat-btn');
+const thinkingIndicator = document.getElementById('thinking-indicator');
+
+function addChatBubble(message, isUser = true) {
+    const bubbleType = isUser ? 'user' : 'model';
+    const icon = isUser ? '👤' : '🤖';
+    const bgClass = isUser ? 'bg-[#4f46e5] text-white' : 'bg-white text-gray-800 border border-gray-200';
+    
+    const wrap = document.createElement('div');
+    wrap.className = `flex items-start space-x-2 ${isUser ? 'flex-row-reverse space-x-reverse' : ''}`;
+    
+    const bubble = document.createElement('div');
+    bubble.className = `chat-bubble chat-bubble-${bubbleType} ${bgClass} p-3 rounded-lg max-w-lg relative shadow-sm`;
+    bubble.innerHTML = `<p>${message.replace(/\n/g, '<br>')}</p>`;
+    
+    wrap.innerHTML = `<span class="text-2xl">${icon}</span>`;
+    wrap.appendChild(bubble);
+    
+    chatHistoryEl.appendChild(wrap);
+    chatHistoryEl.scrollTop = chatHistoryEl.scrollHeight;
+}
+
+function addChatError(message) {
+    const w = document.createElement('div');
+    w.className = 'flex justify-center my-2';
+    w.innerHTML = `<span class="bg-red-100 text-red-700 text-xs font-semibold px-3 py-1 rounded-full">${message}</span>`;
+    chatHistoryEl.appendChild(w);
+    chatHistoryEl.scrollTop = chatHistoryEl.scrollHeight;
+}
+
+function setThinking(on) {
+    thinkingIndicator.classList.toggle('hidden', !on);
+    if (on) chatHistoryEl.scrollTop = chatHistoryEl.scrollHeight;
+}
+
+async function handleSend() {
+    const message = (userInput.value || '').trim();
+    if (!message) return;
+
+    addChatBubble(message, true);
+    userInput.value = '';
+    setThinking(true);
+    sendBtn.disabled = true;
+
+    chatHistory.push({ role: "user", parts: [{ text: message }] });
+
+    try {
+        const response = await fetch(BACKEND_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ history: chatHistory }) 
+        });
+
+        if (!response.ok) {
+            const errData = await response.json();
+            throw new Error(errData.error || `Server error: ${response.status}`);
+        }
+
+        const data = await response.json(); 
+        const aiReply = data.reply;
+
+        chatHistory.push({ role: "model", parts: [{ text: aiReply }] });
+        setThinking(false);
+        addChatBubble(aiReply, false);
+
+    } catch (err) {
+        console.error("Fetch Error:", err);
+        setThinking(false);
+        addChatError(`เกิดข้อผิดพลาด: ${err.message}`);
+        chatHistory.pop();
+    } finally {
+        sendBtn.disabled = false;
+    }
+}
+
+sendBtn.addEventListener('click', handleSend);
+userInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter') handleSend();
+});
+
+// Reset Chat
+newChatBtn.addEventListener('click', () => {
+    chatHistory = [SYSTEM_PROMPT, SYSTEM_ACK];
+    chatHistoryEl.innerHTML = `
+        <div class="flex items-start space-x-2">
+        <span class="text-2xl">🤖</span>
+        <div class="chat-bubble chat-bubble-model bg-white text-gray-800 p-3 rounded-lg max-w-lg relative border border-gray-200 shadow-sm">
+            <p>สวัสดีครับ เริ่มสนทนาเรื่องภาษามือใหม่ได้เลยครับ</p>
+        </div>
+        </div>`;
+    userInput.value = '';
+    setThinking(false);
+});
+
+// Modal Control
+const fabToggle = document.getElementById('fab-chat-toggle');
+const chatModal = document.getElementById('chatbot-modal');
+const chatbotCloseBtn = document.getElementById('chatbot-close-btn');
+
+fabToggle.addEventListener('click', () => {
+    chatModal.classList.remove('chatbot-hidden');
+    fabToggle.style.opacity = '0';
+});
+chatbotCloseBtn.addEventListener('click', () => {
+    chatModal.classList.add('chatbot-hidden');
+    fabToggle.style.opacity = '1';
+});
 </script>
-    	<footer>
-  <p class="footer-links">
-    © 2025 Crow Studio |
-    <a href="https://sites.google.com/view/privacy-policy-pdpa-crow-studi/%E0%B8%AB%E0%B8%99%E0%B8%B2%E0%B9%81%E0%B8%A3%E0%B8%81">นโยบายความเป็นส่วนตัว</a> |
-    <a href="ลิงก์ข้อตกลง">ข้อตกลงการใช้งาน</a>
-  </p>
-</footer>
 </body>
 </html>
-
-
