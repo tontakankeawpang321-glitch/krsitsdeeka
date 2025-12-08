@@ -3,19 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ศัพท์อังกฤษทางทหาร</title>
+    <title>ศัพท์อังกฤษทางทหาร (AI Instructor)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&family=Staatliches&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+
     <style>
         :root {
-            --primary-bg: #f5f5dc; /* สีเบจ/สีทราย (Beige/Sand) */
-            --secondary-bg: #ffffff; /* สีขาว */
-            --header-bg: #e9ecef; /* สีเทาอ่อน */
-            --text-primary: #343a40; /* สีเทาเข้มเกือบดำ */
-            --text-secondary: #6c757d; /* สีเทา */
-            --accent-color: #556b2f; /* สีเขียวทหาร (Dark Olive Green) */
-            --border-color: #dee2e6; /* สีเทาสำหรับเส้นขอบ */
+            --primary-bg: #f5f5dc; /* สีเบจ/สีทราย */
+            --secondary-bg: #ffffff;
+            --header-bg: #e9ecef;
+            --text-primary: #343a40;
+            --text-secondary: #6c757d;
+            --accent-color: #556b2f; /* สีเขียวทหาร */
+            --border-color: #dee2e6;
         }
 
         body {
@@ -24,12 +26,14 @@
             color: var(--text-primary);
             margin: 0;
             padding: 20px;
+            /* ป้องกัน Tailwind กระทบ style เดิมบางส่วน */
         }
 
         .container {
             width: 100%;
             max-width: 1000px;
             margin: 20px auto;
+            margin-bottom: 100px; /* เผื่อพื้นที่ให้ปุ่มแชท */
             background-color: var(--secondary-bg);
             border-radius: 8px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
@@ -65,12 +69,12 @@
 
         #search-input {
             width: 100%;
-            padding: 12px 20px 12px 40px; /* เพิ่ม padding ด้านซ้ายสำหรับไอคอน */
+            padding: 12px 20px 12px 40px;
             border: 1px solid var(--border-color);
             border-radius: 6px;
             font-family: 'Sarabun', sans-serif;
             font-size: 1em;
-            box-sizing: border-box; /* ทำให้ padding ไม่ขยายขนาดกล่อง */
+            box-sizing: border-box;
             transition: border-color 0.2s, box-shadow 0.2s;
         }
         
@@ -81,7 +85,7 @@
         }
 
         .search-container::before {
-            content: '🔍'; /* ไอคอนแว่นขยาย */
+            content: '🔍';
             position: absolute;
             left: 12px;
             top: 50%;
@@ -133,11 +137,62 @@
             background-color: #d4d4be;
         }
 
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            color: var(--text-secondary);
+            font-size: 0.9em;
+        }
+
         @media (max-width: 768px) {
             body { padding: 10px; }
-            .container { margin: 10px; }
+            .container { margin: 10px; margin-bottom: 80px; }
             h1 { font-size: 2em; }
             th, td { padding: 12px 15px; }
+        }
+
+        /* ===== CSS ของ Chatbot UI (Military Theme) ===== */
+        .chat-bubble::before { content: ''; position: absolute; width: 0; height: 0; border-style: solid; }
+        .chat-bubble-user::before {
+            border-width: 0 12px 12px 12px; border-color: transparent transparent #556b2f transparent; /* สีเขียวทหาร */
+            top: -10px; right: 12px;
+        }
+        .chat-bubble-model::before {
+            border-width: 0 12px 12px 12px; border-color: transparent transparent #e5e7eb transparent;
+            top: -10px; left: 12px;
+        }
+        .gemini-thinking-bar {
+            position: relative; width: 100%; height: 4px; background-color: #e0e0e0;
+            border-radius: 2px; overflow: hidden;
+        }
+        .gemini-thinking-bar::before {
+            content: ''; position: absolute; top: 0; left: 0; height: 100%; width: 100%;
+            background: linear-gradient(90deg, #556b2f, #8f9e7a, #556b2f);
+            background-size: 200% 100%; animation: thinking-gradient 2s linear infinite;
+        }
+        @keyframes thinking-gradient { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+        
+        #fab-chat-toggle {
+            position: fixed; bottom: 25px; right: 25px;
+            width: 60px; height: 60px;
+            background-color: #556b2f; /* สีเขียวทหาร */
+            color: white;
+            border: none; border-radius: 50%;
+            font-size: 28px; line-height: 60px; text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            cursor: pointer; z-index: 998;
+            transition: transform 0.2s, opacity 0.3s;
+            font-family: 'Sarabun', sans-serif;
+        }
+        #fab-chat-toggle:hover { transform: scale(1.05); background-color: #3e4f21; }
+        
+        #chatbot-modal {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: 1000; transition: opacity 0.3s, transform 0.3s;
+            opacity: 1; transform: translateY(0); pointer-events: auto;
+        }
+        #chatbot-modal.chatbot-hidden {
+            opacity: 0; transform: translateY(100%); pointer-events: none;
         }
     </style>
 </head>
@@ -166,12 +221,67 @@
                     </tbody>
             </table>
         </div>
+        
+        <footer>
+            <p class="footer-links">
+                © 2025 Crow Studio |
+                <a href="https://sites.google.com/view/privacy-policy-pdpa-crow-studi/%E0%B8%AB%E0%B8%99%E0%B8%B2%E0%B9%81%E0%B8%A3%E0%B8%81" style="color: #6c757d;">นโยบายความเป็นส่วนตัว</a> |
+                <a href="ลิงก์ข้อตกลง" style="color: #6c757d;">ข้อตกลงการใช้งาน</a>
+            </p>
+        </footer>
+    </div>
+
+    <button id="fab-chat-toggle" title="ถามครูฝึกภาษาอังกฤษ">Ai</button>
+
+    <div id="chatbot-modal" class="chatbot-hidden">
+        <div class="flex flex-col h-screen bg-gray-100">
+            <header class="bg-[#556b2f] text-white p-4 flex justify-between items-center shadow-md">
+                <div class="flex items-center gap-2">
+                    <span class="text-2xl">🎖️</span>
+                    <h1 class="text-lg font-bold font-sans text-white m-0">AI Military Instructor</h1>
+                </div>
+                <div>
+                    <button id="new-chat-btn" class="bg-[#f5f5dc] hover:bg-[#e9e9d6] text-[#556b2f] font-bold py-1 px-3 rounded mr-2 text-sm">
+                        เริ่มใหม่
+                    </button>
+                    <button id="chatbot-close-btn" class="bg-gray-700 hover:bg-gray-900 text-white font-bold py-1 px-3 rounded text-sm">
+                        ปิด
+                    </button>
+                </div>
+            </header>
+
+            <main id="chat-history" class="flex-1 overflow-y-auto p-4 space-y-4 bg-[#f5f5dc]">
+                <div class="flex items-start space-x-2">
+                    <span class="text-2xl">🤖</span>
+                    <div class="chat-bubble chat-bubble-model bg-white text-gray-800 p-3 rounded-lg max-w-lg relative border border-gray-200 shadow-sm">
+                        <p>สวัสดีครับ ผมคือ AI ผู้ช่วยสอนภาษาอังกฤษทางทหาร หากสงสัยศัพท์คำไหน หรือต้องการคำแปลประโยคทหาร ถามได้เลยครับ (Sir/Ma'am)</p>
+                    </div>
+                </div>
+            </main>
+
+            <div id="thinking-indicator" class="p-4 hidden bg-[#f5f5dc]">
+                <div class="flex items-center space-x-2">
+                    <span class="text-2xl">🤖</span>
+                    <div class="chat-bubble chat-bubble-model bg-white text-gray-800 p-3 rounded-lg max-w-lg relative border border-gray-200">
+                        <div class="gemini-thinking-bar"></div>
+                    </div>
+                </div>
+            </div>
+
+            <footer class="bg-white p-3 shadow-inner border-t border-gray-200 m-0 w-full max-w-full text-black">
+                <div class="flex space-x-2">
+                    <input id="user-input" type="text" placeholder="พิมพ์ศัพท์ หรือประโยคที่สงสัย..." class="flex-1 p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#556b2f] font-sans text-base text-black">
+                    <button id="send-btn" class="bg-[#556b2f] hover:bg-[#3e4f21] text-white font-bold py-2 px-4 rounded-xl shadow-sm">
+                        ส่ง
+                    </button>
+                </div>
+            </footer>
+        </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             // --- URL ของไฟล์ JSON บน GITHUB ---
-            // !!! กรุณาเปลี่ยน URL ด้านล่างนี้เป็น Raw URL ของไฟล์ JSON บน GitHub ของคุณ !!!
             const jsonUrl = 'https://raw.githubusercontent.com/tontakankeawpang321-glitch/krsitsdeeka/main/Sheet1.json'; 
 
             const loadingMessage = document.getElementById('loading-message');
@@ -200,7 +310,6 @@
 
             // Function to populate table with data
             function populateTable(data) {
-                // Clear previous data
                 tableHeader.innerHTML = '';
                 tableBody.innerHTML = '';
 
@@ -240,20 +349,137 @@
                     }
                 }
                 
-                // Show or hide "no results" message
                 noResultsMessage.style.display = found ? 'none' : 'block';
             });
         });
+
+        /* =========================================
+           ส่วน Chatbot AI (Backend)
+           ========================================= */
+        const BACKEND_URL = 'https://us-central1-law-ai-14740.cloudfunctions.net/api/chat';
+
+        // System Prompt: ครูฝึกภาษาอังกฤษทหาร
+        const SYSTEM_PROMPT = {
+            role: "user",
+            parts: [{ text: "System Instruction: คุณคือ AI ครูฝึกสอนภาษาอังกฤษทางทหาร (Military English Instructor) มีหน้าที่แปลคำศัพท์ทหาร อธิบายคำย่อ (Acronyms) และสอนการใช้ประโยคภาษาอังกฤษในบริบททางทหาร (Tactical/Official) ตอบด้วยความสุภาพ เข้มแข็ง และเป็นทางการ (Sir/Ma'am) ห้ามตอบเรื่องที่ไม่เกี่ยวกับภาษาหรือการทหาร" }]
+        };
+        const SYSTEM_ACK = {
+            role: "model",
+            parts: [{ text: "รับทราบครับกระผม พร้อมปฏิบัติหน้าที่ครูฝึกภาษาอังกฤษแล้วครับ Sir!" }]
+        };
+
+        let chatHistory = [SYSTEM_PROMPT, SYSTEM_ACK];
+
+        const chatHistoryEl = document.getElementById('chat-history');
+        const userInput = document.getElementById('user-input');
+        const sendBtn = document.getElementById('send-btn');
+        const newChatBtn = document.getElementById('new-chat-btn');
+        const thinkingIndicator = document.getElementById('thinking-indicator');
+
+        function addChatBubble(message, isUser = true) {
+            const bubbleType = isUser ? 'user' : 'model';
+            const icon = isUser ? '👤' : '🤖';
+            const bgClass = isUser ? 'bg-[#556b2f] text-white' : 'bg-white text-gray-800 border border-gray-200';
+            
+            const wrap = document.createElement('div');
+            wrap.className = `flex items-start space-x-2 ${isUser ? 'flex-row-reverse space-x-reverse' : ''}`;
+            
+            const bubble = document.createElement('div');
+            bubble.className = `chat-bubble chat-bubble-${bubbleType} ${bgClass} p-3 rounded-lg max-w-lg relative shadow-sm`;
+            bubble.innerHTML = `<p>${message.replace(/\n/g, '<br>')}</p>`;
+            
+            wrap.innerHTML = `<span class="text-2xl">${icon}</span>`;
+            wrap.appendChild(bubble);
+            
+            chatHistoryEl.appendChild(wrap);
+            chatHistoryEl.scrollTop = chatHistoryEl.scrollHeight;
+        }
+
+        function addChatError(message) {
+            const w = document.createElement('div');
+            w.className = 'flex justify-center my-2';
+            w.innerHTML = `<span class="bg-red-100 text-red-700 text-xs font-semibold px-3 py-1 rounded-full">${message}</span>`;
+            chatHistoryEl.appendChild(w);
+            chatHistoryEl.scrollTop = chatHistoryEl.scrollHeight;
+        }
+
+        function setThinking(on) {
+            thinkingIndicator.classList.toggle('hidden', !on);
+            if (on) chatHistoryEl.scrollTop = chatHistoryEl.scrollHeight;
+        }
+
+        async function handleSend() {
+            const message = (userInput.value || '').trim();
+            if (!message) return;
+
+            addChatBubble(message, true);
+            userInput.value = '';
+            setThinking(true);
+            sendBtn.disabled = true;
+
+            chatHistory.push({ role: "user", parts: [{ text: message }] });
+
+            try {
+                const response = await fetch(BACKEND_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ history: chatHistory }) 
+                });
+
+                if (!response.ok) {
+                    const errData = await response.json();
+                    throw new Error(errData.error || `Server error: ${response.status}`);
+                }
+
+                const data = await response.json(); 
+                const aiReply = data.reply;
+
+                chatHistory.push({ role: "model", parts: [{ text: aiReply }] });
+                setThinking(false);
+                addChatBubble(aiReply, false);
+
+            } catch (err) {
+                console.error("Fetch Error:", err);
+                setThinking(false);
+                addChatError(`เกิดข้อผิดพลาด: ${err.message}`);
+                chatHistory.pop();
+            } finally {
+                sendBtn.disabled = false;
+            }
+        }
+
+        sendBtn.addEventListener('click', handleSend);
+        userInput.addEventListener('keydown', e => {
+            if (e.key === 'Enter') handleSend();
+        });
+
+        // Reset Chat
+        newChatBtn.addEventListener('click', () => {
+            chatHistory = [SYSTEM_PROMPT, SYSTEM_ACK];
+            chatHistoryEl.innerHTML = `
+                <div class="flex items-start space-x-2">
+                <span class="text-2xl">🤖</span>
+                <div class="chat-bubble chat-bubble-model bg-white text-gray-800 p-3 rounded-lg max-w-lg relative border border-gray-200 shadow-sm">
+                    <p>รับทราบครับ เริ่มบทเรียนใหม่ได้เลย Sir!</p>
+                </div>
+                </div>`;
+            userInput.value = '';
+            setThinking(false);
+        });
+
+        // Modal Control
+        const fabToggle = document.getElementById('fab-chat-toggle');
+        const chatModal = document.getElementById('chatbot-modal');
+        const chatbotCloseBtn = document.getElementById('chatbot-close-btn');
+
+        fabToggle.addEventListener('click', () => {
+            chatModal.classList.remove('chatbot-hidden');
+            fabToggle.style.opacity = '0';
+        });
+        chatbotCloseBtn.addEventListener('click', () => {
+            chatModal.classList.add('chatbot-hidden');
+            fabToggle.style.opacity = '1';
+        });
     </script>
-	<footer>
-  <p class="footer-links">
-    © 2025 Crow Studio |
-    <a href="https://sites.google.com/view/privacy-policy-pdpa-crow-studi/%E0%B8%AB%E0%B8%99%E0%B8%B2%E0%B9%81%E0%B8%A3%E0%B8%81">นโยบายความเป็นส่วนตัว</a> |
-    <a href="ลิงก์ข้อตกลง">ข้อตกลงการใช้งาน</a>
-  </p>
-</footer>
-	  <a href="https://raw.githack.com/tontakankeawpang321-glitch/krsitsdeeka/main/%E0%B9%80%E0%B8%97%E0%B8%84%E0%B8%99%E0%B8%B4%E0%B8%84%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%9E%E0%B8%B9%E0%B8%94/index.html" class="fab-chatbot" title="แชทบอทพระไตรปิฎก" aria-label="แชทบอทพระไตรปิฎก">
-  Ai
-</a>
 </body>
 </html>
