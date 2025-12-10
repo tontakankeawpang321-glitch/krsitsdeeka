@@ -3,19 +3,19 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
-<title>นาฏศิลป์ไทย – ปุ่มลายไทย & เมนูย่อยเปิดถาวร (ลิงก์ _blank)</title>
+<title>นาฏศิลป์ไทย – ปุ่มลายไทย & เมนูย่อย (AI Expert)</title>
 
-<!-- Hints ช่วยโหลดฟอนต์ไวขึ้น -->
 <link rel="dns-prefetch" href="https://fonts.googleapis.com">
 <link rel="dns-prefetch" href="https://fonts.gstatic.com">
 <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Kodchasan:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
 
 <style>
   :root{--bg:#fffdf7;--ink:#241a08;--muted:#6b5b3a;--line:#efe8da;--gold1:#f7e5b2;--gold2:#e4c96d;--gold3:#c89e4a;--thai:#b38728;--radius:18px;--shadow:0 12px 24px -14px rgba(0,0,0,.25)}
   *{box-sizing:border-box}body{margin:0;font-family:"Kodchasan",system-ui,-apple-system,Segoe UI,Roboto,"Noto Sans Thai",sans-serif;background:var(--bg);color:var(--ink)}
-  .wrap{max-width:900px;margin:auto;padding:20px}
+  .wrap{max-width:900px;margin:auto;padding:20px; padding-bottom: 80px;} /* เพิ่ม padding ล่างเผื่อปุ่มแชท */
   h1{font-size:clamp(24px,5vw,36px);font-weight:700;margin-bottom:12px;text-align:center;color:var(--thai)}
   .thai-btn{position:relative;display:block;width:100%;margin:8px 0;padding:14px 16px;font-size:18px;font-weight:700;color:#3a2a09;text-align:left;border:none;cursor:default;border-radius:var(--radius);
     background:linear-gradient(180deg,var(--gold1),var(--gold2) 60%,var(--gold3));box-shadow:0 2px 0 #fff inset,0 10px 20px -12px rgba(0,0,0,.25),0 4px 0 0 var(--gold3)}
@@ -28,38 +28,51 @@
     background:linear-gradient(180deg,#fff6d4,#f4d97a 70%,#e6c049);color:#3a2a09;box-shadow:0 2px 0 #fff inset,0 10px 20px -12px rgba(0,0,0,.25),0 4px 0 0 #b38728;transition:transform .08s ease}
   .quiz-btn:active{transform:translateY(2px)}
   .quiz-btn span{background:#3a2a09;color:#fff;padding:3px 8px;border-radius:999px;font-size:13px;margin-left:6px}
-     .fab-chatbot {
-    position: fixed;
-    bottom: 70px;
-    right: 25px;
-    width: 40px;
-    height: 40px;
-    background-color: #000000;
-    color: #fff;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 21px; /* ปรับขนาดสำหรับ emoji */
-    text-decoration: none;
-    box-shadow: var(--shadow);
-    transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
-    z-index: 1000;
-  }
+  
+  footer { text-align: center; margin-top: 40px; color: var(--muted); font-size: 14px; }
 
-  .fab-chatbot:hover {
-    background-color: var(--blue-shadow);
-    transform: translateY(-3px) scale(1.05);
-    box-shadow: var(--shadow-hover);
+  /* ===== CSS ของ Chatbot UI (Thai Theme) ===== */
+  .chat-bubble::before { content: ''; position: absolute; width: 0; height: 0; border-style: solid; }
+  .chat-bubble-user::before {
+    border-width: 0 12px 12px 12px; border-color: transparent transparent #b38728 transparent; /* สีทองไทย */
+    top: -10px; right: 12px;
   }
-
-  .fab-chatbot:active {
-    transform: scale(0.98);
+  .chat-bubble-model::before {
+    border-width: 0 12px 12px 12px; border-color: transparent transparent #e5e7eb transparent;
+    top: -10px; left: 12px;
   }
-
-  .fab-chatbot:focus-visible {
-    outline: 3px solid var(--royal-blue);
-    outline-offset: 3px;
+  .gemini-thinking-bar {
+    position: relative; width: 100%; height: 4px; background-color: #e0e0e0;
+    border-radius: 2px; overflow: hidden;
+  }
+  .gemini-thinking-bar::before {
+    content: ''; position: absolute; top: 0; left: 0; height: 100%; width: 100%;
+    background: linear-gradient(90deg, #b38728, #f4d97a, #b38728);
+    background-size: 200% 100%; animation: thinking-gradient 2s linear infinite;
+  }
+  @keyframes thinking-gradient { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+  
+  #fab-chat-toggle {
+    position: fixed; bottom: 25px; right: 25px;
+    width: 60px; height: 60px;
+    background-color: #b38728; /* สีทองไทย */
+    color: white;
+    border: none; border-radius: 50%;
+    font-size: 28px; line-height: 60px; text-align: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    cursor: pointer; z-index: 998;
+    transition: transform 0.2s, opacity 0.3s;
+    font-family: 'Kodchasan', sans-serif;
+  }
+  #fab-chat-toggle:hover { transform: scale(1.05); background-color: #8c6a1f; }
+  
+  #chatbot-modal {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    z-index: 1000; transition: opacity 0.3s, transform 0.3s;
+    opacity: 1; transform: translateY(0); pointer-events: auto;
+  }
+  #chatbot-modal.chatbot-hidden {
+    opacity: 0; transform: translateY(100%); pointer-events: none;
   }
 </style>
 </head>
@@ -69,9 +82,62 @@
     <button class="thai-btn"><div class="h">บทเรียนความรู้</div><div class="d">หัวข้อย่อยทั้งหมดแสดงด้านล่าง</div></button>
     <div id="submenu" class="submenu"></div>
     <a id="btnQuiz" class="quiz-btn" href="https://sites.google.com/view/nardtasinthai/%E0%B9%81%E0%B8%9A%E0%B8%9A%E0%B8%97%E0%B8%94%E0%B8%AA%E0%B8%AD%E0%B8%9A%E0%B8%99%E0%B8%B2%E0%B8%8F%E0%B8%A8%E0%B8%A5%E0%B8%9B-500-%E0%B8%82%E0%B8%AD?authuser=0" target="_blank" rel="noopener">บททดสอบความรู้<span>500 ข้อ</span></a>
+    
+    <footer>
+      © 2025 Crow Studio • 
+    </footer> 
+  </div>
+
+  <button id="fab-chat-toggle" title="ถาม AI นาฏศิลป์">Ai</button>
+
+  <div id="chatbot-modal" class="chatbot-hidden">
+    <div class="flex flex-col h-screen bg-gray-100">
+      <header class="bg-[#b38728] text-white p-4 flex justify-between items-center shadow-md">
+        <div class="flex items-center gap-2">
+            <span class="text-2xl text-[#f4d97a]">🎭</span>
+            <h1 class="text-lg font-bold font-sans text-white m-0">AI นาฏศิลป์ไทย</h1>
+        </div>
+        <div>
+          <button id="new-chat-btn" class="bg-[#fff6d4] hover:bg-[#f4d97a] text-[#b38728] font-bold py-1 px-3 rounded mr-2 text-sm">
+            เริ่มใหม่
+          </button>
+          <button id="chatbot-close-btn" class="bg-gray-700 hover:bg-gray-900 text-white font-bold py-1 px-3 rounded text-sm">
+            ปิด
+          </button>
+        </div>
+      </header>
+
+      <main id="chat-history" class="flex-1 overflow-y-auto p-4 space-y-4 bg-[#fffdf7]">
+        <div class="flex items-start space-x-2">
+          <span class="text-2xl">🤖</span>
+          <div class="chat-bubble chat-bubble-model bg-white text-gray-800 p-3 rounded-lg max-w-lg relative border border-gray-200 shadow-sm">
+            <p>สวัสดีครับ ผมคือ AI ผู้เชี่ยวชาญนาฏศิลป์ไทย ยินดีให้ข้อมูลเรื่องโขน ละคร การรำ และประวัติความเป็นมาครับ</p>
+          </div>
+        </div>
+      </main>
+
+      <div id="thinking-indicator" class="p-4 hidden bg-[#fffdf7]">
+        <div class="flex items-center space-x-2">
+          <span class="text-2xl">🤖</span>
+          <div class="chat-bubble chat-bubble-model bg-white text-gray-800 p-3 rounded-lg max-w-lg relative border border-gray-200">
+            <div class="gemini-thinking-bar"></div>
+          </div>
+        </div>
+      </div>
+
+      <footer class="bg-white p-3 shadow-inner border-t border-gray-200 m-0 w-full max-w-full text-black">
+        <div class="flex space-x-2">
+          <input id="user-input" type="text" placeholder="พิมพ์คำถาม (เช่น โขนคืออะไร)..." class="flex-1 p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#b38728] font-sans text-base text-black">
+          <button id="send-btn" class="bg-[#b38728] hover:bg-[#8c6a1f] text-white font-bold py-2 px-4 rounded-xl shadow-sm">
+            ส่ง
+          </button>
+        </div>
+      </footer>
+    </div>
   </div>
 
 <script defer>
+/* ====== Script เดิมของเว็บ ====== */
 const QUIZ_URL="https://sites.google.com/view/nardtasinthai/%E0%B9%81%E0%B8%9A%E0%B8%9A%E0%B8%97%E0%B8%94%E0%B8%AA%E0%B8%AD%E0%B8%9A%E0%B8%99%E0%B8%B2%E0%B8%8F%E0%B8%A8%E0%B8%A5%E0%B8%9B-500-%E0%B8%82%E0%B8%AD";
 const L=[
   ["ที่มาและความสําคัญของนาฏศิลป์ไทย","https://sites.google.com/view/nardtasinthai/%E0%B8%97%E0%B8%A1%E0%B8%B2%E0%B9%81%E0%B8%A5%E0%B8%B0%E0%B8%84%E0%B8%A7%E0%B8%B2%E0%B8%A1%E0%B8%AA%E0%B8%B2%E0%B8%84%E0%B8%8D%E0%B8%82%E0%B8%AD%E0%B8%87%E0%B8%99%E0%B8%B2%E0%B8%8F%E0%B8%A8%E0%B8%A5%E0%B8%9B%E0%B9%84%E0%B8%97%E0%B8%A2"],
@@ -97,16 +163,135 @@ const L=[
 const el=document.getElementById('submenu');
 el.innerHTML=L.map((x,i)=>`<a class="mini" href="${x[1]}" target="_blank" rel="noopener"><span class="dot"></span><div><div class="t">${i+1}. ${x[0]}</div><div class="u">เปิดอ่าน</div></div></a>`).join('');
 document.getElementById('btnQuiz').href=QUIZ_URL;
+
+/* =========================================
+   ส่วน Chatbot AI (Backend)
+   ========================================= */
+const BACKEND_URL = 'https://us-central1-law-ai-14740.cloudfunctions.net/api/chat';
+
+// System Prompt: ผู้เชี่ยวชาญนาฏศิลป์ไทย
+const SYSTEM_PROMPT = {
+    role: "user",
+    parts: [{ text: "System Instruction: คุณคือ AI ผู้เชี่ยวชาญด้าน 'นาฏศิลป์ไทย' มีหน้าที่ให้ความรู้เกี่ยวกับประวัติความเป็นมา, ประเภทของการแสดง (โขน, ละคร, รำ, ระบำ), การแต่งกาย, ดนตรีไทยที่ใช้ประกอบ และนาฏยศัพท์ต่างๆ ตอบด้วยภาษาที่สุภาพ งดงาม และถูกต้องตามหลักวิชาการ ห้ามตอบเรื่องกฎหมาย" }]
+};
+const SYSTEM_ACK = {
+    role: "model",
+    parts: [{ text: "รับทราบครับ ผมพร้อมให้ความรู้ด้านนาฏศิลป์ไทยแล้วครับ" }]
+};
+
+let chatHistory = [SYSTEM_PROMPT, SYSTEM_ACK];
+
+const chatHistoryEl = document.getElementById('chat-history');
+const userInput = document.getElementById('user-input');
+const sendBtn = document.getElementById('send-btn');
+const newChatBtn = document.getElementById('new-chat-btn');
+const thinkingIndicator = document.getElementById('thinking-indicator');
+
+function addChatBubble(message, isUser = true) {
+    const bubbleType = isUser ? 'user' : 'model';
+    const icon = isUser ? '👤' : '🤖';
+    const bgClass = isUser ? 'bg-[#b38728] text-white' : 'bg-white text-gray-800 border border-gray-200';
+    
+    const wrap = document.createElement('div');
+    wrap.className = `flex items-start space-x-2 ${isUser ? 'flex-row-reverse space-x-reverse' : ''}`;
+    
+    const bubble = document.createElement('div');
+    bubble.className = `chat-bubble chat-bubble-${bubbleType} ${bgClass} p-3 rounded-lg max-w-lg relative shadow-sm`;
+    bubble.innerHTML = `<p>${message.replace(/\n/g, '<br>')}</p>`;
+    
+    wrap.innerHTML = `<span class="text-2xl">${icon}</span>`;
+    wrap.appendChild(bubble);
+    
+    chatHistoryEl.appendChild(wrap);
+    chatHistoryEl.scrollTop = chatHistoryEl.scrollHeight;
+}
+
+function addChatError(message) {
+    const w = document.createElement('div');
+    w.className = 'flex justify-center my-2';
+    w.innerHTML = `<span class="bg-red-100 text-red-700 text-xs font-semibold px-3 py-1 rounded-full">${message}</span>`;
+    chatHistoryEl.appendChild(w);
+    chatHistoryEl.scrollTop = chatHistoryEl.scrollHeight;
+}
+
+function setThinking(on) {
+    thinkingIndicator.classList.toggle('hidden', !on);
+    if (on) chatHistoryEl.scrollTop = chatHistoryEl.scrollHeight;
+}
+
+async function handleSend() {
+    const message = (userInput.value || '').trim();
+    if (!message) return;
+
+    addChatBubble(message, true);
+    userInput.value = '';
+    setThinking(true);
+    sendBtn.disabled = true;
+
+    chatHistory.push({ role: "user", parts: [{ text: message }] });
+
+    try {
+        const response = await fetch(BACKEND_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ history: chatHistory }) 
+        });
+
+        if (!response.ok) {
+            const errData = await response.json();
+            throw new Error(errData.error || `Server error: ${response.status}`);
+        }
+
+        const data = await response.json(); 
+        const aiReply = data.reply;
+
+        chatHistory.push({ role: "model", parts: [{ text: aiReply }] });
+        setThinking(false);
+        addChatBubble(aiReply, false);
+
+    } catch (err) {
+        console.error("Fetch Error:", err);
+        setThinking(false);
+        addChatError(`เกิดข้อผิดพลาด: ${err.message}`);
+        chatHistory.pop();
+    } finally {
+        sendBtn.disabled = false;
+    }
+}
+
+sendBtn.addEventListener('click', handleSend);
+userInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter') handleSend();
+});
+
+// Reset Chat
+newChatBtn.addEventListener('click', () => {
+    chatHistory = [SYSTEM_PROMPT, SYSTEM_ACK];
+    chatHistoryEl.innerHTML = `
+        <div class="flex items-start space-x-2">
+        <span class="text-2xl">🤖</span>
+        <div class="chat-bubble chat-bubble-model bg-white text-gray-800 p-3 rounded-lg max-w-lg relative border border-gray-200 shadow-sm">
+            <p>สวัสดีครับ เริ่มบทสนทนาใหม่เกี่ยวกับนาฏศิลป์ไทยได้เลยครับ</p>
+        </div>
+        </div>`;
+    userInput.value = '';
+    setThinking(false);
+});
+
+// Modal Control
+const fabToggle = document.getElementById('fab-chat-toggle');
+const chatModal = document.getElementById('chatbot-modal');
+const chatbotCloseBtn = document.getElementById('chatbot-close-btn');
+
+fabToggle.addEventListener('click', () => {
+    chatModal.classList.remove('chatbot-hidden');
+    fabToggle.style.opacity = '0';
+});
+chatbotCloseBtn.addEventListener('click', () => {
+    chatModal.classList.add('chatbot-hidden');
+    fabToggle.style.opacity = '1';
+});
 </script>
-<center <footer>
-  © 2025 Crow Studio • 
-</footer> </center>
-  <a href="https://raw.githack.com/tontakankeawpang321-glitch/krsitsdeeka/main/%E0%B8%95%E0%B8%B1%E0%B8%A7%E0%B8%8A%E0%B9%88%E0%B8%A7%E0%B8%A2%E0%B8%99%E0%B8%B2%E0%B8%8F%E0%B8%A8%E0%B8%B4%E0%B8%A5%E0%B8%9B%E0%B9%8C/index.html" class="fab-chatbot" title="แชทบอทพระไตรปิฎก" aria-label="แชทบอทพระไตรปิฎก">
-  Ai
-</a>
+
 </body>
 </html>
-
-
-
-
