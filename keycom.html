@@ -1,346 +1,482 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="th">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
-<title>คลังคีย์ลัดออนไลน์ – ค้นหา/กรอง/ดูแบบไดอะล็อก</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>รวมคีย์ลัดคอมพิวเตอร์ (Keyboard Shortcuts)</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Kanit -->
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        body {
+            font-family: 'Kanit', sans-serif;
+            background-color: #f3f4f6;
+        }
+        
+        /* Keycap Style */
+        .kbd-key {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 1.5rem;
+            padding: 0.25rem 0.5rem;
+            margin: 0 0.1rem;
+            background: #ffffff;
+            border: 1px solid #d1d5db;
+            border-bottom-width: 3px;
+            border-radius: 0.375rem;
+            font-family: monospace;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #374151;
+            transition: all 0.1s;
+        }
+        
+        .kbd-key:active {
+            border-bottom-width: 1px;
+            transform: translateY(2px);
+        }
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
+        .category-btn.active {
+            background-color: #2563eb;
+            color: white;
+            border-color: #2563eb;
+        }
 
-<style>
-  :root{
-    --bg:#fbfbfe; --paper:#ffffff; --ink:#0f172a; --muted:#6b7280; --line:#e5e7eb;
-    --brand:#2563eb; --brand-ink:#ffffff; --accent:#22c55e; --warn:#f59e0b;
-    --radius:16px; --shadow:0 12px 30px -14px rgba(0,0,0,.25);
-    --chip:#eff6ff; --chip-ink:#1d4ed8;
-  }
-  *{box-sizing:border-box}
-  html,body{margin:0; font-family:"Sarabun",system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans Thai",Arial,sans-serif; color:var(--ink); background:linear-gradient(180deg,#f7f9ff,#fff)}
-  a{color:inherit}
+        .program-card {
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .program-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
 
-  .wrap{max-width:1100px; margin:0 auto; padding:20px 16px 80px}
-  header{display:flex; gap:14px; align-items:center; flex-wrap:wrap; margin:8px 0 12px}
-  header h1{font-size:22px; font-weight:700; margin:0}
-  header .sub{color:var(--muted); font-size:14px}
-
-  .toolbar{
-    position:sticky; top:0; z-index:10;
-    backdrop-filter:saturate(180%) blur(6px);
-    background:rgba(255,255,255,.85); border-bottom:1px solid var(--line);
-    padding:10px 0 12px; margin:4px 0 16px;
-  }
-  .searchbar{
-    display:flex; gap:10px; align-items:center; flex-wrap:wrap;
-  }
-  .searchbar input{
-    flex:1; min-width:220px; padding:12px 14px; border:1px solid var(--line); border-radius:12px;
-    background:#fff; outline:none; font-size:14px;
-  }
-  .searchbar input:focus{border-color:#bfdbfe; box-shadow:0 0 0 4px rgba(59,130,246,.15)}
-  .counter{font-size:13px; color:var(--muted)}
-  .btn-clear{
-    appearance:none; border:1px solid var(--line); background:#fff; color:#111827; padding:10px 12px; font-size:13px; border-radius:12px; cursor:pointer;
-  }
-
-  .chips{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px}
-  .chip{
-    background:var(--chip); color:var(--chip-ink); border:1px solid #dbeafe;
-    padding:8px 12px; border-radius:999px; font-size:13px; cursor:pointer; user-select:none;
-    transition:.15s transform ease;
-  }
-  .chip.active{background:#1d4ed8; color:#fff; border-color:#1d4ed8}
-  .chip:hover{transform:translateY(-1px)}
-
-  .grid{
-    display:grid; gap:12px;
-    grid-template-columns:repeat(1,minmax(0,1fr));
-  }
-  @media(min-width:560px){ .grid{grid-template-columns:repeat(2,1fr)} }
-  @media(min-width:920px){ .grid{grid-template-columns:repeat(3,1fr)} }
-
-  .card{
-    background:var(--paper); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow);
-    padding:14px; display:flex; flex-direction:column; gap:10px; min-height:180px;
-  }
-  .title{display:flex; align-items:flex-start; gap:10px}
-  .avatar{
-    width:44px; height:44px; flex:0 0 44px; border-radius:12px; background:linear-gradient(135deg,#e0e7ff,#f0fdf4);
-    display:grid; place-items:center; font-weight:700; color:#1f2937; border:1px solid var(--line);
-  }
-  .meta{flex:1}
-  .meta h3{margin:0; font-size:16px}
-  .badge{display:inline-block; margin-top:4px; font-size:12px; color:var(--muted)}
-  .desc{color:#374151; font-size:13px; line-height:1.5}
-
-  .actions{margin-top:auto; display:flex; gap:8px; flex-wrap:wrap}
-  .btn{
-    appearance:none; border:1px solid var(--line); background:#fff; color:#111827; padding:10px 12px; font-size:13px; border-radius:12px; cursor:pointer;
-  }
-  .btn.primary{background:var(--brand); color:var(--brand-ink); border-color:#1e40af}
-  .btn:active{transform:translateY(1px)}
-
-  /* dialog */
-  dialog{
-    border:none; border-radius:18px; width:min(920px,calc(100% - 24px)); padding:0; overflow:hidden; box-shadow:0 40px 60px -24px rgba(0,0,0,.45);
-  }
-  .dlg-head{
-    padding:16px 18px; background:linear-gradient(135deg,#1e40af,#2563eb); color:#fff; display:flex; align-items:center; gap:12px;
-  }
-  .dlg-head .logo{width:38px; height:38px; border-radius:10px; background:rgba(255,255,255,.15); display:grid; place-items:center; font-weight:700}
-  .dlg-head .tt{flex:1}
-  .dlg-head h2{margin:0; font-size:18px}
-  .dlg-body{padding:14px 18px 18px; background:#fff; max-height:70vh; overflow:auto;}
-  .dlg-tools{display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:8px}
-  .dlg-tools input{
-    flex:1; min-width:200px; padding:10px 12px; border:1px solid var(--line); border-radius:10px; outline:none;
-  }
-  .tbl{width:100%; border-collapse:collapse; font-size:14px}
-  .tbl th,.tbl td{border-bottom:1px solid #edf2f7; padding:9px 8px; text-align:left; vertical-align:top}
-  .tbl th{background:#f8fafc; color:#334155}
-  .kbd{font-family:ui-monospace,Menlo,Consolas,monospace; font-size:13px; background:#0f172a; color:#fff; padding:4px 7px; border-radius:8px; white-space:pre}
-  .dlg-foot{display:flex; justify-content:space-between; align-items:center; padding:12px 18px; background:#fafafa; border-top:1px solid var(--line)}
-  .hint{font-size:12px; color:#6b7280}
-  .x{appearance:none; border:none; background:transparent; font-size:22px; line-height:1; color:#fff; cursor:pointer}
-
-  .empty{padding:20px 10px; color:var(--muted)}
-
-  /* เว้นที่บน-ล่างให้ศูนย์กลางบนมือถือ */
-  .mobile-spacer{height:12vh}
-
-  /* ล็อกสกรอลล์หน้าเมื่อเปิดไดอะล็อก */
-  body.modal-open{
-    overflow:hidden;
-    position:fixed; width:100%;
-  }
-</style>
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8; 
+        }
+    </style>
 </head>
-<body>
-  <div class="wrap">
-    <header>
-      <h1>คลังคีย์ลัดออนไลน์</h1>
-      <span class="sub">คลิกการ์ดเพื่อดูคีย์ลัดในไดอะล็อก · มีค้นหา + กรองหมวด</span>
-    </header>
+<body class="text-slate-800">
 
-    <div class="toolbar">
-      <div class="searchbar">
-        <input id="q" type="search" placeholder="ค้นหาชื่อโปรแกรม หรือชื่อคำสั่ง (เช่น copy, duplicate, render, pivot)…"/>
-        <button id="clearSearch" class="btn-clear" title="ล้างคำค้น">ล้าง</button>
-        <span class="counter" id="counter">—</span>
-      </div>
-      <div class="chips" id="chips"></div>
-    </div>
-
-    <div class="grid" id="grid"></div>
-  </div>
-
-<script>
-/* ===========================
-   1) ข้อมูล (หมวด + โปรแกรม + คีย์ลัด)
-   =========================== */
-const DATA = [
-/* (ข้อมูลเหมือนเดิมทั้งหมด — ไม่ถูกแก้) */
-];
-
-/* ====== 2) ชิปหมวด (จำกัด 3 อัน) + การ์ดโปรแกรม ====== */
-const chipsEl = document.getElementById('chips');
-const gridEl  = document.getElementById('grid');
-const qEl     = document.getElementById('q');
-const counterEl = document.getElementById('counter');
-const clearBtn = document.getElementById('clearSearch');
-
-let flat = [];
-const limitedCats = DATA.map(g=>g.cat).slice(0,3);
-let activeCatIndex = -1;
-
-window.setCategoryIndex = function(idx){
-  if (typeof idx !== 'number') return;
-  if (idx < -1) idx = -1;
-  if (idx > limitedCats.length-1) idx = limitedCats.length-1;
-  activeCatIndex = idx;
-  renderChips();
-  render();
-};
-window.getCategoryIndex = function(){ return activeCatIndex; };
-
-let dlg = null, dlgBody=null, dlgTitle=null, dlgFilter=null, tbody=null, emptyRow=null;
-let currentItem = null;
-let savedScrollY = 0;
-
-function flatten(){
-  flat = [];
-  for(const group of DATA){
-    for(const it of group.items){
-      flat.push({
-        cat: group.cat, name: it.name, url: it.url || '#', desc: it.desc || '',
-        shortcuts: it.shortcuts || []
-      });
-    }
-  }
-}
-function renderChips(){
-  chipsEl.innerHTML = '';
-  limitedCats.forEach((cat, i)=>{
-    const b = document.createElement('button');
-    b.className = 'chip' + (i===activeCatIndex ? ' active':'');
-    b.textContent = cat;
-    b.onclick = ()=>{ activeCatIndex = i; renderChips(); render(); };
-    chipsEl.appendChild(b);
-  });
-}
-function match(item, term){
-  if(!term) return true;
-  term = term.toLowerCase();
-  if((item.name+' '+item.cat+' '+item.desc).toLowerCase().includes(term)) return true;
-  for(const s of item.shortcuts){
-    if((s.key+' '+s.action).toLowerCase().includes(term)) return true;
-  }
-  return false;
-}
-function render(){
-  const term = qEl.value.trim().toLowerCase();
-  chipsEl.style.display = term ? 'none' : '';
-
-  const list = flat.filter(it=>{
-    const okCat = (activeCatIndex===-1) ? true : (it.cat === limitedCats[activeCatIndex]);
-    return okCat && match(it, term);
-  });
-  gridEl.innerHTML = '';
-  list.forEach(it=>{
-    const card = document.createElement('div');
-    card.className = 'card';
-
-    /* ========== เวอร์ชันแก้แล้ว → ไม่มีลิงก์เว็บ ========== */
-    card.innerHTML = `
-      <div class="title">
-        <div class="avatar">${it.name.split(' ').map(w=>w[0]).join('').substring(0,3)}</div>
-        <div class="meta">
-          <h3>${it.name}</h3>
-          <span class="badge">${it.cat}</span>
+    <!-- Navbar -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="keyboard" class="w-8 h-8 text-blue-600"></i>
+                    <h1 class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">Shortcuts TH</h1>
+                </div>
+                
+                <!-- OS Switcher -->
+                <div class="flex bg-slate-100 p-1 rounded-lg">
+                    <button onclick="setOS('windows')" id="btn-win" class="px-3 py-1 rounded-md text-sm font-medium transition-colors flex items-center gap-1 active">
+                        <i data-lucide="monitor" class="w-4 h-4"></i> Win
+                    </button>
+                    <button onclick="setOS('mac')" id="btn-mac" class="px-3 py-1 rounded-md text-sm font-medium transition-colors flex items-center gap-1 text-slate-500">
+                        <i data-lucide="command" class="w-4 h-4"></i> Mac
+                    </button>
+                </div>
+            </div>
         </div>
-      </div>
-      <div class="desc">${it.desc || ''}</div>
-      <div class="actions">
-        <button class="btn primary">ดูคีย์ลัด</button>
-      </div>
-    `;
-    /* ======================================================= */
+    </nav>
 
-    card.querySelector('.btn.primary').onclick = ()=> openDlg(it);
-    gridEl.appendChild(card);
-  });
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Search and Filter -->
+        <div class="mb-8 space-y-4">
+            <div class="relative max-w-2xl mx-auto">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i data-lucide="search" class="w-5 h-5 text-slate-400"></i>
+                </div>
+                <input type="text" id="searchInput" 
+                    class="block w-full pl-10 pr-3 py-4 border border-slate-200 rounded-xl leading-5 bg-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm text-lg" 
+                    placeholder="ค้นหาโปรแกรม (เช่น Excel, Photoshop) หรือ คำสั่ง (เช่น วาง, แคปจอ)...">
+            </div>
 
-  const catLabel = (activeCatIndex===-1) ? 'ทั้งหมด' : limitedCats[activeCatIndex];
-  counterEl.textContent = `${list.length} รายการ${term?` · ค้นหา "${qEl.value.trim()}"`:''}${catLabel!=='ทั้งหมด'?` · หมวด ${catLabel}`:''}`;
+            <!-- Categories -->
+            <div class="flex flex-wrap justify-center gap-2" id="categoryContainer">
+                <button onclick="filterCategory('all')" class="category-btn active px-4 py-2 rounded-full border border-slate-200 bg-white text-slate-600 text-sm font-medium hover:bg-slate-50 transition-colors shadow-sm">
+                    ทั้งหมด
+                </button>
+                <button onclick="filterCategory('general')" class="category-btn px-4 py-2 rounded-full border border-slate-200 bg-white text-slate-600 text-sm font-medium hover:bg-slate-50 transition-colors shadow-sm">
+                    ทั่วไป/ระบบ
+                </button>
+                <button onclick="filterCategory('office')" class="category-btn px-4 py-2 rounded-full border border-slate-200 bg-white text-slate-600 text-sm font-medium hover:bg-slate-50 transition-colors shadow-sm">
+                    งานเอกสาร
+                </button>
+                <button onclick="filterCategory('browser')" class="category-btn px-4 py-2 rounded-full border border-slate-200 bg-white text-slate-600 text-sm font-medium hover:bg-slate-50 transition-colors shadow-sm">
+                    เบราว์เซอร์
+                </button>
+                <button onclick="filterCategory('design')" class="category-btn px-4 py-2 rounded-full border border-slate-200 bg-white text-slate-600 text-sm font-medium hover:bg-slate-50 transition-colors shadow-sm">
+                    กราฟิก & ตัดต่อ
+                </button>
+                <button onclick="filterCategory('dev')" class="category-btn px-4 py-2 rounded-full border border-slate-200 bg-white text-slate-600 text-sm font-medium hover:bg-slate-50 transition-colors shadow-sm">
+                    เขียนโปรแกรม
+                </button>
+            </div>
+        </div>
 
-  if(list.length===0){
-    const empty = document.createElement('div');
-    empty.className = 'empty';
-    empty.textContent = 'ไม่พบผลลัพธ์ที่ตรงกับเงื่อนไข';
-    gridEl.appendChild(empty);
-  }
-}
+        <!-- Shortcuts Grid -->
+        <div id="shortcutsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Content will be injected here by JS -->
+        </div>
 
-function debounce(fn, ms=200){ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a), ms); }; }
+        <!-- Empty State -->
+        <div id="emptyState" class="hidden text-center py-12">
+            <i data-lucide="frown" class="w-16 h-16 mx-auto text-slate-300 mb-4"></i>
+            <h3 class="text-lg font-medium text-slate-900">ไม่พบข้อมูลที่ค้นหา</h3>
+            <p class="text-slate-500">ลองใช้คำค้นหาอื่น หรือตรวจสอบตัวสะกด</p>
+        </div>
 
-/* ====== 3) Dialog ====== */
-function createDialog(){
-  if (dlg) return;
-  dlg = document.createElement('dialog');
-  dlg.innerHTML = `
-    <div class="dlg-head">
-      <div class="logo" id="dlgLogo">⌨️</div>
-      <div class="tt"><h2 id="dlgTitle">—</h2></div>
-      <button class="x" id="dlgClose" aria-label="Close">×</button>
-    </div>
-    <div class="dlg-body" id="dlgBody">
-      <div class="mobile-spacer"></div>
-      <div class="dlg-tools">
-        <input id="dlgFilter" placeholder="ค้นหาในคีย์ลัดของโปรแกรมนี้…">
-        <button class="btn" id="copyBtn">คัดลอกเป็นข้อความ</button>
-      </div>
-      <div class="table-wrap">
-        <table class="tbl">
-          <thead><tr><th style="width:33%">ปุ่ม</th><th>คำสั่ง / รายละเอียด</th></tr></thead>
-          <tbody id="tbody"></tbody>
-        </table>
-        <div class="empty" id="emptyRow" style="display:none">ไม่พบคีย์ลัดที่ตรงกับคำค้น</div>
-      </div>
-      <div class="mobile-spacer"></div>
-      <div class="dlg-foot">
-        <span class="hint">Tip: กด <span class="kbd">Esc</span> เพื่อปิดไดอะล็อก</span>
-        <div></div>
-      </div>
-    </div>
-  `;
-  document.body.appendChild(dlg);
+    </main>
 
-  dlgBody   = dlg.querySelector('#dlgBody');
-  dlgTitle  = dlg.querySelector('#dlgTitle');
-  dlgFilter = dlg.querySelector('#dlgFilter');
-  tbody     = dlg.querySelector('#tbody');
-  emptyRow  = dlg.querySelector('#emptyRow');
+    <footer class="bg-white border-t border-slate-200 mt-12 py-8">
+        <div class="max-w-7xl mx-auto px-4 text-center text-slate-500 text-sm">
+            <p>รวมคีย์ลัดเพื่อการทำงานที่รวดเร็วขึ้น | Designed for Productivity</p>
+        </div>
+    </footer>
 
-  dlg.querySelector('#dlgClose').addEventListener('click', closeDlg);
-  dlg.querySelector('#copyBtn').addEventListener('click', copyTable);
-  dlgFilter.addEventListener('input', debounce(()=>{ if(currentItem) buildTable(currentItem.shortcuts, dlgFilter.value); }, 120));
+    <script>
+        // --- Data Source ---
+        const shortcutsData = [
+            // General System
+            {
+                id: 1,
+                program: "Windows / System",
+                icon: "monitor",
+                category: "general",
+                color: "blue",
+                shortcuts: [
+                    { action: "คัดลอก (Copy)", keys: ["Ctrl", "C"] },
+                    { action: "วาง (Paste)", keys: ["Ctrl", "V"] },
+                    { action: "ตัด (Cut)", keys: ["Ctrl", "X"] },
+                    { action: "ย้อนกลับ (Undo)", keys: ["Ctrl", "Z"] },
+                    { action: "ทำซ้ำ (Redo)", keys: ["Ctrl", "Y"] },
+                    { action: "เลือกทั้งหมด", keys: ["Ctrl", "A"] },
+                    { action: "ล็อกหน้าจอ", keys: ["Win", "L"], macKeys: ["Cmd", "Ctrl", "Q"] },
+                    { action: "สลับหน้าต่าง", keys: ["Alt", "Tab"], macKeys: ["Cmd", "Tab"] },
+                    { action: "โชว์หน้า Desktop", keys: ["Win", "D"], macKeys: ["F11"] },
+                    { action: "เปิด File Explorer", keys: ["Win", "E"], macKeys: ["Opt", "Cmd", "Space"] },
+                    { action: "แคปหน้าจอ (บางส่วน)", keys: ["Win", "Shift", "S"], macKeys: ["Cmd", "Shift", "4"] },
+                    { action: "แคปหน้าจอ (ทั้งหมด)", keys: ["PrtSc"], macKeys: ["Cmd", "Shift", "3"] }
+                ]
+            },
+            // Browsers
+            {
+                id: 2,
+                program: "Google Chrome / Edge",
+                icon: "globe",
+                category: "browser",
+                color: "green",
+                shortcuts: [
+                    { action: "เปิดแท็บใหม่", keys: ["Ctrl", "T"] },
+                    { action: "ปิดแท็บปัจจุบัน", keys: ["Ctrl", "W"] },
+                    { action: "เปิดแท็บที่เพิ่งปิดไป", keys: ["Ctrl", "Shift", "T"] },
+                    { action: "ไปที่แท็บถัดไป", keys: ["Ctrl", "Tab"] },
+                    { action: "ค้นหาในหน้าเว็บ", keys: ["Ctrl", "F"] },
+                    { action: "รีเฟรชหน้าเว็บ", keys: ["F5"], macKeys: ["Cmd", "R"] },
+                    { action: "เปิดโหมดไม่ระบุตัวตน", keys: ["Ctrl", "Shift", "N"] },
+                    { action: "เปิดประวัติการเข้าชม", keys: ["Ctrl", "H"], macKeys: ["Cmd", "Y"] },
+                    { action: "ไปที่แถบ URL", keys: ["Ctrl", "L"] }
+                ]
+            },
+            // Office - Word
+            {
+                id: 3,
+                program: "Microsoft Word",
+                icon: "file-text",
+                category: "office",
+                color: "blue",
+                shortcuts: [
+                    { action: "ทำตัวหนา", keys: ["Ctrl", "B"] },
+                    { action: "ทำตัวเอียง", keys: ["Ctrl", "I"] },
+                    { action: "ขีดเส้นใต้", keys: ["Ctrl", "U"] },
+                    { action: "จัดกึ่งกลาง", keys: ["Ctrl", "E"] },
+                    { action: "จัดชิดซ้าย", keys: ["Ctrl", "L"] },
+                    { action: "ค้นหาและแทนที่", keys: ["Ctrl", "H"] },
+                    { action: "บันทึกไฟล์", keys: ["Ctrl", "S"] },
+                    { action: "ขึ้นหน้าใหม่", keys: ["Ctrl", "Enter"] }
+                ]
+            },
+            // Office - Excel
+            {
+                id: 4,
+                program: "Microsoft Excel",
+                icon: "grid",
+                category: "office",
+                color: "emerald",
+                shortcuts: [
+                    { action: "แก้ไขเซลล์", keys: ["F2"], macKeys: ["Ctrl", "U"] },
+                    { action: "ผลรวมอัตโนมัติ (AutoSum)", keys: ["Alt", "="], macKeys: ["Cmd", "Shift", "T"] },
+                    { action: "แทรกวันที่ปัจจุบัน", keys: ["Ctrl", ";"] },
+                    { action: "แทรกเวลาปัจจุบัน", keys: ["Ctrl", "Shift", ";"] },
+                    { action: "เลือกทั้งแถว", keys: ["Shift", "Space"] },
+                    { action: "เลือกทั้งคอลัมน์", keys: ["Ctrl", "Space"] },
+                    { action: "เปลี่ยนรูปแบบเป็นตัวเลข", keys: ["Ctrl", "Shift", "1"] },
+                    { action: "ไปยังเซลล์ A1", keys: ["Ctrl", "Home"], macKeys: ["Fn", "Ctrl", "Left"] }
+                ]
+            },
+            // Office - PowerPoint
+            {
+                id: 5,
+                program: "PowerPoint",
+                icon: "presentation",
+                category: "office",
+                color: "orange",
+                shortcuts: [
+                    { action: "สร้างสไลด์ใหม่", keys: ["Ctrl", "M"] },
+                    { action: "ทำซ้ำสไลด์/วัตถุ", keys: ["Ctrl", "D"] },
+                    { action: "เริ่มนำเสนอ (ตั้งแต่ต้น)", keys: ["F5"], macKeys: ["Cmd", "Shift", "Enter"] },
+                    { action: "เริ่มนำเสนอ (หน้าปัจจุบัน)", keys: ["Shift", "F5"], macKeys: ["Cmd", "Enter"] },
+                    { action: "จัดกลุ่มวัตถุ", keys: ["Ctrl", "G"], macKeys: ["Cmd", "Opt", "G"] },
+                    { action: "ยกเลิกจัดกลุ่ม", keys: ["Ctrl", "Shift", "G"], macKeys: ["Cmd", "Opt", "Shift", "G"] }
+                ]
+            },
+            // Adobe Photoshop
+            {
+                id: 6,
+                program: "Adobe Photoshop",
+                icon: "image",
+                category: "design",
+                color: "indigo",
+                shortcuts: [
+                    { action: "ยกเลิกการเลือก (Deselect)", keys: ["Ctrl", "D"] },
+                    { action: "ย้อนกลับหลายขั้นตอน", keys: ["Ctrl", "Alt", "Z"], macKeys: ["Cmd", "Opt", "Z"] },
+                    { action: "เครื่องมือ Move", keys: ["V"] },
+                    { action: "เครื่องมือ Hand (เลื่อนภาพ)", keys: ["Space"] },
+                    { action: "ปรับขนาด (Free Transform)", keys: ["Ctrl", "T"] },
+                    { action: "รวม Layer (Merge)", keys: ["Ctrl", "E"] },
+                    { action: "กลับสี (Invert)", keys: ["Ctrl", "I"] },
+                    { action: "Brush Size ลด/เพิ่ม", keys: ["[", "]"] }
+                ]
+            },
+            // VS Code
+            {
+                id: 7,
+                program: "VS Code",
+                icon: "code",
+                category: "dev",
+                color: "sky",
+                shortcuts: [
+                    { action: "เปิด Command Palette", keys: ["Ctrl", "Shift", "P"] },
+                    { action: "ค้นหาไฟล์ (Quick Open)", keys: ["Ctrl", "P"] },
+                    { action: "คอมเมนท์บรรทัด", keys: ["Ctrl", "/"] },
+                    { action: "ย้ายบรรทัด ขึ้น/ลง", keys: ["Alt", "Up/Down"], macKeys: ["Opt", "Up/Down"] },
+                    { action: "Copy บรรทัด ลง/ขึ้น", keys: ["Shift", "Alt", "Down/Up"], macKeys: ["Shift", "Opt", "Down/Up"] },
+                    { action: "เลือกคำที่เหมือนกันถัดไป", keys: ["Ctrl", "D"] },
+                    { action: "จัดระเบียบโค้ด (Format)", keys: ["Shift", "Alt", "F"], macKeys: ["Shift", "Opt", "F"] },
+                    { action: "เปิด/ปิด Terminal", keys: ["Ctrl", "`"] }
+                ]
+            },
+            // Youtube (Web)
+            {
+                id: 8,
+                program: "YouTube (Web)",
+                icon: "play-circle",
+                category: "general",
+                color: "red",
+                shortcuts: [
+                    { action: "เล่น / หยุด", keys: ["K", "Space"] },
+                    { action: "ย้อนหลัง 10 วิ", keys: ["J"] },
+                    { action: "ไปข้างหน้า 10 วิ", keys: ["L"] },
+                    { action: "ปิด/เปิด เสียง", keys: ["M"] },
+                    { action: "เปิด Full Screen", keys: ["F"] },
+                    { action: "เปิด/ปิด คำบรรยาย", keys: ["C"] },
+                    { action: "เพิ่มความเร็ว", keys: ["Shift", ">"] },
+                    { action: "ลดความเร็ว", keys: ["Shift", "<"] }
+                ]
+            }
+        ];
 
-  dlg.addEventListener('close', cleanupDialog);
-  dlg.addEventListener('cancel', (e)=>{ e.preventDefault(); closeDlg(); });
-}
+        // --- State Management ---
+        let currentOS = 'windows';
+        let currentCategory = 'all';
+        let searchQuery = '';
 
-function openDlg(item){
-  createDialog();
-  currentItem = item;
-  dlg.querySelector('#dlgLogo').textContent = (item.name[0]||'⌨️').toUpperCase();
-  dlgTitle.textContent = item.name;
-  dlgFilter.value='';
-  buildTable(item.shortcuts, '');
+        // --- DOM Elements ---
+        const grid = document.getElementById('shortcutsGrid');
+        const emptyState = document.getElementById('emptyState');
+        const searchInput = document.getElementById('searchInput');
+        const btnWin = document.getElementById('btn-win');
+        const btnMac = document.getElementById('btn-mac');
+        const categoryBtns = document.querySelectorAll('.category-btn');
 
-  (typeof dlg.showModal === 'function') ? dlg.showModal() : dlg.setAttribute('open','');
-}
-function closeDlg(){
-  if (!dlg) return;
-  if (dlg.open) dlg.close();
-  else cleanupDialog();
-}
-function cleanupDialog(){
-  if (!dlg) return;
-  dlg.remove();
-  dlg = dlgBody = dlgTitle = dlgFilter = tbody = emptyRow = null;
-  currentItem = null;
-}
+        // --- Functions ---
 
-function buildTable(rows, term){
-  tbody.innerHTML='';
-  const q = (term||'').toLowerCase();
-  const matched = rows.filter(r => (r.key+' '+r.action).toLowerCase().includes(q));
-  matched.forEach(r=>{
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td><span class="kbd">${escapeHtml(r.key)}</span></td><td>${escapeHtml(r.action)}</td>`;
-    tbody.appendChild(tr);
-  });
-  emptyRow.style.display = matched.length? 'none':'block';
-}
+        function setOS(os) {
+            currentOS = os;
+            
+            // Toggle Button Styles
+            if (os === 'windows') {
+                btnWin.classList.add('bg-white', 'shadow-sm', 'text-blue-600');
+                btnWin.classList.remove('text-slate-500');
+                btnMac.classList.remove('bg-white', 'shadow-sm', 'text-blue-600');
+                btnMac.classList.add('text-slate-500');
+            } else {
+                btnMac.classList.add('bg-white', 'shadow-sm', 'text-blue-600');
+                btnMac.classList.remove('text-slate-500');
+                btnWin.classList.remove('bg-white', 'shadow-sm', 'text-blue-600');
+                btnWin.classList.add('text-slate-500');
+            }
 
-function copyTable(){
-  if(!currentItem) return;
-  const q = (dlgFilter.value||'').toLowerCase();
-  const matched = currentItem.shortcuts.filter(r => (r.key+' '+r.action).toLowerCase().includes(q));
-  const text = `คีย์ลัด: ${currentItem.name}\n` + matched.map(r=>`${r.key} — ${r.action}`).join('\n');
-  navigator.clipboard.writeText(text).then(()=> alert('คัดลอกแล้ว!'));
-}
+            render();
+        }
 
-function escapeHtml(s){ return (s||'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+        function filterCategory(cat) {
+            currentCategory = cat;
+            
+            // Update button styles
+            categoryBtns.forEach(btn => {
+                if (btn.getAttribute('onclick').includes(cat)) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
 
-function init(){
-  flatten();
-  renderChips();
-  render();
-  qEl.addEventListener('input', debounce(render, 120));
-  clearBtn.addEventListener('click', ()=>{ qEl.value=''; render(); qEl.focus(); });
-}
-init();
-</script>
+            render();
+        }
+
+        function getKeysForOS(item, os) {
+            // Check if specific keys exist for Mac
+            if (os === 'mac' && item.macKeys) {
+                return item.macKeys;
+            }
+            
+            // If Windows keys, we might need to swap generic modifiers if no specific macKeys are defined
+            let keys = [...item.keys];
+            if (os === 'mac') {
+                return keys.map(k => {
+                    if (k === 'Ctrl') return 'Cmd';
+                    if (k === 'Alt') return 'Opt';
+                    if (k === 'Win') return 'Cmd';
+                    return k;
+                });
+            }
+            return keys;
+        }
+
+        function render() {
+            grid.innerHTML = '';
+            let hasResults = false;
+
+            shortcutsData.forEach(program => {
+                // Filter Logic
+                const matchCategory = currentCategory === 'all' || program.category === currentCategory;
+                
+                // Filter shortcuts inside the program that match search
+                // Or if program name matches search, show all
+                const nameMatch = program.program.toLowerCase().includes(searchQuery.toLowerCase());
+                
+                let visibleShortcuts = program.shortcuts;
+
+                if (!nameMatch && searchQuery) {
+                    visibleShortcuts = program.shortcuts.filter(s => 
+                        s.action.toLowerCase().includes(searchQuery.toLowerCase())
+                    );
+                }
+
+                if (matchCategory && (nameMatch || visibleShortcuts.length > 0)) {
+                    hasResults = true;
+                    
+                    // Create Card
+                    const card = document.createElement('div');
+                    card.className = 'program-card bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden flex flex-col';
+                    
+                    // Header
+                    const header = document.createElement('div');
+                    header.className = `px-5 py-3 border-b border-slate-100 flex items-center gap-3 bg-${program.color}-50`;
+                    header.innerHTML = `
+                        <div class="p-2 bg-white rounded-lg shadow-sm text-${program.color}-600">
+                            <i data-lucide="${program.icon}" class="w-5 h-5"></i>
+                        </div>
+                        <h3 class="font-semibold text-slate-800">${program.program}</h3>
+                    `;
+                    card.appendChild(header);
+
+                    // Body
+                    const body = document.createElement('div');
+                    body.className = 'p-5 flex-1';
+                    
+                    const ul = document.createElement('ul');
+                    ul.className = 'space-y-3';
+
+                    // Determine which shortcuts to show (all if program matches, or filtered)
+                    const shortcutsToShow = nameMatch ? program.shortcuts : visibleShortcuts;
+
+                    shortcutsToShow.forEach(sc => {
+                        const li = document.createElement('li');
+                        li.className = 'flex justify-between items-center text-sm gap-2';
+                        
+                        const actionSpan = document.createElement('span');
+                        actionSpan.className = 'text-slate-600 font-medium';
+                        actionSpan.textContent = sc.action;
+
+                        const keysDiv = document.createElement('div');
+                        keysDiv.className = 'flex flex-wrap justify-end gap-1';
+                        
+                        const keys = getKeysForOS(sc, currentOS);
+                        
+                        keys.forEach(k => {
+                            const kbd = document.createElement('kbd');
+                            kbd.className = 'kbd-key';
+                            kbd.textContent = k;
+                            keysDiv.appendChild(kbd);
+                        });
+
+                        li.appendChild(actionSpan);
+                        li.appendChild(keysDiv);
+                        ul.appendChild(li);
+                    });
+
+                    body.appendChild(ul);
+                    card.appendChild(body);
+                    grid.appendChild(card);
+                }
+            });
+
+            // Handle Empty State
+            if (!hasResults) {
+                emptyState.classList.remove('hidden');
+            } else {
+                emptyState.classList.add('hidden');
+            }
+
+            // Re-initialize icons
+            lucide.createIcons();
+        }
+
+        // --- Event Listeners ---
+        searchInput.addEventListener('input', (e) => {
+            searchQuery = e.target.value.trim();
+            render();
+        });
+
+        // --- Init ---
+        // Init OS based on user platform
+        if (navigator.platform.toUpperCase().indexOf('MAC') >= 0) {
+            setOS('mac');
+        } else {
+            setOS('windows');
+        }
+        
+    </script>
 </body>
 </html>
