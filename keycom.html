@@ -1,0 +1,919 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>คลังคีย์ลัดออนไลน์ – ค้นหา/กรอง/ดูแบบไดอะล็อก</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --bg:#fbfbfe; --paper:#ffffff; --ink:#0f172a; --muted:#6b7280; --line:#e5e7eb;
+    --brand:#2563eb; --brand-ink:#ffffff; --accent:#22c55e; --warn:#f59e0b;
+    --radius:16px; --shadow:0 12px 30px -14px rgba(0,0,0,.25);
+    --chip:#eff6ff; --chip-ink:#1d4ed8;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0; font-family:"Sarabun",system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans Thai",Arial,sans-serif; color:var(--ink); background:linear-gradient(180deg,#f7f9ff,#fff)}
+  a{color:inherit}
+
+  .wrap{max-width:1100px; margin:0 auto; padding:20px 16px 80px}
+  header{display:flex; gap:14px; align-items:center; flex-wrap:wrap; margin:8px 0 12px}
+  header h1{font-size:22px; font-weight:700; margin:0}
+  header .sub{color:var(--muted); font-size:14px}
+
+  .toolbar{
+    position:sticky; top:0; z-index:10;
+    backdrop-filter:saturate(180%) blur(6px);
+    background:rgba(255,255,255,.85); border-bottom:1px solid var(--line);
+    padding:10px 0 12px; margin:4px 0 16px;
+  }
+  .searchbar{
+    display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+  }
+  .searchbar input{
+    flex:1; min-width:220px; padding:12px 14px; border:1px solid var(--line); border-radius:12px;
+    background:#fff; outline:none; font-size:14px;
+  }
+  .searchbar input:focus{border-color:#bfdbfe; box-shadow:0 0 0 4px rgba(59,130,246,.15)}
+  .counter{font-size:13px; color:var(--muted)}
+  .btn-clear{
+    appearance:none; border:1px solid var(--line); background:#fff; color:#111827; padding:10px 12px; font-size:13px; border-radius:12px; cursor:pointer;
+  }
+
+  .chips{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px}
+  .chip{
+    background:var(--chip); color:var(--chip-ink); border:1px solid #dbeafe;
+    padding:8px 12px; border-radius:999px; font-size:13px; cursor:pointer; user-select:none;
+    transition:.15s transform ease;
+  }
+  .chip.active{background:#1d4ed8; color:#fff; border-color:#1d4ed8}
+  .chip:hover{transform:translateY(-1px)}
+
+  .grid{
+    display:grid; gap:12px;
+    grid-template-columns:repeat(1,minmax(0,1fr));
+  }
+  @media(min-width:560px){ .grid{grid-template-columns:repeat(2,1fr)} }
+  @media(min-width:920px){ .grid{grid-template-columns:repeat(3,1fr)} }
+
+  .card{
+    background:var(--paper); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow);
+    padding:14px; display:flex; flex-direction:column; gap:10px; min-height:180px;
+  }
+  .title{display:flex; align-items:flex-start; gap:10px}
+  .avatar{
+    width:44px; height:44px; flex:0 0 44px; border-radius:12px; background:linear-gradient(135deg,#e0e7ff,#f0fdf4);
+    display:grid; place-items:center; font-weight:700; color:#1f2937; border:1px solid var(--line);
+  }
+  .meta{flex:1}
+  .meta h3{margin:0; font-size:16px}
+  .badge{display:inline-block; margin-top:4px; font-size:12px; color:var(--muted)}
+  .desc{color:#374151; font-size:13px; line-height:1.5}
+
+  .actions{margin-top:auto; display:flex; gap:8px; flex-wrap:wrap}
+  .btn{
+    appearance:none; border:1px solid var(--line); background:#fff; color:#111827; padding:10px 12px; font-size:13px; border-radius:12px; cursor:pointer;
+  }
+  .btn.primary{background:var(--brand); color:var(--brand-ink); border-color:#1e40af}
+  .btn.ghost{background:#fff}
+  .btn:active{transform:translateY(1px)}
+  .btn.link{border:none; color:#1d4ed8; background:transparent; padding:8px 6px}
+
+  /* dialog */
+  dialog{
+    border:none; border-radius:18px; width:min(920px,calc(100% - 24px)); padding:0; overflow:hidden; box-shadow:0 40px 60px -24px rgba(0,0,0,.45);
+  }
+  .dlg-head{
+    padding:16px 18px; background:linear-gradient(135deg,#1e40af,#2563eb); color:#fff; display:flex; align-items:center; gap:12px;
+  }
+  .dlg-head .logo{width:38px; height:38px; border-radius:10px; background:rgba(255,255,255,.15); display:grid; place-items:center; font-weight:700}
+  .dlg-head .tt{flex:1}
+  .dlg-head h2{margin:0; font-size:18px}
+  .dlg-body{padding:14px 18px 18px; background:#fff; max-height:70vh; overflow:auto;}
+  .dlg-tools{display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:8px}
+  .dlg-tools input{
+    flex:1; min-width:200px; padding:10px 12px; border:1px solid var(--line); border-radius:10px; outline:none;
+  }
+  .tbl{width:100%; border-collapse:collapse; font-size:14px}
+  .tbl th,.tbl td{border-bottom:1px solid #edf2f7; padding:9px 8px; text-align:left; vertical-align:top}
+  .tbl th{background:#f8fafc; color:#334155}
+  .kbd{font-family:ui-monospace,Menlo,Consolas,monospace; font-size:13px; background:#0f172a; color:#fff; padding:4px 7px; border-radius:8px; white-space:pre}
+  .dlg-foot{display:flex; justify-content:space-between; align-items:center; padding:12px 18px; background:#fafafa; border-top:1px solid var(--line)}
+  .hint{font-size:12px; color:#6b7280}
+  .x{appearance:none; border:none; background:transparent; font-size:22px; line-height:1; color:#fff; cursor:pointer}
+
+  .empty{padding:20px 10px; color:var(--muted)}
+
+  /* เว้นที่บน-ล่างให้ศูนย์กลางบนมือถือ */
+  .mobile-spacer{height:12vh}
+
+  /* ล็อกสกรอลล์หน้าเมื่อเปิดไดอะล็อก */
+  body.modal-open{
+    overflow:hidden;
+    position:fixed; width:100%;
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>คลังคีย์ลัดออนไลน์</h1>
+      <span class="sub">คลิกการ์ดเพื่อดูคีย์ลัดในไดอะล็อก · มีค้นหา + กรองหมวด</span>
+    </header>
+
+    <div class="toolbar">
+      <div class="searchbar">
+        <input id="q" type="search" placeholder="ค้นหาชื่อโปรแกรม หรือชื่อคำสั่ง (เช่น copy, duplicate, render, pivot)…"/>
+        <button id="clearSearch" class="btn-clear" title="ล้างคำค้น">ล้าง</button>
+        <span class="counter" id="counter">—</span>
+      </div>
+      <div class="chips" id="chips"></div>
+    </div>
+
+    <div class="grid" id="grid"></div>
+  </div>
+
+<script>
+/* ===========================
+   1) ข้อมูล (หมวด + โปรแกรม + คีย์ลัด)
+   =========================== */
+const DATA = [
+{
+    cat:"Office Suite & Productivity",
+    items:[
+      { name:"Microsoft Word", url:"https://support.microsoft.com/th-th/office/keyboard-shortcuts-in-word",
+        desc:"สร้าง/แก้ไขเอกสาร รายงาน จดหมาย",
+        shortcuts:[
+          {key:"Ctrl + N", action:"เอกสารใหม่"},
+          {key:"Ctrl + O", action:"เปิดเอกสาร"},
+          {key:"Ctrl + S", action:"บันทึก"},
+          {key:"Ctrl + P", action:"พิมพ์"},
+          {key:"Ctrl + B / I / U", action:"หนา / เอียง / ขีดเส้นใต้"},
+          {key:"Ctrl + A", action:"เลือกทั้งหมด"},
+          {key:"Ctrl + C / X / V", action:"คัดลอก/ตัด/วาง"},
+          {key:"Ctrl + Z / Y", action:"ย้อนกลับ/ทำซ้ำ"},
+          {key:"Ctrl + K", action:"แทรกลิงก์"},
+          {key:"Ctrl + H", action:"ค้นหาและแทนที่"}
+        ]
+      },
+      { name:"Microsoft Excel", url:"https://support.microsoft.com/th-th/office/keyboard-shortcuts-in-excel",
+        desc:"ตารางคำนวณ วิเคราะห์ข้อมูล กราฟ",
+        shortcuts:[
+          {key:"Ctrl + N / O / S", action:"ใหม่ / เปิด / บันทึก"},
+          {key:"Ctrl + C / X / V / Z", action:"คัดลอก/ตัด/วาง/ย้อนกลับ"},
+          {key:"Ctrl + Arrow", action:"ไปยังขอบข้อมูล"},
+          {key:"Ctrl + Shift + L", action:"สลับตัวกรอง (Filter)"},
+          {key:"Ctrl + T", action:"สร้างตาราง (Table)"},
+          {key:"F2", action:"แก้ไขเซลล์"},
+          {key:"Ctrl + ;  /  Ctrl + : ", action:"วันที่วันนี้ / เวลา"},
+          {key:"Alt + = ", action:"AutoSum"},
+          {key:"Ctrl + 1", action:"จัดรูปแบบเซลล์"},
+          {key:"Ctrl + Shift + %", action:"รูปแบบเปอร์เซ็นต์"}
+        ]
+      },
+      { name:"Microsoft PowerPoint", url:"https://support.microsoft.com/th-th/office/keyboard-shortcuts-in-powerpoint",
+        desc:"ออกแบบ & นำเสนอสไลด์",
+        shortcuts:[
+          {key:"Ctrl + M", action:"สไลด์ใหม่"},
+          {key:"Ctrl + D", action:"ทำสำเนาอ็อบเจกต์/สไลด์"},
+          {key:"Ctrl + G / Shift + Ctrl + G", action:"จัดกลุ่ม / ยกเลิกกลุ่ม"},
+          {key:"Ctrl + L / R / E", action:"จัดชิดซ้าย/ขวา/กลาง"},
+          {key:"Ctrl + Shift + V", action:"วางรูปแบบ"},
+          {key:"F5 / Shift + F5", action:"เล่นสไลด์ตั้งแต่ต้น / จากสไลด์ปัจจุบัน"},
+          {key:"B / W (ระหว่างนำเสนอ)", action:"จอดำ / จอขาว"},
+          {key:"Alt + Shift + Up/Down", action:"จัดลำดับ list"}
+        ]
+      },
+      { name:"Google Docs", url:"https://support.google.com/docs/answer/179738",
+        desc:"เอกสารออนไลน์ ทำงานร่วมกันเรียลไทม์",
+        shortcuts:[
+          {key:"Ctrl + /", action:"เปิดตัวช่วยคีย์ลัดทั้งหมด"},
+          {key:"Ctrl + Alt + M", action:"เพิ่มคอมเมนต์"},
+          {key:"Ctrl + Shift + C", action:"นับจำนวนคำ"},
+          {key:"Ctrl + Alt + 1..6", action:"หัวข้อ H1..H6"},
+          {key:"Ctrl + Shift + 7/8", action:"ลำดับเลข / จุด"}
+        ]
+      },
+      { name:"Google Sheets", url:"https://support.google.com/docs/answer/181110",
+        desc:"ตารางคำนวณออนไลน์",
+        shortcuts:[
+          {key:"Ctrl + /", action:"ดูคีย์ลัดทั้งหมด"},
+          {key:"Ctrl + Shift + L", action:"สลับตัวกรอง"},
+          {key:"Ctrl + Enter", action:"ใส่ค่าไปทุกเซลล์ที่เลือก"},
+          {key:"Ctrl + Shift + V", action:"วางค่า (ไม่เอารูปแบบ)"},
+          {key:"Ctrl + Shift + 5", action:"เปอร์เซ็นต์"},
+          {key:"Ctrl + ; / Ctrl + Shift + ;", action:"วันที่ / เวลา"}
+        ]
+      },
+      { name:"Google Slides", url:"https://support.google.com/docs/answer/179410",
+        desc:"สไลด์ออนไลน์",
+        shortcuts:[
+          {key:"Ctrl + D", action:"ทำสำเนา"},
+          {key:"Ctrl + Shift + C/V", action:"คัดลอก/วางรูปแบบ"},
+          {key:"Ctrl + Alt + Shift + G", action:"จัดแนวกระจายเท่ากัน"},
+          {key:"Ctrl + Shift + F", action:"ซ่อนเมนู"},
+          {key:"Ctrl + Alt + M", action:"คอมเมนต์"}
+        ]
+      },
+      { name:"Adobe Acrobat Pro", url:"https://helpx.adobe.com/acrobat/using/keyboard-shortcuts.html",
+        desc:"สร้าง/แก้ไข/จัดการ PDF",
+        shortcuts:[
+          {key:"Ctrl + L", action:"โหมดอ่านเต็มจอ"},
+          {key:"Ctrl + Shift + S", action:"บันทึกเป็น"},
+          {key:"Ctrl + F / Shift + Ctrl + F", action:"ค้นหา / ค้นหาขั้นสูง"},
+          {key:"Ctrl + 0 / + / -", action:"พอดีหน้า / ซูมเข้า / ซูมออก"}
+        ]
+      },
+      { name:"LibreOffice (Writer/Calc/Impress)", url:"https://help.libreoffice.org/latest/lo/text/shared/04/01010000.html",
+        desc:"ชุดออฟฟิศฟรี",
+        shortcuts:[
+          {key:"Ctrl + Shift + Y", action:"เปลี่ยนตัวพิมพ์ใหญ่-เล็ก"},
+          {key:"Ctrl + F2", action:"ฟิลด์"},
+          {key:"F7", action:"ตรวจตัวสะกด"}
+        ]
+      }
+    ]
+  },
+
+  {
+    cat:"Graphic Design & Media",
+    items:[
+      { name:"Adobe Photoshop", url:"https://helpx.adobe.com/photoshop/using/default-keyboard-shortcuts.html",
+        desc:"แต่งภาพ/กราฟิกมาตรฐานอุตสาหกรรม",
+        shortcuts:[
+          {key:"Ctrl + J", action:"ทำสำเนาเลเยอร์"},
+          {key:"Ctrl + Shift + N", action:"เลเยอร์ใหม่"},
+          {key:"Ctrl + Alt + Shift + E", action:"รวมเลเยอร์เป็นเลเยอร์ใหม่"},
+          {key:"Ctrl + T", action:"Free Transform"},
+          {key:"B / E / V", action:"แปรง / ยางลบ / ย้าย"},
+          {key:"[  ]", action:"ลด/เพิ่มขนาดแปรง"},
+          {key:"Alt + Scroll", action:"ซูม"},
+          {key:"Space", action:"Pan (มือ)"},
+          {key:"Ctrl + Alt + Z", action:"ย้อนหลายขั้น"}
+        ]
+      },
+      { name:"Adobe Illustrator", url:"https://helpx.adobe.com/illustrator/using/default-keyboard-shortcuts.html",
+        desc:"เวกเตอร์ โลโก้ ไอคอน",
+        shortcuts:[
+          {key:"V / A / P", action:"Select / Direct / Pen"},
+          {key:"Ctrl + 2 / Alt + Ctrl + 2", action:"ล็อก / ปลดล็อกทั้งหมด"},
+          {key:"Ctrl + G / Shift + Ctrl + G", action:"กลุ่ม / ยกเลิกกลุ่ม"},
+          {key:"Shift + M", action:"Shape Builder"},
+          {key:"Ctrl + 7", action:"Clipping Mask"}
+        ]
+      },
+      { name:"Adobe InDesign", url:"https://helpx.adobe.com/indesign/using/default-keyboard-shortcuts.html",
+        desc:"จัดหน้าเลย์เอาต์สิ่งพิมพ์",
+        shortcuts:[
+          {key:"W", action:"โหมดพรีวิว"},
+          {key:"Ctrl + D", action:"Place รูป/ไฟล์"},
+          {key:"Ctrl + Shift + > / <", action:"เพิ่ม/ลดขนาดตัวอักษร"},
+          {key:"Ctrl + Alt + C", action:"ปรับกรอบพอดีเนื้อหา"}
+        ]
+      },
+      { name:"Canva", url:"https://www.canva.com/help/article/keyboard-shortcuts/",
+        desc:"ออกแบบกราฟิกผ่านเว็บ",
+        shortcuts:[
+          {key:"T", action:"เพิ่มข้อความเร็ว"},
+          {key:"L / R", action:"เพิ่มเส้น / สี่เหลี่ยมเร็ว"},
+          {key:"Ctrl + D", action:"ทำสำเนาอ็อบเจกต์"},
+          {key:"Ctrl + ] / [", action:"นำหน้า/ถอยหลัง"},
+          {key:"Shift + Arrow", action:"ขยับแบบละเอียด"}
+        ]
+      },
+      { name:"Figma", url:"https://help.figma.com/hc/en-us/articles/360040328753-Keyboard-shortcuts-in-Figma",
+        desc:"ออกแบบ UI/UX",
+        shortcuts:[
+          {key:"F / R / O", action:"Frame / Rectangle / Oval"},
+          {key:"Ctrl + /", action:"Quick actions"},
+          {key:"Alt (ลาก)", action:"ทำสำเนาพร้อมวัดระยะ"},
+          {key:"Ctrl + G", action:"Group"},
+          {key:"Shift + A", action:"Auto Layout"},
+          {key:"Ctrl + \\\\ ", action:"Outline Stroke"}
+        ]
+      },
+      { name:"Adobe Premiere Pro", url:"https://helpx.adobe.com/premiere-pro/using/keyboard-shortcuts.html",
+        desc:"ตัดต่อวิดีโอ",
+        shortcuts:[
+          {key:"I / O", action:"ตั้ง In / Out"},
+          {key:"Space", action:"เล่น/หยุด"},
+          {key:"C / V", action:"มีดโกน / เลือก"},
+          {key:"Ctrl + K", action:"ตัดที่ Playhead"},
+          {key:"J / K / L", action:"ย้อน / หยุด / เล่นเร็ว"}
+        ]
+      }
+    ]
+  },
+
+  {
+    cat:"Communication & Collaboration",
+    items:[
+      { name:"Microsoft Teams", url:"https://support.microsoft.com/office/keyboard-shortcuts-for-microsoft-teams",
+        desc:"แชท ประชุม แชร์ไฟล์",
+        shortcuts:[
+          {key:"Ctrl + .", action:"รายการคีย์ลัด"},
+          {key:"Ctrl + E", action:"ไปช่องค้นหา"},
+          {key:"Ctrl + Shift + M", action:"ปิด/เปิดไมค์"},
+          {key:"Ctrl + Shift + O", action:"ปิด/เปิดกล้อง"},
+          {key:"Ctrl + N", action:"แชทใหม่"}
+        ]
+      },
+      { name:"Slack", url:"https://slack.com/help/articles/201374536-Slack-keyboard-shortcuts",
+        desc:"แชทองค์กรแบบแชนแนล",
+        shortcuts:[
+          {key:"Ctrl + K", action:"Jump to… (สลับห้อง/DM)"},
+          {key:"Ctrl + /", action:"คู่มือคีย์ลัด"},
+          {key:"Ctrl + Shift + A", action:"กิจกรรมล่าสุด"},
+          {key:"Alt + ↑/↓", action:"เลื่อนช่อง/DM"}
+        ]
+      },
+      { name:"Zoom", url:"https://support.zoom.com/hc/en/article?id=zm_kb&sysparm_article=KB0069398",
+        desc:"วิดีโอคอนเฟอเรนซ์",
+        shortcuts:[
+          {key:"Alt + A / V", action:"ปิด/เปิดไมค์ / กล้อง"},
+          {key:"Alt + S", action:"แชร์หน้าจอ"},
+          {key:"Alt + M", action:"ปิดไมค์ทุกคน (โฮสต์)"},
+          {key:"Alt + F", action:"เต็มจอ"}
+        ]
+      },
+      { name:"Microsoft Outlook / Gmail", url:"https://support.microsoft.com/office/keyboard-shortcuts-for-outlook / https://support.google.com/mail/answer/6594",
+        desc:"อีเมล & ปฏิทิน",
+        shortcuts:[
+          {key:"Ctrl + R", action:"ตอบกลับ"},
+          {key:"Ctrl + Enter", action:"ส่ง"},
+          {key:"Gmail: Shift + ?", action:"ช่วยเหลือคีย์ลัด"}
+        ]
+      }
+    ]
+  },
+
+  {
+    cat:"Project Management & Marketing",
+    items:[
+      { name:"Asana", url:"https://help.asana.com/hc/en-us/articles/14045395710491-Keyboard-shortcuts",
+        desc:"จัดการงาน/โปรเจกต์",
+        shortcuts:[
+          {key:"Tab + Q", action:"เพิ่มงานใหม่"},
+          {key:"Tab + A", action:"มอบหมาย"},
+          {key:"Tab + D", action:"วันครบกำหนด"},
+          {key:"Tab + S", action:"ติดดาว"}
+        ]
+      },
+      { name:"Trello", url:"https://support.atlassian.com/trello/docs/trello-shortcuts/",
+        desc:"บอร์ด Kanban",
+        shortcuts:[
+          {key:"N", action:"เพิ่มการ์ดใหม่"},
+          {key:"C", action:"Archive การ์ด"},
+          {key:"L", action:"ป้ายกำกับ"},
+          {key:"Space", action:"มอบหมายตัวเอง"}
+        ]
+      },
+      { name:"Jira", url:"https://support.atlassian.com/jira-cloud-administration/docs/keyboard-shortcuts-in-jira/",
+        desc:"ติดตามบั๊ก/งาน",
+        shortcuts:[
+          {key:".", action:"เมนูคำสั่งด่วน"},
+          {key:"C", action:"สร้าง Issue"},
+          {key:"A", action:"มอบหมาย"},
+          {key:"M", action:"คอมเมนต์"}
+        ]
+      },
+      { name:"Google Analytics", url:"https://support.google.com/analytics/answer/10261380",
+        desc:"วิเคราะห์ทราฟฟิก",
+        shortcuts:[
+          {key:"? (Shift + /)", action:"ช่วยเหลือคีย์ลัด"},
+          {key:"Shift + D", action:"วันที่วันนี้"},
+          {key:"Shift + W/M/Y", action:"สัปดาห์/เดือน/ปีนี้"}
+        ]
+      },
+      { name:"Hootsuite / Buffer", url:"https://help.hootsuite.com / https://support.buffer.com",
+        desc:"จัดการ/ตั้งเวลาโพสต์",
+        shortcuts:[
+          {key:"/ (โฟกัสค้นหา)", action:"ค้นหาโพสต์/คิว"},
+          {key:"Ctrl + Enter", action:"โพสต์/ตั้งเวลา"}
+        ]
+      }
+    ]
+  },
+
+  {
+    cat:"Finance & Accounting",
+    items:[
+      { name:"QuickBooks", url:"https://quickbooks.intuit.com/learn-support/en-us/help-article/productivity/keyboard-shortcuts-quickbooks-online/",
+        desc:"บัญชีธุรกิจ",
+        shortcuts:[
+          {key:"Ctrl + Alt + ? ", action:"รายการคีย์ลัด"},
+          {key:"Ctrl + Alt + I", action:"ใบแจ้งหนี้ใหม่"},
+          {key:"Ctrl + Alt + X", action:"ค่าใช้จ่ายใหม่"}
+        ]
+      },
+      { name:"Xero", url:"https://central.xero.com/s/article/Keyboard-shortcuts",
+        desc:"บัญชีบนคลาวด์",
+        shortcuts:[
+          {key:"/ แล้วพิมพ์", action:"ค้นหาเมนูเร็ว"},
+          {key:"G แล้ว N", action:"ไป Invoices ใหม่"}
+        ]
+      },
+      { name:"SAP / Oracle NetSuite / Sage", url:"#",
+        desc:"ERP / บัญชีองค์กร",
+        shortcuts:[
+          {key:"F1 / F4 / F8", action:"Help / Search / Execute (SAP)"},
+          {key:"Ctrl + S", action:"บันทึกแบบสากล"}
+        ]
+      }
+    ]
+  },
+
+  {
+    cat:"Human Resources",
+    items:[
+      { name:"BambooHR / Rippling", url:"#",
+        desc:"HRIS",
+        shortcuts:[
+          {key:"/", action:"ค้นหา"},
+          {key:"Ctrl + Enter", action:"บันทึกฟอร์ม"}
+        ]
+      },
+      { name:"Gusto / Paychex", url:"#",
+        desc:"เงินเดือน/ภาษี",
+        shortcuts:[
+          {key:"Alt + S", action:"ส่งสลิป"},
+          {key:"/", action:"ค้นหา"}
+        ]
+      },
+      { name:"Greenhouse / Lever", url:"#",
+        desc:"ATS",
+        shortcuts:[
+          {key:"G แล้ว C", action:"สร้าง Candidate"},
+          {key:"G แล้ว J", action:"ไป Jobs"}
+        ]
+      }
+    ]
+  },
+
+  {
+    cat:"Game Engines",
+    items:[
+      { name:"Unreal Engine (Editor)", url:"https://docs.unrealengine.com",
+        desc:"เอนจิน AAA (C++ / Blueprints)",
+        shortcuts:[
+          {key:"W / E / R", action:"Move / Rotate / Scale"},
+          {key:"End", action:"วางวัตถุกับพื้น"},
+          {key:"F", action:"โฟกัสวัตถุ"},
+          {key:"G", action:"Game View"},
+          {key:"Ctrl + P", action:"Play"},
+          {key:"Alt + Drag", action:"ทำสำเนาวัตถุ"}
+        ]
+      },
+      { name:"Unity (Editor)", url:"https://docs.unity3d.com/Manual/UnityHotkeys.html",
+        desc:"เอนจินยอดนิยม (C#)",
+        shortcuts:[
+          {key:"Q / W / E / R", action:"View / Move / Rotate / Scale"},
+          {key:"F", action:"Frame Selected"},
+          {key:"Ctrl + D", action:"Duplicate"},
+          {key:"Ctrl + P", action:"Play/Stop"}
+        ]
+      },
+      { name:"Godot", url:"https://docs.godotengine.org",
+        desc:"โอเพ่นซอร์ส 2D/3D",
+        shortcuts:[
+          {key:"Q / W / E / R", action:"Select / Move / Rotate / Scale"},
+          {key:"F", action:"โฟกัส"},
+          {key:"Ctrl + D", action:"Duplicate"},
+          {key:"F5", action:"Run Project"}
+        ]
+      },
+      { name:"GameMaker Studio", url:"https://manual.gamemaker.io",
+        desc:"เกม 2D เริ่มต้นง่าย",
+        shortcuts:[
+          {key:"Ctrl + T", action:"เทมเพลตอ็อบเจกต์"},
+          {key:"F5", action:"Run"},
+          {key:"Ctrl + D", action:"Duplicate"}
+        ]
+      },
+      { name:"RPG Maker", url:"https://www.rpgmakerweb.com",
+        desc:"สร้าง RPG สำเร็จรูป",
+        shortcuts:[
+          {key:"F9", action:"Database"},
+          {key:"F12", action:"Playtest"},
+          {key:"Ctrl + D", action:"Duplicate"}
+        ]
+      }
+    ]
+  },
+
+  {
+    cat:"Art, 3D & Audio",
+    items:[
+      { name:"Blender", url:"https://docs.blender.org/manual/en/latest/interface/keymap/index.html",
+        desc:"3D ฟรีครบวงจร",
+        shortcuts:[
+          {key:"G / R / S", action:"ย้าย / หมุน / สเกล"},
+          {key:"Tab", action:"สลับ Object/Edit"},
+          {key:"Shift + A", action:"Add"},
+          {key:"Ctrl + R", action:"Loop Cut"},
+          {key:"Z", action:"โหมดแสดงผล"},
+          {key:"NumPad 1/3/7", action:"มุมมองหน้า/ข้าง/บน"}
+        ]
+      },
+      { name:"Aseprite", url:"https://www.aseprite.org/docs/keyboard/",
+        desc:"Pixel Art + Animation",
+        shortcuts:[
+          {key:"B / E", action:"แปรง / ยางลบ"},
+          {key:"L", action:"Lasso"},
+          {key:"Ctrl + B", action:"Onion Skin"},
+          {key:"Ctrl + K", action:"ย่อ/ขยายแคนวาส"}
+        ]
+      },
+      { name:"Audacity", url:"https://support.audacityteam.org",
+        desc:"อัด/ตัดต่อเสียงฟรี",
+        shortcuts:[
+          {key:"R / Space", action:"Record / Play"},
+          {key:"Ctrl + B", action:"สร้างป้ายกำกับ"},
+          {key:"Ctrl + Shift + E", action:"ส่งออกเสียง"}
+        ]
+      },
+      { name:"FL Studio / Ableton", url:"#",
+        desc:"ทำเพลง/ซาวด์แทร็ก",
+        shortcuts:[
+          {key:"Ctrl + N", action:"โปรเจกต์ใหม่"},
+          {key:"Space", action:"เล่น/หยุด"},
+          {key:"Ctrl + L", action:"ลูป/เลือกช่วง"}
+        ]
+      }
+    ]
+  },
+
+  /* ====== เพิ่มหมวดสำหรับงานเขียนโค้ด/สคริปต์ ====== */
+  {
+    cat:"Code & IDEs",
+    items:[
+      { name:"Visual Studio Code", url:"https://code.visualstudio.com/docs/getstarted/keybindings",
+        desc:"ตัวแก้ไขโค้ดยอดนิยม (Extensions เยอะ)",
+        shortcuts:[
+          {key:"Ctrl + P", action:"เปิดไฟล์ด่วน"},
+          {key:"Ctrl + Shift + P", action:"Command Palette"},
+          {key:"Ctrl + `", action:"เปิด/ซ่อน Terminal ในตัว"},
+          {key:"Ctrl + B", action:"ซ่อน/แสดง Sidebar"},
+          {key:"Alt + Click", action:"เคอร์เซอร์หลายตำแหน่ง"},
+          {key:"Ctrl + D", action:"เลือกคำซ้ำถัดไป"},
+          {key:"Ctrl + /", action:"คอมเมนต์บรรทัด"},
+          {key:"F12 / Alt + F12", action:"Go to Definition / Peek"}
+        ]
+      },
+      { name:"Visual Studio", url:"https://learn.microsoft.com/visualstudio/ide/default-keyboard-shortcuts-in-visual-studio",
+        desc:"IDE สำหรับ .NET / C++",
+        shortcuts:[
+          {key:"Ctrl + ,", action:"ค้นหาทุกอย่าง (Navigate To)"},
+          {key:"F5 / Ctrl + F5", action:"Debug / Run"},
+          {key:"Ctrl + K, C / Ctrl + K, U", action:"คอมเมนต์ / ยกเลิกคอมเมนต์"},
+          {key:"Ctrl + Q", action:"ค้นหาเมนู/ตัวเลือก"},
+          {key:"Ctrl + .", action:"Quick Actions (Refactor/แก้ Import)"}
+        ]
+      },
+      { name:"Android Studio (IntelliJ)", url:"https://developer.android.com/studio/intro/keyboard-shortcuts",
+        desc:"พัฒนาแอป Android (Kotlin/Java)",
+        shortcuts:[
+          {key:"Shift (กดสองครั้ง)", action:"Search Everywhere"},
+          {key:"Ctrl + Shift + A", action:"ค้นหาคำสั่ง/แอคชัน"},
+          {key:"Alt + Enter", action:"แนะนำ/แก้โค้ดอัตโนมัติ"},
+          {key:"Ctrl + B / Ctrl + Click", action:"Go to Declaration"},
+          {key:"Ctrl + Alt + L", action:"จัดรูปแบบโค้ด"},
+          {key:"Shift + F10 / Shift + F9", action:"Run / Debug"},
+          {key:"Ctrl + Shift + F", action:"ค้นหาในโปรเจกต์"},
+          {key:"Ctrl + E", action:"Recent Files"}
+        ]
+      },
+      { name:"IntelliJ IDEA", url:"https://www.jetbrains.com/help/idea/mastering-keyboard-shortcuts.html",
+        desc:"IDE สำหรับ JVM (Java/Kotlin)",
+        shortcuts:[
+          {key:"Ctrl + N / Ctrl + Shift + N", action:"ค้นหา Class / File"},
+          {key:"Ctrl + Alt + B", action:"ไปที่ Implementations"},
+          {key:"Ctrl + Alt + V", action:"Extract Variable"},
+          {key:"Ctrl + Alt + M", action:"Extract Method"},
+          {key:"Alt + Insert", action:"Generate (Getter/Setter/Constructor)"}
+        ]
+      },
+      { name:"Xcode", url:"https://help.apple.com/xcode/mac/shortcuts/",
+        desc:"พัฒนา iOS/macOS",
+        shortcuts:[
+          {key:"⌘ + Shift + O", action:"ค้นหาไฟล์/สัญลักษณ์"},
+          {key:"⌘ + B / ⌘ + R", action:"Build / Run"},
+          {key:"⌘ + /", action:"คอมเมนต์บรรทัด"},
+          {key:"⌘ + Ctrl + ←/→", action:"สลับแท็บ/ไฟล์"},
+          {key:"⌘ + Shift + J", action:"เผยตำแหน่งไฟล์ใน Project Navigator"}
+        ]
+      },
+      { name:"Sublime Text", url:"https://www.sublimetext.com/docs/key_bindings.html",
+        desc:"ตัวแก้ไขโค้ดเบาและเร็ว",
+        shortcuts:[
+          {key:"Ctrl + P", action:"Goto Anything"},
+          {key:"Ctrl + Shift + P", action:"Command Palette"},
+          {key:"Ctrl + D", action:"เลือกคำซ้ำถัดไป"},
+          {key:"Ctrl + L", action:"เลือกทั้งบรรทัด"},
+          {key:"Ctrl + /", action:"คอมเมนต์บรรทัด"}
+        ]
+      },
+      { name:"Vim (พื้นฐาน)", url:"https://vimhelp.org/",
+        desc:"ตัวแก้ไขในเทอร์มินัล",
+        shortcuts:[
+          {key:"Esc", action:"ออกจากโหมดแก้ไขสู่ Normal"},
+          {key:":w / :q / :wq / :q!", action:"บันทึก / ออก / บันทึกและออก / บังคับออก"},
+          {key:"dd / yy / p", action:"ลบบรรทัด / คัดลอกบรรทัด / วาง"},
+          {key:"u / Ctrl + r", action:"Undo / Redo"},
+          {key:"/คำ", action:"ค้นหา (n/N ไปผลลัพธ์ถัดไป/ก่อนหน้า)"},
+          {key:"gg / G", action:"ไปต้นไฟล์ / ท้ายไฟล์"}
+        ]
+      }
+    ]
+  },
+
+  {
+    cat:"Developer Tools",
+    items:[
+      { name:"Terminal/Bash", url:"https://www.gnu.org/software/bash/manual/",
+        desc:"เชลล์/เทอร์มินัลทั่วไป",
+        shortcuts:[
+          {key:"Ctrl + C", action:"ยกเลิกคำสั่งปัจจุบัน"},
+          {key:"Ctrl + L", action:"ล้างหน้าจอ"},
+          {key:"Ctrl + R", action:"ค้นหาประวัติคำสั่งแบบย้อนกลับ"},
+          {key:"!! / !$", action:"รันคำสั่งล่าสุด / อาร์กิวเมนต์ท้ายสุด"},
+          {key:"Tab", action:"Auto-complete"}
+        ]
+      },
+      { name:"Git (พื้นฐานในเทอร์มินัล)", url:"https://git-scm.com/docs",
+        desc:"ควบคุมเวอร์ชันซอร์สโค้ด",
+        shortcuts:[
+          {key:"git status", action:"ดูสถานะไฟล์"},
+          {key:"git add -A", action:"เพิ่มไฟล์ทั้งหมด"},
+          {key:"git commit -m \"msg\"", action:"คอมมิตพร้อมข้อความ"},
+          {key:"git push / git pull", action:"อัปโหลด/ดึงการเปลี่ยนแปลง"},
+          {key:"git log --oneline --graph", action:"ดูประวัติแบบย่อ"}
+        ]
+      },
+      { name:"Postman", url:"https://learning.postman.com/docs/getting-started/postman-overview/",
+        desc:"ทดสอบ API",
+        shortcuts:[
+          {key:"Ctrl + Enter", action:"ส่งคำขอ (Send)"},
+          {key:"Ctrl + S", action:"บันทึก"},
+          {key:"Ctrl + F", action:"ค้นหา"},
+          {key:"Ctrl + Alt + T", action:"แท็บใหม่"},
+          {key:"Ctrl + Shift + R", action:"รันคอลเลกชัน (Runner)"}
+        ]
+      },
+      { name:"Docker (CLI พื้นฐาน)", url:"https://docs.docker.com/",
+        desc:"คอนเทนเนอร์สำหรับแอป",
+        shortcuts:[
+          {key:"docker ps", action:"รายการคอนเทนเนอร์ที่รันอยู่"},
+          {key:"docker images", action:"รายการอิมเมจ"},
+          {key:"docker run -it --rm image", action:"รันคอนเทนเนอร์ชั่วคราว"},
+          {key:"docker compose up -d", action:"สตาร์ทบริการด้วย Compose"},
+          {key:"docker logs -f <name>", action:"ตามดูล็อกแบบสด"}
+        ]
+      }
+    ]
+  },
+
+  {
+    cat:"Data & Notebooks",
+    items:[
+      { name:"JupyterLab/Notebook", url:"https://jupyter-notebook.readthedocs.io/en/stable/",
+        desc:"งานวิเคราะห์ข้อมูล/สอนเขียนโค้ด",
+        shortcuts:[
+          {key:"Shift + Enter", action:"รันเซลล์ และไปถัดไป"},
+          {key:"A / B", action:"แทรกเซลล์ด้านบน / ล่าง"},
+          {key:"M / Y", action:"แปลงเป็น Markdown / Code"},
+          {key:"DD", action:"ลบเซลล์ (กด D สองครั้ง)"},
+          {key:"Ctrl + Shift + P", action:"Command Palette"}
+        ]
+      }
+    ]
+  }
+];
+
+/* ====== 2) ชิปหมวด (จำกัด 3 อัน) + การ์ดโปรแกรม ====== */
+const chipsEl = document.getElementById('chips');
+const gridEl  = document.getElementById('grid');
+const qEl     = document.getElementById('q');
+const counterEl = document.getElementById('counter');
+const clearBtn = document.getElementById('clearSearch');
+
+let flat = [];               // flatten DATA
+const limitedCats = DATA.map(g=>g.cat).slice(0,3);  // << ใช้แค่ 3 หมวดแรก
+let activeCatIndex = -1;     // -1 = ทั้งหมด, 0..2 = index ใน limitedCats
+
+// ===== APIs สำหรับเรียกจากด้านนอก =====
+window.setCategoryIndex = function(idx){
+  if (typeof idx !== 'number') return;
+  if (idx < -1) idx = -1;
+  if (idx > limitedCats.length-1) idx = limitedCats.length-1;
+  activeCatIndex = idx;
+  renderChips();
+  render();
+};
+window.getCategoryIndex = function(){ return activeCatIndex; };
+// =====================================
+
+let dlg = null, dlgBody=null, dlgTitle=null, dlgFilter=null, tbody=null, emptyRow=null;
+let currentItem = null;
+let savedScrollY = 0;
+
+function flatten(){
+  flat = [];
+  for(const group of DATA){
+    for(const it of group.items){
+      flat.push({
+        cat: group.cat, name: it.name, url: it.url || '#', desc: it.desc || '',
+        shortcuts: it.shortcuts || []
+      });
+    }
+  }
+}
+function renderChips(){
+  chipsEl.innerHTML = '';
+  limitedCats.forEach((cat, i)=>{
+    const b = document.createElement('button');
+    b.className = 'chip' + (i===activeCatIndex ? ' active':'');
+    b.textContent = cat;
+    b.onclick = ()=>{ activeCatIndex = i; renderChips(); render(); };
+    chipsEl.appendChild(b);
+  });
+}
+function match(item, term){
+  if(!term) return true;
+  term = term.toLowerCase();
+  if((item.name+' '+item.cat+' '+item.desc).toLowerCase().includes(term)) return true;
+  for(const s of item.shortcuts){
+    if((s.key+' '+s.action).toLowerCase().includes(term)) return true;
+  }
+  return false;
+}
+function render(){
+  const term = qEl.value.trim().toLowerCase();
+  // ซ่อน chips เมื่อพิมพ์ค้นหา
+  chipsEl.style.display = term ? 'none' : '';
+
+  const list = flat.filter(it=>{
+    const okCat = (activeCatIndex===-1) ? true : (it.cat === limitedCats[activeCatIndex]);
+    return okCat && match(it, term);
+  });
+  gridEl.innerHTML = '';
+  list.forEach(it=>{
+    const card = document.createElement('div');
+    card.className = 'card';
+
+    card.innerHTML = `
+      <div class="title">
+        <div class="avatar">${it.name.split(' ').map(w=>w[0]).join('').substring(0,3)}</div>
+        <div class="meta">
+          <h3>${it.name}</h3>
+          <span class="badge">${it.cat}</span>
+        </div>
+      </div>
+      <div class="desc">${it.desc || ''}</div>
+      <div class="actions">
+        <button class="btn primary">ดูคีย์ลัด</button>
+        <a class="btn ghost" href="${it.url||'#'}" target="_blank" rel="noopener">คู่มือ/หน้าเว็บ</a>
+      </div>
+    `;
+    card.querySelector('.btn.primary').onclick = ()=> openDlg(it);
+    gridEl.appendChild(card);
+  });
+
+  const catLabel = (activeCatIndex===-1) ? 'ทั้งหมด' : limitedCats[activeCatIndex];
+  counterEl.textContent = `${list.length} รายการ${term?` · ค้นหา "${qEl.value.trim()}"`:''}${catLabel!=='ทั้งหมด'?` · หมวด ${catLabel}`:''}`;
+
+  if(list.length===0){
+    const empty = document.createElement('div');
+    empty.className = 'empty';
+    empty.textContent = 'ไม่พบผลลัพธ์ที่ตรงกับเงื่อนไข';
+    gridEl.appendChild(empty);
+  }
+}
+function debounce(fn, ms=200){ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a), ms); }; }
+
+/* ====== 3) Dialog (สร้าง/ลบแบบไดนามิก) ====== */
+function createDialog(){
+  if (dlg) return;
+  dlg = document.createElement('dialog');
+  dlg.innerHTML = `
+    <div class="dlg-head">
+      <div class="logo" id="dlgLogo">⌨️</div>
+      <div class="tt"><h2 id="dlgTitle">—</h2></div>
+      <button class="x" id="dlgClose" aria-label="Close">×</button>
+    </div>
+    <div class="dlg-body" id="dlgBody">
+      <div class="mobile-spacer" aria-hidden="true"></div>
+      <div class="dlg-tools">
+        <input id="dlgFilter" placeholder="ค้นหาในคีย์ลัดของโปรแกรมนี้… (เช่น layer, slide, comment)">
+        <button class="btn" id="copyBtn">คัดลอกเป็นข้อความ</button>
+      </div>
+      <div class="table-wrap">
+        <table class="tbl">
+          <thead><tr><th style="width:33%">ปุ่ม</th><th>คำสั่ง / รายละเอียด</th></tr></thead>
+          <tbody id="tbody"></tbody>
+        </table>
+        <div class="empty" id="emptyRow" style="display:none">ไม่พบคีย์ลัดที่ตรงกับคำค้น</div>
+      </div>
+      <div class="mobile-spacer" aria-hidden="true"></div>
+      <div class="dlg-foot">
+        <span class="hint">Tip: กด <span class="kbd">Esc</span> เพื่อปิดไดอะล็อก · บางโปรแกรมมีทั้ง Windows / macOS</span>
+        <div></div>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(dlg);
+
+  dlgBody   = dlg.querySelector('#dlgBody');
+  dlgTitle  = dlg.querySelector('#dlgTitle');
+  dlgFilter = dlg.querySelector('#dlgFilter');
+  tbody     = dlg.querySelector('#tbody');
+  emptyRow  = dlg.querySelector('#emptyRow');
+
+  dlg.querySelector('#dlgClose').addEventListener('click', closeDlg);
+  dlg.querySelector('#copyBtn').addEventListener('click', copyTable);
+  dlgFilter.addEventListener('input', debounce(()=>{ if(currentItem) buildTable(currentItem.shortcuts, dlgFilter.value); }, 120));
+
+  // ป้องกันสกรอลล์ฉากหลัง (มือถือ)
+  dlg.addEventListener('touchmove', (e)=>{
+    if (!e.target.closest('.dlg-body')) e.preventDefault();
+  }, {passive:false});
+
+  dlg.addEventListener('close', cleanupDialog);
+  dlg.addEventListener('cancel', (e)=>{ e.preventDefault(); closeDlg(); }); // รองรับ Esc
+}
+
+function openDlg(item){
+  createDialog();
+  currentItem = item;
+  dlg.querySelector('#dlgLogo').textContent = (item.name[0]||'⌨️').toUpperCase();
+  dlgTitle.textContent = item.name;
+  dlgFilter.value='';
+  buildTable(item.shortcuts, '');
+
+  (typeof dlg.showModal === 'function') ? dlg.showModal() : dlg.setAttribute('open','');
+  lockPageScroll();
+}
+function closeDlg(){
+  if (!dlg) return;
+  if (dlg.open) dlg.close();
+  else cleanupDialog();
+}
+function cleanupDialog(){
+  unlockPageScroll();
+  if (!dlg) return;
+  dlg.remove();
+  dlg = dlgBody = dlgTitle = dlgFilter = tbody = emptyRow = null;
+  currentItem = null;
+}
+
+function buildTable(rows, term){
+  tbody.innerHTML='';
+  const q = (term||'').toLowerCase();
+  const matched = rows.filter(r => (r.key+' '+r.action).toLowerCase().includes(q));
+  matched.forEach(r=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td><span class="kbd">${escapeHtml(r.key)}</span></td><td>${escapeHtml(r.action)}</td>`;
+    tbody.appendChild(tr);
+  });
+  emptyRow.style.display = matched.length? 'none':'block';
+}
+
+function copyTable(){
+  if(!currentItem) return;
+  const q = (dlgFilter.value||'').toLowerCase();
+  const matched = currentItem.shortcuts.filter(r => (r.key+' '+r.action).toLowerCase().includes(q));
+  const text = `คีย์ลัด: ${currentItem.name}\n` + matched.map(r=>`${r.key} — ${r.action}`).join('\n');
+  navigator.clipboard.writeText(text).then(()=> alert('คัดลอกแล้ว!'));
+}
+
+/* ====== 4) Lock scroll helpers ====== */
+function lockPageScroll(){
+  savedScrollY = window.scrollY || document.documentElement.scrollTop;
+  document.body.classList.add('modal-open');
+  document.body.style.top = `-${savedScrollY}px`;
+}
+function unlockPageScroll(){
+  document.body.classList.remove('modal-open');
+  document.body.style.top = '';
+  window.scrollTo({top: savedScrollY, left:0, behavior:'instant' in window ? 'instant':'auto'});
+}
+
+/* ====== 5) Utils & Boot ====== */
+function escapeHtml(s){ return (s||'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+
+function init(){
+  flatten();
+  renderChips();
+  render();
+  qEl.addEventListener('input', debounce(render, 120));
+  clearBtn.addEventListener('click', ()=>{
+    qEl.value=''; render(); qEl.focus();
+  });
+}
+init();
+</script>
+</body>
+</html>
