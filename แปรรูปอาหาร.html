@@ -3,61 +3,91 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>เมนูแปรรูปอาหาร – Industrial UI</title>
+<title>เมนูแปรรูปอาหาร – Industrial AI</title>
 <link href="https://fonts.googleapis.com/css2?family=Kodchasan:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+
 <style>
   :root {
-    /* ✅ Factory/Industrial Theme Color Palette */
-    --bg: #f5f7fa;          /* พื้นหลังสีเทาอ่อนเหมือนพื้นคอนกรีต */
-    --card: #ffffff;        /* การ์ดสีขาวสะอาด */
-    --ink: #111827;          /* ตัวอักษรสีดำเข้ม */
-    --muted: #6b7280;        /* ข้อความรองสีเทา */
-    --line: #e5e7eb;        /* เส้นแบ่งสีเทาอ่อน */
-    --accent: #facc15;      /* สีเหลืองอุตสาหกรรม (Industrial Yellow) */
-    --accent-dark: #eab308; /* สีเหลืองเข้มสำหรับ hover */
-    --radius: 8px;          /* ลดความโค้งลงให้ดูเหลี่ยมขึ้น */
-    --shadow: 0 4px 12px -6px rgba(0,0,0,.2);
+    /* ✅ Industrial Theme Color Palette (New) */
+    --bg: #e5e7eb;          /* สีเทาคอนกรีต */
+    --card: #ffffff;        /* ขาวสะอาด */
+    --ink: #1f2937;         /* เทาเข้มเกือบดำ (Charcoal) */
+    --muted: #6b7280;       /* เทากลาง */
+    --line: #d1d5db;        /* เส้นขอบโลหะ */
+    --accent: #f59e0b;      /* สีเหลืองอุตสาหกรรม (Safety Yellow) */
+    --accent-hover: #d97706;/* เหลืองเข้ม */
+    --radius: 6px;          /* มุมมนน้อยลง ให้ดูแข็งแรงแบบโรงงาน */
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   }
+  
   * { box-sizing: border-box; }
+  
   body {
     margin: 0;
-    background: var(--bg);
+    background-color: var(--bg);
     color: var(--ink);
     font-family: 'Kodchasan', system-ui, sans-serif;
+    /* Pattern พื้นหลังแบบตะแกรงเหล็กจางๆ */
+    background-image: radial-gradient(#d1d5db 1px, transparent 1px);
+    background-size: 20px 20px;
   }
+
   .wrap {
     max-width: 1100px;
     margin: auto;
-    padding: 18px 14px 80px;
+    padding: 30px 20px 100px;
   }
+
+  .header-box {
+    text-align: center;
+    margin-bottom: 30px;
+    background: var(--card);
+    padding: 20px;
+    border-radius: var(--radius);
+    border-left: 5px solid var(--accent);
+    box-shadow: var(--shadow);
+  }
+
   .title {
     font-weight: 700;
-    font-size: clamp(22px, 4vw, 28px);
-    margin: 6px 0 4px;
-    text-transform: uppercase; /* ทำให้ดูเหมือนป้ายในโรงงาน */
+    font-size: clamp(24px, 5vw, 32px);
+    margin: 0;
+    text-transform: uppercase;
     letter-spacing: 1px;
+    color: var(--ink);
   }
+  
   .hint {
     color: var(--muted);
     font-size: 14px;
-    margin: 0 0 16px;
+    margin-top: 8px;
   }
 
-  /* ✅ Search Bar */
+  /* ✅ Search Bar Industrial Style */
+  .search-wrapper {
+    position: relative;
+    max-width: 600px;
+    margin: 0 auto 30px;
+  }
   .search-bar {
     display: flex;
     align-items: center;
-    gap: 12px;
     background: var(--card);
-    border: 1px solid var(--line);
+    border: 2px solid var(--line);
     border-radius: var(--radius);
-    padding: 10px 14px;
-    margin-bottom: 24px;
-    box-shadow: var(--shadow);
+    padding: 0 16px;
+    height: 50px;
+    transition: all 0.2s;
+  }
+  .search-bar:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.1);
   }
   .search-bar svg {
     color: var(--muted);
-    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
   }
   .search-bar input {
     width: 100%;
@@ -65,23 +95,25 @@
     outline: none;
     background: transparent;
     font-family: 'Kodchasan', sans-serif;
-    font-size: 15px;
+    font-size: 16px;
     color: var(--ink);
+    margin-left: 10px;
+    height: 100%;
   }
 
-  /* ✅ Grid Layout for Items */
+  /* ✅ Grid Layout */
   .grid {
     display: grid;
     gap: 12px;
-    /* ทำให้ Grid ตอบสนองตามขนาดหน้าจออัตโนมัติ */
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   }
   
-  /* ✅ Item Button Style */
+  /* ✅ Item Button Style (Label Tag Style) */
   .item {
-    display: flex; /* ใช้ flex เพื่อจัดตำแหน่งตัวเลขและข้อความ */
+    position: relative;
+    display: flex;
     align-items: center;
-    padding: 12px 14px;
+    padding: 14px 16px;
     border-radius: var(--radius);
     border: 1px solid var(--line);
     background: var(--card);
@@ -90,82 +122,187 @@
     color: var(--ink);
     box-shadow: var(--shadow);
     cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-    text-align: left; /* จัดข้อความชิดซ้าย */
+    transition: all 0.15s ease;
+    text-align: left;
+    overflow: hidden;
+  }
+  
+  /* แถบสีด้านข้างปุ่ม */
+  .item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background-color: var(--line);
+    transition: background-color 0.2s;
+  }
+
+  .item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    border-color: var(--accent);
+  }
+  
+  .item:hover::before {
+    background-color: var(--accent);
+  }
+
+  .item:active {
+    transform: translateY(0);
+  }
+  
+  .num {
+    font-family: monospace;
+    margin-right: 12px;
+    font-weight: 700;
+    color: var(--muted);
+    font-size: 14px;
+    opacity: 0.7;
+    padding-left: 6px;
+  }
+
+  .item-name {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  .item:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 18px -8px rgba(0,0,0,.3);
-    border-color: var(--accent);
-  }
-  .item:active {
-    transform: translateY(0);
-  }
-  .item:focus-visible {
-    outline: 2px solid var(--accent-dark);
-    outline-offset: 2px;
-    border-color: var(--accent);
-  }
-  
-  /* สไตล์ตัวเลขนำหน้า */
-  .num {
-    margin-right: 8px;
-    font-weight: 700;
+
+  footer {
+    text-align: center;
+    margin-top: 40px;
     color: var(--muted);
-    font-size: 14px;
-  }  .fab-chatbot {
-    position: fixed;
-    bottom: 85px;
-    right: 25px;
-    width: 40px;
-    height: 40px;
-    background-color: #00000;
-    color: #fff;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 21px; /* ปรับขนาดสำหรับ emoji */
-    text-decoration: none;
-    box-shadow: var(--shadow);
-    transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
-    z-index: 1000;
+    font-size: 13px;
   }
 
-  .fab-chatbot:hover {
-    background-color: var(--blue-shadow);
-    transform: translateY(-3px) scale(1.05);
-    box-shadow: var(--shadow-hover);
+  /* ===== CSS ของ Chatbot UI (Industrial Theme) ===== */
+  .chat-bubble::before { content: ''; position: absolute; width: 0; height: 0; border-style: solid; }
+  .chat-bubble-user::before {
+    border-width: 0 12px 12px 12px; border-color: transparent transparent #f59e0b transparent; /* Safety Yellow */
+    top: -10px; right: 12px;
   }
-
-  .fab-chatbot:active {
-    transform: scale(0.98);
+  .chat-bubble-model::before {
+    border-width: 0 12px 12px 12px; border-color: transparent transparent #e5e7eb transparent;
+    top: -10px; left: 12px;
   }
-
-  .fab-chatbot:focus-visible {
-    outline: 3px solid var(--royal-blue);
-    outline-offset: 3px;
+  .gemini-thinking-bar {
+    position: relative; width: 100%; height: 4px; background-color: #e0e0e0;
+    border-radius: 2px; overflow: hidden;
   }
-  /* === End FAB Chatbot Button === */
+  .gemini-thinking-bar::before {
+    content: ''; position: absolute; top: 0; left: 0; height: 100%; width: 100%;
+    background: linear-gradient(90deg, #f59e0b, #fbbf24, #f59e0b);
+    background-size: 200% 100%; animation: thinking-gradient 2s linear infinite;
+  }
+  @keyframes thinking-gradient { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+  
+  #fab-chat-toggle {
+    position: fixed; bottom: 25px; right: 25px;
+    width: 60px; height: 60px;
+    background-color: #f59e0b; /* Safety Yellow */
+    color: #1f2937; /* Dark Text for Contrast */
+    border: none; border-radius: 50%;
+    font-size: 28px; line-height: 60px; text-align: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    cursor: pointer; z-index: 998;
+    transition: transform 0.2s, opacity 0.3s;
+    font-family: 'Kodchasan', sans-serif;
+    border: 2px solid #fff;
+  }
+  #fab-chat-toggle:hover { transform: scale(1.05); background-color: #fbbf24; }
+  
+  #chatbot-modal {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    z-index: 1000; transition: opacity 0.3s, transform 0.3s;
+    opacity: 1; transform: translateY(0); pointer-events: auto;
+  }
+  #chatbot-modal.chatbot-hidden {
+    opacity: 0; transform: translateY(100%); pointer-events: none;
+  }
 </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="title">เมนูแปรรูปอาหาร</div>
-  <p class="hint">ค้นหาเมนูที่ต้องการ | คลิกปุ่มเพื่อเปิดหน้าข้อมูลในแท็บใหม่</p>
 
-  <div class="search-bar">
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-    <input type="search" id="searchInput" placeholder="ค้นหาชื่อเมนู เช่น เนื้อเค็ม, น้ำพริก...">
+<div class="wrap">
+  <div class="header-box">
+    <div class="title">🏭 เมนูแปรรูปอาหาร</div>
+    <p class="hint">ฐานข้อมูลการถนอมอาหารและการแปรรูปผลผลิตทางการเกษตร</p>
+  </div>
+
+  <div class="search-wrapper">
+    <div class="search-bar">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      <input type="search" id="searchInput" placeholder="ค้นหาเมนู (เช่น แหนม, กล้วยฉาบ)...">
+    </div>
   </div>
 
   <div class="grid" id="grid"></div>
+
+  <footer>
+    <p class="footer-links">
+      © 2025 Crow Studio |
+      <a href="https://sites.google.com/view/privacy-policy-pdpa-crow-studi/%E0%B8%AB%E0%B8%99%E0%B8%B2%E0%B9%81%E0%B8%A3%E0%B8%81">นโยบายความเป็นส่วนตัว</a> |
+      <a href="ลิงก์ข้อตกลง">ข้อตกลงการใช้งาน</a>
+    </p>
+  </footer>
+</div>
+
+<button id="fab-chat-toggle" title="ถามผู้เชี่ยวชาญ">Ai</button>
+
+<div id="chatbot-modal" class="chatbot-hidden">
+  <div class="flex flex-col h-screen bg-gray-100">
+    <header class="bg-[#1f2937] text-white p-4 flex justify-between items-center shadow-md border-b-4 border-[#f59e0b]">
+      <div class="flex items-center gap-2">
+          <span class="text-2xl">🥫</span>
+          <div>
+            <h1 class="text-lg font-bold font-sans text-white m-0">AI แปรรูปอาหาร</h1>
+            <p class="text-xs text-gray-400 m-0">ผู้ช่วยถนอมอาหาร & แพ็คเกจจิ้ง</p>
+          </div>
+      </div>
+      <div>
+        <button id="new-chat-btn" class="bg-[#f59e0b] hover:bg-[#d97706] text-[#1f2937] font-bold py-1 px-3 rounded mr-2 text-sm">
+          เริ่มใหม่
+        </button>
+        <button id="chatbot-close-btn" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-1 px-3 rounded text-sm">
+          ปิด
+        </button>
+      </div>
+    </header>
+
+    <main id="chat-history" class="flex-1 overflow-y-auto p-4 space-y-4 bg-[#e5e7eb]">
+      <div class="flex items-start space-x-2">
+        <span class="text-2xl">🤖</span>
+        <div class="chat-bubble chat-bubble-model bg-white text-gray-800 p-3 rounded-lg max-w-lg relative border border-gray-200 shadow-sm">
+          <p>สวัสดีครับ ผมคือ AI ผู้เชี่ยวชาญด้านการแปรรูปและถนอมอาหาร หากมีข้อสงสัยเรื่องสูตร วิธีการทำ หรือการเก็บรักษา สอบถามได้เลยครับ</p>
+        </div>
+      </div>
+    </main>
+
+    <div id="thinking-indicator" class="p-4 hidden bg-[#e5e7eb]">
+      <div class="flex items-center space-x-2">
+        <span class="text-2xl">🤖</span>
+        <div class="chat-bubble chat-bubble-model bg-white text-gray-800 p-3 rounded-lg max-w-lg relative border border-gray-200">
+          <div class="gemini-thinking-bar"></div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="bg-white p-3 shadow-inner border-t border-gray-200 m-0 w-full max-w-full">
+      <div class="flex space-x-2">
+        <input id="user-input" type="text" placeholder="พิมพ์คำถาม (เช่น วิธีทำกล้วยตาก)..." class="flex-1 p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#f59e0b] font-sans text-base text-gray-800">
+        <button id="send-btn" class="bg-[#f59e0b] hover:bg-[#d97706] text-[#1f2937] font-bold py-2 px-4 rounded-xl shadow-sm">
+          ส่ง
+        </button>
+      </div>
+    </footer>
+  </div>
 </div>
 
 <script>
+/* =========================
+   1. ส่วนจัดการรายการอาหาร (List Logic)
+   ========================= */
 const BASE_URL = "https://sites.google.com/view/panrobtang";
 
 const items = [
@@ -191,28 +328,29 @@ function toSiteSlug(thaiName){
 const grid = document.getElementById('grid');
 const searchInput = document.getElementById('searchInput');
 
-/* render items */
 function render(list = items) {
   if (list.length === 0) {
-    grid.innerHTML = `<p class="hint">ไม่พบเมนูที่ค้นหา</p>`;
+    grid.innerHTML = `<p class="hint" style="text-align:center; grid-column:1/-1;">ไม่พบเมนูที่ค้นหา</p>`;
     return;
   }
   grid.innerHTML = list.map((name, i) => {
     // หา index ดั้งเดิมเพื่อแสดงลำดับที่ถูกต้อง
     const originalIndex = items.indexOf(name) + 1;
+    // สร้างเลขให้เป็น 3 หลัก (001) เพื่อความสวยงามแบบโรงงาน
+    const formattedIndex = String(originalIndex).padStart(3, '0');
     return `
       <button class="item" data-name="${name}">
-        <span class="num">${originalIndex}.</span>${name}
+        <span class="num">${formattedIndex}</span>
+        <span class="item-name">${name}</span>
       </button>
     `;
   }).join('');
 }
 
-/* ✅ Function for handling search */
 function applySearch() {
   const searchTerm = searchInput.value.trim().toLowerCase();
   if (!searchTerm) {
-    render(items); // ถ้าช่องค้นหาว่าง ให้แสดงทั้งหมด
+    render(items);
     return;
   }
   const filteredItems = items.filter(item => 
@@ -221,10 +359,8 @@ function applySearch() {
   render(filteredItems);
 }
 
-// ✅ Event listener for the search input
 searchInput.addEventListener('input', applySearch);
 
-/* click item → open slug page (_blank) */
 grid.addEventListener('click', e => {
   const btn = e.target.closest('.item'); 
   if (!btn) return;
@@ -236,15 +372,136 @@ grid.addEventListener('click', e => {
 
 // Initial render
 render();
+
+
+/* =========================================
+   2. ส่วน Chatbot AI (Backend)
+   ========================================= */
+const BACKEND_URL = 'https://us-central1-law-ai-14740.cloudfunctions.net/api/chat';
+
+// System Prompt: ผู้เชี่ยวชาญการแปรรูปอาหาร
+const SYSTEM_PROMPT = {
+    role: "user",
+    parts: [{ text: "System Instruction: คุณคือ AI ผู้เชี่ยวชาญด้าน 'การแปรรูปอาหารและการถนอมอาหาร' (Food Processing Expert) มีหน้าที่ให้คำแนะนำเกี่ยวกับสูตรอาหารแปรรูป, เทคนิคการถนอมอาหาร (ดอง, กวน, ตากแห้ง, แช่อิ่ม), การเลือกวัตถุดิบ, สุขอนามัยในการผลิต และบรรจุภัณฑ์ ตอบด้วยภาษาที่สุภาพ เป็นลำดับขั้นตอน เข้าใจง่าย" }]
+};
+const SYSTEM_ACK = {
+    role: "model",
+    parts: [{ text: "รับทราบครับ ผมพร้อมให้คำแนะนำด้านการแปรรูปอาหารแล้วครับ" }]
+};
+
+let chatHistory = [SYSTEM_PROMPT, SYSTEM_ACK];
+
+const chatHistoryEl = document.getElementById('chat-history');
+const userInput = document.getElementById('user-input');
+const sendBtn = document.getElementById('send-btn');
+const newChatBtn = document.getElementById('new-chat-btn');
+const thinkingIndicator = document.getElementById('thinking-indicator');
+
+function addChatBubble(message, isUser = true) {
+    const bubbleType = isUser ? 'user' : 'model';
+    const icon = isUser ? '👤' : '🤖';
+    const bgClass = isUser ? 'bg-[#f59e0b] text-[#1f2937] font-semibold' : 'bg-white text-gray-800 border border-gray-200';
+    
+    const wrap = document.createElement('div');
+    wrap.className = `flex items-start space-x-2 ${isUser ? 'flex-row-reverse space-x-reverse' : ''}`;
+    
+    const bubble = document.createElement('div');
+    bubble.className = `chat-bubble chat-bubble-${bubbleType} ${bgClass} p-3 rounded-lg max-w-lg relative shadow-sm`;
+    bubble.innerHTML = `<p>${message.replace(/\n/g, '<br>')}</p>`;
+    
+    wrap.innerHTML = `<span class="text-2xl">${icon}</span>`;
+    wrap.appendChild(bubble);
+    
+    chatHistoryEl.appendChild(wrap);
+    chatHistoryEl.scrollTop = chatHistoryEl.scrollHeight;
+}
+
+function addChatError(message) {
+    const w = document.createElement('div');
+    w.className = 'flex justify-center my-2';
+    w.innerHTML = `<span class="bg-red-100 text-red-700 text-xs font-semibold px-3 py-1 rounded-full">${message}</span>`;
+    chatHistoryEl.appendChild(w);
+    chatHistoryEl.scrollTop = chatHistoryEl.scrollHeight;
+}
+
+function setThinking(on) {
+    thinkingIndicator.classList.toggle('hidden', !on);
+    if (on) chatHistoryEl.scrollTop = chatHistoryEl.scrollHeight;
+}
+
+async function handleSend() {
+    const message = (userInput.value || '').trim();
+    if (!message) return;
+
+    addChatBubble(message, true);
+    userInput.value = '';
+    setThinking(true);
+    sendBtn.disabled = true;
+
+    chatHistory.push({ role: "user", parts: [{ text: message }] });
+
+    try {
+        const response = await fetch(BACKEND_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ history: chatHistory }) 
+        });
+
+        if (!response.ok) {
+            const errData = await response.json();
+            throw new Error(errData.error || `Server error: ${response.status}`);
+        }
+
+        const data = await response.json(); 
+        const aiReply = data.reply;
+
+        chatHistory.push({ role: "model", parts: [{ text: aiReply }] });
+        setThinking(false);
+        addChatBubble(aiReply, false);
+
+    } catch (err) {
+        console.error("Fetch Error:", err);
+        setThinking(false);
+        addChatError(`เกิดข้อผิดพลาด: ${err.message}`);
+        chatHistory.pop();
+    } finally {
+        sendBtn.disabled = false;
+    }
+}
+
+sendBtn.addEventListener('click', handleSend);
+userInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter') handleSend();
+});
+
+// Reset Chat
+newChatBtn.addEventListener('click', () => {
+    chatHistory = [SYSTEM_PROMPT, SYSTEM_ACK];
+    chatHistoryEl.innerHTML = `
+        <div class="flex items-start space-x-2">
+        <span class="text-2xl">🤖</span>
+        <div class="chat-bubble chat-bubble-model bg-white text-gray-800 p-3 rounded-lg max-w-lg relative border border-gray-200 shadow-sm">
+            <p>สวัสดีครับ เริ่มสนทนาเรื่องการแปรรูปอาหารใหม่ได้เลยครับ</p>
+        </div>
+        </div>`;
+    userInput.value = '';
+    setThinking(false);
+});
+
+// Modal Control
+const fabToggle = document.getElementById('fab-chat-toggle');
+const chatModal = document.getElementById('chatbot-modal');
+const chatbotCloseBtn = document.getElementById('chatbot-close-btn');
+
+fabToggle.addEventListener('click', () => {
+    chatModal.classList.remove('chatbot-hidden');
+    fabToggle.style.opacity = '0';
+});
+chatbotCloseBtn.addEventListener('click', () => {
+    chatModal.classList.add('chatbot-hidden');
+    fabToggle.style.opacity = '1';
+});
 </script>
-	<footer>
-  <p class="footer-links">
-    © 2025 Crow Studio |
-    <a href="https://sites.google.com/view/privacy-policy-pdpa-crow-studi/%E0%B8%AB%E0%B8%99%E0%B8%B2%E0%B9%81%E0%B8%A3%E0%B8%81">นโยบายความเป็นส่วนตัว</a> |
-    <a href="ลิงก์ข้อตกลง">ข้อตกลงการใช้งาน</a>
-  </p>
-</footer>
- <a href="https://raw.githack.com/tontakankeawpang321-glitch/krsitsdeeka/main/%E0%B8%95%E0%B8%B1%E0%B8%A7%E0%B8%8A%E0%B9%88%E0%B8%A7%E0%B8%A2%20%E0%B9%81%E0%B8%9B%E0%B8%A3%E0%B8%A3%E0%B8%B9%E0%B8%9B/index.html" class="fab-chatbot" title="แชทบอทพระไตรปิฎก" aria-label="แชทบอทพระไตรปิฎก">
-  Ai
-</a></body>
+
+</body>
 </html>
