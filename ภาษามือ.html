@@ -178,18 +178,21 @@
         <p>สร้างสรรค์ด้วยความรัก 🧡 เพื่อการเรียนรู้</p>
     </footer>
 
-    <!-- Modal / Dialog -->
-    <div id="detailModal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <!-- Modal / Dialog (Re-structured for better Z-index and click handling) -->
+    <div id="detailModal" class="relative z-50 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <!-- Backdrop -->
-        <div class="fixed inset-0 bg-orange-900/20 backdrop-blur-sm transition-opacity" onclick="closeModal()"></div>
+        <div class="fixed inset-0 bg-orange-900/30 backdrop-blur-sm transition-opacity"></div>
 
-        <!-- Modal Panel -->
-        <div class="fixed inset-0 z-10 overflow-y-auto">
-            <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
-                <div class="relative transform overflow-hidden rounded-3xl bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg modal-content border-4 border-orange-100">
+        <!-- Scroll/Click Container -->
+        <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+            <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0" onclick="closeModal()">
+                
+                <!-- Modal Panel -->
+                <!-- Added onclick="event.stopPropagation()" to prevent closing when clicking inside the modal -->
+                <div class="relative transform overflow-hidden rounded-3xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg modal-content border-4 border-orange-100" onclick="event.stopPropagation()">
                     
                     <!-- Close Button -->
-                    <button onclick="closeModal()" class="absolute top-4 right-4 bg-orange-100 hover:bg-orange-200 text-orange-500 rounded-full p-1 transition-colors z-10 shadow-md">
+                    <button onclick="closeModal()" class="absolute top-4 right-4 bg-orange-100 hover:bg-orange-200 text-orange-500 rounded-full p-1 transition-colors z-20 shadow-md">
                         <i data-lucide="x" class="w-6 h-6"></i>
                     </button>
 
@@ -198,7 +201,7 @@
                         <div class="flex flex-col items-center">
                             
                             <!-- Image Header -->
-                            <div class="w-full h-48 bg-orange-50 rounded-2xl overflow-hidden mb-4 relative group">
+                            <div class="w-full h-48 bg-orange-50 rounded-2xl overflow-hidden mb-4 relative group shrink-0">
                                 <img id="modalImage" src="" alt="Sign Language" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
                                 <div class="absolute bottom-2 right-2 bg-white/90 px-3 py-1 rounded-full text-xs font-bold text-orange-500 shadow-sm" id="modalCategory">
                                     Category
@@ -206,8 +209,8 @@
                             </div>
 
                             <!-- Title -->
-                            <h3 id="modalTitle" class="text-3xl font-bold text-orange-600 cute-font mb-1"></h3>
-                            <p id="modalWordEn" class="text-sm text-gray-400 font-medium mb-4"></p>
+                            <h3 id="modalTitle" class="text-3xl font-bold text-orange-600 cute-font mb-1 text-center"></h3>
+                            <p id="modalWordEn" class="text-sm text-gray-400 font-medium mb-4 text-center"></p>
 
                             <!-- Description Box -->
                             <div class="w-full bg-orange-50/50 rounded-xl p-4 mb-3 border border-orange-100">
@@ -229,17 +232,16 @@
                                 </div>
                             </div>
 
-                            <!-- YouTube Embed -->
-                            <div class="w-full rounded-xl overflow-hidden shadow-sm aspect-video bg-black relative">
-                                <!-- Added allow="fullscreen" for robust browser support -->
-                                <iframe id="modalYoutube" class="w-full h-full" src="" 
+                            <!-- YouTube Embed Container -->
+                            <div id="videoContainer" class="w-full rounded-xl overflow-hidden shadow-sm bg-black relative aspect-video hidden">
+                                <iframe id="modalYoutube" class="w-full h-full absolute inset-0 z-10" src="" 
                                     title="YouTube video player" frameborder="0" 
                                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen" 
                                     allowfullscreen>
                                 </iframe>
                             </div>
                             
-                            <a id="modalYoutubeLink" href="#" target="_blank" class="mt-3 flex items-center gap-2 text-xs text-orange-400 hover:text-orange-600 transition-colors">
+                            <a id="modalYoutubeLink" href="#" target="_blank" class="mt-3 flex items-center gap-2 text-xs text-orange-400 hover:text-orange-600 transition-colors hidden">
                                 <i data-lucide="external-link" class="w-3 h-3"></i> เปิดใน YouTube
                             </a>
 
@@ -272,6 +274,8 @@
         const loadingState = document.getElementById('loadingState');
         const errorState = document.getElementById('errorState');
         const modal = document.getElementById('detailModal');
+        const videoContainer = document.getElementById('videoContainer');
+        const modalYoutubeLink = document.getElementById('modalYoutubeLink');
 
         // 2. Fetch Data Function
         async function loadData() {
@@ -352,10 +356,9 @@
 
         // 5. Main Filter & Render Logic
         function filterAndRender() {
-            // Check both inputs
             const termDesktop = searchInputDesktop ? searchInputDesktop.value.toLowerCase() : '';
             const termMobile = searchInputMobile ? searchInputMobile.value.toLowerCase() : '';
-            const searchTerm = termDesktop || termMobile; // Use whichever has value
+            const searchTerm = termDesktop || termMobile; 
             
             const filteredData = vocabData.filter(item => {
                 const matchCategory = activeCategory === 'ทั้งหมด' || (item.category || 'ทั่วไป') === activeCategory;
@@ -434,24 +437,39 @@
             modalImg.src = item.imageUrl || 'https://placehold.co/600x400/fff7ed/ea580c?text=ไม่มีรูป';
             modalImg.onerror = function() { this.src = 'https://placehold.co/600x400/f3f4f6/9ca3af?text=รูปเสีย'; };
             
-            document.getElementById('modalYoutubeLink').href = item.youtubeUrl || '#';
+            modalYoutubeLink.href = item.youtubeUrl || '#';
 
             let embedUrl = "";
+            let hasVideo = false;
+
             if (item.youtubeUrl) {
-                if(item.youtubeUrl.includes("shorts")) {
-                    const parts = item.youtubeUrl.split('/shorts/');
+                // Trim logic to be safe
+                const url = item.youtubeUrl.trim();
+                if(url.includes("shorts")) {
+                    const parts = url.split('/shorts/');
                     if(parts.length > 1) {
                         const videoId = parts[1].split('?')[0];
-                        // Added fs=1 for fullscreen button
-                        embedUrl = `https://www.youtube.com/embed/${videoId}?rel=0&controls=1&fs=1`;
+                        // Added playsinline=1 for mobile compatibility
+                        embedUrl = `https://www.youtube.com/embed/${videoId}?rel=0&controls=1&fs=1&playsinline=1`;
+                        hasVideo = true;
                     }
-                } else if (item.youtubeUrl.includes("watch?v=")) {
-                    const videoId = item.youtubeUrl.split('v=')[1].split('&')[0];
-                    // Added fs=1 for fullscreen button
-                    embedUrl = `https://www.youtube.com/embed/${videoId}?rel=0&controls=1&fs=1`;
+                } else if (url.includes("watch?v=")) {
+                    const videoId = url.split('v=')[1].split('&')[0];
+                    // Added playsinline=1 for mobile compatibility
+                    embedUrl = `https://www.youtube.com/embed/${videoId}?rel=0&controls=1&fs=1&playsinline=1`;
+                    hasVideo = true;
                 }
             }
-            document.getElementById('modalYoutube').src = embedUrl;
+
+            if (hasVideo) {
+                document.getElementById('modalYoutube').src = embedUrl;
+                videoContainer.classList.remove('hidden');
+                modalYoutubeLink.classList.remove('hidden');
+            } else {
+                document.getElementById('modalYoutube').src = "";
+                videoContainer.classList.add('hidden');
+                modalYoutubeLink.classList.add('hidden');
+            }
 
             modal.classList.remove('hidden');
             document.body.style.overflow = 'hidden'; 
