@@ -262,10 +262,59 @@
                 const response = await fetch('signs500.json');
                 if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                 
-                vocabData = await response.json();
+                const rawData = await response.json();
+                
+                // Dictionary สำหรับแปลหมวดหมู่เป็นภาษาไทย
+                const categoryMap = {
+                    'consonant': 'พยัญชนะ',
+                    'vowel': 'สระ',
+                    'tone': 'วรรณยุกต์',
+                    'number': 'ตัวเลข',
+                    'family': 'ครอบครัว',
+                    'food': 'อาหาร',
+                    'animal': 'สัตว์',
+                    'colors': 'สี',
+                    'color': 'สี',
+                    'place': 'สถานที่',
+                    'vehicle': 'ยานพาหนะ',
+                    'action': 'กริยา/ท่าทาง',
+                    'verb': 'คำกริยา',
+                    'feeling': 'ความรู้สึก',
+                    'emotion': 'อารมณ์',
+                    'body': 'ร่างกาย',
+                    'clothes': 'เสื้อผ้า',
+                    'fruit': 'ผลไม้',
+                    'vegetable': 'ผัก',
+                    'sport': 'กีฬา',
+                    'occupation': 'อาชีพ',
+                    'job': 'อาชีพ',
+                    'day': 'วัน/เดือน/ปี',
+                    'time': 'เวลา',
+                    'province': 'จังหวัด',
+                    'country': 'ประเทศ',
+                    'school': 'โรงเรียน',
+                    'house': 'บ้าน',
+                    'nature': 'ธรรมชาติ',
+                    'adjective': 'คำคุณศัพท์',
+                    'miscellaneous': 'เบ็ดเตล็ด',
+                    'general': 'ทั่วไป',
+                    'other': 'อื่นๆ'
+                };
+
+                // แปลงข้อมูล Category
+                vocabData = rawData.map(item => {
+                    const originalCat = (item.category || 'ทั่วไป').toLowerCase().trim();
+                    // ถ้ามีใน Dictionary ให้ใช้ภาษาไทย ถ้าไม่มีให้ใช้ตัวเดิม
+                    const mappedCat = categoryMap[originalCat] || item.category || 'ทั่วไป';
+                    
+                    return {
+                        ...item,
+                        category: mappedCat
+                    };
+                });
                 
                 // Extract Unique Categories
-                const uniqueCats = [...new Set(vocabData.map(item => item.category || 'ทั่วไป'))].sort();
+                const uniqueCats = [...new Set(vocabData.map(item => item.category))].sort();
                 categories = ['ทั้งหมด', ...uniqueCats];
                 
                 loadingState.classList.add('hidden');
@@ -345,11 +394,11 @@
                 card.className = 'bg-white rounded-2xl md:rounded-3xl shadow-sm border border-orange-100 overflow-hidden cursor-pointer card-hover transition-all duration-300 flex flex-col h-full';
                 card.onclick = () => openModal(item);
 
-                const imgUrl = item.imageUrl || 'https://placehold.co/600x400/fff7ed/ea580c?text=No+Image';
+                const imgUrl = item.imageUrl || 'https://placehold.co/600x400/fff7ed/ea580c?text=ไม่มีรูป';
 
                 card.innerHTML = `
                     <div class="h-32 md:h-48 overflow-hidden bg-orange-50 relative shrink-0">
-                        <img src="${imgUrl}" alt="${item.word}" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/600x400/f3f4f6/9ca3af?text=Image+Error'">
+                        <img src="${imgUrl}" alt="${item.word}" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/600x400/f3f4f6/9ca3af?text=รูปเสีย'">
                         <div class="absolute top-2 right-2 md:top-3 md:right-3 bg-white/90 backdrop-blur-sm px-1.5 py-0.5 md:px-2 md:py-1 rounded-md text-[10px] md:text-xs font-bold text-orange-400 shadow-sm truncate max-w-[80px] md:max-w-none">
                             ${item.category || 'ทั่วไป'}
                         </div>
@@ -391,8 +440,8 @@
             document.getElementById('modalTip').innerText = item.tip || '-';
             
             const modalImg = document.getElementById('modalImage');
-            modalImg.src = item.imageUrl || 'https://placehold.co/600x400/fff7ed/ea580c?text=No+Image';
-            modalImg.onerror = function() { this.src = 'https://placehold.co/600x400/f3f4f6/9ca3af?text=Image+Error'; };
+            modalImg.src = item.imageUrl || 'https://placehold.co/600x400/fff7ed/ea580c?text=ไม่มีรูป';
+            modalImg.onerror = function() { this.src = 'https://placehold.co/600x400/f3f4f6/9ca3af?text=รูปเสีย'; };
             
             document.getElementById('modalYoutubeLink').href = item.youtubeUrl || '#';
 
