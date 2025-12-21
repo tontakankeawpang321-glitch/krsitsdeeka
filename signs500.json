@@ -6,7 +6,7 @@
     "description": "กำมือ ชูนิ้วชี้และนิ้วโป้งเหยียดตรง แล้วงอนิ้วชี้ลงมาแตะที่นิ้วโป้ง (ทำมือเป็นรูปหัวไก่)",
     "tip": "จินตนาการว่าเป็นปากไก่",
     "imageUrl": "https://placehold.co/400x400/fff7ed/ea580c?text=ก+(ก.ไก่)",
-    "youtubeUrl": "https://youtube.com/shorts/9tBPYnSHAxk?feature=share",
+    "youtubeUrl": "https://youtu.be/JzcnsQAYdIc",
     "word_en": "Ko Kai (ก) – Chicken",
     "description_en": "Make a fist and extend the index finger and thumb straight, then bend the index finger down to touch the thumb, forming the beak of a chicken."
   },
@@ -17,7 +17,7 @@
     "description": "กำมือ หันฝ่ามือออกด้านข้าง แล้วขยับข้อมือขึ้นลงเล็กน้อย (เหมือนเคาะไข่)",
     "tip": "ท่าทางเหมือนกำลังเคาะไข่",
     "imageUrl": "https://placehold.co/400x400/fff7ed/ea580c?text=ข+(ข.ไข่)",
-    "youtubeUrl": "https://youtube.com/shorts/9tBPYnSHAxk?feature=share",
+    "youtubeUrl": "https://youtu.be/JzcnsQAYdIc",
     "word_en": "Kho Khai (ข) – Egg",
     "description_en": "Make a fist, turn the palm to the side and move the wrist up and down slightly, as if tapping or cracking an egg."
   },
@@ -28,7 +28,7 @@
     "description": "กำมือ ชูนิ้วโป้ง นิ้วชี้ และนิ้วกลาง กางออกเล็กน้อย (คล้ายหัวควาย)",
     "tip": "เขาควาย 2 ข้าง",
     "imageUrl": "https://placehold.co/400x400/fff7ed/ea580c?text=ค+(ค.ควาย)",
-    "youtubeUrl": "https://youtube.com/shorts/9tBPYnSHAxk?feature=share",
+    "youtubeUrl": "https://youtu.be/JzcnsQAYdIc",
     "word_en": "Kho Khwai (ค) – Buffalo",
     "description_en": "Fist hand, extend the thumb, index, and middle finger slightly apart to represent the head and horns of a buffalo."
   },
@@ -39,7 +39,7 @@
     "description": "กำมือ ชูนิ้วชี้งอลงมาเหมือนงาช้าง หรือใช้นิ้วชี้แตะที่จมูกแล้วชี้ออกมา",
     "tip": "งวงช้าง หรือ งู",
     "imageUrl": "https://placehold.co/400x400/fff7ed/ea580c?text=ง+(ง.งู)",
-   "youtubeUrl": "https://youtube.com/shorts/9tBPYnSHAxk?feature=share",
+   "youtubeUrl": "https://youtu.be/JzcnsQAYdIc",
     "word_en": "Ngo Ngu (ง) – Snake",
     "description_en": "Make a fist and curve the index finger down like an elephant tusk, or touch the nose with the index finger and point it outward like a trunk or snake."
   },
@@ -50,7 +50,7 @@
     "description": "ใช้มือข้างหนึ่งจีบนิ้ว (นิ้วโป้งแตะนิ้วชี้) แล้วเคาะที่กลางฝ่ามืออีกข้าง (เหมือนจาน)",
     "tip": "ลักษณะเหมือนจาน",
     "imageUrl": "https://placehold.co/400x400/fff7ed/ea580c?text=จ+(จ.จาน)",
-    "youtubeUrl": "https://youtube.com/shorts/9tBPYnSHAxk?feature=share",
+    "youtubeUrl": "https://youtu.be/JzcnsQAYdIc",
     "word_en": "Cho Chan (จ) – Plate",
     "description_en": "Pinch the thumb and index finger of one hand, then tap the center of the other palm, representing a plate."
   },
@@ -61,7 +61,7 @@
     "description": "ทำมือเป็นรูปช้าง (กำมือ ชูนิ้วโป้งและนิ้วก้อย) แล้วขยับมือไปข้างหน้า",
     "tip": "ช้าง",
     "imageUrl": "https://placehold.co/400x400/fff7ed/ea580c?text=ช+(ช.ช้าง)",
-     "youtubeUrl": "https://youtube.com/shorts/9tBPYnSHAxk?feature=share",
+     "youtubeUrl": "https://youtu.be/JzcnsQAYdIc",
     "word_en": "Cho Chang (ช) – Elephant",
     "description_en": "Make an elephant shape: fist hand, extend thumb and little finger as trunk and tail, then move the hand forward."
   },
@@ -72,7 +72,7 @@
     "description": "กำมือ ชูนิ้วชี้ขึ้น แล้วงอนิ้วชี้ลงเล็กน้อย (เด็ก)",
     "tip": "เด็ก",
     "imageUrl": "https://placehold.co/400x400/fff7ed/ea580c?text=ด+(ด.เด็ก)",
-     "youtubeUrl": "https://youtube.com/shorts/9tBPYnSHAxk?feature=share",
+     "youtubeUrl": "https://youtu.be/JzcnsQAYdIc",
     "word_en": "Do Dek (ด) – Child",
     "description_en": "Make a fist and raise the index finger, slightly bending it forward to represent a child."
   },
@@ -81,6 +81,7 @@
     "word": "ต (เต่า)",
     "category": "consonant",
     "description": "กำมือ ชูนิ้วโป้งและนิ้วก้อย (เต่า) แล้วขยับมือคล้ายเต่าเดิน",
+         "youtubeUrl": "https://youtu.be/JzcnsQAYdIc",
     "tip": "เต่า",
     "imageUrl": "https://placehold.co/400x400/fff7ed/ea580c?text=ต+(ต.เต่า)",
     "word_en": "To Tao (ต) – Turtle",
@@ -159,7 +160,7 @@
     "description": "ทำท่าลิง (เกาข้างลำตัว)",
     "tip": "ลิง",
     "imageUrl": "https://placehold.co/400x400/fff7ed/ea580c?text=ล+(ล.ลิง)",
-     "youtubeUrl": "https://youtube.com/shorts/9tBPYnSHAxk?feature=share",
+     "youtubeUrl": "https://youtu.be/JzcnsQAYdIc",
     "word_en": "Lo Ling (ล) – Monkey",
     "description_en": "Scratch the side of the body playfully to represent a monkey."
   },
