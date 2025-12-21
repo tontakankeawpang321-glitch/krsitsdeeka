@@ -325,11 +325,13 @@
                     const parts = item.youtubeUrl.split('/shorts/');
                     if(parts.length > 1) {
                         const videoId = parts[1].split('?')[0];
-                        embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0`;
+                        // Removed autoplay=1, added controls=1
+                        embedUrl = `https://www.youtube.com/embed/${videoId}?rel=0&controls=1`;
                     }
                 } else if (item.youtubeUrl.includes("watch?v=")) {
                     const videoId = item.youtubeUrl.split('v=')[1].split('&')[0];
-                    embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0`;
+                    // Removed autoplay=1, added controls=1
+                    embedUrl = `https://www.youtube.com/embed/${videoId}?rel=0&controls=1`;
                 }
             }
             
