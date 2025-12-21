@@ -25,6 +25,7 @@
         /* Custom Scrollbar */
         ::-webkit-scrollbar {
             width: 8px;
+            height: 8px; /* For horizontal scroll */
         }
         ::-webkit-scrollbar-track {
             background: #fff7ed; 
@@ -60,18 +61,27 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        
+        /* Hide scrollbar for category menu on mobile but keep functionality */
+        .hide-scroll::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scroll {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
     </style>
 </head>
 <body class="text-gray-700 min-h-screen flex flex-col">
 
     <!-- Header -->
-    <header class="bg-white/80 backdrop-blur-md sticky top-0 z-30 shadow-sm border-b border-orange-100">
-        <div class="max-w-5xl mx-auto px-4 py-4 flex flex-col md:flex-row items-center justify-between gap-4">
-            <div class="flex items-center gap-3">
+    <header class="bg-white/80 backdrop-blur-md sticky top-0 z-40 shadow-sm border-b border-orange-100">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex flex-col md:flex-row items-center justify-between gap-3">
+            <div class="flex items-center gap-2 md:gap-3 w-full md:w-auto justify-center md:justify-start">
                 <div class="bg-orange-100 p-2 rounded-full text-orange-500">
-                    <i data-lucide="hand" class="w-8 h-8"></i>
+                    <i data-lucide="hand" class="w-6 h-6 md:w-8 md:h-8"></i>
                 </div>
-                <h1 class="text-2xl md:text-3xl font-bold text-orange-600 cute-font">ภาษามือหรรษา</h1>
+                <h1 class="text-xl md:text-3xl font-bold text-orange-600 cute-font whitespace-nowrap">ภาษามือหรรษา</h1>
             </div>
             
             <!-- Search Bar -->
@@ -80,46 +90,70 @@
                     <i data-lucide="search" class="w-5 h-5 text-orange-300"></i>
                 </div>
                 <input type="text" id="searchInput" 
-                    class="block w-full pl-10 pr-3 py-2 border-2 border-orange-100 rounded-full leading-5 bg-white placeholder-orange-200 focus:outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-200 transition-all duration-300 cute-font" 
+                    class="block w-full pl-10 pr-3 py-2 border-2 border-orange-100 rounded-full leading-5 bg-white placeholder-orange-200 focus:outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-200 transition-all duration-300 cute-font text-sm md:text-base" 
                     placeholder="ค้นหาคำศัพท์... (เช่น ก ไก่)">
             </div>
         </div>
     </header>
 
     <!-- Main Content -->
-    <main class="flex-grow container mx-auto px-4 py-8 max-w-5xl">
+    <main class="flex-grow container mx-auto px-4 py-6 max-w-6xl">
         
-        <!-- Welcome Message -->
-        <div class="text-center mb-10">
-            <h2 class="text-xl text-orange-800 cute-font mb-2">ยินดีต้อนรับสู่โลกของการเรียนรู้</h2>
-            <p class="text-gray-500 text-sm">คลิกที่การ์ดเพื่อดูรายละเอียดและวิดีโอสาธิต</p>
-        </div>
+        <div class="flex flex-col md:flex-row gap-6">
+            
+            <!-- Sidebar / Category Menu -->
+            <aside class="w-full md:w-64 flex-shrink-0">
+                <div class="md:sticky md:top-24 z-20">
+                    <h3 class="text-lg font-bold text-orange-800 cute-font mb-3 hidden md:block px-2">
+                        <i data-lucide="list-filter" class="inline w-4 h-4 mr-1"></i> หมวดหมู่
+                    </h3>
+                    
+                    <!-- Mobile: Horizontal Scroll, Desktop: Vertical List -->
+                    <div id="categoryMenu" class="flex overflow-x-auto md:flex-col gap-2 pb-2 md:pb-0 hide-scroll snap-x">
+                        <!-- Categories will be injected here -->
+                        <div class="animate-pulse bg-white h-10 w-24 rounded-full md:w-full md:rounded-xl"></div>
+                        <div class="animate-pulse bg-white h-10 w-24 rounded-full md:w-full md:rounded-xl"></div>
+                        <div class="animate-pulse bg-white h-10 w-24 rounded-full md:w-full md:rounded-xl"></div>
+                    </div>
+                </div>
+            </aside>
 
-        <!-- Loading State -->
-        <div id="loadingState" class="text-center py-12 hidden">
-            <div class="loader mb-4"></div>
-            <p class="cute-font text-orange-400">กำลังโหลดข้อมูลคำศัพท์จ้า...</p>
-        </div>
+            <!-- Right Content Area -->
+            <div class="flex-grow min-w-0">
+                
+                <!-- Welcome Message (Desktop Only to save space on mobile) -->
+                <div class="hidden md:block text-center mb-6 bg-white/50 p-4 rounded-2xl border border-orange-50">
+                    <h2 class="text-xl text-orange-800 cute-font mb-1">ยินดีต้อนรับสู่โลกของการเรียนรู้</h2>
+                    <p class="text-gray-500 text-sm">เลือกหมวดหมู่หรือค้นหา แล้วคลิกที่การ์ดเพื่อดูรายละเอียด</p>
+                </div>
 
-        <!-- Cards Grid -->
-        <div id="cardGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!-- Content will be injected here by JS -->
-        </div>
+                <!-- Loading State -->
+                <div id="loadingState" class="text-center py-12 hidden">
+                    <div class="loader mb-4"></div>
+                    <p class="cute-font text-orange-400">กำลังโหลดข้อมูลคำศัพท์จ้า...</p>
+                </div>
 
-        <!-- No Results State -->
-        <div id="noResults" class="hidden text-center py-12">
-            <div class="bg-white p-6 rounded-3xl inline-block shadow-sm">
-                <i data-lucide="frown" class="w-12 h-12 mx-auto text-orange-300 mb-2"></i>
-                <p class="cute-font text-lg text-gray-500">ไม่พบคำที่ค้นหาจ้า</p>
-            </div>
-        </div>
+                <!-- Cards Grid (Adjusted for 2 columns on mobile) -->
+                <div id="cardGrid" class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
+                    <!-- Content will be injected here by JS -->
+                </div>
 
-        <!-- Error State -->
-         <div id="errorState" class="hidden text-center py-12">
-            <div class="bg-red-50 p-6 rounded-3xl inline-block shadow-sm border border-red-100">
-                <i data-lucide="alert-circle" class="w-12 h-12 mx-auto text-red-400 mb-2"></i>
-                <p class="cute-font text-lg text-red-500">โหลดข้อมูลไม่สำเร็จ</p>
-                <p class="text-sm text-red-400 mt-1">กรุณาตรวจสอบไฟล์ signs500.json</p>
+                <!-- No Results State -->
+                <div id="noResults" class="hidden text-center py-12">
+                    <div class="bg-white p-6 rounded-3xl inline-block shadow-sm">
+                        <i data-lucide="frown" class="w-12 h-12 mx-auto text-orange-300 mb-2"></i>
+                        <p class="cute-font text-lg text-gray-500">ไม่พบคำที่ค้นหาจ้า</p>
+                    </div>
+                </div>
+
+                <!-- Error State -->
+                <div id="errorState" class="hidden text-center py-12">
+                    <div class="bg-red-50 p-6 rounded-3xl inline-block shadow-sm border border-red-100">
+                        <i data-lucide="alert-circle" class="w-12 h-12 mx-auto text-red-400 mb-2"></i>
+                        <p class="cute-font text-lg text-red-500">โหลดข้อมูลไม่สำเร็จ</p>
+                        <p class="text-sm text-red-400 mt-1">กรุณาตรวจสอบไฟล์ signs500.json</p>
+                    </div>
+                </div>
             </div>
         </div>
     </main>
@@ -205,45 +239,97 @@
 
     <script>
         // 1. Data Setup & Global Variables
-        let vocabData = []; // สร้างตัวแปรว่างไว้รอรับข้อมูลจาก JSON
+        let vocabData = []; 
+        let categories = ['ทั้งหมด'];
+        let activeCategory = 'ทั้งหมด';
         
         // Element References
         const cardGrid = document.getElementById('cardGrid');
+        const categoryMenu = document.getElementById('categoryMenu');
         const searchInput = document.getElementById('searchInput');
         const noResults = document.getElementById('noResults');
         const loadingState = document.getElementById('loadingState');
         const errorState = document.getElementById('errorState');
         const modal = document.getElementById('detailModal');
 
-        // 2. Fetch Data Function (ดึงข้อมูลจากไฟล์ signs500.json)
+        // 2. Fetch Data Function
         async function loadData() {
-            // Show loading
             loadingState.classList.remove('hidden');
             cardGrid.innerHTML = '';
+            categoryMenu.innerHTML = ''; // Clear skeleton
             
             try {
-                // Fetch data from external file
                 const response = await fetch('signs500.json');
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                 
                 vocabData = await response.json();
                 
-                // Hide loading, Show content
+                // Extract Unique Categories
+                const uniqueCats = [...new Set(vocabData.map(item => item.category || 'ทั่วไป'))].sort();
+                categories = ['ทั้งหมด', ...uniqueCats];
+                
                 loadingState.classList.add('hidden');
-                renderCards(vocabData);
+                
+                // Init UI
+                renderCategories();
+                filterAndRender(); // Replaces direct renderCards
                 
             } catch (error) {
                 console.error("Error loading JSON:", error);
                 loadingState.classList.add('hidden');
                 errorState.classList.remove('hidden');
-                lucide.createIcons(); // Re-init icons for error state
             }
         }
 
-        // 3. Render Function
+        // 3. Render Categories
+        function renderCategories() {
+            categoryMenu.innerHTML = categories.map(cat => {
+                const isActive = activeCategory === cat;
+                const activeClasses = 'bg-orange-500 text-white shadow-md ring-2 ring-orange-200';
+                const inactiveClasses = 'bg-white text-gray-600 hover:bg-orange-50 border border-orange-100';
+                
+                return `
+                    <button onclick="setCategory('${cat}')" 
+                        class="${isActive ? activeClasses : inactiveClasses} 
+                               shrink-0 snap-start
+                               md:w-full text-left px-4 py-2 md:py-3 rounded-full md:rounded-xl 
+                               transition-all duration-200 font-medium cute-font text-sm md:text-base 
+                               flex items-center justify-between group whitespace-nowrap">
+                        <span>${cat}</span>
+                        ${isActive ? '<i data-lucide="check" class="hidden md:block w-4 h-4 ml-2"></i>' : ''}
+                    </button>
+                `;
+            }).join('');
+            lucide.createIcons();
+        }
+
+        // 4. Set Category Function
+        window.setCategory = (cat) => {
+            activeCategory = cat;
+            renderCategories(); // Re-render to update active style
+            filterAndRender();
+        };
+
+        // 5. Main Filter & Render Logic
+        function filterAndRender() {
+            const searchTerm = searchInput.value.toLowerCase();
+            
+            const filteredData = vocabData.filter(item => {
+                // Category Filter
+                const matchCategory = activeCategory === 'ทั้งหมด' || (item.category || 'ทั่วไป') === activeCategory;
+                
+                // Search Filter
+                const matchSearch = (item.word && item.word.toLowerCase().includes(searchTerm)) || 
+                                    (item.word_en && item.word_en.toLowerCase().includes(searchTerm)) ||
+                                    (item.description && item.description.includes(searchTerm));
+                
+                return matchCategory && matchSearch;
+            });
+
+            renderCards(filteredData);
+        }
+
+        // 6. Render Cards (Updated for mobile layout)
         function renderCards(items) {
             cardGrid.innerHTML = '';
             
@@ -256,30 +342,32 @@
 
             items.forEach(item => {
                 const card = document.createElement('div');
-                card.className = 'bg-white rounded-3xl shadow-sm border border-orange-100 overflow-hidden cursor-pointer card-hover transition-all duration-300';
+                card.className = 'bg-white rounded-2xl md:rounded-3xl shadow-sm border border-orange-100 overflow-hidden cursor-pointer card-hover transition-all duration-300 flex flex-col h-full';
                 card.onclick = () => openModal(item);
 
-                // Handle missing image
                 const imgUrl = item.imageUrl || 'https://placehold.co/600x400/fff7ed/ea580c?text=No+Image';
 
                 card.innerHTML = `
-                    <div class="h-48 overflow-hidden bg-orange-50 relative">
+                    <div class="h-32 md:h-48 overflow-hidden bg-orange-50 relative shrink-0">
                         <img src="${imgUrl}" alt="${item.word}" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/600x400/f3f4f6/9ca3af?text=Image+Error'">
-                        <div class="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-lg text-xs font-bold text-orange-400 shadow-sm">
+                        <div class="absolute top-2 right-2 md:top-3 md:right-3 bg-white/90 backdrop-blur-sm px-1.5 py-0.5 md:px-2 md:py-1 rounded-md text-[10px] md:text-xs font-bold text-orange-400 shadow-sm truncate max-w-[80px] md:max-w-none">
                             ${item.category || 'ทั่วไป'}
                         </div>
                     </div>
-                    <div class="p-5">
-                        <h3 class="text-2xl font-bold text-gray-800 cute-font mb-1">${item.word}</h3>
-                        <p class="text-xs text-orange-400 font-medium mb-3 uppercase tracking-wide">${item.word_en ? item.word_en.split('–')[0] : ''}</p>
-                        <p class="text-gray-500 text-sm line-clamp-2">${item.description}</p>
+                    <div class="p-3 md:p-5 flex flex-col flex-grow">
+                        <h3 class="text-base md:text-2xl font-bold text-gray-800 cute-font mb-0.5 md:mb-1 truncate leading-tight">${item.word}</h3>
+                        <p class="text-[10px] md:text-xs text-orange-400 font-medium mb-1 md:mb-3 uppercase tracking-wide truncate">${item.word_en ? item.word_en.split('–')[0] : ''}</p>
+                        <p class="text-gray-500 text-xs md:text-sm line-clamp-2 leading-relaxed flex-grow">${item.description}</p>
                         
-                        <div class="mt-4 flex items-center justify-between">
-                            <span class="text-xs bg-orange-50 text-orange-600 px-3 py-1 rounded-full font-medium">
-                                คลิกดูวิธีทำ
+                        <div class="mt-2 md:mt-4 flex items-center justify-between pt-2 border-t border-orange-50">
+                            <span class="text-[10px] md:text-xs text-orange-400 font-medium hidden md:inline">
+                                คลิกดู
                             </span>
-                            <div class="bg-orange-500 rounded-full p-1.5 text-white">
-                                <i data-lucide="play" class="w-4 h-4 fill-current"></i>
+                             <span class="text-[10px] md:text-xs text-orange-400 font-medium md:hidden">
+                                ดูวิธีทำ
+                            </span>
+                            <div class="bg-orange-100 md:bg-orange-500 rounded-full p-1 md:p-1.5 text-orange-500 md:text-white">
+                                <i data-lucide="play" class="w-3 h-3 md:w-4 md:h-4 fill-current"></i>
                             </div>
                         </div>
                     </div>
@@ -287,24 +375,14 @@
                 cardGrid.appendChild(card);
             });
             
-            // Re-initialize icons for new elements
             lucide.createIcons();
         }
 
-        // 4. Search Function
-        searchInput.addEventListener('input', (e) => {
-            const searchTerm = e.target.value.toLowerCase();
-            const filteredData = vocabData.filter(item => 
-                (item.word && item.word.toLowerCase().includes(searchTerm)) || 
-                (item.word_en && item.word_en.toLowerCase().includes(searchTerm)) ||
-                (item.description && item.description.includes(searchTerm))
-            );
-            renderCards(filteredData);
-        });
+        // 7. Search Listener
+        searchInput.addEventListener('input', filterAndRender);
 
-        // 5. Modal Logic
+        // 8. Modal Logic
         function openModal(item) {
-            // Populate Data
             document.getElementById('modalTitle').innerText = item.word || '';
             document.getElementById('modalWordEn').innerText = item.word_en || '';
             document.getElementById('modalCategory').innerText = item.category || 'ทั่วไป';
@@ -318,26 +396,21 @@
             
             document.getElementById('modalYoutubeLink').href = item.youtubeUrl || '#';
 
-            // Handle YouTube Embed
             let embedUrl = "";
             if (item.youtubeUrl) {
                 if(item.youtubeUrl.includes("shorts")) {
                     const parts = item.youtubeUrl.split('/shorts/');
                     if(parts.length > 1) {
                         const videoId = parts[1].split('?')[0];
-                        // Removed autoplay=1, added controls=1
                         embedUrl = `https://www.youtube.com/embed/${videoId}?rel=0&controls=1`;
                     }
                 } else if (item.youtubeUrl.includes("watch?v=")) {
                     const videoId = item.youtubeUrl.split('v=')[1].split('&')[0];
-                    // Removed autoplay=1, added controls=1
                     embedUrl = `https://www.youtube.com/embed/${videoId}?rel=0&controls=1`;
                 }
             }
-            
             document.getElementById('modalYoutube').src = embedUrl;
 
-            // Show Modal
             modal.classList.remove('hidden');
             document.body.style.overflow = 'hidden'; 
         }
@@ -354,10 +427,8 @@
             }
         });
 
-        // เริ่มต้นการทำงานโดยการดึงข้อมูล
+        // Initialize
         loadData();
-        
-        // Init icons (for initial static elements)
         lucide.createIcons();
     </script>
 </body>
