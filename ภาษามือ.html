@@ -2,663 +2,529 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>พจนานุกรมภาษามือไทย (TSL) + AI</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>พจนานุกรมภาษามือไทย (TSL) Demo</title>
+    <meta name="theme-color" content="#4f46e5">
+    <meta name="description" content="พจนานุกรมภาษามือไทย แบบออฟไลน์">
 
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 
+    <!-- Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
-
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
-        body { font-family: 'Noto Sans Thai', sans-serif; }
-
-        /* ==== 3D Card Effects ==== */
-        .card-3d {
-            background: linear-gradient(145deg, #ffffff, #e6e6e6);
-            box-shadow: 8px 8px 20px #d1d1d1, -8px -8px 20px #ffffff;
-            transition: 0.2s;
-        }
-        .card-3d:active {
-            transform: scale(0.96);
-            box-shadow: inset 5px 5px 15px #cfcfcf, inset -5px -5px 15px #ffffff;
-        }
-        .btn-3d {
-            background: linear-gradient(135deg, #6366f1, #8b5cf6);
-            box-shadow: 4px 4px 12px rgba(99,102,241,0.4);
-            transition: 0.2s;
-        }
-        .btn-3d:active {
-            transform: scale(0.95);
-            box-shadow: inset 4px 4px 10px rgba(0,0,0,0.2);
+        /* Base Setup */
+        body { 
+            font-family: 'Noto Sans Thai', sans-serif; 
+            -webkit-tap-highlight-color: transparent;
+            overscroll-behavior-y: none;
         }
 
-        /* Glass */
-        .glass {
-            background: rgba(255,255,255,0.7);
-            backdrop-filter: blur(10px);
-        }
-
-        /* Scrollbar Hide */
+        /* Hide Scrollbar */
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes zoomIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        .animate-fade-in { animation: fadeIn 0.25s ease-out forwards; }
-        .animate-zoom-in { animation: zoomIn 0.25s ease-out forwards; }
+        html { scroll-behavior: smooth; }
 
-        /* Consonant Card Style */
-        .consonant-card {
-            aspect-ratio: 3/4;
-            background: linear-gradient(145deg, #ffffff, #e6e6e6);
-            border-radius: 16px;
-            box-shadow: 6px 6px 16px #d1d1d1, -6px -6px 16px #ffffff;
-            overflow: hidden;
-            transition: 0.2s;
+        /* Skeleton Loading */
+        @keyframes shimmer {
+            0% { background-position: -1000px 0; }
+            100% { background-position: 1000px 0; }
         }
-        .consonant-card:active {
-            transform: scale(0.95);
+        .skeleton {
+            background: linear-gradient(to right, #f1f5f9 4%, #e2e8f0 25%, #f1f5f9 36%);
+            background-size: 1000px 100%;
+            animation: shimmer 2s infinite linear;
         }
 
-        /* ===== CSS ของ Chatbot UI (Indigo Theme) ===== */
-        .chat-bubble::before { content: ''; position: absolute; width: 0; height: 0; border-style: solid; }
-        .chat-bubble-user::before {
-            border-width: 0 12px 12px 12px; border-color: transparent transparent #4f46e5 transparent; /* Indigo-600 */
-            top: -10px; right: 12px;
+        /* Bottom Sheet Transition */
+        .bottom-sheet {
+            transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+            transform: translateY(100%);
+            will-change: transform;
         }
-        .chat-bubble-model::before {
-            border-width: 0 12px 12px 12px; border-color: transparent transparent #e5e7eb transparent;
-            top: -10px; left: 12px;
+        .bottom-sheet.active { transform: translateY(0); }
+
+        /* Chat Animations */
+        @keyframes messagePop {
+            0% { transform: scale(0.95); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
         }
-        .gemini-thinking-bar {
-            position: relative; width: 100%; height: 4px; background-color: #e0e0e0;
-            border-radius: 2px; overflow: hidden;
+        .msg-anim { animation: messagePop 0.2s ease-out forwards; }
+
+        /* Mock Thinking Bar */
+        .thinking-bar {
+            height: 4px;
+            width: 100%;
+            background: linear-gradient(90deg, #4f46e5, #818cf8, #c7d2fe, #4f46e5);
+            background-size: 200% 100%;
+            animation: thinking 1.5s linear infinite;
+            border-radius: 4px;
         }
-        .gemini-thinking-bar::before {
-            content: ''; position: absolute; top: 0; left: 0; height: 100%; width: 100%;
-            background: linear-gradient(90deg, #4f46e5, #818cf8, #4f46e5);
-            background-size: 200% 100%; animation: thinking-gradient 2s linear infinite;
-        }
-        @keyframes thinking-gradient { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-        
-        #fab-chat-toggle {
-            position: fixed; bottom: 25px; right: 25px;
-            width: 60px; height: 60px;
-            background-color: #4f46e5; /* Indigo */
-            color: white;
-            border: none; border-radius: 50%;
-            font-size: 28px; line-height: 60px; text-align: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            cursor: pointer; z-index: 998;
-            transition: transform 0.2s, opacity 0.3s;
-        }
-        #fab-chat-toggle:hover { transform: scale(1.05); background-color: #4338ca; }
-        
-        #chatbot-modal {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            z-index: 1000; transition: opacity 0.3s, transform 0.3s;
-            opacity: 1; transform: translateY(0); pointer-events: auto;
-        }
-        #chatbot-modal.chatbot-hidden {
-            opacity: 0; transform: translateY(100%); pointer-events: none;
-        }
+        @keyframes thinking { 0% { background-position: 100% 0; } 100% { background-position: -100% 0; } }
     </style>
 </head>
 
-<body class="bg-slate-100 text-slate-800 pb-10">
+<body class="bg-slate-50 text-slate-800 pb-24 selection:bg-indigo-100 selection:text-indigo-700">
 
-<header class="sticky top-0 z-40 shadow-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
-    <div class="max-w-5xl mx-auto px-4 py-5 flex items-center gap-4">
-        <div class="p-2 bg-white/20 rounded-xl shadow-inner">
-            <i data-lucide="hand" class="w-8 h-8 text-yellow-300"></i>
-        </div>
-        <div>
-            <h1 class="text-2xl font-bold drop-shadow">พจนานุกรมภาษามือไทย (TSL)</h1>
-            <p class="text-blue-100 text-sm opacity-90">AI + คู่มือท่าทาง</p>
-        </div>
-    </div>
-</header>
-
-<main class="max-w-5xl mx-auto px-4 py-6 space-y-6">
-
-    <div class="sticky top-[72px] z-30 bg-slate-100/80 backdrop-blur-md py-4 px-2 -mx-4 border-b border-slate-200 shadow-sm">
-
-        <div class="relative max-w-lg mx-auto md:mx-0">
-            <div class="absolute left-3 top-0 bottom-0 flex items-center text-slate-400">
-                <i data-lucide="search" class="w-5 h-5"></i>
+    <!-- Header -->
+    <header class="fixed top-0 left-0 right-0 z-40 bg-indigo-600 text-white shadow-lg transition-all duration-300" id="mainHeader">
+        <div class="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="p-2 bg-white/20 rounded-xl backdrop-blur-sm">
+                    <i data-lucide="hand" class="w-6 h-6 text-yellow-300"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold leading-tight">TSL Dictionary</h1>
+                    <p class="text-[10px] text-indigo-200 font-medium tracking-wide">ฉบับทดลอง (Offline Mode)</p>
+                </div>
             </div>
-            <input
-                id="searchInput"
-                type="text"
-                placeholder="ค้นหา เช่น สวัสดี , ครอบครัว , อารมณ์ …"
-                class="w-full pl-10 pr-4 py-3 rounded-2xl border border-slate-200 shadow-md glass focus:ring-2 focus:ring-indigo-400 outline-none transition"
-            />
+            <button class="p-2 text-indigo-100 hover:text-white active:scale-95 transition">
+                <i data-lucide="info" class="w-6 h-6"></i>
+            </button>
         </div>
+    </header>
 
-        <div class="flex items-center gap-2 overflow-x-auto scrollbar-hide mt-3 pb-1">
-            <div id="categoryContainer" class="flex gap-2"></div>
-        </div>
-    </div>
-    
-    <div id="dataLoadingState" class="hidden py-10 text-center">
-        <div class="animate-spin w-10 h-10 border-4 border-indigo-200 border-t-indigo-600 rounded-full mx-auto mb-3"></div>
-        <p class="text-slate-500 text-sm">กำลังโหลดข้อมูล…</p>
-    </div>
-
-    <div id="gridContainer" class="grid gap-4 min-h-[60vh]">
-        </div>
-
-    <div id="notFoundMessage" class="hidden py-12 text-center text-slate-400">
-        <i data-lucide="search" class="w-12 h-12 mx-auto mb-3 opacity-20"></i>
-        <p>ไม่พบคำที่ค้นหา</p>
-    </div>
-</main>
-
-<div id="modalOverlay"
-    class="hidden fixed inset-0 z-[60] bg-black/60 backdrop-blur-md flex items-center justify-center px-4 animate-fade-in"
-    onclick="handleModalClick(event)">
-    
-    <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden animate-zoom-in max-h-[90vh] flex flex-col border border-slate-200">
-
-        <div class="relative w-full aspect-video bg-slate-200 flex items-center justify-center">
-            <img id="modalImage" src="" class="w-full h-full object-cover hidden" />
-            
-            <div id="modalNoImage" class="text-slate-400 text-center">
-                <i data-lucide="image-off" class="w-10 h-10 mx-auto opacity-50"></i>
-                <p class="text-sm">ไม่มีรูปภาพ</p>
+    <!-- Main Content -->
+    <main class="max-w-md mx-auto px-4 pt-20">
+        
+        <!-- Search & Categories (Sticky) -->
+        <div class="sticky top-[60px] z-30 pt-4 pb-2 -mx-4 px-4 bg-slate-50/95 backdrop-blur-sm border-b border-slate-200 transition-shadow" id="searchBarContainer">
+            <div class="relative">
+                <div class="absolute left-4 top-3.5 text-slate-400">
+                    <i data-lucide="search" class="w-5 h-5"></i>
+                </div>
+                <input 
+                    id="searchInput" 
+                    type="search" 
+                    enterkeyhint="search"
+                    placeholder="ค้นหา (เช่น สวัสดี, รัก, พยัญชนะ)..." 
+                    class="w-full pl-11 pr-4 py-3 rounded-2xl bg-white border border-slate-200 shadow-sm text-slate-700 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all placeholder:text-slate-400"
+                >
             </div>
 
-            <span id="modalCategoryBadge"
-                class="absolute bottom-3 left-3 px-3 py-1 rounded-full text-xs font-bold text-white shadow-lg">
-            </span>
+            <div class="flex items-center gap-2 overflow-x-auto scrollbar-hide mt-3 pb-2 select-none" id="categoryContainer">
+                <!-- Categories injected by JS -->
+            </div>
+        </div>
 
-            <button onclick="closeModal()"
-                class="absolute top-3 right-3 p-2 bg-black/40 hover:bg-black/60 text-white rounded-full backdrop-blur-sm transition">
-                <i data-lucide="x"></i>
+        <!-- Content Grid -->
+        <div id="gridContainer" class="grid grid-cols-2 gap-3 mt-4 min-h-[50vh]"></div>
+
+        <!-- Loading / Empty States -->
+        <div id="loadingState" class="hidden grid grid-cols-2 gap-3 mt-4">
+            <div class="aspect-[4/3] rounded-2xl skeleton"></div>
+            <div class="aspect-[4/3] rounded-2xl skeleton"></div>
+            <div class="aspect-[4/3] rounded-2xl skeleton"></div>
+            <div class="aspect-[4/3] rounded-2xl skeleton"></div>
+        </div>
+
+        <div id="emptyState" class="hidden py-16 text-center text-slate-400">
+            <div class="bg-slate-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i data-lucide="search-x" class="w-10 h-10 opacity-50"></i>
+            </div>
+            <p class="text-sm font-medium">ไม่พบคำที่คุณค้นหา</p>
+        </div>
+
+    </main>
+
+    <!-- FAB (Chat Button) -->
+    <button id="fabChat" class="fixed bottom-6 right-5 w-14 h-14 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full shadow-lg shadow-indigo-600/30 flex items-center justify-center z-40 transition-transform active:scale-90">
+        <i data-lucide="message-circle" class="w-7 h-7"></i>
+    </button>
+
+    <!-- Bottom Sheet (Details) -->
+    <div id="detailBackdrop" class="fixed inset-0 bg-black/60 z-50 opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm" onclick="closeDetailSheet()"></div>
+    
+    <div id="detailSheet" class="fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-[32px] bottom-sheet max-h-[90vh] flex flex-col shadow-2xl overflow-hidden max-w-md mx-auto">
+        <div class="w-full flex justify-center pt-3 pb-1 flex-shrink-0" onclick="closeDetailSheet()">
+            <div class="w-12 h-1.5 bg-slate-300 rounded-full"></div>
+        </div>
+
+        <div class="overflow-y-auto flex-1 p-0 pb-8 scrollbar-hide">
+            <div class="relative w-full aspect-video bg-slate-100">
+                <img id="sheetImage" class="w-full h-full object-cover" src="" alt="Sign Language Image" loading="lazy">
+                <div id="sheetNoImage" class="absolute inset-0 flex flex-col items-center justify-center text-slate-400 hidden">
+                    <i data-lucide="image-off" class="w-8 h-8 mb-2 opacity-50"></i>
+                    <span class="text-xs">ไม่มีรูปภาพ</span>
+                </div>
+                <button onclick="closeDetailSheet()" class="absolute top-4 right-4 bg-black/30 text-white p-2 rounded-full backdrop-blur-md active:scale-90 transition">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <div class="px-6 py-5">
+                <div class="flex items-start gap-4 mb-4">
+                    <div id="sheetIcon" class="w-14 h-14 rounded-2xl flex-shrink-0 flex items-center justify-center text-2xl font-bold text-white bg-indigo-500 shadow-lg shadow-indigo-200">ก</div>
+                    <div>
+                        <span id="sheetCategory" class="text-[10px] font-bold uppercase tracking-wider text-indigo-600 bg-indigo-50 px-2 py-1 rounded-md mb-1 inline-block">หมวดทั่วไป</span>
+                        <h2 id="sheetTitle" class="text-3xl font-bold text-slate-800 leading-none">สวัสดี</h2>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100 text-slate-600 text-sm leading-relaxed">
+                        <h3 class="font-semibold text-slate-800 mb-1 text-xs uppercase opacity-70">วิธีทำท่า</h3>
+                        <p id="sheetDesc">...</p>
+                    </div>
+
+                    <div id="sheetTipBox" class="p-4 bg-amber-50 rounded-2xl border border-amber-100 flex gap-3 hidden">
+                        <i data-lucide="lightbulb" class="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5"></i>
+                        <div>
+                            <h3 class="font-bold text-amber-700 text-xs mb-1">เทคนิคการจำ</h3>
+                            <p id="sheetTip" class="text-sm text-amber-800">...</p>
+                        </div>
+                    </div>
+
+                    <a id="sheetYoutube" href="#" target="_blank" class="flex items-center justify-center gap-2 w-full py-3.5 bg-red-50 text-red-600 font-bold rounded-xl active:bg-red-100 transition border border-red-100">
+                        <i data-lucide="youtube" class="w-5 h-5"></i>
+                        ดูวิดีโอสาธิต
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat Modal (Simulated) -->
+    <div id="chatModal" class="fixed inset-0 z-50 bg-white transform translate-y-full transition-transform duration-300 flex flex-col">
+        <div class="bg-indigo-600 text-white px-4 py-3 flex items-center justify-between shadow-md flex-shrink-0">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+                    <i data-lucide="bot" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h2 class="font-bold text-base">แชทบอท (จำลอง)</h2>
+                    <div class="flex items-center gap-1.5 opacity-80">
+                        <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                        <span class="text-[10px]">พร้อมใช้งาน</span>
+                    </div>
+                </div>
+            </div>
+            <button onclick="toggleChat(false)" class="p-2 hover:bg-white/10 rounded-full transition">
+                <i data-lucide="chevron-down" class="w-6 h-6"></i>
             </button>
         </div>
 
-        <div class="p-6 space-y-6 overflow-y-auto">
-
-            <div class="flex gap-4 items-center">
-                <div id="modalIconContainer"
-                    class="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl font-bold text-white shadow-xl">
-                </div>
-                <div>
-                    <h2 id="modalWord" class="text-2xl font-extrabold text-slate-800 mb-1"></h2>
-                    <p class="text-sm text-slate-500">วิธีทำท่าภาษามือ</p>
+        <div id="chatHistory" class="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50 scrollbar-hide">
+            <div class="flex gap-3 msg-anim">
+                <div class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center flex-shrink-0 text-lg">🤖</div>
+                <div class="bg-white border border-slate-200 p-3 rounded-2xl rounded-tl-none shadow-sm max-w-[85%] text-sm text-slate-700">
+                    สวัสดีครับ! ระบบนี้เป็นระบบจำลอง (Demo) ผมสามารถตอบคำถามพื้นฐานเกี่ยวกับแอปนี้ได้ครับ
                 </div>
             </div>
+        </div>
 
-            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 shadow-inner">
-                <p id="modalDescription" class="text-slate-700 leading-relaxed"></p>
+        <div class="p-3 bg-white border-t border-slate-100 flex-shrink-0 pb-safe">
+            <div class="relative flex items-end gap-2">
+                <button id="chatResetBtn" class="p-3 text-slate-400 hover:text-indigo-600 bg-slate-100 rounded-xl transition" title="เริ่มใหม่">
+                    <i data-lucide="rotate-ccw" class="w-5 h-5"></i>
+                </button>
+                <textarea id="chatInput" rows="1" placeholder="พิมพ์ข้อความ..." class="flex-1 bg-slate-100 text-slate-800 text-sm rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none resize-none max-h-24 overflow-y-auto"></textarea>
+                <button id="chatSendBtn" class="p-3 bg-indigo-600 text-white rounded-xl shadow-md shadow-indigo-200 active:scale-95 transition disabled:opacity-50">
+                    <i data-lucide="send" class="w-5 h-5"></i>
+                </button>
             </div>
-
-            <div id="modalTipContainer"
-                class="hidden bg-amber-50 border border-amber-200 p-4 rounded-xl flex gap-3 items-start shadow-inner">
-                
-                <i data-lucide="lightbulb" class="text-amber-500 w-6 h-6"></i>
-                
-                <div>
-                    <span class="font-bold text-amber-700 text-sm block mb-1">เทคนิคจำง่าย:</span>
-                    <p id="modalTip" class="text-sm text-amber-800"></p>
-                </div>
-            </div>
-
         </div>
-
-        <div class="p-5 border-t border-slate-200 bg-white">
-            <a id="modalYoutubeLink" href="#" target="_blank"
-                class="w-full py-3 text-center rounded-xl font-bold flex items-center justify-center gap-2 transition active:scale-95">
-                <i data-lucide="youtube"></i>
-                <span id="modalYoutubeText">ดูวิดีโอ</span>
-            </a>
-        </div>
-
-    </div>
-</div>
-
-<footer>
-    <p class="footer-links" style="text-align:center; margin-top:40px; color:#64748b; font-size:0.9rem;">
-      © 2025 Crow Studio |
-      <a href="https://sites.google.com/view/privacy-policy-pdpa-crow-studi/%E0%B8%AB%E0%B8%99%E0%B8%B2%E0%B9%81%E0%B8%A3%E0%B8%81">นโยบายความเป็นส่วนตัว</a> |
-      <a href="ลิงก์ข้อตกลง">ข้อตกลงการใช้งาน</a>
-    </p>
-</footer>
-
-<button id="fab-chat-toggle" title="ถาม AI ภาษามือ">Ai</button>
-
-<div id="chatbot-modal" class="chatbot-hidden">
-  <div class="flex flex-col h-screen bg-gray-100">
-    <header class="bg-[#4f46e5] text-white p-4 flex justify-between items-center shadow-md">
-      <div class="flex items-center gap-2">
-          <span class="text-2xl">🖐️</span>
-          <h1 class="text-lg font-bold font-sans text-white m-0">AI ภาษามือ</h1>
-      </div>
-      <div>
-        <button id="new-chat-btn" class="bg-[#e0e7ff] hover:bg-[#c7d2fe] text-[#4f46e5] font-bold py-1 px-3 rounded mr-2 text-sm">
-          เริ่มใหม่
-        </button>
-        <button id="chatbot-close-btn" class="bg-gray-700 hover:bg-gray-900 text-white font-bold py-1 px-3 rounded text-sm">
-          ปิด
-        </button>
-      </div>
-    </header>
-
-    <main id="chat-history" class="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
-      <div class="flex items-start space-x-2">
-        <span class="text-2xl">🤖</span>
-        <div class="chat-bubble chat-bubble-model bg-white text-gray-800 p-3 rounded-lg max-w-lg relative border border-gray-200 shadow-sm">
-          <p>สวัสดีครับ ผมคือ AI ผู้เชี่ยวชาญภาษามือไทย (TSL) สอบถามวิธีทำท่าทาง ความหมาย หรือไวยากรณ์ได้เลยครับ</p>
-        </div>
-      </div>
-    </main>
-
-    <div id="thinking-indicator" class="p-4 hidden bg-gray-50">
-      <div class="flex items-center space-x-2">
-        <span class="text-2xl">🤖</span>
-        <div class="chat-bubble chat-bubble-model bg-white text-gray-800 p-3 rounded-lg max-w-lg relative border border-gray-200">
-          <div class="gemini-thinking-bar"></div>
-        </div>
-      </div>
     </div>
 
-    <footer class="bg-white p-3 shadow-inner border-t border-gray-200 m-0 w-full max-w-full">
-      <div class="flex space-x-2">
-        <input id="user-input" type="text" placeholder="พิมพ์คำถาม (เช่น ท่ารักทำอย่างไร)..." class="flex-1 p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#4f46e5] font-sans text-base text-gray-800">
-        <button id="send-btn" class="bg-[#4f46e5] hover:bg-[#4338ca] text-white font-bold py-2 px-4 rounded-xl shadow-sm">
-          ส่ง
-        </button>
-      </div>
-    </footer>
-  </div>
-</div>
+    <script>
+        // ================= CONFIGURATION & DATA ================= //
+        // * ตัด API URL และ Key ออกทั้งหมด *
+        
+        // Mock Data: ข้อมูลตัวอย่างสำหรับแสดงผลเมื่อไม่มีไฟล์ JSON หรือ API
+        const MOCK_DATA = [
+            { id: 1, word: "สวัสดี", category: "daily", description: "ยกมือพนมที่ระดับอก ก้มศีรษะเล็กน้อย", imageUrl: "https://images.unsplash.com/photo-1622547748225-3fc4abd2cca0?q=80&w=600&auto=format&fit=crop", tip: "ใช้ได้ทั้งชายและหญิง" },
+            { id: 2, word: "ขอบคุณ", category: "daily", description: "มือขวาแตะที่คาง แล้วเลื่อนออกไปข้างหน้า พร้อมพยักหน้า", imageUrl: "https://images.unsplash.com/photo-1596464716127-f9a862557965?q=80&w=600&auto=format&fit=crop" },
+            { id: 3, word: "ขอโทษ", category: "daily", description: "กำมือขวา วนเป็นวงกลมบริเวณหน้าอกด้านซ้าย", imageUrl: "", tip: "แสดงสีหน้าสำนึกผิดด้วย" },
+            { id: 4, word: "พ่อ", category: "family", description: "นิ้วโป้งแตะที่ปลายจมูก หรือหน้าผาก", imageUrl: "https://images.unsplash.com/photo-1511895426328-dc8714191300?q=80&w=600&auto=format&fit=crop" },
+            { id: 5, word: "แม่", category: "family", description: "นิ้วโป้งแตะที่แก้มข้างขวา", imageUrl: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=600&auto=format&fit=crop" },
+            { id: 6, word: "รัก", category: "emotion", description: "กำมือทั้งสองข้างไขว้กันที่หน้าอก", imageUrl: "https://images.unsplash.com/photo-1518199266791-5375a83190b7?q=80&w=600&auto=format&fit=crop" },
+            { id: 7, word: "ก.ไก่", category: "consonant", description: "กำมือ ชูนิ้วชี้ขึ้นแล้วงอนิ้วชี้ลงเล็กน้อยคล้ายหัวไก่", imageUrl: "" },
+            { id: 8, word: "หิว", category: "daily_life", description: "ใช้มือลูบลงที่ท้อง ผ่านสะดือ", imageUrl: "" },
+            { id: 9, word: "น้ำ", category: "food", description: "ชูนิ้วโป้ง กดที่ปากสองครั้ง", imageUrl: "https://images.unsplash.com/photo-1548839140-29a749e1cf4d?q=80&w=600&auto=format&fit=crop" },
+            { id: 10, word: "บ้าน", category: "place", description: "ประกบปลายนิ้วมือทั้งสองข้างเป็นรูปจั่วหลังคา", imageUrl: "https://images.unsplash.com/photo-1518780664697-55e3ad937233?q=80&w=600&auto=format&fit=crop" },
+        ];
 
-<script>
-/* =========================
-    CONFIG & GLOBAL STATE
-   ========================= */
+        let allSigns = [];
+        let activeCategory = 'all';
 
-// ⚠️ Note: The client-side translation feature (existing logic) still relies on client key.
-// But the new Chatbot connects to the secure Backend.
-const apiKey = "AIzaSyD_9mzuoLZT-tka_73IpHJWpSsBWLEM8b4"; // Key เดิมสำหรับการแปล Gloss (ถ้ายังใช้อยู่)
+        const categories = [
+            { id: "all", label: "ทั้งหมด", icon: "book-open", color: "bg-indigo-600" },
+            { id: "consonant", label: "พยัญชนะ", icon: "type", color: "bg-orange-500" },
+            { id: "daily", label: "คำพื้นฐาน", icon: "star", color: "bg-yellow-500" },
+            { id: "family", label: "ครอบครัว", icon: "users", color: "bg-pink-500" },
+            { id: "emotion", label: "อารมณ์", icon: "smile", color: "bg-purple-500" },
+            { id: "food", label: "อาหาร", icon: "coffee", color: "bg-emerald-500" },
+            { id: "place", label: "สถานที่", icon: "map-pin", color: "bg-blue-500" },
+        ];
 
-let signData = [];
-let searchTerm = "";
-let activeCategory = "all";
+        // ================= APP INITIALIZATION ================= //
+        document.addEventListener('DOMContentLoaded', async () => {
+            renderCategories();
+            lucide.createIcons();
+            
+            document.getElementById('gridContainer').classList.add('hidden');
+            document.getElementById('loadingState').classList.remove('hidden');
 
-/* หมวดหมู่ */
-const categories = [
-    { id: "all",          label: "ทั้งหมด",          icon: "book-open" },
-    { id: "consonant",    label: "พยัญชนะ (ก-ฮ)",    icon: "type" },
-    { id: "number",       label: "ตัวเลข",            icon: "hash" },
-    { id: "daily",        label: "คำพื้นฐาน",        icon: "heart" },
-    { id: "daily_life",   label: "ชีวิตประจำวัน",     icon: "sun" },
-    { id: "family",       label: "ครอบครัว",         icon: "users" },
-    { id: "emotion",      label: "อารมณ์",            icon: "smile" },
-    { id: "place",        label: "สถานที่",           icon: "map-pin" },
-    { id: "object",       label: "สิ่งของ",           icon: "box" },
-    { id: "food",         label: "อาหาร/เครื่องดื่ม", icon: "cup-soda" },
-    { id: "action",       label: "การกระทำ",         icon: "zap" },
-    { id: "conversation", label: "บทสนทนา",          icon: "message-circle" },
-];
+            try {
+                // พยายามโหลดไฟล์ signs500.json (ถ้ามี)
+                const res = await fetch('signs500.json');
+                if (!res.ok) throw new Error("File not found");
+                allSigns = await res.json();
+            } catch (error) {
+                // ถ้าโหลดไม่ได้ ให้ใช้ Mock Data แทน
+                console.log("Using Mock Data");
+                allSigns = MOCK_DATA;
+            } finally {
+                // หน่วงเวลาเล็กน้อยให้เห็น Loading (เพื่อ UX)
+                setTimeout(() => {
+                    document.getElementById('loadingState').classList.add('hidden');
+                    document.getElementById('gridContainer').classList.remove('hidden');
+                    renderGrid(allSigns);
+                }, 800);
+            }
 
-
-/* =========================
-    CATEGORY COLOR SYSTEM
-   ========================= */
-function getCategoryStyles(c) {
-    switch (c) {
-        case "consonant": return { badge: "bg-orange-500", cardColor: "bg-orange-400", text: "text-white" };
-        case "number": return { badge: "bg-green-500", cardColor: "bg-green-400", text: "text-white" };
-        case "daily": return { badge: "bg-purple-500", cardColor: "bg-purple-400", text: "text-white" };
-        case "daily_life": return { badge: "bg-indigo-500", cardColor: "bg-indigo-400", text: "text-white" };
-        case "family": return { badge: "bg-blue-500", cardColor: "bg-blue-400", text: "text-white" };
-        case "emotion": return { badge: "bg-pink-500", cardColor: "bg-pink-400", text: "text-white" };
-        case "place": return { badge: "bg-emerald-500", cardColor: "bg-emerald-400", text: "text-white" };
-        case "object": return { badge: "bg-slate-500", cardColor: "bg-slate-400", text: "text-white" };
-        case "food": return { badge: "bg-amber-500", cardColor: "bg-amber-400", text: "text-white" };
-        case "action": return { badge: "bg-cyan-500", cardColor: "bg-cyan-400", text: "text-white" };
-        case "conversation": return { badge: "bg-red-500", cardColor: "bg-red-400", text: "text-white" };
-        default: return { badge: "bg-sky-500", cardColor: "bg-sky-400", text: "text-white" };
-    }
-}
-
-/* =========================
-    LOAD JSON DATA
-   ========================= */
-async function fetchSignData() {
-    document.getElementById("dataLoadingState").classList.remove("hidden");
-    document.getElementById("gridContainer").classList.add("hidden");
-
-    try {
-        const res = await fetch("signs500.json");
-        signData = await res.json();
-        renderGrid();
-    } catch (err) {
-        gridContainer.innerHTML =
-            `<div class='text-center text-red-500 col-span-full'>ไม่พบไฟล์ <b>signs500.json</b></div>`;
-    }
-
-    document.getElementById("dataLoadingState").classList.add("hidden");
-    document.getElementById("gridContainer").classList.remove("hidden");
-}
-
-
-/* =========================
-       CATEGORY BUTTON UI
-   ========================= */
-function renderCategories() {
-    const ctn = document.getElementById("categoryContainer");
-    ctn.innerHTML = categories.map(c => {
-        const active = (activeCategory === c.id);
-
-        return `
-        <button onclick="setActiveCategory('${c.id}')"
-            class="px-4 py-2 whitespace-nowrap rounded-full border shadow 
-                   ${active ? "bg-indigo-600 text-white border-indigo-600 shadow-lg" : "bg-white text-slate-600 border-slate-300 hover:bg-slate-50"} 
-                   flex items-center gap-2 transition">
-            <i data-lucide="${c.icon}" class="w-4 h-4"></i>
-            ${c.label}
-        </button>`;
-    }).join("");
-
-    lucide.createIcons();
-}
-
-function setActiveCategory(id) {
-    activeCategory = id;
-    renderCategories();
-    renderGrid();
-}
-
-
-/* =========================
-        RENDER GRID
-   ========================= */
-function renderGrid() {
-    const grid = document.getElementById("gridContainer");
-    const term = searchTerm.toLowerCase();
-
-    const filtered = signData.filter(item => {
-        const w = (item.word || "").toLowerCase();
-        const d = (item.description || "").toLowerCase();
-
-        const matchSearch = w.includes(term) || d.includes(term);
-        const matchCategory = activeCategory === "all" || item.category === activeCategory;
-
-        return matchSearch && matchCategory;
-    });
-
-    /* Layout */
-    grid.className =
-        activeCategory === "consonant"
-            ? "grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3"
-            : "grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-4";
-
-    if (!filtered.length) {
-        notFoundMessage.classList.remove("hidden");
-        grid.innerHTML = "";
-        return;
-    }
-
-    notFoundMessage.classList.add("hidden");
-
-    grid.innerHTML = filtered.map(item => {
-        const styles = getCategoryStyles(item.category);
-        const short = (item.word || "").split(" ")[0];
-
-        /* ==============
-            Consonant Card
-           ============== */
-        if (item.category === "consonant") {
-            return `
-            <div onclick="openModal('${item.id}')"
-                class="consonant-card cursor-pointer group">
-                
-                <div class="w-full h-[75%] overflow-hidden bg-slate-200">
-                    <img src="${item.imageUrl || ""}" 
-                         class="w-full h-full object-cover group-hover:scale-110 transition">
-                </div>
-
-                <div class="h-[25%] flex items-center justify-center text-2xl font-bold text-slate-800">
-                    ${short}
-                </div>
-            </div>`;
-        }
-
-        /* ==============
-            Standard Card (3D Small)
-           ============== */
-        return `
-        <div onclick="openModal('${item.id}')"
-            class="card-3d cursor-pointer flex items-center gap-3 p-3 rounded-xl border border-slate-200 hover:shadow-xl transition">
-
-            <div class="w-12 h-12 rounded-xl flex items-center justify-center text-xl font-bold ${styles.cardColor} ${styles.text} shadow">
-                ${short}
-            </div>
-
-            <div class="flex-1 min-w-0">
-                <h3 class="font-bold text-slate-800 truncate">${item.word}</h3>
-                <p class="text-[11px] text-slate-500 truncate">${item.description || ""}</p>
-            </div>
-        </div>`;
-    }).join("");
-}
-
-
-/* =========================
-         OPEN MODAL
-   ========================= */
-function openModal(id) {
-    const item = signData.find(i => i.id == id);
-    if (!item) return;
-
-    document.body.style.overflow = "hidden";
-    modalOverlay.classList.remove("hidden");
-
-    const img = document.getElementById("modalImage");
-    const noImg = document.getElementById("modalNoImage");
-
-    if (item.imageUrl) {
-        img.src = item.imageUrl;
-        img.classList.remove("hidden");
-        noImg.classList.add("hidden");
-    } else {
-        img.classList.add("hidden");
-        noImg.classList.remove("hidden");
-    }
-
-    const styles = getCategoryStyles(item.category);
-
-    modalCategoryBadge.textContent = styles.badgeLabel;
-    modalCategoryBadge.className = `px-3 py-1 rounded-full text-xs font-bold text-white shadow-lg ${styles.badge}`;
-
-    modalIconContainer.textContent = (item.word || "").charAt(0);
-    modalIconContainer.className = `w-16 h-16 rounded-2xl flex items-center justify-center text-3xl font-bold shadow-lg ${styles.cardColor} ${styles.text}`;
-
-    modalWord.textContent = item.word;
-    modalDescription.textContent = item.description || "";
-
-    if (item.tip) {
-        modalTipContainer.classList.remove("hidden");
-        modalTip.textContent = item.tip;
-    } else {
-        modalTipContainer.classList.add("hidden");
-    }
-
-    /* Youtube Button */
-    if (item.youtubeUrl) {
-        modalYoutubeLink.href = item.youtubeUrl;
-        modalYoutubeLink.className = "bg-red-600 hover:bg-red-700 text-white rounded-xl py-3 flex items-center justify-center gap-2 shadow-md";
-        modalYoutubeText.textContent = "ดูวิดีโอสาธิต";
-    } else {
-        const q = encodeURIComponent("ภาษามือไทย " + item.word);
-        modalYoutubeLink.href = `https://www.youtube.com/results?search_query=${q}`;
-        modalYoutubeLink.className = "bg-slate-100 hover:bg-slate-200 rounded-xl py-3 text-slate-700 flex items-center justify-center gap-2";
-        modalYoutubeText.textContent = "ค้นหาใน YouTube";
-    }
-
-    lucide.createIcons();
-}
-
-function closeModal() {
-    modalOverlay.classList.add("hidden");
-    document.body.style.overflow = "";
-}
-
-function handleModalClick(e) {
-    if (e.target.id === "modalOverlay") closeModal();
-}
-
-/* =========================
-         SEARCH LISTENER
-   ========================= */
-document.getElementById("searchInput").addEventListener("input", e => {
-    searchTerm = e.target.value;
-    renderGrid();
-});
-
-
-/* =========================
-            INIT
-   ========================= */
-renderCategories();
-fetchSignData();
-lucide.createIcons();
-
-
-/* =========================================
-    ส่วน Chatbot AI (Backend)
-   ========================================= */
-const BACKEND_URL = 'https://us-central1-law-ai-14740.cloudfunctions.net/api/chat';
-
-// System Prompt: ผู้เชี่ยวชาญภาษามือไทย
-const SYSTEM_PROMPT = {
-    role: "user",
-    parts: [{ text: "System Instruction: คุณคือ AI ผู้เชี่ยวชาญด้าน 'ภาษามือไทย (TSL)' มีหน้าที่อธิบายลักษณะท่าทาง ความหมาย และไวยากรณ์ของภาษามือไทย (Gloss) ให้กับผู้เริ่มต้นเรียน หรือคนหูหนวก สามารถแปลงประโยคภาษาไทยเป็นลำดับคำในภาษามือ (Gloss) ได้ ตอบด้วยภาษาสุภาพ และเป็นกันเอง" }]
-};
-const SYSTEM_ACK = {
-    role: "model",
-    parts: [{ text: "รับทราบครับ ผมพร้อมช่วยอธิบายและแปลภาษามือไทยแล้วครับ" }]
-};
-
-let chatHistory = [SYSTEM_PROMPT, SYSTEM_ACK];
-
-const chatHistoryEl = document.getElementById('chat-history');
-const userInput = document.getElementById('user-input');
-const sendBtn = document.getElementById('send-btn');
-const newChatBtn = document.getElementById('new-chat-btn');
-const thinkingIndicator = document.getElementById('thinking-indicator');
-
-function addChatBubble(message, isUser = true) {
-    const bubbleType = isUser ? 'user' : 'model';
-    const icon = isUser ? '👤' : '🤖';
-    const bgClass = isUser ? 'bg-[#4f46e5] text-white' : 'bg-white text-gray-800 border border-gray-200';
-    
-    const wrap = document.createElement('div');
-    wrap.className = `flex items-start space-x-2 ${isUser ? 'flex-row-reverse space-x-reverse' : ''}`;
-    
-    const bubble = document.createElement('div');
-    bubble.className = `chat-bubble chat-bubble-${bubbleType} ${bgClass} p-3 rounded-lg max-w-lg relative shadow-sm`;
-    bubble.innerHTML = `<p>${message.replace(/\n/g, '<br>')}</p>`;
-    
-    wrap.innerHTML = `<span class="text-2xl">${icon}</span>`;
-    wrap.appendChild(bubble);
-    
-    chatHistoryEl.appendChild(wrap);
-    chatHistoryEl.scrollTop = chatHistoryEl.scrollHeight;
-}
-
-function addChatError(message) {
-    const w = document.createElement('div');
-    w.className = 'flex justify-center my-2';
-    w.innerHTML = `<span class="bg-red-100 text-red-700 text-xs font-semibold px-3 py-1 rounded-full">${message}</span>`;
-    chatHistoryEl.appendChild(w);
-    chatHistoryEl.scrollTop = chatHistoryEl.scrollHeight;
-}
-
-function setThinking(on) {
-    thinkingIndicator.classList.toggle('hidden', !on);
-    if (on) chatHistoryEl.scrollTop = chatHistoryEl.scrollHeight;
-}
-
-async function handleSend() {
-    const message = (userInput.value || '').trim();
-    if (!message) return;
-
-    addChatBubble(message, true);
-    userInput.value = '';
-    setThinking(true);
-    sendBtn.disabled = true;
-
-    chatHistory.push({ role: "user", parts: [{ text: message }] });
-
-    try {
-        const response = await fetch(BACKEND_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ history: chatHistory }) 
+            setupSearch();
+            setupChat();
         });
 
-        if (!response.ok) {
-            const errData = await response.json();
-            throw new Error(errData.error || `Server error: ${response.status}`);
+        // ================= LOGIC: RENDER & SEARCH ================= //
+        function renderCategories() {
+            const container = document.getElementById('categoryContainer');
+            container.innerHTML = categories.map(c => `
+                <button onclick="filterCategory('${c.id}')" 
+                    class="whitespace-nowrap px-4 py-2 rounded-full border text-sm font-medium transition-all duration-200 flex items-center gap-2
+                    ${activeCategory === c.id 
+                        ? 'bg-slate-800 text-white border-slate-800 shadow-md transform scale-105' 
+                        : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-100'}">
+                    <i data-lucide="${c.icon}" class="w-3.5 h-3.5"></i>
+                    ${c.label}
+                </button>
+            `).join('');
+            lucide.createIcons();
         }
 
-        const data = await response.json(); 
-        const aiReply = data.reply;
+        function filterCategory(id) {
+            activeCategory = id;
+            renderCategories();
+            filterData(document.getElementById('searchInput').value);
+        }
 
-        chatHistory.push({ role: "model", parts: [{ text: aiReply }] });
-        setThinking(false);
-        addChatBubble(aiReply, false);
+        function setupSearch() {
+            const searchInput = document.getElementById('searchInput');
+            let timeout;
+            searchInput.addEventListener('input', (e) => {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => filterData(e.target.value), 300);
+            });
+            searchInput.addEventListener('keyup', (e) => {
+                if (e.key === 'Enter') searchInput.blur();
+            });
+        }
 
-    } catch (err) {
-        console.error("Fetch Error:", err);
-        setThinking(false);
-        addChatError(`เกิดข้อผิดพลาด: ${err.message}`);
-        chatHistory.pop();
-    } finally {
-        sendBtn.disabled = false;
-    }
-}
+        function filterData(query) {
+            const term = query.toLowerCase().trim();
+            const filtered = allSigns.filter(item => {
+                const matchCat = activeCategory === 'all' || item.category === activeCategory;
+                const matchSearch = item.word.includes(term) || (item.description && item.description.includes(term));
+                return matchCat && matchSearch;
+            });
+            renderGrid(filtered);
+        }
 
-sendBtn.addEventListener('click', handleSend);
-userInput.addEventListener('keydown', e => {
-    if (e.key === 'Enter') handleSend();
-});
+        function renderGrid(data) {
+            const grid = document.getElementById('gridContainer');
+            const empty = document.getElementById('emptyState');
 
-// Reset Chat
-newChatBtn.addEventListener('click', () => {
-    chatHistory = [SYSTEM_PROMPT, SYSTEM_ACK];
-    chatHistoryEl.innerHTML = `
-        <div class="flex items-start space-x-2">
-        <span class="text-2xl">🤖</span>
-        <div class="chat-bubble chat-bubble-model bg-white text-gray-800 p-3 rounded-lg max-w-lg relative border border-gray-200 shadow-sm">
-            <p>สวัสดีครับ เริ่มสนทนาเรื่องภาษามือใหม่ได้เลยครับ</p>
-        </div>
-        </div>`;
-    userInput.value = '';
-    setThinking(false);
-});
+            if (data.length === 0) {
+                grid.innerHTML = '';
+                empty.classList.remove('hidden');
+                return;
+            }
 
-// Modal Control
-const fabToggle = document.getElementById('fab-chat-toggle');
-const chatModal = document.getElementById('chatbot-modal');
-const chatbotCloseBtn = document.getElementById('chatbot-close-btn');
+            empty.classList.add('hidden');
+            grid.innerHTML = data.map(item => {
+                const catObj = categories.find(c => c.id === item.category) || categories[0];
+                return `
+                <div onclick="openDetailSheet(${item.id})" class="group bg-white rounded-2xl p-3 border border-slate-100 shadow-sm hover:shadow-md transition active:scale-95 cursor-pointer flex flex-col h-full relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-1 h-full ${catObj.color}"></div>
+                    
+                    <div class="w-full aspect-square rounded-xl bg-slate-100 mb-3 overflow-hidden relative">
+                         ${item.imageUrl 
+                            ? `<img src="${item.imageUrl}" class="w-full h-full object-cover transition duration-500 group-hover:scale-110" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                               <div class="hidden absolute inset-0 items-center justify-center text-slate-300 bg-slate-50"><i data-lucide="image-off"></i></div>`
+                            : `<div class="w-full h-full flex items-center justify-center text-slate-300 font-bold text-4xl select-none bg-slate-50">${item.word.charAt(0)}</div>`
+                         }
+                    </div>
+                    
+                    <div class="flex-1">
+                        <span class="text-[10px] text-slate-400 font-medium bg-slate-50 px-1.5 py-0.5 rounded uppercase tracking-wide border border-slate-100 mb-1 inline-block">
+                            ${catObj.label}
+                        </span>
+                        <h3 class="font-bold text-slate-800 text-lg leading-tight line-clamp-1">${item.word}</h3>
+                    </div>
+                </div>
+                `;
+            }).join('');
+            lucide.createIcons();
+        }
 
-fabToggle.addEventListener('click', () => {
-    chatModal.classList.remove('chatbot-hidden');
-    fabToggle.style.opacity = '0';
-});
-chatbotCloseBtn.addEventListener('click', () => {
-    chatModal.classList.add('chatbot-hidden');
-    fabToggle.style.opacity = '1';
-});
-</script>
+        // ================= UI: DETAIL SHEET ================= //
+        function openDetailSheet(id) {
+            const item = allSigns.find(i => i.id === id);
+            if (!item) return;
+
+            document.getElementById('sheetTitle').textContent = item.word;
+            document.getElementById('sheetDesc').textContent = item.description || "ไม่มีคำอธิบาย";
+            
+            const catObj = categories.find(c => c.id === item.category) || categories[0];
+            document.getElementById('sheetCategory').textContent = catObj.label;
+            
+            const iconEl = document.getElementById('sheetIcon');
+            iconEl.textContent = item.word.charAt(0);
+            iconEl.className = `w-14 h-14 rounded-2xl flex-shrink-0 flex items-center justify-center text-2xl font-bold text-white shadow-lg ${catObj.color}`;
+
+            const imgEl = document.getElementById('sheetImage');
+            const noImgEl = document.getElementById('sheetNoImage');
+            if (item.imageUrl) {
+                imgEl.src = item.imageUrl;
+                imgEl.classList.remove('hidden');
+                noImgEl.classList.add('hidden');
+                imgEl.onerror = () => { imgEl.classList.add('hidden'); noImgEl.classList.remove('hidden'); };
+            } else {
+                imgEl.classList.add('hidden');
+                noImgEl.classList.remove('hidden');
+            }
+
+            const tipBox = document.getElementById('sheetTipBox');
+            if (item.tip) {
+                document.getElementById('sheetTip').textContent = item.tip;
+                tipBox.classList.remove('hidden');
+            } else {
+                tipBox.classList.add('hidden');
+            }
+
+            const ytBtn = document.getElementById('sheetYoutube');
+            if (item.youtubeUrl) {
+                ytBtn.href = item.youtubeUrl;
+                ytBtn.innerHTML = `<i data-lucide="youtube" class="w-5 h-5"></i> ดูวิดีโอสาธิต`;
+            } else {
+                ytBtn.href = `https://www.youtube.com/results?search_query=ภาษามือไทย+${item.word}`;
+                ytBtn.innerHTML = `<i data-lucide="search" class="w-5 h-5"></i> ค้นหาใน YouTube`;
+            }
+            lucide.createIcons();
+
+            document.body.style.overflow = 'hidden';
+            document.getElementById('detailBackdrop').classList.remove('pointer-events-none', 'opacity-0');
+            document.getElementById('detailSheet').classList.add('active');
+        }
+
+        function closeDetailSheet() {
+            document.body.style.overflow = '';
+            document.getElementById('detailBackdrop').classList.add('pointer-events-none', 'opacity-0');
+            document.getElementById('detailSheet').classList.remove('active');
+        }
+
+        // ================= UI: SIMULATED CHAT ================= //
+        const chatModal = document.getElementById('chatModal');
+        const fabChat = document.getElementById('fabChat');
+        
+        fabChat.addEventListener('click', () => toggleChat(true));
+
+        function toggleChat(show) {
+            if (show) {
+                chatModal.classList.remove('translate-y-full');
+                document.getElementById('chatInput').focus();
+            } else {
+                chatModal.classList.add('translate-y-full');
+                document.getElementById('searchInput').blur();
+            }
+        }
+
+        function setupChat() {
+            const input = document.getElementById('chatInput');
+            const sendBtn = document.getElementById('chatSendBtn');
+            const resetBtn = document.getElementById('chatResetBtn');
+            const history = document.getElementById('chatHistory');
+
+            // คำตอบจำลอง (Simulated Responses)
+            const mockResponses = [
+                "ระบบนี้เป็น Demo ครับ ไม่สามารถตอบโต้แบบ AI จริงได้ แต่คุณสามารถค้นหาคำศัพท์ในช่องค้นหาด้านบนได้เลยครับ",
+                "ลองกดที่รูปภาพเพื่อดูรายละเอียดเพิ่มเติม หรือดูวิดีโอสาธิตได้นะครับ",
+                "ภาษามือไทยมีเอกลักษณ์ที่น่าสนใจมากครับ",
+                "สวัสดีครับ ยินดีที่ได้รู้จักครับ"
+            ];
+
+            function addMessage(text, isUser) {
+                const div = document.createElement('div');
+                div.className = `flex gap-3 msg-anim ${isUser ? 'flex-row-reverse' : ''}`;
+                const avatar = isUser ? '👤' : '🤖';
+                const avatarClass = isUser ? 'bg-indigo-600 text-white' : 'bg-indigo-100 text-indigo-700';
+                const bubbleClass = isUser ? 'bg-indigo-600 text-white rounded-tr-none' : 'bg-white border border-slate-200 text-slate-700 rounded-tl-none';
+
+                div.innerHTML = `
+                    <div class="w-8 h-8 rounded-full ${avatarClass} flex items-center justify-center flex-shrink-0 text-sm shadow-sm">${avatar}</div>
+                    <div class="${bubbleClass} p-3 rounded-2xl shadow-sm max-w-[85%] text-sm leading-relaxed">
+                        ${text.replace(/\n/g, '<br>')}
+                    </div>
+                `;
+                history.appendChild(div);
+                history.scrollTo(0, history.scrollHeight);
+            }
+
+            function addLoading() {
+                const div = document.createElement('div');
+                div.id = 'aiLoading';
+                div.className = 'flex gap-3 msg-anim';
+                div.innerHTML = `
+                    <div class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center flex-shrink-0">🤖</div>
+                    <div class="bg-white border border-slate-200 p-3 rounded-2xl rounded-tl-none shadow-sm w-24">
+                        <div class="thinking-bar"></div>
+                    </div>
+                `;
+                history.appendChild(div);
+                history.scrollTo(0, history.scrollHeight);
+            }
+
+            function removeLoading() {
+                const el = document.getElementById('aiLoading');
+                if (el) el.remove();
+            }
+
+            function sendMessage() {
+                const text = input.value.trim();
+                if (!text) return;
+
+                input.value = '';
+                input.style.height = 'auto';
+                addMessage(text, true);
+                addLoading();
+                sendBtn.disabled = true;
+
+                // จำลองความล่าช้าของเครือข่าย (Simulation)
+                setTimeout(() => {
+                    removeLoading();
+                    const randomReply = mockResponses[Math.floor(Math.random() * mockResponses.length)];
+                    addMessage(randomReply, false);
+                    sendBtn.disabled = false;
+                }, 1200);
+            }
+
+            sendBtn.addEventListener('click', sendMessage);
+            resetBtn.addEventListener('click', () => {
+                history.innerHTML = '';
+                addMessage('รีเซ็ตห้องแชทแล้วครับ', false);
+            });
+
+            input.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = (this.scrollHeight) + 'px';
+            });
+        }
+    </script>
 </body>
 </html>
