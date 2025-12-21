@@ -75,8 +75,8 @@
 <body class="text-gray-700 min-h-screen flex flex-col">
 
     <!-- Header -->
-    <header class="bg-white/80 backdrop-blur-md sticky top-0 z-40 shadow-sm border-b border-orange-100">
-        <div class="max-w-6xl mx-auto px-4 py-3 flex flex-col md:flex-row items-center justify-between gap-3">
+    <header class="bg-white/80 backdrop-blur-md sticky top-0 z-40 shadow-sm border-b border-orange-100 h-[72px]">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex flex-col md:flex-row items-center justify-between gap-3 h-full">
             <div class="flex items-center gap-2 md:gap-3 w-full md:w-auto justify-center md:justify-start">
                 <div class="bg-orange-100 p-2 rounded-full text-orange-500">
                     <i data-lucide="hand" class="w-6 h-6 md:w-8 md:h-8"></i>
@@ -85,31 +85,46 @@
             </div>
             
             <!-- Search Bar -->
-            <div class="relative w-full md:w-96">
+            <div class="relative w-full md:w-96 hidden md:block">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <i data-lucide="search" class="w-5 h-5 text-orange-300"></i>
                 </div>
-                <input type="text" id="searchInput" 
-                    class="block w-full pl-10 pr-3 py-2 border-2 border-orange-100 rounded-full leading-5 bg-white placeholder-orange-200 focus:outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-200 transition-all duration-300 cute-font text-sm md:text-base" 
+                <input type="text" id="searchInputDesktop" 
+                    class="block w-full pl-10 pr-3 py-2 border-2 border-orange-100 rounded-full leading-5 bg-white placeholder-orange-200 focus:outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-200 transition-all duration-300 cute-font" 
                     placeholder="ค้นหาคำศัพท์... (เช่น ก ไก่)">
             </div>
         </div>
     </header>
 
+    <!-- Mobile Search Bar (Separate from header to allow sticky category) -->
+    <div class="md:hidden px-4 py-3 bg-white/50 backdrop-blur-sm border-b border-orange-50">
+        <div class="relative w-full">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i data-lucide="search" class="w-5 h-5 text-orange-300"></i>
+            </div>
+            <input type="text" id="searchInputMobile" 
+                class="block w-full pl-10 pr-3 py-2 border-2 border-orange-100 rounded-full leading-5 bg-white placeholder-orange-200 focus:outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-200 transition-all duration-300 cute-font text-sm" 
+                placeholder="ค้นหาคำศัพท์...">
+        </div>
+    </div>
+
     <!-- Main Content -->
-    <main class="flex-grow container mx-auto px-4 py-6 max-w-6xl">
+    <main class="flex-grow container mx-auto px-4 py-4 md:py-6 max-w-6xl relative">
         
         <div class="flex flex-col md:flex-row gap-6">
             
             <!-- Sidebar / Category Menu -->
-            <aside class="w-full md:w-64 flex-shrink-0">
-                <div class="md:sticky md:top-24 z-20">
+            <!-- Mobile: Sticky Top (below header), Desktop: Sticky Sidebar -->
+            <aside class="w-full md:w-64 flex-shrink-0 sticky top-0 md:top-24 z-30 bg-transparent pointer-events-none md:pointer-events-auto">
+                <div class="pointer-events-auto">
+                    <!-- Title (Desktop Only) -->
                     <h3 class="text-lg font-bold text-orange-800 cute-font mb-3 hidden md:block px-2">
                         <i data-lucide="list-filter" class="inline w-4 h-4 mr-1"></i> หมวดหมู่
                     </h3>
                     
-                    <!-- Mobile: Horizontal Scroll, Desktop: Vertical List -->
-                    <div id="categoryMenu" class="flex overflow-x-auto md:flex-col gap-2 pb-2 md:pb-0 hide-scroll snap-x">
+                    <!-- Menu Container -->
+                    <!-- Mobile: Added background/blur/shadow to make it stand out when sticky -->
+                    <div id="categoryMenu" class="flex overflow-x-auto md:flex-col gap-2 pb-2 md:pb-0 hide-scroll snap-x py-2 md:py-0 -mx-4 px-4 md:mx-0 md:px-0 bg-white/90 backdrop-blur-md md:bg-transparent shadow-sm md:shadow-none border-b md:border-none border-orange-100 md:rounded-none">
                         <!-- Categories will be injected here -->
                         <div class="animate-pulse bg-white h-10 w-24 rounded-full md:w-full md:rounded-xl"></div>
                         <div class="animate-pulse bg-white h-10 w-24 rounded-full md:w-full md:rounded-xl"></div>
@@ -119,9 +134,9 @@
             </aside>
 
             <!-- Right Content Area -->
-            <div class="flex-grow min-w-0">
+            <div class="flex-grow min-w-0 pt-2 md:pt-0">
                 
-                <!-- Welcome Message (Desktop Only to save space on mobile) -->
+                <!-- Welcome Message (Desktop Only) -->
                 <div class="hidden md:block text-center mb-6 bg-white/50 p-4 rounded-2xl border border-orange-50">
                     <h2 class="text-xl text-orange-800 cute-font mb-1">ยินดีต้อนรับสู่โลกของการเรียนรู้</h2>
                     <p class="text-gray-500 text-sm">เลือกหมวดหมู่หรือค้นหา แล้วคลิกที่การ์ดเพื่อดูรายละเอียด</p>
@@ -133,7 +148,7 @@
                     <p class="cute-font text-orange-400">กำลังโหลดข้อมูลคำศัพท์จ้า...</p>
                 </div>
 
-                <!-- Cards Grid (Adjusted for 2 columns on mobile) -->
+                <!-- Cards Grid -->
                 <div id="cardGrid" class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
                     <!-- Content will be injected here by JS -->
                 </div>
@@ -174,7 +189,7 @@
                 <div class="relative transform overflow-hidden rounded-3xl bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg modal-content border-4 border-orange-100">
                     
                     <!-- Close Button -->
-                    <button onclick="closeModal()" class="absolute top-4 right-4 bg-orange-100 hover:bg-orange-200 text-orange-500 rounded-full p-1 transition-colors z-10">
+                    <button onclick="closeModal()" class="absolute top-4 right-4 bg-orange-100 hover:bg-orange-200 text-orange-500 rounded-full p-1 transition-colors z-10 shadow-md">
                         <i data-lucide="x" class="w-6 h-6"></i>
                     </button>
 
@@ -216,7 +231,12 @@
 
                             <!-- YouTube Embed -->
                             <div class="w-full rounded-xl overflow-hidden shadow-sm aspect-video bg-black relative">
-                                <iframe id="modalYoutube" class="w-full h-full" src="" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                                <!-- Added allow="fullscreen" for robust browser support -->
+                                <iframe id="modalYoutube" class="w-full h-full" src="" 
+                                    title="YouTube video player" frameborder="0" 
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen" 
+                                    allowfullscreen>
+                                </iframe>
                             </div>
                             
                             <a id="modalYoutubeLink" href="#" target="_blank" class="mt-3 flex items-center gap-2 text-xs text-orange-400 hover:text-orange-600 transition-colors">
@@ -246,7 +266,8 @@
         // Element References
         const cardGrid = document.getElementById('cardGrid');
         const categoryMenu = document.getElementById('categoryMenu');
-        const searchInput = document.getElementById('searchInput');
+        const searchInputDesktop = document.getElementById('searchInputDesktop');
+        const searchInputMobile = document.getElementById('searchInputMobile');
         const noResults = document.getElementById('noResults');
         const loadingState = document.getElementById('loadingState');
         const errorState = document.getElementById('errorState');
@@ -256,7 +277,7 @@
         async function loadData() {
             loadingState.classList.remove('hidden');
             cardGrid.innerHTML = '';
-            categoryMenu.innerHTML = ''; // Clear skeleton
+            categoryMenu.innerHTML = ''; 
             
             try {
                 const response = await fetch('signs500.json');
@@ -264,64 +285,34 @@
                 
                 const rawData = await response.json();
                 
-                // Dictionary สำหรับแปลหมวดหมู่เป็นภาษาไทย
+                // Dictionary for Category Mapping
                 const categoryMap = {
-                    'consonant': 'พยัญชนะ',
-                    'vowel': 'สระ',
-                    'tone': 'วรรณยุกต์',
-                    'number': 'ตัวเลข',
-                    'family': 'ครอบครัว',
-                    'food': 'อาหาร',
-                    'animal': 'สัตว์',
-                    'colors': 'สี',
-                    'color': 'สี',
-                    'place': 'สถานที่',
-                    'vehicle': 'ยานพาหนะ',
-                    'action': 'กริยา/ท่าทาง',
-                    'verb': 'คำกริยา',
-                    'feeling': 'ความรู้สึก',
-                    'emotion': 'อารมณ์',
-                    'body': 'ร่างกาย',
-                    'clothes': 'เสื้อผ้า',
-                    'fruit': 'ผลไม้',
-                    'vegetable': 'ผัก',
-                    'sport': 'กีฬา',
-                    'occupation': 'อาชีพ',
-                    'job': 'อาชีพ',
-                    'day': 'วัน/เดือน/ปี',
-                    'time': 'เวลา',
-                    'province': 'จังหวัด',
-                    'country': 'ประเทศ',
-                    'school': 'โรงเรียน',
-                    'house': 'บ้าน',
-                    'nature': 'ธรรมชาติ',
-                    'adjective': 'คำคุณศัพท์',
-                    'miscellaneous': 'เบ็ดเตล็ด',
-                    'general': 'ทั่วไป',
-                    'other': 'อื่นๆ'
+                    'consonant': 'พยัญชนะ', 'vowel': 'สระ', 'tone': 'วรรณยุกต์',
+                    'number': 'ตัวเลข', 'family': 'ครอบครัว', 'food': 'อาหาร',
+                    'animal': 'สัตว์', 'colors': 'สี', 'color': 'สี',
+                    'place': 'สถานที่', 'vehicle': 'ยานพาหนะ', 'action': 'กริยา/ท่าทาง',
+                    'verb': 'คำกริยา', 'feeling': 'ความรู้สึก', 'emotion': 'อารมณ์',
+                    'body': 'ร่างกาย', 'clothes': 'เสื้อผ้า', 'fruit': 'ผลไม้',
+                    'vegetable': 'ผัก', 'sport': 'กีฬา', 'occupation': 'อาชีพ',
+                    'job': 'อาชีพ', 'day': 'วัน/เดือน/ปี', 'time': 'เวลา',
+                    'province': 'จังหวัด', 'country': 'ประเทศ', 'school': 'โรงเรียน',
+                    'house': 'บ้าน', 'nature': 'ธรรมชาติ', 'adjective': 'คำคุณศัพท์',
+                    'miscellaneous': 'เบ็ดเตล็ด', 'general': 'ทั่วไป', 'other': 'อื่นๆ'
                 };
 
-                // แปลงข้อมูล Category
                 vocabData = rawData.map(item => {
                     const originalCat = (item.category || 'ทั่วไป').toLowerCase().trim();
-                    // ถ้ามีใน Dictionary ให้ใช้ภาษาไทย ถ้าไม่มีให้ใช้ตัวเดิม
                     const mappedCat = categoryMap[originalCat] || item.category || 'ทั่วไป';
-                    
-                    return {
-                        ...item,
-                        category: mappedCat
-                    };
+                    return { ...item, category: mappedCat };
                 });
                 
-                // Extract Unique Categories
                 const uniqueCats = [...new Set(vocabData.map(item => item.category))].sort();
                 categories = ['ทั้งหมด', ...uniqueCats];
                 
                 loadingState.classList.add('hidden');
                 
-                // Init UI
                 renderCategories();
-                filterAndRender(); // Replaces direct renderCards
+                filterAndRender(); 
                 
             } catch (error) {
                 console.error("Error loading JSON:", error);
@@ -355,30 +346,29 @@
         // 4. Set Category Function
         window.setCategory = (cat) => {
             activeCategory = cat;
-            renderCategories(); // Re-render to update active style
+            renderCategories(); 
             filterAndRender();
         };
 
         // 5. Main Filter & Render Logic
         function filterAndRender() {
-            const searchTerm = searchInput.value.toLowerCase();
+            // Check both inputs
+            const termDesktop = searchInputDesktop ? searchInputDesktop.value.toLowerCase() : '';
+            const termMobile = searchInputMobile ? searchInputMobile.value.toLowerCase() : '';
+            const searchTerm = termDesktop || termMobile; // Use whichever has value
             
             const filteredData = vocabData.filter(item => {
-                // Category Filter
                 const matchCategory = activeCategory === 'ทั้งหมด' || (item.category || 'ทั่วไป') === activeCategory;
-                
-                // Search Filter
                 const matchSearch = (item.word && item.word.toLowerCase().includes(searchTerm)) || 
                                     (item.word_en && item.word_en.toLowerCase().includes(searchTerm)) ||
                                     (item.description && item.description.includes(searchTerm));
-                
                 return matchCategory && matchSearch;
             });
 
             renderCards(filteredData);
         }
 
-        // 6. Render Cards (Updated for mobile layout)
+        // 6. Render Cards
         function renderCards(items) {
             cardGrid.innerHTML = '';
             
@@ -427,8 +417,9 @@
             lucide.createIcons();
         }
 
-        // 7. Search Listener
-        searchInput.addEventListener('input', filterAndRender);
+        // 7. Search Listeners
+        if(searchInputDesktop) searchInputDesktop.addEventListener('input', filterAndRender);
+        if(searchInputMobile) searchInputMobile.addEventListener('input', filterAndRender);
 
         // 8. Modal Logic
         function openModal(item) {
@@ -451,11 +442,13 @@
                     const parts = item.youtubeUrl.split('/shorts/');
                     if(parts.length > 1) {
                         const videoId = parts[1].split('?')[0];
-                        embedUrl = `https://www.youtube.com/embed/${videoId}?rel=0&controls=1`;
+                        // Added fs=1 for fullscreen button
+                        embedUrl = `https://www.youtube.com/embed/${videoId}?rel=0&controls=1&fs=1`;
                     }
                 } else if (item.youtubeUrl.includes("watch?v=")) {
                     const videoId = item.youtubeUrl.split('v=')[1].split('&')[0];
-                    embedUrl = `https://www.youtube.com/embed/${videoId}?rel=0&controls=1`;
+                    // Added fs=1 for fullscreen button
+                    embedUrl = `https://www.youtube.com/embed/${videoId}?rel=0&controls=1&fs=1`;
                 }
             }
             document.getElementById('modalYoutube').src = embedUrl;
@@ -476,7 +469,6 @@
             }
         });
 
-        // Initialize
         loadData();
         lucide.createIcons();
     </script>
