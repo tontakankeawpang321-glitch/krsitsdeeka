@@ -1,56 +1,255 @@
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<style>
-  .flag-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 12px;
-    max-width: 800px;
-    margin: auto;
-  }
-  .flag-btn {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 10px;
-    padding: 10px 14px;
-    border-radius: 12px;
-    background: #f9f9f9;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
-    font-weight: bold;
-    font-size: 16px;
-    cursor: pointer;
-    text-decoration: none;
-    color: #333;
-    transition: transform 0.2s, box-shadow 0.2s;
-  }
-  .flag-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-  }
-  .flag-btn img {
-    width: 28px;
-    height: 20px;
-    border-radius: 3px;
-    object-fit: cover;
-  }
-</style>
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Crow Studio - Language Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Anuphan:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --safe-area-bottom: env(safe-area-inset-bottom);
+        }
+        body {
+            font-family: 'Inter', 'Anuphan', sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            min-height: 100vh;
+        }
+        .glass-morphism {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .flag-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .flag-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.1);
+        }
+        #chat-window {
+            height: calc(100% - 130px);
+            scrollbar-width: thin;
+            scrollbar-color: #cbd5e1 transparent;
+        }
+        #chat-window::-webkit-scrollbar {
+            width: 4px;
+        }
+        #chat-window::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 10px;
+        }
+        .chat-bubble-user {
+            border-radius: 18px 18px 2px 18px;
+        }
+        .chat-bubble-bot {
+            border-radius: 18px 18px 18px 2px;
+        }
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .animate-slide-up {
+            animation: slideUp 0.4s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
 
+    <!-- Header Section -->
+    <header class="max-w-4xl mx-auto text-center mb-10 mt-6">
+        <h1 class="text-3xl md:text-4xl font-bold text-slate-800 mb-2">Language Learning</h1>
+        <p class="text-slate-500 uppercase tracking-widest text-sm font-semibold">Select your destination</p>
+    </header>
 
-<div class="flag-grid">
-  <a href="https://sites.google.com/view/pasa30one/%E0%B8%AD%E0%B9%80%E0%B8%A1%E0%B8%A3%E0%B8%81%E0%B8%B2-us" target="_blank" class="flag-btn"><img src="https://flagcdn.com/w40/us.png">US</a>
-  <a href="https://sites.google.com/view/pasa30one/%E0%B8%A0%E0%B8%B2%E0%B8%A9%E0%B8%B2%E0%B8%AD%E0%B8%87%E0%B8%81%E0%B8%A4%E0%B8%A9-uk" class="flag-btn"><img src="https://flagcdn.com/w40/gb.png">UK</a>
-  <a href="https://sites.google.com/view/pasa30one/%E0%B8%A0%E0%B8%B2%E0%B8%A9%E0%B8%B2%E0%B8%88%E0%B8%99-ch" target="_blank" class="flag-btn"><img src="https://flagcdn.com/w40/cn.png">Ch</a>
-  <a href="https://sites.google.com/view/pasa30one/%E0%B8%9E%E0%B8%A1%E0%B8%B2-ma" target="_blank" class="flag-btn"><img src="https://flagcdn.com/w40/mm.png">Ma</a>
-  <a href="https://sites.google.com/view/pasa30one/%E0%B8%A0%E0%B8%B2%E0%B8%A9%E0%B8%B2%E0%B8%8D%E0%B8%9B%E0%B8%99-jp" target="_blank" class="flag-btn"><img src="https://flagcdn.com/w40/jp.png">Jp</a>
-  <a href="https://sites.google.com/view/pasa30one/%E0%B8%A0%E0%B8%B2%E0%B8%A9%E0%B8%B2%E0%B9%80%E0%B8%81%E0%B8%B2%E0%B8%AB%E0%B8%A5-ko" target="_blank" class="flag-btn"><img src="https://flagcdn.com/w40/kr.png">Ko</a>
-  <a href="https://sites.google.com/view/pasa30one/%E0%B8%81%E0%B8%A1%E0%B8%9E%E0%B8%8A%E0%B8%B2-kom" target="_blank" class="flag-btn"><img src="https://flagcdn.com/w40/kh.png">Kom</a>
-  <a href="https://sites.google.com/view/pasa30one/%E0%B8%A0%E0%B8%B2%E0%B8%A9%E0%B8%B2%E0%B9%80%E0%B8%A7%E0%B8%A2%E0%B8%94%E0%B8%99%E0%B8%B2%E0%B8%A1-vein" target="_blank" class="flag-btn"><img src="https://flagcdn.com/w40/vn.png">Vein</a>
-  <a href="https://sites.google.com/view/pasa30one/%E0%B8%A0%E0%B8%B2%E0%B8%A9%E0%B8%B2%E0%B8%A3%E0%B8%AA%E0%B9%80%E0%B8%8B%E0%B8%A2-rus" target="_blank" class="flag-btn"><img src="https://flagcdn.com/w40/ru.png">Rus</a>
-  <a href="https://sites.google.com/view/pasa30one/%E0%B8%A0%E0%B8%B2%E0%B8%A9%E0%B8%B2%E0%B9%80%E0%B8%A2%E0%B8%AD%E0%B8%A3%E0%B8%A1%E0%B8%99-ge" target="_blank" class="flag-btn"><img src="https://flagcdn.com/w40/de.png">Ge</a>
-  <a href="https://sites.google.com/view/pasa30one/%E0%B8%A0%E0%B8%B2%E0%B8%A9%E0%B8%B2%E0%B8%AA%E0%B9%80%E0%B8%9B%E0%B8%99-sp" target="_blank" class="flag-btn"><img src="https://flagcdn.com/w40/es.png">Spain</a>
-</div>
-<div><br><br><br>
-<center><footer>
-  © 2025 Crow Studio • FreeToLearn
-</footer> </center>
-</div>
+    <!-- Flag Grid Section -->
+    <main class="max-w-4xl mx-auto mb-20">
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+            <a href="https://sites.google.com/view/pasa30one/%E0%B8%AD%E0%B9%80%E0%B8%A1%E0%B8%A3%E0%B8%81%E0%B8%B2-us" target="_blank" class="flag-card glass-morphism p-4 rounded-2xl flex items-center space-x-3 group">
+                <img src="https://flagcdn.com/w80/us.png" class="w-10 h-7 rounded shadow-sm object-cover" alt="US">
+                <span class="font-bold text-slate-700 group-hover:text-blue-600">US</span>
+            </a>
+            <a href="https://sites.google.com/view/pasa30one/%E0%B8%A0%E0%B8%B2%E0%B8%A9%E0%B8%B2%E0%B8%AD%E0%B8%87%E0%B8%81%E0%B8%A4%E0%B8%A9-uk" target="_blank" class="flag-card glass-morphism p-4 rounded-2xl flex items-center space-x-3 group">
+                <img src="https://flagcdn.com/w80/gb.png" class="w-10 h-7 rounded shadow-sm object-cover" alt="UK">
+                <span class="font-bold text-slate-700 group-hover:text-blue-600">UK</span>
+            </a>
+            <a href="https://sites.google.com/view/pasa30one/%E0%B8%A0%E0%B8%B2%E0%B8%A9%E0%B8%B2%E0%B8%88%E0%B8%99-ch" target="_blank" class="flag-card glass-morphism p-4 rounded-2xl flex items-center space-x-3 group">
+                <img src="https://flagcdn.com/w80/cn.png" class="w-10 h-7 rounded shadow-sm object-cover" alt="China">
+                <span class="font-bold text-slate-700 group-hover:text-blue-600">CH</span>
+            </a>
+            <a href="https://sites.google.com/view/pasa30one/%E0%B8%9E%E0%B8%A1%E0%B8%B2-ma" target="_blank" class="flag-card glass-morphism p-4 rounded-2xl flex items-center space-x-3 group">
+                <img src="https://flagcdn.com/w80/mm.png" class="w-10 h-7 rounded shadow-sm object-cover" alt="Myanmar">
+                <span class="font-bold text-slate-700 group-hover:text-blue-600">MA</span>
+            </a>
+            <a href="https://sites.google.com/view/pasa30one/%E0%B8%A0%E0%B8%B2%E0%B8%A9%E0%B8%B2%E0%B8%8D%E0%B8%9B%E0%B8%99-jp" target="_blank" class="flag-card glass-morphism p-4 rounded-2xl flex items-center space-x-3 group">
+                <img src="https://flagcdn.com/w80/jp.png" class="w-10 h-7 rounded shadow-sm object-cover" alt="Japan">
+                <span class="font-bold text-slate-700 group-hover:text-blue-600">JP</span>
+            </a>
+            <a href="https://sites.google.com/view/pasa30one/%E0%B8%A0%E0%B8%B2%E0%B8%A9%E0%B8%B2%E0%B9%80%E0%B8%A1%E0%B8%A3%E0%B8%81%E0%B8%B2-us" target="_blank" class="flag-card glass-morphism p-4 rounded-2xl flex items-center space-x-3 group">
+                <img src="https://flagcdn.com/w80/kr.png" class="w-10 h-7 rounded shadow-sm object-cover" alt="Korea">
+                <span class="font-bold text-slate-700 group-hover:text-blue-600">KO</span>
+            </a>
+            <a href="https://sites.google.com/view/pasa30one/%E0%B8%81%E0%B8%A1%E0%B8%9E%E0%B8%8A%E0%B8%B2-kom" target="_blank" class="flag-card glass-morphism p-4 rounded-2xl flex items-center space-x-3 group">
+                <img src="https://flagcdn.com/w80/kh.png" class="w-10 h-7 rounded shadow-sm object-cover" alt="Cambodia">
+                <span class="font-bold text-slate-700 group-hover:text-blue-600">KOM</span>
+            </a>
+            <a href="https://sites.google.com/view/pasa30one/%E0%B8%A0%E0%B8%B2%E0%B8%A9%E0%B8%B2%E0%B9%80%E0%B8%A7%E0%B8%A2%E0%B8%94%E0%B8%99%E0%B8%B2%E0%B8%A1-vein" target="_blank" class="flag-card glass-morphism p-4 rounded-2xl flex items-center space-x-3 group">
+                <img src="https://flagcdn.com/w80/vn.png" class="w-10 h-7 rounded shadow-sm object-cover" alt="Vietnam">
+                <span class="font-bold text-slate-700 group-hover:text-blue-600">VEIN</span>
+            </a>
+            <a href="https://sites.google.com/view/pasa30one/%E0%B8%A0%E0%B8%B2%E0%B8%A9%E0%B8%B2%E0%B8%A3%E0%B8%AA%E0%B9%80%E0%B8%8B%E0%B8%A2-rus" target="_blank" class="flag-card glass-morphism p-4 rounded-2xl flex items-center space-x-3 group">
+                <img src="https://flagcdn.com/w80/ru.png" class="w-10 h-7 rounded shadow-sm object-cover" alt="Russia">
+                <span class="font-bold text-slate-700 group-hover:text-blue-600">RUS</span>
+            </a>
+            <a href="https://sites.google.com/view/pasa30one/%E0%B8%A0%E0%B8%B2%E0%B8%A9%E0%B8%B2%E0%B9%80%E0%B8%A2%E0%B8%AD%E0%B8%A3%E0%B8%A1%E0%B8%99-ge" target="_blank" class="flag-card glass-morphism p-4 rounded-2xl flex items-center space-x-3 group">
+                <img src="https://flagcdn.com/w80/de.png" class="w-10 h-7 rounded shadow-sm object-cover" alt="Germany">
+                <span class="font-bold text-slate-700 group-hover:text-blue-600">GE</span>
+            </a>
+            <a href="https://sites.google.com/view/pasa30one/%E0%B8%A0%E0%B8%B2%E0%B8%A9%E0%B8%B2%E0%B8%AA%E0%B9%80%E0%B8%9B%E0%B8%99-sp" target="_blank" class="flag-card glass-morphism p-4 rounded-2xl flex items-center space-x-3 group">
+                <img src="https://flagcdn.com/w80/es.png" class="w-10 h-7 rounded shadow-sm object-cover" alt="Spain">
+                <span class="font-bold text-slate-700 group-hover:text-blue-600 text-sm">SPAIN</span>
+            </a>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="max-w-4xl mx-auto text-center py-6 text-slate-400 text-sm">
+        <p>© 2025 Crow Studio • FreeToLearn</p>
+    </footer>
+
+    <!-- Floating Chatbot UI -->
+    <div id="chat-widget" class="fixed bottom-6 right-6 z-50 flex flex-col items-end">
+        <!-- Chat Window -->
+        <div id="chat-container" class="hidden glass-morphism w-[90vw] sm:w-[380px] h-[500px] mb-4 rounded-3xl shadow-2xl flex flex-col overflow-hidden animate-slide-up">
+            <!-- Header -->
+            <div class="bg-blue-600 p-4 flex items-center justify-between text-white">
+                <div class="flex items-center space-x-2">
+                    <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                    <span class="font-semibold">Crow Assistant AI</span>
+                </div>
+                <button onclick="toggleChat()" class="hover:bg-blue-700 p-1 rounded">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            
+            <!-- Messages -->
+            <div id="chat-window" class="flex-1 p-4 overflow-y-auto bg-slate-50/50 space-y-4">
+                <div class="flex flex-col items-start">
+                    <div class="chat-bubble-bot bg-white text-slate-700 p-3 shadow-sm text-sm max-w-[85%] border border-slate-100">
+                        สวัสดีครับ! ผมคือ AI ผู้ช่วยจาก Crow Studio มีอะไรให้ช่วยเกี่ยวกับการเรียนภาษาไหมครับ?
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input -->
+            <div class="p-3 border-t border-slate-100 bg-white">
+                <div class="flex items-center space-x-2 bg-slate-100 p-2 rounded-2xl">
+                    <input type="text" id="user-input" placeholder="พิมพ์คำถามของคุณ..." class="bg-transparent flex-1 outline-none text-sm px-2 py-1 text-slate-700">
+                    <button id="send-btn" class="bg-blue-600 text-white p-2 rounded-xl hover:bg-blue-700 transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- FAB Button -->
+        <button id="chat-fab" onclick="toggleChat()" class="bg-blue-600 text-white p-4 rounded-full shadow-lg hover:scale-110 transition-transform active:scale-95 flex items-center justify-center">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
+        </button>
+    </div>
+
+    <script>
+        const chatContainer = document.getElementById('chat-container');
+        const chatWindow = document.getElementById('chat-window');
+        const userInput = document.getElementById('user-input');
+        const sendBtn = document.getElementById('send-btn');
+        const apiKey = ""; // แพลตฟอร์มจะจัดเตรียมคีย์ให้ในสภาพแวดล้อมรันไทม์
+        
+        // สถานะการเปิด/ปิด
+        let isOpen = false;
+
+        function toggleChat() {
+            isOpen = !isOpen;
+            chatContainer.classList.toggle('hidden', !isOpen);
+            if (isOpen) userInput.focus();
+        }
+
+        // ฟังก์ชันส่งข้อความพร้อม Exponential Backoff
+        async function fetchAIResponse(message, retries = 5, delay = 1000) {
+            const systemPrompt = "คุณคือผู้ช่วย AI ของ Crow Studio เว็บไซต์เรียนภาษาฟรี คุณชื่อว่า Crow AI ตอบคำถามอย่างเป็นมิตร กระชับ และช่วยเหลือผู้ใช้ในเรื่องการเรียนภาษา";
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: message }] }],
+                        systemInstruction: { parts: [{ text: systemPrompt }] }
+                    })
+                });
+
+                if (!response.ok) {
+                    if (response.status === 429 && retries > 0) {
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        return fetchAIResponse(message, retries - 1, delay * 2);
+                    }
+                    throw new Error('API request failed');
+                }
+
+                const data = await response.json();
+                return data.candidates?.[0]?.content?.parts?.[0]?.text || "ขออภัยครับ ผมไม่สามารถประมวลผลคำตอบได้ในขณะนี้";
+            } catch (error) {
+                if (retries > 0) {
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    return fetchAIResponse(message, retries - 1, delay * 2);
+                }
+                return "ขออภัยครับ เกิดข้อผิดพลาดในการเชื่อมต่อ กรุณาลองใหม่ภายหลัง";
+            }
+        }
+
+        function appendMessage(text, role) {
+            const div = document.createElement('div');
+            div.className = `flex flex-col ${role === 'user' ? 'items-end' : 'items-start'}`;
+            
+            const bubble = document.createElement('div');
+            bubble.className = role === 'user' 
+                ? 'chat-bubble-user bg-blue-600 text-white p-3 shadow-sm text-sm max-w-[85%]' 
+                : 'chat-bubble-bot bg-white text-slate-700 p-3 shadow-sm text-sm max-w-[85%] border border-slate-100';
+            
+            bubble.textContent = text;
+            div.appendChild(bubble);
+            chatWindow.appendChild(div);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+
+        async function handleSend() {
+            const text = userInput.value.trim();
+            if (!text) return;
+
+            appendMessage(text, 'user');
+            userInput.value = '';
+            
+            // แสดงสถานะกำลังพิมพ์
+            const loadingId = 'loading-' + Date.now();
+            const loadingDiv = document.createElement('div');
+            loadingDiv.id = loadingId;
+            loadingDiv.className = 'flex flex-col items-start';
+            loadingDiv.innerHTML = `<div class="chat-bubble-bot bg-slate-200 text-slate-500 p-2 text-xs italic animate-pulse">Crow กำลังพิมพ์...</div>`;
+            chatWindow.appendChild(loadingDiv);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+
+            const aiResponse = await fetchAIResponse(text);
+            
+            // ลบสถานะกำลังพิมพ์และเพิ่มคำตอบจริง
+            document.getElementById(loadingId).remove();
+            appendMessage(aiResponse, 'bot');
+        }
+
+        sendBtn.addEventListener('click', handleSend);
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleSend();
+        });
+    </script>
+</body>
+</html>
