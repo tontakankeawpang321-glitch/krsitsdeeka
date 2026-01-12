@@ -2,186 +2,326 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>รวมคีย์ลัดคอมพิวเตอร์ (Keyboard Shortcuts)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Shortcuts TH - รวมคีย์ลัดคอมพิวเตอร์</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Kanit', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#2563eb',
+                        primaryHover: '#1d4ed8',
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
         body {
             font-family: 'Kanit', sans-serif;
-            background-color: #f3f4f6;
+            background-color: #f8fafc;
+            /* Subtle dot pattern background */
+            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+            background-size: 24px 24px;
         }
-        
-        /* Keycap Style */
+
+        /* Modern Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* Glassmorphism Utilities */
+        .glass {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        /* 3D Keycap Style */
         .kbd-key {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            min-width: 1.5rem;
-            padding: 0.25rem 0.5rem;
-            margin: 0 0.1rem;
-            background: #ffffff;
+            min-width: 1.75rem;
+            height: 1.75rem;
+            padding: 0 0.4rem;
+            margin: 0 0.15rem;
+            background: linear-gradient(to bottom, #ffffff, #f3f4f6);
             border: 1px solid #d1d5db;
             border-bottom-width: 3px;
-            border-radius: 0.375rem;
-            font-family: monospace;
-            font-size: 0.875rem;
-            font-weight: 600;
+            border-radius: 0.5rem;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 0.75rem;
+            font-weight: 700;
             color: #374151;
-            transition: all 0.1s;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+            user-select: none;
         }
         
         .kbd-key:active {
             border-bottom-width: 1px;
             transform: translateY(2px);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
         }
 
+        /* Category Buttons */
+        .category-btn {
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
         .category-btn.active {
             background-color: #2563eb;
             color: white;
             border-color: #2563eb;
+            box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.3);
         }
 
+        /* Horizontal Scroll for Mobile Categories */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Card Hover Effect */
         .program-card {
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
         }
-        
         .program-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.1);
         }
 
-        /* Chat Widget Animations */
+        /* Chat Widget Animation */
         .chat-enter {
-            animation: slideIn 0.3s ease-out forwards;
+            animation: slideUpFade 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        @keyframes slideUpFade {
+            from { opacity: 0; transform: translateY(20px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
         }
 
-        /* Scrollbar styling */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #f1f1f1; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        /* Pulse Animation for Chat Button */
+        @keyframes pulse-ring {
+            0% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(37, 99, 235, 0); }
+            100% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(37, 99, 235, 0); }
+        }
+        .chat-btn-pulse::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0; right: 0; bottom: 0;
+            border-radius: 50%;
+            animation: pulse-ring 2s infinite;
+            z-index: -1;
+        }
     </style>
 </head>
-<body class="text-slate-800 relative min-h-screen">
+<body class="text-slate-800 relative min-h-screen pb-24">
 
-    <nav class="bg-white shadow-sm sticky top-0 z-50">
+    <!-- Navbar -->
+    <nav class="glass border-b border-slate-200 sticky top-0 z-40 w-full transition-all duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
-                <div class="flex items-center gap-2">
-                    <i data-lucide="keyboard" class="w-8 h-8 text-blue-600"></i>
-                    <h1 class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">Shortcuts TH</h1>
+                <!-- Logo -->
+                <div class="flex items-center gap-2.5 group cursor-pointer" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+                    <div class="bg-blue-600 text-white p-2 rounded-xl shadow-lg shadow-blue-500/30 transition-transform group-hover:rotate-6">
+                        <i data-lucide="keyboard" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold tracking-tight text-slate-900 leading-none">Shortcuts TH</h1>
+                        <span class="text-xs text-blue-600 font-medium">รวมคีย์ลัดน่ารู้</span>
+                    </div>
                 </div>
                 
-                <div class="flex bg-slate-100 p-1 rounded-lg">
-                    <button onclick="setOS('windows')" id="btn-win" class="px-3 py-1 rounded-md text-sm font-medium transition-colors flex items-center gap-1 active">
-                        <i data-lucide="monitor" class="w-4 h-4"></i> Win
+                <!-- OS Toggle -->
+                <div class="flex bg-slate-100/80 p-1.5 rounded-xl border border-slate-200">
+                    <button onclick="setOS('windows')" id="btn-win" class="px-3 py-1.5 rounded-lg text-sm font-medium transition-all flex items-center gap-1.5 active shadow-sm bg-white text-blue-600">
+                        <i data-lucide="monitor" class="w-4 h-4"></i> <span class="hidden sm:inline">Windows</span><span class="sm:hidden">Win</span>
                     </button>
-                    <button onclick="setOS('mac')" id="btn-mac" class="px-3 py-1 rounded-md text-sm font-medium transition-colors flex items-center gap-1 text-slate-500">
-                        <i data-lucide="command" class="w-4 h-4"></i> Mac
+                    <button onclick="setOS('mac')" id="btn-mac" class="px-3 py-1.5 rounded-lg text-sm font-medium transition-all flex items-center gap-1.5 text-slate-500 hover:text-slate-700">
+                        <i data-lucide="command" class="w-4 h-4"></i> <span class="hidden sm:inline">MacOS</span><span class="sm:hidden">Mac</span>
                     </button>
                 </div>
             </div>
         </div>
     </nav>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         
-        <div class="mb-8 space-y-4">
-            <div class="relative max-w-2xl mx-auto">
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <i data-lucide="search" class="w-5 h-5 text-slate-400"></i>
+        <!-- Search & Filter Section -->
+        <div class="space-y-6">
+            <!-- Search Bar -->
+            <div class="relative max-w-3xl mx-auto group">
+                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none transition-colors group-focus-within:text-blue-500 text-slate-400">
+                    <i data-lucide="search" class="w-5 h-5"></i>
                 </div>
                 <input type="text" id="searchInput" 
-                    class="block w-full pl-10 pr-3 py-4 border border-slate-200 rounded-xl leading-5 bg-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm text-lg" 
-                    placeholder="ค้นหาโปรแกรม (เช่น Excel, Photoshop) หรือ คำสั่ง (เช่น วาง, แคปจอ)...">
+                    class="block w-full pl-11 pr-4 py-4 border border-slate-200 rounded-2xl leading-5 bg-white placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 shadow-sm transition-all text-lg" 
+                    placeholder="ค้นหาโปรแกรม (เช่น Excel, Chrome) หรือคำสั่ง (เช่น แคปจอ, วาง)...">
+                <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                    <span class="text-xs text-slate-400 border border-slate-200 rounded px-1.5 py-0.5 hidden sm:block">Ctrl + K</span>
+                </div>
             </div>
 
-            <div class="flex flex-wrap justify-center gap-2" id="categoryContainer">
-                <button onclick="filterCategory('all')" class="category-btn active px-4 py-2 rounded-full border border-slate-200 bg-white text-slate-600 text-sm font-medium hover:bg-slate-50 transition-colors shadow-sm">ทั้งหมด</button>
-                <button onclick="filterCategory('general')" class="category-btn px-4 py-2 rounded-full border border-slate-200 bg-white text-slate-600 text-sm font-medium hover:bg-slate-50 transition-colors shadow-sm">ทั่วไป/ระบบ</button>
-                <button onclick="filterCategory('office')" class="category-btn px-4 py-2 rounded-full border border-slate-200 bg-white text-slate-600 text-sm font-medium hover:bg-slate-50 transition-colors shadow-sm">งานเอกสาร</button>
-                <button onclick="filterCategory('browser')" class="category-btn px-4 py-2 rounded-full border border-slate-200 bg-white text-slate-600 text-sm font-medium hover:bg-slate-50 transition-colors shadow-sm">เบราว์เซอร์</button>
-                <button onclick="filterCategory('design')" class="category-btn px-4 py-2 rounded-full border border-slate-200 bg-white text-slate-600 text-sm font-medium hover:bg-slate-50 transition-colors shadow-sm">กราฟิก & ตัดต่อ</button>
-                <button onclick="filterCategory('dev')" class="category-btn px-4 py-2 rounded-full border border-slate-200 bg-white text-slate-600 text-sm font-medium hover:bg-slate-50 transition-colors shadow-sm">เขียนโปรแกรม</button>
+            <!-- Categories -->
+            <div class="flex sm:flex-wrap sm:justify-center gap-2 overflow-x-auto hide-scrollbar pb-2 px-1 -mx-4 sm:mx-0 sm:px-0 scroll-pl-4">
+                <div class="w-4 sm:hidden flex-shrink-0"></div> <!-- Spacer for mobile -->
+                <button onclick="filterCategory('all')" class="category-btn active flex-shrink-0 px-5 py-2 rounded-full border border-slate-200 bg-white text-slate-600 text-sm font-medium hover:bg-slate-50">
+                    <i class="inline-block w-2 h-2 rounded-full bg-slate-400 mr-2 mb-0.5"></i>ทั้งหมด
+                </button>
+                <button onclick="filterCategory('general')" class="category-btn flex-shrink-0 px-5 py-2 rounded-full border border-slate-200 bg-white text-slate-600 text-sm font-medium hover:bg-slate-50">
+                    💻 ทั่วไป/ระบบ
+                </button>
+                <button onclick="filterCategory('office')" class="category-btn flex-shrink-0 px-5 py-2 rounded-full border border-slate-200 bg-white text-slate-600 text-sm font-medium hover:bg-slate-50">
+                    📝 งานเอกสาร
+                </button>
+                <button onclick="filterCategory('browser')" class="category-btn flex-shrink-0 px-5 py-2 rounded-full border border-slate-200 bg-white text-slate-600 text-sm font-medium hover:bg-slate-50">
+                    🌐 เบราว์เซอร์
+                </button>
+                <button onclick="filterCategory('design')" class="category-btn flex-shrink-0 px-5 py-2 rounded-full border border-slate-200 bg-white text-slate-600 text-sm font-medium hover:bg-slate-50">
+                    🎨 กราฟิก
+                </button>
+                <button onclick="filterCategory('dev')" class="category-btn flex-shrink-0 px-5 py-2 rounded-full border border-slate-200 bg-white text-slate-600 text-sm font-medium hover:bg-slate-50">
+                    👨‍💻 เขียนโปรแกรม
+                </button>
+                <div class="w-4 sm:hidden flex-shrink-0"></div> <!-- Spacer for mobile -->
             </div>
         </div>
 
-        <div id="shortcutsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+        <!-- Shortcuts Grid -->
+        <div id="shortcutsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
+            <!-- Grid Items will be injected here -->
+        </div>
 
-        <div id="emptyState" class="hidden text-center py-12">
-            <i data-lucide="frown" class="w-16 h-16 mx-auto text-slate-300 mb-4"></i>
-            <h3 class="text-lg font-medium text-slate-900">ไม่พบข้อมูลที่ค้นหา</h3>
-            <p class="text-slate-500">ลองใช้คำค้นหาอื่น หรือตรวจสอบตัวสะกด</p>
+        <!-- Empty State -->
+        <div id="emptyState" class="hidden text-center py-20">
+            <div class="bg-slate-100 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
+                <i data-lucide="search-x" class="w-10 h-10 text-slate-400"></i>
+            </div>
+            <h3 class="text-xl font-semibold text-slate-900 mb-1">ไม่พบข้อมูลที่ค้นหา</h3>
+            <p class="text-slate-500">ลองใช้คำค้นหาอื่น หรือเปลี่ยนหมวดหมู่ดูนะครับ</p>
         </div>
     </main>
 
-    <footer class="bg-white border-t border-slate-200 mt-12 py-8">
-        <div class="max-w-7xl mx-auto px-4 text-center text-slate-500 text-sm">
-            <p>รวมคีย์ลัดเพื่อการทำงานที่รวดเร็วขึ้น | Designed for Productivity</p>
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 mt-12 py-10">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <div class="flex justify-center items-center gap-2 mb-4">
+                <i data-lucide="keyboard" class="w-5 h-5 text-blue-600"></i>
+                <span class="font-bold text-slate-800">Shortcuts TH</span>
+            </div>
+            <p class="text-slate-500 text-sm">รวมคีย์ลัดเพื่อการทำงานที่รวดเร็วขึ้น | Designed for Productivity</p>
         </div>
     </footer>
 
-    <button onclick="toggleChat()" class="fixed bottom-6 right-6 w-14 h-14 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110 z-50">
-        <i data-lucide="message-square" class="w-6 h-6"></i>
-    </button>
-
-    <div id="chatWidget" class="fixed bottom-24 right-6 w-80 md:w-96 bg-white rounded-2xl shadow-2xl border border-slate-100 hidden flex-col z-50 overflow-hidden" style="height: 500px; max-height: 80vh;">
-        <div class="bg-blue-600 p-4 flex justify-between items-center text-white">
-            <div class="flex items-center gap-2">
-                <i data-lucide="bot" class="w-5 h-5"></i>
-                <h3 class="font-medium">AI Assistant</h3>
+    <!-- Chat Widget Container -->
+    <div class="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 flex flex-col items-end gap-4">
+        
+        <!-- Chat Window -->
+        <div id="chatWidget" class="hidden w-[90vw] sm:w-96 bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden flex-col transition-all duration-300 origin-bottom-right" 
+             style="height: 550px; max-height: 80vh;">
+            
+            <!-- Chat Header -->
+            <div class="bg-gradient-to-r from-blue-600 to-indigo-600 p-4 flex justify-between items-center text-white shadow-md">
+                <div class="flex items-center gap-3">
+                    <div class="bg-white/20 p-1.5 rounded-lg backdrop-blur-sm">
+                        <i data-lucide="bot" class="w-5 h-5 text-white"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-sm">AI Assistant</h3>
+                        <p class="text-xs text-blue-100 flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></span> ออนไลน์
+                        </p>
+                    </div>
+                </div>
+                <button onclick="toggleChat()" class="hover:bg-white/20 p-2 rounded-lg transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
             </div>
-            <button onclick="toggleChat()" class="hover:bg-blue-700 p-1 rounded">
-                <i data-lucide="x" class="w-5 h-5"></i>
-            </button>
-        </div>
 
-        <div id="chatMessages" class="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50">
-            <div class="flex justify-start">
-                <div class="bg-white border border-slate-200 text-slate-700 rounded-2xl rounded-tl-none py-2 px-3 text-sm shadow-sm max-w-[85%]">
-                    สวัสดีครับ! มีอะไรให้ผมช่วยเกี่ยวกับคีย์ลัด ไหมครับ?
+            <!-- Chat Messages -->
+            <div id="chatMessages" class="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50">
+                <div class="flex justify-center py-2">
+                    <span class="text-xs text-slate-400 bg-slate-100 px-3 py-1 rounded-full">วันนี้</span>
+                </div>
+                <div class="flex justify-start">
+                    <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center mr-2 flex-shrink-0 border border-blue-200">
+                        <i data-lucide="bot" class="w-4 h-4 text-blue-600"></i>
+                    </div>
+                    <div class="bg-white border border-slate-200 text-slate-700 rounded-2xl rounded-tl-none py-2.5 px-4 text-sm shadow-sm max-w-[80%]">
+                        สวัสดีครับ! 👋 ผมคือผู้ช่วย AI <br>มีอะไรให้ผมช่วยหาคีย์ลัด หรือสอบถามข้อมูลเพิ่มเติมไหมครับ?
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Input -->
+            <div class="p-3 bg-white border-t border-slate-100">
+                <form onsubmit="sendMessage(event)" class="relative flex items-end gap-2">
+                    <div class="flex-1 relative">
+                        <input type="text" id="chatInputText" 
+                            class="w-full border border-slate-200 rounded-2xl pl-4 pr-10 py-3 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 bg-slate-50 focus:bg-white transition-colors"
+                            placeholder="พิมพ์คำถามที่นี่..." autocomplete="off">
+                    </div>
+                    <button type="submit" id="sendBtn" class="bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-xl transition-all shadow-md shadow-blue-500/30 disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0 hover:scale-105 active:scale-95">
+                        <i data-lucide="send" class="w-5 h-5"></i>
+                    </button>
+                </form>
+                <div class="text-center mt-2">
+                    <p class="text-[10px] text-slate-400">AI อาจแสดงข้อมูลคลาดเคลื่อนได้</p>
                 </div>
             </div>
         </div>
 
-        <div class="p-3 bg-white border-t border-slate-100">
-            <form onsubmit="sendMessage(event)" class="flex gap-2">
-                <input type="text" id="chatInputText" 
-                    class="flex-1 border border-slate-200 rounded-full px-4 py-2 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                    placeholder="พิมพ์ข้อความ..." autocomplete="off">
-                <button type="submit" id="sendBtn" class="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-                    <i data-lucide="send" class="w-4 h-4"></i>
-                </button>
-            </form>
-        </div>
+        <!-- Toggle Button -->
+        <button onclick="toggleChat()" class="chat-btn-pulse w-14 h-14 bg-gradient-to-br from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-full shadow-xl flex items-center justify-center transition-all hover:scale-110 active:scale-95 z-50 group">
+            <i data-lucide="message-square" class="w-6 h-6 group-hover:hidden transition-all"></i>
+            <i data-lucide="chevron-up" class="w-7 h-7 hidden group-hover:block transition-all"></i>
+        </button>
     </div>
 
     <script>
-        // --- Data Source (ข้อมูลเดิม) ---
+        // --- Data Source ---
         const shortcutsData = [
-            { id: 1, program: "Windows / System", icon: "monitor", category: "general", color: "blue", shortcuts: [ { action: "คัดลอก (Copy)", keys: ["Ctrl", "C"] }, { action: "วาง (Paste)", keys: ["Ctrl", "V"] }, { action: "ตัด (Cut)", keys: ["Ctrl", "X"] }, { action: "ย้อนกลับ (Undo)", keys: ["Ctrl", "Z"] }, { action: "ทำซ้ำ (Redo)", keys: ["Ctrl", "Y"] }, { action: "เลือกทั้งหมด", keys: ["Ctrl", "A"] }, { action: "ล็อกหน้าจอ", keys: ["Win", "L"], macKeys: ["Cmd", "Ctrl", "Q"] }, { action: "สลับหน้าต่าง", keys: ["Alt", "Tab"], macKeys: ["Cmd", "Tab"] }, { action: "โชว์หน้า Desktop", keys: ["Win", "D"], macKeys: ["F11"] }, { action: "เปิด File Explorer", keys: ["Win", "E"], macKeys: ["Opt", "Cmd", "Space"] }, { action: "แคปหน้าจอ (บางส่วน)", keys: ["Win", "Shift", "S"], macKeys: ["Cmd", "Shift", "4"] }, { action: "แคปหน้าจอ (ทั้งหมด)", keys: ["PrtSc"], macKeys: ["Cmd", "Shift", "3"] } ] },
-            { id: 2, program: "Google Chrome / Edge", icon: "globe", category: "browser", color: "green", shortcuts: [ { action: "เปิดแท็บใหม่", keys: ["Ctrl", "T"] }, { action: "ปิดแท็บปัจจุบัน", keys: ["Ctrl", "W"] }, { action: "เปิดแท็บที่เพิ่งปิดไป", keys: ["Ctrl", "Shift", "T"] }, { action: "ไปที่แท็บถัดไป", keys: ["Ctrl", "Tab"] }, { action: "ค้นหาในหน้าเว็บ", keys: ["Ctrl", "F"] }, { action: "รีเฟรชหน้าเว็บ", keys: ["F5"], macKeys: ["Cmd", "R"] }, { action: "เปิดโหมดไม่ระบุตัวตน", keys: ["Ctrl", "Shift", "N"] }, { action: "เปิดประวัติการเข้าชม", keys: ["Ctrl", "H"], macKeys: ["Cmd", "Y"] }, { action: "ไปที่แถบ URL", keys: ["Ctrl", "L"] } ] },
-            { id: 3, program: "Microsoft Word", icon: "file-text", category: "office", color: "blue", shortcuts: [ { action: "ทำตัวหนา", keys: ["Ctrl", "B"] }, { action: "ทำตัวเอียง", keys: ["Ctrl", "I"] }, { action: "ขีดเส้นใต้", keys: ["Ctrl", "U"] }, { action: "จัดกึ่งกลาง", keys: ["Ctrl", "E"] }, { action: "จัดชิดซ้าย", keys: ["Ctrl", "L"] }, { action: "ค้นหาและแทนที่", keys: ["Ctrl", "H"] }, { action: "บันทึกไฟล์", keys: ["Ctrl", "S"] }, { action: "ขึ้นหน้าใหม่", keys: ["Ctrl", "Enter"] } ] },
-            { id: 4, program: "Microsoft Excel", icon: "grid", category: "office", color: "emerald", shortcuts: [ { action: "แก้ไขเซลล์", keys: ["F2"], macKeys: ["Ctrl", "U"] }, { action: "ผลรวมอัตโนมัติ (AutoSum)", keys: ["Alt", "="], macKeys: ["Cmd", "Shift", "T"] }, { action: "แทรกวันที่ปัจจุบัน", keys: ["Ctrl", ";"] }, { action: "แทรกเวลาปัจจุบัน", keys: ["Ctrl", "Shift", ";"] }, { action: "เลือกทั้งแถว", keys: ["Shift", "Space"] }, { action: "เลือกทั้งคอลัมน์", keys: ["Ctrl", "Space"] }, { action: "เปลี่ยนรูปแบบเป็นตัวเลข", keys: ["Ctrl", "Shift", "1"] }, { action: "ไปยังเซลล์ A1", keys: ["Ctrl", "Home"], macKeys: ["Fn", "Ctrl", "Left"] } ] },
-            { id: 5, program: "PowerPoint", icon: "presentation", category: "office", color: "orange", shortcuts: [ { action: "สร้างสไลด์ใหม่", keys: ["Ctrl", "M"] }, { action: "ทำซ้ำสไลด์/วัตถุ", keys: ["Ctrl", "D"] }, { action: "เริ่มนำเสนอ (ตั้งแต่ต้น)", keys: ["F5"], macKeys: ["Cmd", "Shift", "Enter"] }, { action: "เริ่มนำเสนอ (หน้าปัจจุบัน)", keys: ["Shift", "F5"], macKeys: ["Cmd", "Enter"] }, { action: "จัดกลุ่มวัตถุ", keys: ["Ctrl", "G"], macKeys: ["Cmd", "Opt", "G"] }, { action: "ยกเลิกจัดกลุ่ม", keys: ["Ctrl", "Shift", "G"], macKeys: ["Cmd", "Opt", "Shift", "G"] } ] },
-            { id: 6, program: "Adobe Photoshop", icon: "image", category: "design", color: "indigo", shortcuts: [ { action: "ยกเลิกการเลือก (Deselect)", keys: ["Ctrl", "D"] }, { action: "ย้อนกลับหลายขั้นตอน", keys: ["Ctrl", "Alt", "Z"], macKeys: ["Cmd", "Opt", "Z"] }, { action: "เครื่องมือ Move", keys: ["V"] }, { action: "เครื่องมือ Hand (เลื่อนภาพ)", keys: ["Space"] }, { action: "ปรับขนาด (Free Transform)", keys: ["Ctrl", "T"] }, { action: "รวม Layer (Merge)", keys: ["Ctrl", "E"] }, { action: "กลับสี (Invert)", keys: ["Ctrl", "I"] }, { action: "Brush Size ลด/เพิ่ม", keys: ["[", "]"] } ] },
-            { id: 7, program: "VS Code", icon: "code", category: "dev", color: "sky", shortcuts: [ { action: "เปิด Command Palette", keys: ["Ctrl", "Shift", "P"] }, { action: "ค้นหาไฟล์ (Quick Open)", keys: ["Ctrl", "P"] }, { action: "คอมเมนท์บรรทัด", keys: ["Ctrl", "/"] }, { action: "ย้ายบรรทัด ขึ้น/ลง", keys: ["Alt", "Up/Down"], macKeys: ["Opt", "Up/Down"] }, { action: "Copy บรรทัด ลง/ขึ้น", keys: ["Shift", "Alt", "Down/Up"], macKeys: ["Shift", "Opt", "Down/Up"] }, { action: "เลือกคำที่เหมือนกันถัดไป", keys: ["Ctrl", "D"] }, { action: "จัดระเบียบโค้ด (Format)", keys: ["Shift", "Alt", "F"], macKeys: ["Shift", "Opt", "F"] }, { action: "เปิด/ปิด Terminal", keys: ["Ctrl", "`"] } ] },
-            { id: 8, program: "YouTube (Web)", icon: "play-circle", category: "general", color: "red", shortcuts: [ { action: "เล่น / หยุด", keys: ["K", "Space"] }, { action: "ย้อนหลัง 10 วิ", keys: ["J"] }, { action: "ไปข้างหน้า 10 วิ", keys: ["L"] }, { action: "ปิด/เปิด เสียง", keys: ["M"] }, { action: "เปิด Full Screen", keys: ["F"] }, { action: "เปิด/ปิด คำบรรยาย", keys: ["C"] }, { action: "เพิ่มความเร็ว", keys: ["Shift", ">"] }, { action: "ลดความเร็ว", keys: ["Shift", "<"] } ] }
+            { id: 1, program: "Windows / System", icon: "monitor", category: "general", color: "blue", shortcuts: [ { action: "คัดลอก (Copy)", keys: ["Ctrl", "C"] }, { action: "วาง (Paste)", keys: ["Ctrl", "V"] }, { action: "ตัด (Cut)", keys: ["Ctrl", "X"] }, { action: "ย้อนกลับ (Undo)", keys: ["Ctrl", "Z"] }, { action: "ทำซ้ำ (Redo)", keys: ["Ctrl", "Y"] }, { action: "เลือกทั้งหมด", keys: ["Ctrl", "A"] }, { action: "ล็อกหน้าจอ", keys: ["Win", "L"], macKeys: ["Cmd", "Ctrl", "Q"] }, { action: "สลับหน้าต่าง", keys: ["Alt", "Tab"], macKeys: ["Cmd", "Tab"] }, { action: "โชว์หน้า Desktop", keys: ["Win", "D"], macKeys: ["F11"] }, { action: "เปิด File Explorer", keys: ["Win", "E"], macKeys: ["Opt", "Cmd", "Space"] }, { action: "แคปหน้าจอ (เลือก)", keys: ["Win", "Shift", "S"], macKeys: ["Cmd", "Shift", "4"] }, { action: "แคปหน้าจอ (เต็ม)", keys: ["PrtSc"], macKeys: ["Cmd", "Shift", "3"] }, { action: "เปิด Emoji", keys: ["Win", "."], macKeys: ["Cmd", "Ctrl", "Space"] } ] },
+            { id: 2, program: "Google Chrome / Edge", icon: "globe", category: "browser", color: "green", shortcuts: [ { action: "เปิดแท็บใหม่", keys: ["Ctrl", "T"] }, { action: "ปิดแท็บปัจจุบัน", keys: ["Ctrl", "W"] }, { action: "กู้คืนแท็บที่ปิด", keys: ["Ctrl", "Shift", "T"] }, { action: "ไปที่แท็บถัดไป", keys: ["Ctrl", "Tab"] }, { action: "ค้นหาในหน้า", keys: ["Ctrl", "F"] }, { action: "รีเฟรช (ล้าง Cache)", keys: ["Ctrl", "Shift", "R"], macKeys: ["Cmd", "Shift", "R"] }, { action: "โหมดไม่ระบุตัวตน", keys: ["Ctrl", "Shift", "N"] }, { action: "เปิดประวัติ", keys: ["Ctrl", "H"], macKeys: ["Cmd", "Y"] }, { action: "ไปที่ URL bar", keys: ["Ctrl", "L"] } ] },
+            { id: 3, program: "Microsoft Word", icon: "file-text", category: "office", color: "blue", shortcuts: [ { action: "ตัวหนา", keys: ["Ctrl", "B"] }, { action: "ตัวเอียง", keys: ["Ctrl", "I"] }, { action: "ขีดเส้นใต้", keys: ["Ctrl", "U"] }, { action: "จัดกึ่งกลาง", keys: ["Ctrl", "E"] }, { action: "จัดชิดซ้าย", keys: ["Ctrl", "L"] }, { action: "ค้นหาและแทนที่", keys: ["Ctrl", "H"] }, { action: "บันทึก", keys: ["Ctrl", "S"] }, { action: "ขึ้นหน้าใหม่", keys: ["Ctrl", "Enter"] } ] },
+            { id: 4, program: "Microsoft Excel", icon: "grid", category: "office", color: "emerald", shortcuts: [ { action: "แก้ไขเซลล์", keys: ["F2"], macKeys: ["Ctrl", "U"] }, { action: "AutoSum", keys: ["Alt", "="], macKeys: ["Cmd", "Shift", "T"] }, { action: "ใส่วันที่ปัจจุบัน", keys: ["Ctrl", ";"] }, { action: "ใส่เวลาปัจจุบัน", keys: ["Ctrl", "Shift", ";"] }, { action: "เลือกทั้งแถว", keys: ["Shift", "Space"] }, { action: "เลือกทั้งคอลัมน์", keys: ["Ctrl", "Space"] }, { action: "Format ตัวเลข", keys: ["Ctrl", "Shift", "1"] }, { action: "ไปเซลล์ A1", keys: ["Ctrl", "Home"], macKeys: ["Fn", "Ctrl", "Left"] } ] },
+            { id: 5, program: "PowerPoint", icon: "presentation", category: "office", color: "orange", shortcuts: [ { action: "สไลด์ใหม่", keys: ["Ctrl", "M"] }, { action: "Duplicate", keys: ["Ctrl", "D"] }, { action: "เริ่มนำเสนอ", keys: ["F5"], macKeys: ["Cmd", "Shift", "Enter"] }, { action: "นำเสนอหน้านี้", keys: ["Shift", "F5"], macKeys: ["Cmd", "Enter"] }, { action: "จัดกลุ่ม (Group)", keys: ["Ctrl", "G"], macKeys: ["Cmd", "Opt", "G"] }, { action: "ยกเลิก Group", keys: ["Ctrl", "Shift", "G"], macKeys: ["Cmd", "Opt", "Shift", "G"] } ] },
+            { id: 6, program: "Adobe Photoshop", icon: "image", category: "design", color: "indigo", shortcuts: [ { action: "ยกเลิกเลือก", keys: ["Ctrl", "D"] }, { action: "Undo หลายครั้ง", keys: ["Ctrl", "Alt", "Z"], macKeys: ["Cmd", "Opt", "Z"] }, { action: "เครื่องมือ Move", keys: ["V"] }, { action: "เครื่องมือ Hand", keys: ["Space"] }, { action: "Free Transform", keys: ["Ctrl", "T"] }, { action: "รวม Layer", keys: ["Ctrl", "E"] }, { action: "Invert สี", keys: ["Ctrl", "I"] }, { action: "ปรับขนาด Brush", keys: ["[", "]"] } ] },
+            { id: 7, program: "VS Code", icon: "code", category: "dev", color: "sky", shortcuts: [ { action: "Command Palette", keys: ["Ctrl", "Shift", "P"] }, { action: "ค้นหาไฟล์", keys: ["Ctrl", "P"] }, { action: "Comment", keys: ["Ctrl", "/"] }, { action: "ย้ายบรรทัด", keys: ["Alt", "Up/Down"], macKeys: ["Opt", "Up/Down"] }, { action: "Copy บรรทัด", keys: ["Shift", "Alt", "Down/Up"], macKeys: ["Shift", "Opt", "Down/Up"] }, { action: "เลือกคำซ้ำ", keys: ["Ctrl", "D"] }, { action: "Format Code", keys: ["Shift", "Alt", "F"], macKeys: ["Shift", "Opt", "F"] }, { action: "Toggle Terminal", keys: ["Ctrl", "`"] } ] },
+            { id: 8, program: "YouTube (Web)", icon: "play-circle", category: "general", color: "red", shortcuts: [ { action: "เล่น / หยุด", keys: ["K", "Space"] }, { action: "ย้อน 10 วิ", keys: ["J"] }, { action: "ข้าม 10 วิ", keys: ["L"] }, { action: "ปิดเสียง", keys: ["M"] }, { action: "Full Screen", keys: ["F"] }, { action: "เปิด/ปิด Sub", keys: ["C"] }, { action: "เพิ่มความเร็ว", keys: ["Shift", ">"] }, { action: "ลดความเร็ว", keys: ["Shift", "<"] } ] }
         ];
 
-        // --- State Management ---
+        // --- State ---
         let currentOS = 'windows';
         let currentCategory = 'all';
         let searchQuery = '';
 
-        // --- DOM Elements ---
+        // --- Elements ---
         const grid = document.getElementById('shortcutsGrid');
         const emptyState = document.getElementById('emptyState');
         const searchInput = document.getElementById('searchInput');
@@ -189,37 +329,71 @@
         const btnMac = document.getElementById('btn-mac');
         const categoryBtns = document.querySelectorAll('.category-btn');
 
-        // --- Original Functions ---
+        // --- Core Functions ---
         function setOS(os) {
             currentOS = os;
+            const activeClass = ['bg-white', 'shadow-sm', 'text-blue-600'];
+            const inactiveClass = ['text-slate-500', 'hover:text-slate-700'];
+
             if (os === 'windows') {
-                btnWin.classList.add('bg-white', 'shadow-sm', 'text-blue-600');
-                btnWin.classList.remove('text-slate-500');
-                btnMac.classList.remove('bg-white', 'shadow-sm', 'text-blue-600');
-                btnMac.classList.add('text-slate-500');
+                btnWin.classList.add(...activeClass);
+                btnWin.classList.remove(...inactiveClass);
+                btnMac.classList.remove(...activeClass);
+                btnMac.classList.add(...inactiveClass);
             } else {
-                btnMac.classList.add('bg-white', 'shadow-sm', 'text-blue-600');
-                btnMac.classList.remove('text-slate-500');
-                btnWin.classList.remove('bg-white', 'shadow-sm', 'text-blue-600');
-                btnWin.classList.add('text-slate-500');
+                btnMac.classList.add(...activeClass);
+                btnMac.classList.remove(...inactiveClass);
+                btnWin.classList.remove(...activeClass);
+                btnWin.classList.add(...inactiveClass);
             }
             render();
         }
 
         function filterCategory(cat) {
             currentCategory = cat;
-            categoryBtns.forEach(btn => {
-                if (btn.getAttribute('onclick').includes(cat)) {
+            // Update UI buttons
+            const buttons = document.querySelectorAll('.category-btn');
+            buttons.forEach(btn => {
+                if (btn.getAttribute('onclick').includes(`'${cat}'`)) {
                     btn.classList.add('active');
+                    // Add dot icon to active
+                    if (!btn.querySelector('i')) {
+                        const i = document.createElement('i');
+                        i.className = 'inline-block w-2 h-2 rounded-full bg-white mr-2 mb-0.5';
+                        btn.prepend(i);
+                    } else {
+                        btn.querySelector('i').classList.remove('bg-slate-400');
+                        btn.querySelector('i').classList.add('bg-white');
+                    }
                 } else {
                     btn.classList.remove('active');
+                    // Reset icon color
+                    if (btn.querySelector('i')) {
+                        btn.querySelector('i').classList.add('bg-slate-400');
+                        btn.querySelector('i').classList.remove('bg-white');
+                    } else {
+                        // For buttons that don't have the icon initially (others), we don't add it unless active
+                         // Ideally we could restructure to consistent icons, but for now simple toggle
+                    }
+                    // Simple fix for "All" button icon logic or just rebuild icon on render
                 }
             });
+            // Re-render buttons cleanly (optional) or just handle class logic
+            // Let's simplify: reset all innerHTML to text only then add icon to active
+            const mapText = { 'all': 'ทั้งหมด', 'general': '💻 ทั่วไป/ระบบ', 'office': '📝 งานเอกสาร', 'browser': '🌐 เบราว์เซอร์', 'design': '🎨 กราฟิก', 'dev': '👨‍💻 เขียนโปรแกรม'};
+            
+            buttons.forEach(btn => {
+                const type = btn.getAttribute('onclick').match(/'([^']+)'/)[1];
+                btn.className = `category-btn flex-shrink-0 px-5 py-2 rounded-full border border-slate-200 text-slate-600 text-sm font-medium hover:bg-slate-50 transition-all ${type === cat ? 'active bg-blue-600 text-white border-blue-600 shadow-md shadow-blue-500/30' : 'bg-white'}`;
+                // Keep icon logic simple: no icons inside text for now except emoji
+                // If it was the first button (All), add the dot back if needed
+            });
+
             render();
         }
 
         function getKeysForOS(item, os) {
-            if (os === 'mac' && item.macKeys) { return item.macKeys; }
+            if (os === 'mac' && item.macKeys) return item.macKeys;
             let keys = [...item.keys];
             if (os === 'mac') {
                 return keys.map(k => {
@@ -235,34 +409,53 @@
         function render() {
             grid.innerHTML = '';
             let hasResults = false;
+
             shortcutsData.forEach(program => {
                 const matchCategory = currentCategory === 'all' || program.category === currentCategory;
                 const nameMatch = program.program.toLowerCase().includes(searchQuery.toLowerCase());
+                
                 let visibleShortcuts = program.shortcuts;
                 if (!nameMatch && searchQuery) {
                     visibleShortcuts = program.shortcuts.filter(s => s.action.toLowerCase().includes(searchQuery.toLowerCase()));
                 }
+
                 if (matchCategory && (nameMatch || visibleShortcuts.length > 0)) {
                     hasResults = true;
+                    
                     const card = document.createElement('div');
-                    card.className = 'program-card bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden flex flex-col';
+                    card.className = 'program-card bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden flex flex-col group';
+                    
+                    // Card Header
                     const header = document.createElement('div');
-                    header.className = `px-5 py-3 border-b border-slate-100 flex items-center gap-3 bg-${program.color}-50`;
-                    header.innerHTML = `<div class="p-2 bg-white rounded-lg shadow-sm text-${program.color}-600"><i data-lucide="${program.icon}" class="w-5 h-5"></i></div><h3 class="font-semibold text-slate-800">${program.program}</h3>`;
+                    header.className = `px-5 py-4 border-b border-slate-100 flex items-center gap-3 bg-gradient-to-r from-${program.color}-50 to-white`;
+                    header.innerHTML = `
+                        <div class="p-2.5 bg-white rounded-xl shadow-sm text-${program.color}-600 ring-1 ring-slate-100 group-hover:scale-110 transition-transform duration-300">
+                            <i data-lucide="${program.icon}" class="w-5 h-5"></i>
+                        </div>
+                        <h3 class="font-semibold text-slate-800 text-lg tracking-tight">${program.program}</h3>
+                    `;
                     card.appendChild(header);
+
+                    // Card Body
                     const body = document.createElement('div');
-                    body.className = 'p-5 flex-1';
+                    body.className = 'p-5 flex-1 bg-white';
+                    
                     const ul = document.createElement('ul');
                     ul.className = 'space-y-3';
+                    
                     const shortcutsToShow = nameMatch ? program.shortcuts : visibleShortcuts;
+                    
                     shortcutsToShow.forEach(sc => {
                         const li = document.createElement('li');
-                        li.className = 'flex justify-between items-center text-sm gap-2';
+                        li.className = 'flex justify-between items-center text-sm gap-3 py-0.5';
+                        
                         const actionSpan = document.createElement('span');
-                        actionSpan.className = 'text-slate-600 font-medium';
+                        actionSpan.className = 'text-slate-600 font-medium truncate';
                         actionSpan.textContent = sc.action;
+                        
                         const keysDiv = document.createElement('div');
-                        keysDiv.className = 'flex flex-wrap justify-end gap-1';
+                        keysDiv.className = 'flex flex-wrap justify-end gap-1 flex-shrink-0';
+                        
                         const keys = getKeysForOS(sc, currentOS);
                         keys.forEach(k => {
                             const kbd = document.createElement('kbd');
@@ -270,37 +463,55 @@
                             kbd.textContent = k;
                             keysDiv.appendChild(kbd);
                         });
+                        
                         li.appendChild(actionSpan);
                         li.appendChild(keysDiv);
                         ul.appendChild(li);
                     });
+                    
                     body.appendChild(ul);
                     card.appendChild(body);
                     grid.appendChild(card);
                 }
             });
-            if (!hasResults) { emptyState.classList.remove('hidden'); } else { emptyState.classList.add('hidden'); }
+
+            if (!hasResults) {
+                emptyState.classList.remove('hidden');
+            } else {
+                emptyState.classList.add('hidden');
+            }
+            
             lucide.createIcons();
         }
 
-        // --- Event Listeners ---
+        // --- Keyboard Shortcut for Search ---
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                searchInput.focus();
+            }
+        });
+
         searchInput.addEventListener('input', (e) => {
             searchQuery = e.target.value.trim();
             render();
         });
 
-        // --- Init ---
+        // Initialize
         if (navigator.platform.toUpperCase().indexOf('MAC') >= 0) { setOS('mac'); } else { setOS('windows'); }
 
+
         // ==========================================
-        // ส่วนที่เพิ่มใหม่: Backend Connection Logic
+        // Chatbot Logic (Updated)
         // ==========================================
 
         const chatWidget = document.getElementById('chatWidget');
         const chatMessages = document.getElementById('chatMessages');
         const chatInputText = document.getElementById('chatInputText');
         const sendBtn = document.getElementById('sendBtn');
-        const API_URL = 'https://us-central1-law-ai-14740.cloudfunctions.net/api/chat';
+        
+        // ✅ Updated API URL
+        const API_URL = 'https://kodmai2025-github-io.vercel.app/api/chat';
 
         function toggleChat() {
             if (chatWidget.classList.contains('hidden')) {
@@ -317,15 +528,38 @@
             const div = document.createElement('div');
             div.className = isUser ? 'flex justify-end' : 'flex justify-start';
             
-            const bubble = document.createElement('div');
-            bubble.className = isUser 
-                ? 'bg-blue-600 text-white rounded-2xl rounded-tr-none py-2 px-3 text-sm shadow-sm max-w-[85%]' 
-                : 'bg-white border border-slate-200 text-slate-700 rounded-2xl rounded-tl-none py-2 px-3 text-sm shadow-sm max-w-[85%]';
+            const content = document.createElement('div');
+            content.className = "flex max-w-[85%] items-end gap-2";
             
-            bubble.textContent = text;
-            div.appendChild(bubble);
+            // Bot Icon for bot messages
+            if (!isUser) {
+                content.innerHTML = `
+                    <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 border border-blue-200">
+                        <i data-lucide="bot" class="w-4 h-4 text-blue-600"></i>
+                    </div>
+                    <div class="bg-white border border-slate-200 text-slate-700 rounded-2xl rounded-tl-none py-2.5 px-4 text-sm shadow-sm">
+                        ${text}
+                    </div>
+                `;
+            } else {
+                content.innerHTML = `
+                    <div class="bg-blue-600 text-white rounded-2xl rounded-tr-none py-2.5 px-4 text-sm shadow-md shadow-blue-500/20">
+                        ${text}
+                    </div>
+                `;
+                div.className = 'flex justify-end'; // Re-confirm class
+                content.className = "flex max-w-[85%] items-end gap-2 flex-row-reverse"; // User styling
+            }
+
+            div.appendChild(content);
             chatMessages.appendChild(div);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            // Smooth scroll to bottom
+            chatMessages.scrollTo({
+                top: chatMessages.scrollHeight,
+                behavior: 'smooth'
+            });
+            lucide.createIcons();
         }
 
         async function sendMessage(e) {
@@ -333,26 +567,34 @@
             const message = chatInputText.value.trim();
             if (!message) return;
 
-            // 1. แสดงข้อความผู้ใช้
+            // 1. Show User Message
             appendMessage(message, true);
             chatInputText.value = '';
             
-            // 2. แสดงสถานะ Loading
+            // 2. Loading State
             const loadingId = 'loading-' + Date.now();
             const loadingDiv = document.createElement('div');
             loadingDiv.id = loadingId;
-            loadingDiv.className = 'flex justify-start';
-            loadingDiv.innerHTML = `<div class="bg-white border border-slate-200 text-slate-500 rounded-2xl rounded-tl-none py-2 px-3 text-sm shadow-sm flex items-center gap-1">
-                                        <span class="animate-bounce">●</span>
-                                        <span class="animate-bounce" style="animation-delay: 0.1s">●</span>
-                                        <span class="animate-bounce" style="animation-delay: 0.2s">●</span>
-                                    </div>`;
+            loadingDiv.className = 'flex justify-start mt-2';
+            loadingDiv.innerHTML = `
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="loader-2" class="w-4 h-4 text-blue-400 animate-spin"></i>
+                    </div>
+                    <div class="bg-white border border-slate-200 text-slate-500 rounded-2xl rounded-tl-none py-2 px-4 text-sm shadow-sm flex items-center gap-1.5">
+                        <span class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce"></span>
+                        <span class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></span>
+                        <span class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></span>
+                    </div>
+                </div>
+            `;
             chatMessages.appendChild(loadingDiv);
             chatMessages.scrollTop = chatMessages.scrollHeight;
+            lucide.createIcons();
             
             sendBtn.disabled = true;
 
-            // 3. ยิง API (Fetch)
+            // 3. API Call
             try {
                 const response = await fetch(API_URL, {
                     method: 'POST',
@@ -360,31 +602,28 @@
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({ 
-                        // หมายเหตุ: ตรงนี้ต้องดูว่า Backend ต้องการ key ชื่ออะไร 
-                        // ปกติมักจะเป็น "message", "prompt", หรือ "query"
-                        // ในที่นี้ผมสมมติว่าเป็น "message" ตามมาตรฐานทั่วไป
                         message: message 
                     })
                 });
 
-                // ลบ Loading
                 document.getElementById(loadingId).remove();
 
                 if (!response.ok) {
-                    throw new Error('API Error');
+                    throw new Error('API Error: ' + response.statusText);
                 }
 
                 const data = await response.json();
-                
-                // 4. แสดงข้อความตอบกลับจาก AI
-                // หมายเหตุ: ต้องดูว่า Backend return key ชื่ออะไรมา (เช่น .response, .reply, .message)
-                // ผมใส่เผื่อไว้หลายแบบ
+                // Adapt to your backend response structure
                 const botReply = data.response || data.message || data.reply || JSON.stringify(data);
-                appendMessage(botReply, false);
+                
+                // Format links if any (basic regex)
+                const formattedReply = botReply.replace(/\n/g, '<br>');
+                
+                appendMessage(formattedReply, false);
 
             } catch (error) {
                 if(document.getElementById(loadingId)) document.getElementById(loadingId).remove();
-                appendMessage("ขออภัย เกิดข้อผิดพลาดในการเชื่อมต่อ: " + error.message, false);
+                appendMessage("ขออภัย ระบบขัดข้องชั่วคราว: " + error.message, false);
                 console.error("Connection Error:", error);
             } finally {
                 sendBtn.disabled = false;
