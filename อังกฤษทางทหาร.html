@@ -3,483 +3,432 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ศัพท์อังกฤษทางทหาร (AI Instructor)</title>
+    <title>Military English | AI Instructor</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&family=Staatliches&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;700&family=Staatliches&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
         :root {
-            --primary-bg: #f5f5dc; /* สีเบจ/สีทราย */
-            --secondary-bg: #ffffff;
-            --header-bg: #e9ecef;
-            --text-primary: #343a40;
-            --text-secondary: #6c757d;
-            --accent-color: #556b2f; /* สีเขียวทหาร */
-            --border-color: #dee2e6;
+            --army-green: #556b2f;
+            --army-dark: #3e4f21;
+            --sand-light: #f5f5dc;
+            --sand-dark: #e9e9d6;
+            --text-main: #2d3436;
         }
 
         body {
             font-family: 'Sarabun', sans-serif;
-            background-color: var(--primary-bg);
-            color: var(--text-primary);
-            margin: 0;
-            padding: 20px;
-            /* ป้องกัน Tailwind กระทบ style เดิมบางส่วน */
+            background-color: var(--sand-light);
+            color: var(--text-main);
+            overflow-x: hidden;
         }
 
-        .container {
-            width: 100%;
-            max-width: 1000px;
-            margin: 20px auto;
-            margin-bottom: 100px; /* เผื่อพื้นที่ให้ปุ่มแชท */
-            background-color: var(--secondary-bg);
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            border: 1px solid var(--border-color);
+        .military-header {
+            font-family: 'Staatliches', cursive;
+            letter-spacing: 3px;
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+        }
+
+        /* Table Customization */
+        .table-wrapper {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            background: white;
             overflow: hidden;
         }
 
-        header {
-            background-color: var(--secondary-bg);
-            padding: 25px 30px;
-            border-bottom: 2px solid var(--accent-color);
-            text-align: center;
-        }
-
-        h1 {
-            font-family: 'Staatliches', cursive;
-            color: var(--accent-color);
-            margin: 0;
-            font-size: 2.8em;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
-
-        .controls {
-            padding: 15px 20px;
-            border-bottom: 1px solid var(--border-color);
-            background-color: #f8f9fa;
-        }
-
-        .search-container {
-            position: relative;
-        }
-
-        #search-input {
-            width: 100%;
-            padding: 12px 20px 12px 40px;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            font-family: 'Sarabun', sans-serif;
-            font-size: 1em;
-            box-sizing: border-box;
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
-        
-        #search-input:focus {
-            outline: none;
-            border-color: var(--accent-color);
-            box-shadow: 0 0 0 2px rgba(85, 107, 47, 0.2);
-        }
-
-        .search-container::before {
-            content: '🔍';
-            position: absolute;
-            left: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 1.2em;
-            color: var(--text-secondary);
-        }
-        
-        #loading-message, #no-results-message {
-            text-align: center;
-            padding: 40px;
-            color: var(--text-secondary);
-            font-size: 1.2em;
-        }
-
-        .table-container {
-            padding: 0;
-            overflow-x: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: left;
-        }
-
-        th, td {
-            padding: 15px 20px;
-            border-bottom: 1px solid var(--border-color);
-            white-space: nowrap;
-        }
-
-        thead th {
-            background-color: var(--header-bg);
-            color: var(--accent-color);
-            font-size: 1.1em;
-            font-weight: 700;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-            text-transform: uppercase;
-        }
-        
-        tbody tr:nth-child(even) {
-             background-color: #f8f9fa;
-        }
-        
-        tbody tr:hover {
-            background-color: #d4d4be;
-        }
-
-        footer {
-            text-align: center;
-            margin-top: 20px;
-            color: var(--text-secondary);
-            font-size: 0.9em;
-        }
-
-        @media (max-width: 768px) {
-            body { padding: 10px; }
-            .container { margin: 10px; margin-bottom: 80px; }
-            h1 { font-size: 2em; }
-            th, td { padding: 12px 15px; }
-        }
-
-        /* ===== CSS ของ Chatbot UI (Military Theme) ===== */
-        .chat-bubble::before { content: ''; position: absolute; width: 0; height: 0; border-style: solid; }
-        .chat-bubble-user::before {
-            border-width: 0 12px 12px 12px; border-color: transparent transparent #556b2f transparent; /* สีเขียวทหาร */
-            top: -10px; right: 12px;
-        }
-        .chat-bubble-model::before {
-            border-width: 0 12px 12px 12px; border-color: transparent transparent #e5e7eb transparent;
-            top: -10px; left: 12px;
-        }
-        .gemini-thinking-bar {
-            position: relative; width: 100%; height: 4px; background-color: #e0e0e0;
-            border-radius: 2px; overflow: hidden;
-        }
-        .gemini-thinking-bar::before {
-            content: ''; position: absolute; top: 0; left: 0; height: 100%; width: 100%;
-            background: linear-gradient(90deg, #556b2f, #8f9e7a, #556b2f);
-            background-size: 200% 100%; animation: thinking-gradient 2s linear infinite;
-        }
-        @keyframes thinking-gradient { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-        
-        #fab-chat-toggle {
-            position: fixed; bottom: 25px; right: 25px;
-            width: 60px; height: 60px;
-            background-color: #556b2f; /* สีเขียวทหาร */
+        table thead {
+            background-color: var(--army-green);
             color: white;
-            border: none; border-radius: 50%;
-            font-size: 28px; line-height: 60px; text-align: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            cursor: pointer; z-index: 998;
-            transition: transform 0.2s, opacity 0.3s;
-            font-family: 'Sarabun', sans-serif;
         }
-        #fab-chat-toggle:hover { transform: scale(1.05); background-color: #3e4f21; }
+
+        table tbody tr:nth-child(even) {
+            background-color: #f9fafb;
+        }
+
+        table tbody tr:hover {
+            background-color: #f1f5f9;
+            cursor: default;
+        }
+
+        /* Chat bubbles */
+        .chat-container {
+            scrollbar-width: thin;
+            scrollbar-color: var(--army-green) transparent;
+        }
         
-        #chatbot-modal {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            z-index: 1000; transition: opacity 0.3s, transform 0.3s;
-            opacity: 1; transform: translateY(0); pointer-events: auto;
+        .chat-container::-webkit-scrollbar {
+            width: 6px;
         }
-        #chatbot-modal.chatbot-hidden {
-            opacity: 0; transform: translateY(100%); pointer-events: none;
+        
+        .chat-container::-webkit-scrollbar-thumb {
+            background-color: var(--army-green);
+            border-radius: 10px;
+        }
+
+        .bubble {
+            max-width: 85%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            position: relative;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .bubble-ai {
+            background: white;
+            color: var(--text-main);
+            border-bottom-left-radius: 2px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .bubble-user {
+            background: var(--army-green);
+            color: white;
+            border-bottom-right-radius: 2px;
+            box-shadow: 0 2px 8px rgba(85, 107, 47, 0.3);
+        }
+
+        /* Floating Button */
+        #fab-chat-toggle {
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        #fab-chat-toggle:active {
+            transform: scale(0.9);
+        }
+
+        /* Loading Indicator Animation */
+        .dot-flashing {
+            position: relative;
+            width: 10px;
+            height: 10px;
+            border-radius: 5px;
+            background-color: var(--army-green);
+            color: var(--army-green);
+            animation: dot-flashing 1s infinite linear alternate;
+            animation-delay: 0.5s;
+        }
+        .dot-flashing::before, .dot-flashing::after {
+            content: "";
+            display: inline-block;
+            position: absolute;
+            top: 0;
+        }
+        .dot-flashing::before {
+            left: -15px;
+            width: 10px;
+            height: 10px;
+            border-radius: 5px;
+            background-color: var(--army-green);
+            color: var(--army-green);
+            animation: dot-flashing 1s infinite linear alternate;
+            animation-delay: 0s;
+        }
+        .dot-flashing::after {
+            left: 15px;
+            width: 10px;
+            height: 10px;
+            border-radius: 5px;
+            background-color: var(--army-green);
+            color: var(--army-green);
+            animation: dot-flashing 1s infinite linear alternate;
+            animation-delay: 1s;
+        }
+        @keyframes dot-flashing {
+            0% { background-color: var(--army-green); }
+            50%, 100% { background-color: #ebe6ff; }
+        }
+
+        .modal-transition {
+            transition: transform 0.4s ease, opacity 0.3s ease;
+        }
+
+        .hidden-modal {
+            transform: translateY(100%) scale(0.9);
+            opacity: 0;
+            pointer-events: none;
         }
     </style>
 </head>
-<body>
+<body class="p-0 m-0">
 
-    <div class="container">
-        <header>
-            <h1>Military Vocabulary</h1>
+    <div class="min-h-screen pb-24">
+        <!-- Main Header -->
+        <header class="bg-white border-b-4 border-[#556b2f] py-8 px-4 text-center mb-6 shadow-sm">
+            <h1 class="military-header text-4xl md:text-6xl text-[#556b2f] m-0 uppercase font-bold">Military Vocabulary</h1>
+            <p class="text-gray-500 mt-2 font-light">คลังศัพท์ภาษาอังกฤษทางทหารและอักษรย่อ</p>
         </header>
 
-        <div class="controls">
-            <div class="search-container">
-                <input type="text" id="search-input" placeholder="ค้นหาคำศัพท์ไทย หรือ English...">
+        <!-- Main Content -->
+        <div class="max-w-5xl mx-auto px-4">
+            
+            <!-- Search Control -->
+            <div class="bg-white p-4 rounded-xl shadow-md mb-6 sticky top-4 z-20">
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    </span>
+                    <input type="text" id="search-input" 
+                        class="block w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#556b2f] focus:border-transparent outline-none transition-all"
+                        placeholder="ค้นหาคำศัพท์ไทย, English หรือคำย่อ...">
+                </div>
+            </div>
+
+            <!-- Table Section -->
+            <div class="table-wrapper">
+                <div id="loading-spinner" class="py-20 text-center">
+                    <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-[#556b2f] border-t-transparent"></div>
+                    <p class="mt-4 text-gray-500">กำลังดาวน์โหลดคลังคำศัพท์...</p>
+                </div>
+
+                <div id="no-results" class="hidden py-20 text-center text-gray-400">
+                    <p class="text-xl">❌ ไม่พบข้อมูลที่ต้องการ</p>
+                    <button onclick="document.getElementById('search-input').value=''; dispatchSearch();" class="text-[#556b2f] underline mt-2">ล้างการค้นหา</button>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table id="vocab-table" class="min-w-full hidden">
+                        <thead>
+                            <tr id="table-header">
+                                <!-- Headers injected by JS -->
+                            </tr>
+                        </thead>
+                        <tbody id="table-body" class="divide-y divide-gray-100">
+                            <!-- Rows injected by JS -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
-        
-        <div class="table-container">
-            <p id="loading-message">กำลังโหลดข้อมูล...</p>
-            <p id="no-results-message" style="display:none;">ไม่พบข้อมูลที่ตรงกัน</p>
-            <table id="vocab-table" style="display:none;">
-                <thead>
-                    <tr id="table-header">
-                        </tr>
-                </thead>
-                <tbody id="table-body">
-                    </tbody>
-            </table>
-        </div>
-        
-        <footer>
-            <p class="footer-links">
-                © 2025 Crow Studio |
-                <a href="https://sites.google.com/view/privacy-policy-pdpa-crow-studi/%E0%B8%AB%E0%B8%99%E0%B8%B2%E0%B9%81%E0%B8%A3%E0%B8%81" style="color: #6c757d;">นโยบายความเป็นส่วนตัว</a> |
-                <a href="ลิงก์ข้อตกลง" style="color: #6c757d;">ข้อตกลงการใช้งาน</a>
-            </p>
+
+        <!-- Footer -->
+        <footer class="mt-12 text-center text-gray-500 text-sm px-4">
+            <p>© 2025 Crow Studio - พัฒนาเพื่อการศึกษาทางทหาร</p>
+            <div class="mt-2 space-x-4">
+                <a href="#" class="hover:text-[#556b2f]">นโยบายความเป็นส่วนตัว</a>
+                <span>|</span>
+                <a href="#" class="hover:text-[#556b2f]">ข้อตกลงการใช้งาน</a>
+            </div>
         </footer>
     </div>
 
-    <button id="fab-chat-toggle" title="ถามครูฝึกภาษาอังกฤษ">Ai</button>
+    <!-- Floating Action Button -->
+    <button id="fab-chat-toggle" class="fixed bottom-6 right-6 w-16 h-16 bg-[#556b2f] text-white rounded-full shadow-2xl flex items-center justify-center text-2xl z-40 hover:bg-[#3e4f21]">
+        <span id="fab-icon">💬</span>
+    </button>
 
-    <div id="chatbot-modal" class="chatbot-hidden">
-        <div class="flex flex-col h-screen bg-gray-100">
-            <header class="bg-[#556b2f] text-white p-4 flex justify-between items-center shadow-md">
-                <div class="flex items-center gap-2">
-                    <span class="text-2xl">🎖️</span>
-                    <h1 class="text-lg font-bold font-sans text-white m-0">AI Military Instructor</h1>
-                </div>
+    <!-- Chatbot Modal -->
+    <div id="chatbot-modal" class="fixed inset-0 z-50 flex flex-col bg-[#f5f5dc] modal-transition hidden-modal md:inset-auto md:right-6 md:bottom-24 md:w-[400px] md:h-[600px] md:rounded-2xl md:shadow-2xl overflow-hidden">
+        
+        <!-- Chat Header -->
+        <header class="bg-[#556b2f] p-4 text-white flex justify-between items-center shadow-lg">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center text-xl">🎖️</div>
                 <div>
-                    <button id="new-chat-btn" class="bg-[#f5f5dc] hover:bg-[#e9e9d6] text-[#556b2f] font-bold py-1 px-3 rounded mr-2 text-sm">
-                        เริ่มใหม่
-                    </button>
-                    <button id="chatbot-close-btn" class="bg-gray-700 hover:bg-gray-900 text-white font-bold py-1 px-3 rounded text-sm">
-                        ปิด
-                    </button>
-                </div>
-            </header>
-
-            <main id="chat-history" class="flex-1 overflow-y-auto p-4 space-y-4 bg-[#f5f5dc]">
-                <div class="flex items-start space-x-2">
-                    <span class="text-2xl">🤖</span>
-                    <div class="chat-bubble chat-bubble-model bg-white text-gray-800 p-3 rounded-lg max-w-lg relative border border-gray-200 shadow-sm">
-                        <p>สวัสดีครับ ผมคือ AI ผู้ช่วยสอนภาษาอังกฤษทางทหาร หากสงสัยศัพท์คำไหน หรือต้องการคำแปลประโยคทหาร ถามได้เลยครับ (Sir/Ma'am)</p>
-                    </div>
-                </div>
-            </main>
-
-            <div id="thinking-indicator" class="p-4 hidden bg-[#f5f5dc]">
-                <div class="flex items-center space-x-2">
-                    <span class="text-2xl">🤖</span>
-                    <div class="chat-bubble chat-bubble-model bg-white text-gray-800 p-3 rounded-lg max-w-lg relative border border-gray-200">
-                        <div class="gemini-thinking-bar"></div>
-                    </div>
+                    <h2 class="font-bold text-lg leading-tight">AI Military Instructor</h2>
+                    <p class="text-xs text-green-100 opacity-80">พร้อมตอบคำถาม 24 ชม. Sir!</p>
                 </div>
             </div>
+            <div class="flex gap-2">
+                <button id="new-chat-btn" title="เริ่มแชทใหม่" class="p-2 hover:bg-white/10 rounded-lg transition-colors text-sm">🔄</button>
+                <button id="chatbot-close-btn" class="p-2 hover:bg-white/10 rounded-lg transition-colors">✕</button>
+            </div>
+        </header>
 
-            <footer class="bg-white p-3 shadow-inner border-t border-gray-200 m-0 w-full max-w-full text-black">
-                <div class="flex space-x-2">
-                    <input id="user-input" type="text" placeholder="พิมพ์ศัพท์ หรือประโยคที่สงสัย..." class="flex-1 p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#556b2f] font-sans text-base text-black">
-                    <button id="send-btn" class="bg-[#556b2f] hover:bg-[#3e4f21] text-white font-bold py-2 px-4 rounded-xl shadow-sm">
-                        ส่ง
-                    </button>
+        <!-- Chat Content -->
+        <main id="chat-history" class="flex-1 overflow-y-auto p-4 space-y-4 chat-container">
+            <!-- Initial Message -->
+            <div class="flex justify-start">
+                <div class="bubble bubble-ai">
+                    สวัสดีครับ! ผมคือ AI ครูฝึกสอนภาษาอังกฤษทางทหาร หากคุณต้องการทราบความหมายของคำศัพท์ ประโยคที่ใช้ในสนามรบ หรือคำย่อทางทหาร สอบถามผมมาได้เลยครับ! <strong>(Sir/Ma'am)</strong>
                 </div>
-            </footer>
+            </div>
+        </main>
+
+        <!-- Thinking Indicator -->
+        <div id="thinking-indicator" class="px-4 py-2 hidden">
+            <div class="flex justify-start items-center space-x-6 ml-4">
+                <div class="dot-flashing"></div>
+            </div>
         </div>
+
+        <!-- Chat Input -->
+        <footer class="bg-white p-4 border-t border-gray-200">
+            <div class="flex gap-2 bg-gray-100 p-2 rounded-2xl border border-gray-200 focus-within:border-[#556b2f] transition-all">
+                <input id="user-input" type="text" 
+                    class="flex-1 bg-transparent border-none outline-none px-2 py-1 text-base" 
+                    placeholder="ถามครูฝึกได้ที่นี่...">
+                <button id="send-btn" class="bg-[#556b2f] text-white p-2 px-4 rounded-xl font-bold hover:bg-[#3e4f21] disabled:opacity-50 transition-all">
+                    ส่ง
+                </button>
+            </div>
+        </footer>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // --- URL ของไฟล์ JSON บน GITHUB ---
-            const jsonUrl = 'https://raw.githubusercontent.com/tontakankeawpang321-glitch/krsitsdeeka/main/Sheet1.json'; 
+        // Configuration
+        const JSON_URL = 'https://raw.githubusercontent.com/tontakankeawpang321-glitch/krsitsdeeka/main/Sheet1.json';
+        const BACKEND_URL = 'https://kodmai2025-github-io.vercel.app/api/chat';
+        
+        const SYSTEM_INSTRUCTION = "คุณคือ AI ครูฝึกสอนภาษาอังกฤษทางทหาร (Military English Instructor) มีหน้าที่แปลคำศัพท์ทหาร อธิบายคำย่อ (Acronyms) และสอนการใช้ประโยคภาษาอังกฤษในบริบททางทหาร (Tactical/Official) ตอบด้วยความสุภาพ เข้มแข็ง และเป็นทางการ (Sir/Ma'am) ห้ามตอบเรื่องที่ไม่เกี่ยวกับภาษาหรือการทหาร หากมีการถามคำศัพท์ทั่วไป ให้พยายามเชื่อมโยงเข้ากับบริบททางทหารเสมอ";
 
-            const loadingMessage = document.getElementById('loading-message');
-            const noResultsMessage = document.getElementById('no-results-message');
-            const vocabTable = document.getElementById('vocab-table');
-            const tableHeader = document.getElementById('table-header');
-            const tableBody = document.getElementById('table-body');
-            const searchInput = document.getElementById('search-input');
+        let chatHistory = [
+            { role: "user", parts: [{ text: `System Instruction: ${SYSTEM_INSTRUCTION}` }] },
+            { role: "model", parts: [{ text: "รับทราบครับกระผม พร้อมปฏิบัติหน้าที่ครูฝึกภาษาอังกฤษแล้วครับ Sir!" }] }
+        ];
 
-            // Fetch data from URL
-            fetch(jsonUrl)
-                .then(response => {
-                    if (!response.ok) throw new Error('Network Error: ' + response.statusText);
-                    return response.json();
-                })
-                .then(data => {
-                    loadingMessage.style.display = 'none';
-                    vocabTable.style.display = 'table';
-                    populateTable(data);
-                })
-                .catch(error => {
-                    console.error('Fetch Error:', error);
-                    loadingMessage.textContent = 'เกิดข้อผิดพลาด: ' + error.message;
-                    loadingMessage.style.color = '#dc3545';
-                });
-
-            // Function to populate table with data
-            function populateTable(data) {
-                tableHeader.innerHTML = '';
-                tableBody.innerHTML = '';
-
-                if (data.length > 0) {
-                    const headers = Object.keys(data[0]);
-                    headers.forEach(headerText => {
-                        const header = document.createElement('th');
-                        header.textContent = headerText;
-                        tableHeader.appendChild(header);
-                    });
-                }
-
-                data.forEach(item => {
-                    const row = document.createElement('tr');
-                    Object.values(item).forEach(text => {
-                        const cell = document.createElement('td');
-                        cell.textContent = text === null ? '-' : text;
-                        row.appendChild(cell);
-                    });
-                    tableBody.appendChild(row);
-                });
-            }
-
-            // Search functionality
-            searchInput.addEventListener('keyup', () => {
-                const filter = searchInput.value.toLowerCase();
-                const rows = tableBody.getElementsByTagName('tr');
-                let found = false;
-
-                for (let i = 0; i < rows.length; i++) {
-                    let rowText = rows[i].textContent || rows[i].innerText;
-                    if (rowText.toLowerCase().indexOf(filter) > -1) {
-                        rows[i].style.display = '';
-                        found = true;
-                    } else {
-                        rows[i].style.display = 'none';
-                    }
-                }
-                
-                noResultsMessage.style.display = found ? 'none' : 'block';
-            });
-        });
-
-        /* =========================================
-           ส่วน Chatbot AI (Backend)
-           ========================================= */
-        const BACKEND_URL = 'https://us-central1-law-ai-14740.cloudfunctions.net/api/chat';
-
-        // System Prompt: ครูฝึกภาษาอังกฤษทหาร
-        const SYSTEM_PROMPT = {
-            role: "user",
-            parts: [{ text: "System Instruction: คุณคือ AI ครูฝึกสอนภาษาอังกฤษทางทหาร (Military English Instructor) มีหน้าที่แปลคำศัพท์ทหาร อธิบายคำย่อ (Acronyms) และสอนการใช้ประโยคภาษาอังกฤษในบริบททางทหาร (Tactical/Official) ตอบด้วยความสุภาพ เข้มแข็ง และเป็นทางการ (Sir/Ma'am) ห้ามตอบเรื่องที่ไม่เกี่ยวกับภาษาหรือการทหาร" }]
-        };
-        const SYSTEM_ACK = {
-            role: "model",
-            parts: [{ text: "รับทราบครับกระผม พร้อมปฏิบัติหน้าที่ครูฝึกภาษาอังกฤษแล้วครับ Sir!" }]
-        };
-
-        let chatHistory = [SYSTEM_PROMPT, SYSTEM_ACK];
-
+        // UI Elements
+        const vocabTable = document.getElementById('vocab-table');
+        const tableHeader = document.getElementById('table-header');
+        const tableBody = document.getElementById('table-body');
+        const loadingSpinner = document.getElementById('loading-spinner');
+        const noResults = document.getElementById('no-results');
+        const searchInput = document.getElementById('search-input');
+        
+        const fabToggle = document.getElementById('fab-chat-toggle');
+        const chatModal = document.getElementById('chatbot-modal');
+        const chatbotCloseBtn = document.getElementById('chatbot-close-btn');
         const chatHistoryEl = document.getElementById('chat-history');
         const userInput = document.getElementById('user-input');
         const sendBtn = document.getElementById('send-btn');
-        const newChatBtn = document.getElementById('new-chat-btn');
         const thinkingIndicator = document.getElementById('thinking-indicator');
+        const newChatBtn = document.getElementById('new-chat-btn');
 
-        function addChatBubble(message, isUser = true) {
-            const bubbleType = isUser ? 'user' : 'model';
-            const icon = isUser ? '👤' : '🤖';
-            const bgClass = isUser ? 'bg-[#556b2f] text-white' : 'bg-white text-gray-800 border border-gray-200';
+        // Load Vocabulary Data
+        async function loadVocab() {
+            try {
+                const response = await fetch(JSON_URL);
+                if (!response.ok) throw new Error('ไม่สามารถโหลดไฟล์ข้อมูลได้');
+                const data = await response.json();
+                renderTable(data);
+                loadingSpinner.classList.add('hidden');
+                vocabTable.classList.remove('hidden');
+            } catch (error) {
+                console.error(error);
+                loadingSpinner.innerHTML = `<p class="text-red-500">❌ เกิดข้อผิดพลาด: ${error.message}</p>`;
+            }
+        }
+
+        function renderTable(data) {
+            if (data.length === 0) return;
             
+            // Build Headers
+            const keys = Object.keys(data[0]);
+            tableHeader.innerHTML = keys.map(k => `<th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">${k}</th>`).join('');
+            
+            // Build Rows
+            tableBody.innerHTML = data.map(item => `
+                <tr class="transition-colors">
+                    ${keys.map(k => `<td class="px-6 py-4 text-sm text-gray-700">${item[k] || '-'}</td>`).join('')}
+                </tr>
+            `).join('');
+        }
+
+        // Search Logic
+        function dispatchSearch() {
+            const filter = searchInput.value.toLowerCase();
+            const rows = tableBody.getElementsByTagName('tr');
+            let hasResults = false;
+
+            Array.from(rows).forEach(row => {
+                const text = row.textContent.toLowerCase();
+                if (text.includes(filter)) {
+                    row.style.display = '';
+                    hasResults = true;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            noResults.classList.toggle('hidden', hasResults);
+            vocabTable.classList.toggle('hidden', !hasResults);
+        }
+
+        searchInput.addEventListener('input', dispatchSearch);
+
+        // Chatbot Controls
+        fabToggle.addEventListener('click', () => {
+            chatModal.classList.toggle('hidden-modal');
+            const isHidden = chatModal.classList.contains('hidden-modal');
+            document.getElementById('fab-icon').textContent = isHidden ? '💬' : '✕';
+        });
+
+        chatbotCloseBtn.addEventListener('click', () => {
+            chatModal.classList.add('hidden-modal');
+            document.getElementById('fab-icon').textContent = '💬';
+        });
+
+        function appendMessage(text, role) {
             const wrap = document.createElement('div');
-            wrap.className = `flex items-start space-x-2 ${isUser ? 'flex-row-reverse space-x-reverse' : ''}`;
+            wrap.className = `flex ${role === 'user' ? 'justify-end' : 'justify-start'}`;
             
             const bubble = document.createElement('div');
-            bubble.className = `chat-bubble chat-bubble-${bubbleType} ${bgClass} p-3 rounded-lg max-w-lg relative shadow-sm`;
-            bubble.innerHTML = `<p>${message.replace(/\n/g, '<br>')}</p>`;
+            bubble.className = `bubble ${role === 'user' ? 'bubble-user' : 'bubble-ai'}`;
+            bubble.innerHTML = text.replace(/\n/g, '<br>');
             
-            wrap.innerHTML = `<span class="text-2xl">${icon}</span>`;
             wrap.appendChild(bubble);
-            
             chatHistoryEl.appendChild(wrap);
             chatHistoryEl.scrollTop = chatHistoryEl.scrollHeight;
         }
 
-        function addChatError(message) {
-            const w = document.createElement('div');
-            w.className = 'flex justify-center my-2';
-            w.innerHTML = `<span class="bg-red-100 text-red-700 text-xs font-semibold px-3 py-1 rounded-full">${message}</span>`;
-            chatHistoryEl.appendChild(w);
-            chatHistoryEl.scrollTop = chatHistoryEl.scrollHeight;
-        }
+        async function handleChat() {
+            const msg = userInput.value.trim();
+            if (!msg || sendBtn.disabled) return;
 
-        function setThinking(on) {
-            thinkingIndicator.classList.toggle('hidden', !on);
-            if (on) chatHistoryEl.scrollTop = chatHistoryEl.scrollHeight;
-        }
-
-        async function handleSend() {
-            const message = (userInput.value || '').trim();
-            if (!message) return;
-
-            addChatBubble(message, true);
+            // User UI
+            appendMessage(msg, 'user');
             userInput.value = '';
-            setThinking(true);
             sendBtn.disabled = true;
+            thinkingIndicator.classList.remove('hidden');
+            chatHistoryEl.scrollTop = chatHistoryEl.scrollHeight;
 
-            chatHistory.push({ role: "user", parts: [{ text: message }] });
+            chatHistory.push({ role: "user", parts: [{ text: msg }] });
 
             try {
                 const response = await fetch(BACKEND_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ history: chatHistory }) 
+                    body: JSON.stringify({ history: chatHistory })
                 });
 
-                if (!response.ok) {
-                    const errData = await response.json();
-                    throw new Error(errData.error || `Server error: ${response.status}`);
-                }
+                if (!response.ok) throw new Error('ขออภัยครับ Sir! ระบบการสื่อสารขัดข้อง');
 
-                const data = await response.json(); 
+                const data = await response.json();
                 const aiReply = data.reply;
 
+                appendMessage(aiReply, 'model');
                 chatHistory.push({ role: "model", parts: [{ text: aiReply }] });
-                setThinking(false);
-                addChatBubble(aiReply, false);
-
             } catch (err) {
-                console.error("Fetch Error:", err);
-                setThinking(false);
-                addChatError(`เกิดข้อผิดพลาด: ${err.message}`);
-                chatHistory.pop();
+                appendMessage(err.message, 'model');
+                chatHistory.pop(); // Remove last user msg to keep history consistent
             } finally {
                 sendBtn.disabled = false;
+                thinkingIndicator.classList.add('hidden');
             }
         }
 
-        sendBtn.addEventListener('click', handleSend);
-        userInput.addEventListener('keydown', e => {
-            if (e.key === 'Enter') handleSend();
-        });
+        sendBtn.addEventListener('click', handleChat);
+        userInput.addEventListener('keydown', (e) => e.key === 'Enter' && handleChat());
 
-        // Reset Chat
         newChatBtn.addEventListener('click', () => {
-            chatHistory = [SYSTEM_PROMPT, SYSTEM_ACK];
+            chatHistory = [
+                { role: "user", parts: [{ text: `System Instruction: ${SYSTEM_INSTRUCTION}` }] },
+                { role: "model", parts: [{ text: "รับทราบครับกระผม พร้อมปฏิบัติหน้าที่ครูฝึกภาษาอังกฤษแล้วครับ Sir!" }] }
+            ];
             chatHistoryEl.innerHTML = `
-                <div class="flex items-start space-x-2">
-                <span class="text-2xl">🤖</span>
-                <div class="chat-bubble chat-bubble-model bg-white text-gray-800 p-3 rounded-lg max-w-lg relative border border-gray-200 shadow-sm">
-                    <p>รับทราบครับ เริ่มบทเรียนใหม่ได้เลย Sir!</p>
+                <div class="flex justify-start">
+                    <div class="bubble bubble-ai">
+                        ล้างข้อมูลการสนทนาเรียบร้อย พร้อมเริ่มบทเรียนใหม่แล้วครับ Sir! มีอะไรให้ช่วยไหมครับ?
+                    </div>
                 </div>
-                </div>`;
-            userInput.value = '';
-            setThinking(false);
+            `;
         });
 
-        // Modal Control
-        const fabToggle = document.getElementById('fab-chat-toggle');
-        const chatModal = document.getElementById('chatbot-modal');
-        const chatbotCloseBtn = document.getElementById('chatbot-close-btn');
-
-        fabToggle.addEventListener('click', () => {
-            chatModal.classList.remove('chatbot-hidden');
-            fabToggle.style.opacity = '0';
-        });
-        chatbotCloseBtn.addEventListener('click', () => {
-            chatModal.classList.add('chatbot-hidden');
-            fabToggle.style.opacity = '1';
-        });
+        // Initialize
+        loadVocab();
     </script>
 </body>
 </html>
