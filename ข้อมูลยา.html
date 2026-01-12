@@ -3,10 +3,12 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>รายชื่อยารักษาโรค (AI Pharmacist)</title>
+<title>รายชื่อยารักษาโรค (AI Pharmacist & Health Check)</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&family=Kodchasan:wght@600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com"></script>
+<!-- Markdown Parser for AI response -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
 <style>
   :root{
@@ -103,7 +105,7 @@
   }
   .modal header{
     position:sticky; top:0; background:linear-gradient(180deg,#fff,rgba(255,255,255,.92));
-    padding:16px 18px; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; align-items:center; gap:10px;
+    padding:16px 18px; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; align-items:center; gap:10px; z-index: 10;
   }
   .modal .body{ padding:18px; }
   .modal h2{ margin:0 0 8px; font-size:22px; }
@@ -117,17 +119,14 @@
   .content-html table, .content-html th, .content-html td{ border:1px solid #ddd; }
   .content-html th, .content-html td{ padding:8px; }
 
-  .skeleton{ background:linear-gradient(90deg, #f6f7f9 25%, #eceff3 37%, #f6f7f9 63%); animation:shimmer 1.2s infinite; }
-  @keyframes shimmer{ 0%{background-position:-200px 0} 100%{background-position:200px 0} }
-
   /* ====== สีข้อความตามหมวดหมู่ยา ====== */
   .cat-analgesic .drug-name{ color:#b45309 }      
   .cat-antipyretic .drug-name{ color:#2563eb }    
-  .cat-antibiotic .drug-name{ color:#dc2626 }    
-  .cat-antihistamine .drug-name{ color:#0f766e } 
+  .cat-antibiotic .drug-name{ color:#dc2626 }     
+  .cat-antihistamine .drug-name{ color:#0f766e }  
   .cat-antacid .drug-name{ color:#7c3aed }        
   .cat-cough .drug-name{ color:#1e40af }          
-  .cat-vitamin .drug-name{ color:#166534 }       
+  .cat-vitamin .drug-name{ color:#166534 }        
 
   /* ===== CSS ของ Chatbot UI (Pharmacist Theme) ===== */
   .chat-bubble::before { content: ''; position: absolute; width: 0; height: 0; border-style: solid; }
@@ -172,6 +171,35 @@
   #chatbot-modal.chatbot-hidden {
     opacity: 0; transform: translateY(100%); pointer-events: none;
   }
+
+  /* Health Form Specifics */
+  .health-form-group { margin-bottom: 10px; }
+  .health-form-label { display: block; font-size: 13px; color: #4b5563; margin-bottom: 3px; font-weight: 700; }
+  .health-form-input {
+    width: 100%; padding: 8px; border: 1px solid #e5e7eb; border-radius: 8px; outline: none; transition: border-color 0.2s;
+    background-color: #f9fafb; font-size: 14px;
+  }
+  .health-form-input:focus { border-color: #50b5a5; background-color: white; }
+
+  /* Chips for diseases */
+  .chip-group { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip-option {
+    cursor: pointer; padding: 6px 12px; border-radius: 999px; border: 1px solid #cbd5e1;
+    background-color: #f1f5f9; color: #475569; font-size: 13px; transition: all 0.2s;
+    user-select: none;
+  }
+  .chip-option:hover { background-color: #e2e8f0; }
+  .chip-option.selected {
+    background-color: #ccfbf1; border-color: #50b5a5; color: #0f766e; font-weight: 700;
+  }
+
+  /* Result Markdown */
+  .result-markdown p { margin-bottom: 0.8em; line-height: 1.6; }
+  .result-markdown h3 { font-size: 1.25rem; font-weight: 700; color: #064e43; margin-top: 1em; margin-bottom: 0.5em; }
+  .result-markdown ul { list-style-type: disc; padding-left: 1.5em; margin-bottom: 0.8em; }
+  .result-markdown li { margin-bottom: 0.2em; }
+  .result-markdown strong { color: #0f172a; }
+
 </style>
 </head>
 <body>
@@ -211,6 +239,7 @@
     </div>
   </main>
 
+  <!-- Modal แสดงรายละเอียดยา -->
   <div id="modalBackdrop" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="mTitle">
     <div class="modal">
       <header>
@@ -229,56 +258,170 @@
     <p class="footer-links" style="text-align: center; color: #475569; margin-top: 20px;">
       © 2025 Crow Studio |
       <a href="https://sites.google.com/view/privacy-policy-pdpa-crow-studi/%E0%B8%AB%E0%B8%99%E0%B8%B2%E0%B9%81%E0%B8%A3%E0%B8%81">นโยบายความเป็นส่วนตัว</a> |
-      <a href="ลิงก์ข้อตกลง">ข้อตกลงการใช้งาน</a>
+      <a href="#">ข้อตกลงการใช้งาน</a>
     </p>
   </footer>
 
+  <!-- FAB Button -->
   <button id="fab-chat-toggle" title="ถามเภสัชกร AI">Ai</button>
 
+  <!-- Chatbot Modal -->
   <div id="chatbot-modal" class="chatbot-hidden">
     <div class="flex flex-col h-screen bg-gray-100">
-      <header class="bg-[#50b5a5] text-white p-4 flex justify-between items-center shadow-md">
+      
+      <!-- Header Chatbot -->
+      <header class="bg-[#50b5a5] text-white p-3 md:p-4 flex justify-between items-center shadow-md">
         <div class="flex items-center gap-2">
-            <span class="text-2xl">💊</span>
-            <h1 class="text-lg font-bold font-sans text-white m-0">AI เภสัชกร</h1>
+            <span class="text-xl md:text-2xl">💊</span>
+            <div>
+                <h1 class="text-base md:text-lg font-bold font-sans text-white m-0">AI เภสัชกร</h1>
+                <p class="text-xs text-green-100 hidden md:block">ผู้ช่วยอัจฉริยะ 24 ชม.</p>
+            </div>
         </div>
-        <div>
-          <button id="new-chat-btn" class="bg-[#ddfff8] hover:bg-[#baf3ea] text-[#064e43] font-bold py-1 px-3 rounded mr-2 text-sm">
+        <div class="flex items-center gap-2">
+          <!-- ปุ่มประเมินสุขภาพ -->
+          <button id="health-check-btn" class="bg-white hover:bg-green-50 text-[#064e43] font-bold py-1.5 px-3 rounded-lg text-sm flex items-center gap-1 shadow-sm transition-all animate-pulse">
+             <span class="text-lg">🩺</span> <span class="hidden sm:inline">ประเมินสุขภาพ</span>
+          </button>
+
+          <button id="new-chat-btn" class="bg-[#ddfff8] hover:bg-[#baf3ea] text-[#064e43] font-bold py-1.5 px-3 rounded-lg text-sm transition-colors">
             เริ่มใหม่
           </button>
-          <button id="chatbot-close-btn" class="bg-gray-700 hover:bg-gray-900 text-white font-bold py-1 px-3 rounded text-sm">
+          <button id="chatbot-close-btn" class="bg-gray-800 hover:bg-gray-900 text-white font-bold py-1.5 px-3 rounded-lg text-sm transition-colors">
             ปิด
           </button>
         </div>
       </header>
 
+      <!-- Chat History -->
       <main id="chat-history" class="flex-1 overflow-y-auto p-4 space-y-4 bg-[#f0fdfa]">
         <div class="flex items-start space-x-2">
           <span class="text-2xl">🤖</span>
           <div class="chat-bubble chat-bubble-model bg-white text-gray-800 p-3 rounded-lg max-w-lg relative border border-gray-200 shadow-sm">
-            <p>สวัสดีครับ ผมคือ AI ผู้ช่วยเภสัชกร มีหน้าที่ให้ข้อมูลเกี่ยวกับยารักษาโรค สรรพคุณ และวิธีใช้เบื้องต้นครับ<br><br><small style="color:#d97706">*คำเตือน: ข้อมูลนี้เป็นเพียงคำแนะนำเบื้องต้น ไม่สามารถทดแทนการวินิจฉัยของแพทย์ได้ หากมีอาการรุนแรงโปรดพบแพทย์ทันที</small></p>
+            <p>สวัสดีครับ ผมคือ AI ผู้ช่วยเภสัชกร สอบถามข้อมูลยาได้เลยครับ<br><br>
+            หากมีอาการป่วย แนะนำให้กดปุ่ม <strong>"🩺 ประเมินสุขภาพ"</strong> ด้านบน เพื่อให้ผมช่วยวิเคราะห์เบื้องต้นครับ
+            </p>
           </div>
         </div>
       </main>
 
+      <!-- Thinking Indicator -->
       <div id="thinking-indicator" class="p-4 hidden bg-[#f0fdfa]">
         <div class="flex items-center space-x-2">
           <span class="text-2xl">🤖</span>
           <div class="chat-bubble chat-bubble-model bg-white text-gray-800 p-3 rounded-lg max-w-lg relative border border-gray-200">
             <div class="gemini-thinking-bar"></div>
+            <span class="text-xs text-gray-500 mt-1 block">กำลังพิมพ์...</span>
           </div>
         </div>
       </div>
 
-      <footer class="bg-white p-3 shadow-inner border-t border-gray-200 m-0 w-full max-w-full">
+      <!-- Input Area -->
+      <footer class="bg-white p-3 shadow-inner border-t border-gray-200 m-0 w-full max-w-full z-10">
         <div class="flex space-x-2">
           <input id="user-input" type="text" placeholder="พิมพ์ชื่อยา หรืออาการป่วย..." class="flex-1 p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#50b5a5] font-sans text-base">
-          <button id="send-btn" class="bg-[#50b5a5] hover:bg-[#2f8f80] text-white font-bold py-2 px-4 rounded-xl shadow-sm">
+          <button id="send-btn" class="bg-[#50b5a5] hover:bg-[#2f8f80] text-white font-bold py-2 px-4 rounded-xl shadow-sm transition-colors">
             ส่ง
           </button>
         </div>
       </footer>
     </div>
+
+    <!-- Health Assessment Dialog (Form) -->
+    <div id="health-modal-overlay" class="absolute inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl w-full max-w-lg shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
+            <header class="p-3 border-b border-gray-100 flex justify-between items-center bg-[#50b5a5]">
+                <div class="flex items-center gap-2 text-white font-bold text-lg">
+                    <span>🩺</span> ประเมินสุขภาพเบื้องต้น
+                </div>
+                <button id="close-health-modal" class="text-white/80 hover:text-white text-2xl leading-none">&times;</button>
+            </header>
+            
+            <div class="p-4 overflow-y-auto space-y-3 bg-slate-50">
+                <!-- Row 1: Basic Info (Compact) -->
+                <div class="grid grid-cols-4 gap-2">
+                    <div class="col-span-2 sm:col-span-1">
+                         <label class="health-form-label">เพศ</label>
+                         <select id="hf-gender" class="health-form-input">
+                            <option value="ชาย">ชาย</option>
+                            <option value="หญิง">หญิง</option>
+                        </select>
+                    </div>
+                    <div class="col-span-2 sm:col-span-1">
+                        <label class="health-form-label">อายุ (ปี)</label>
+                        <input type="number" id="hf-age" class="health-form-input" placeholder="0">
+                    </div>
+                    <div class="col-span-2 sm:col-span-1">
+                        <label class="health-form-label">น้ำหนัก (kg)</label>
+                        <input type="number" id="hf-weight" class="health-form-input" placeholder="0">
+                    </div>
+                    <div class="col-span-2 sm:col-span-1">
+                        <label class="health-form-label">ส่วนสูง (cm)</label>
+                        <input type="number" id="hf-height" class="health-form-input" placeholder="0">
+                    </div>
+                </div>
+
+                <!-- Row 2: Chronic Diseases (Chips) -->
+                <div class="health-form-group">
+                    <label class="health-form-label">โรคประจำตัว (เลือกได้มากกว่า 1)</label>
+                    <div class="chip-group" id="disease-chips">
+                        <div class="chip-option" data-val="ไม่มี">ไม่มี</div>
+                        <div class="chip-option" data-val="ความดันโลหิตสูง">ความดันโลหิตสูง</div>
+                        <div class="chip-option" data-val="เบาหวาน">เบาหวาน</div>
+                        <div class="chip-option" data-val="ไขมันในเลือด">ไขมันในเลือด</div>
+                        <div class="chip-option" data-val="โรคหัวใจ">โรคหัวใจ</div>
+                        <div class="chip-option" data-val="หอบหืด">หอบหืด</div>
+                        <div class="chip-option" data-val="ไตเรื้อรัง">ไตเรื้อรัง</div>
+                    </div>
+                    <input type="text" id="hf-disease-other" class="health-form-input mt-2" placeholder="อื่นๆ ระบุ...">
+                </div>
+
+                <!-- Row 3: Allergy -->
+                <div class="health-form-group">
+                    <label class="health-form-label text-red-600">ประวัติแพ้ยา / อาหาร (สำคัญ)</label>
+                    <input type="text" id="hf-allergy" class="health-form-input border-red-200 bg-red-50 focus:bg-white" placeholder="ระบุชื่อยาที่แพ้ หรือ 'ไม่มี'">
+                </div>
+
+                <!-- Row 4: Symptoms (Focus) -->
+                <div class="health-form-group">
+                    <label class="health-form-label text-[#064e43] text-base">อาการที่ต้องการปรึกษา (ระบุละเอียด)</label>
+                    <textarea id="hf-symptoms" rows="4" class="health-form-input border-[#50b5a5] shadow-sm text-base" placeholder="เช่น ปวดหัวตุบๆ ขมับขวา มา 2 วัน, มีไข้ต่ำๆ, เจ็บคอเวลากลืน..."></textarea>
+                </div>
+            </div>
+
+            <footer class="p-3 border-t border-gray-100 flex justify-end gap-3 bg-white">
+                <button id="cancel-health-btn" class="px-4 py-2 text-gray-500 hover:bg-gray-100 rounded-lg text-sm font-bold">ยกเลิก</button>
+                <button id="submit-health-btn" class="px-6 py-2 bg-[#50b5a5] hover:bg-[#2f8f80] text-white rounded-lg text-sm font-bold shadow-lg transition-all flex items-center gap-2">
+                    <span>⚡</span> วิเคราะห์อาการ
+                </button>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Result Dialog (Popup) -->
+    <div id="result-modal-overlay" class="absolute inset-0 bg-black/70 z-[60] hidden flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl w-full max-w-2xl shadow-2xl flex flex-col max-h-[85vh] overflow-hidden">
+            <header class="p-4 border-b border-gray-100 flex justify-between items-center bg-white sticky top-0">
+                <div class="flex items-center gap-2 text-[#064e43] font-bold text-xl">
+                    <span>🤖</span> ผลการวิเคราะห์ (AI)
+                </div>
+                <button id="close-result-modal" class="text-gray-400 hover:text-gray-600 text-3xl leading-none">&times;</button>
+            </header>
+            
+            <div id="result-content-area" class="p-6 overflow-y-auto bg-[#fffdf7] text-gray-800 text-base leading-relaxed result-markdown">
+                <!-- Loading State -->
+                <div class="flex flex-col items-center justify-center py-10 space-y-4 text-gray-500">
+                     <div class="w-10 h-10 border-4 border-gray-200 border-t-[#50b5a5] rounded-full animate-spin"></div>
+                     <p>กำลังประมวลผลข้อมูลสุขภาพของคุณ...</p>
+                </div>
+            </div>
+
+            <footer class="p-4 border-t border-gray-100 bg-gray-50 text-xs text-center text-gray-500">
+                คำเตือน: ผลลัพธ์จาก AI เป็นเพียงคำแนะนำเบื้องต้น ไม่ใช่การวินิจฉัยทางการแพทย์ โปรดพบแพทย์หากอาการรุนแรง
+            </footer>
+        </div>
+    </div>
+
   </div>
 
 <script>
@@ -361,7 +504,7 @@ function renderPage(){
   document.getElementById('nextBtn').disabled = page>=totalPages;
 }
 
-/** =============== Modal Logic =============== **/
+/** =============== Modal Logic (Drug Info) =============== **/
 let scrollY = 0;
 function lockBody(){
   scrollY = window.scrollY || document.documentElement.scrollTop;
@@ -375,7 +518,6 @@ function unlockBody(){
   window.scrollTo(0, scrollY); document.getElementById('mainContent').removeAttribute('inert');
 }
 
-// เปลี่ยนชื่อฟังก์ชันเป็น openDrugModal เพื่อไม่ให้ชนกับ Chatbot
 function openDrugModal(encodedId, encodedName){
   const id = decodeURIComponent(encodedId || '');
   const name = decodeURIComponent(encodedName || '');
@@ -426,11 +568,11 @@ document.getElementById('cat').addEventListener('change', applySearch);
 
 
 /** =========================================
-    3. ส่วน Chatbot AI (Backend)
+    3. ส่วน Chatbot AI + Health Assessment Logic
     ========================================= */
-const BACKEND_URL = 'https://us-central1-law-ai-14740.cloudfunctions.net/api/chat';
+const NORMAL_CHAT_URL = 'https://kodmai2025-github-io.vercel.app/api/chat';
+// Remove specific worker URL
 
-// System Prompt: ปรับบุคลิกให้เป็นเภสัชกร
 const SYSTEM_PROMPT = {
     role: "user",
     parts: [{ text: "System Instruction: คุณคือ AI เภสัชกรผู้ช่วย (Pharmacist AI) มีหน้าที่ให้ข้อมูลเกี่ยวกับยา สรรพคุณ วิธีใช้ ผลข้างเคียง และคำแนะนำเบื้องต้นเกี่ยวกับสุขภาพ ตอบด้วยภาษาที่สุภาพ เข้าใจง่าย และต้องระบุเสมอว่า 'ข้อมูลนี้เป็นเพียงคำแนะนำเบื้องต้น ควรปรึกษาแพทย์หรือเภสัชกรก่อนใช้ยา' ห้ามตอบเรื่องกฎหมายหรือเรื่องอื่นที่ไม่เกี่ยวข้องกับสุขภาพ" }]
@@ -442,16 +584,31 @@ const SYSTEM_ACK = {
 
 let chatHistory = [SYSTEM_PROMPT, SYSTEM_ACK];
 
+// DOM Elements
 const chatHistoryEl = document.getElementById('chat-history');
 const userInput = document.getElementById('user-input');
 const sendBtn = document.getElementById('send-btn');
 const newChatBtn = document.getElementById('new-chat-btn');
 const thinkingIndicator = document.getElementById('thinking-indicator');
+const chatModal = document.getElementById('chatbot-modal');
 
+// Health Modal Elements
+const healthCheckBtn = document.getElementById('health-check-btn');
+const healthModalOverlay = document.getElementById('health-modal-overlay');
+const closeHealthModalBtn = document.getElementById('close-health-modal');
+const cancelHealthBtn = document.getElementById('cancel-health-btn');
+const submitHealthBtn = document.getElementById('submit-health-btn');
+
+// Result Modal Elements
+const resultModalOverlay = document.getElementById('result-modal-overlay');
+const closeResultModalBtn = document.getElementById('close-result-modal');
+const resultContentArea = document.getElementById('result-content-area');
+
+// --- Helper Functions ---
 function addChatBubble(message, isUser = true) {
     const bubbleType = isUser ? 'user' : 'model';
     const icon = isUser ? '👤' : '🤖';
-    const bgClass = isUser ? 'bg-[#50b5a5] text-white' : 'bg-white text-gray-800 border border-gray-200'; // สีเขียวมิ้นต์
+    const bgClass = isUser ? 'bg-[#50b5a5] text-white' : 'bg-white text-gray-800 border border-gray-200';
     
     const wrap = document.createElement('div');
     wrap.className = `flex items-start space-x-2 ${isUser ? 'flex-row-reverse space-x-reverse' : ''}`;
@@ -467,19 +624,12 @@ function addChatBubble(message, isUser = true) {
     chatHistoryEl.scrollTop = chatHistoryEl.scrollHeight;
 }
 
-function addChatError(message) {
-    const w = document.createElement('div');
-    w.className = 'flex justify-center my-2';
-    w.innerHTML = `<span class="bg-red-100 text-red-700 text-xs font-semibold px-3 py-1 rounded-full">${message}</span>`;
-    chatHistoryEl.appendChild(w);
-    chatHistoryEl.scrollTop = chatHistoryEl.scrollHeight;
-}
-
 function setThinking(on) {
     thinkingIndicator.classList.toggle('hidden', !on);
     if (on) chatHistoryEl.scrollTop = chatHistoryEl.scrollHeight;
 }
 
+// --- Chat Logic (Normal) ---
 async function handleSend() {
     const message = (userInput.value || '').trim();
     if (!message) return;
@@ -492,28 +642,23 @@ async function handleSend() {
     chatHistory.push({ role: "user", parts: [{ text: message }] });
 
     try {
-        const response = await fetch(BACKEND_URL, {
+        const response = await fetch(NORMAL_CHAT_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ history: chatHistory }) 
         });
 
-        if (!response.ok) {
-            const errData = await response.json();
-            throw new Error(errData.error || `Server error: ${response.status}`);
-        }
-
+        if (!response.ok) throw new Error(`Server error: ${response.status}`);
         const data = await response.json(); 
-        const aiReply = data.reply;
+        const aiReply = data.reply || data.text || "(ไม่ได้รับคำตอบจากระบบ)";
 
         chatHistory.push({ role: "model", parts: [{ text: aiReply }] });
         setThinking(false);
         addChatBubble(aiReply, false);
 
     } catch (err) {
-        console.error("Fetch Error:", err);
         setThinking(false);
-        addChatError(`เกิดข้อผิดพลาด: ${err.message}`);
+        addChatBubble(`เกิดข้อผิดพลาด: ${err.message}`, false);
         chatHistory.pop();
     } finally {
         sendBtn.disabled = false;
@@ -521,36 +666,133 @@ async function handleSend() {
 }
 
 sendBtn.addEventListener('click', handleSend);
-userInput.addEventListener('keydown', e => {
-    if (e.key === 'Enter') handleSend();
-});
-
-// Reset Chat
+userInput.addEventListener('keydown', e => { if (e.key === 'Enter') handleSend(); });
 newChatBtn.addEventListener('click', () => {
     chatHistory = [SYSTEM_PROMPT, SYSTEM_ACK];
-    chatHistoryEl.innerHTML = `
-        <div class="flex items-start space-x-2">
-        <span class="text-2xl">🤖</span>
-        <div class="chat-bubble chat-bubble-model bg-white text-gray-800 p-3 rounded-lg max-w-lg relative border border-gray-200 shadow-sm">
-            <p>สวัสดีครับ ผมคือ AI ผู้ช่วยเภสัชกร สอบถามเรื่องยาใหม่ได้เลยครับ</p>
-        </div>
-        </div>`;
+    chatHistoryEl.innerHTML = `<div class="flex items-start space-x-2"><span class="text-2xl">🤖</span><div class="chat-bubble chat-bubble-model bg-white text-gray-800 p-3 rounded-lg max-w-lg relative border border-gray-200 shadow-sm"><p>สวัสดีครับ ผมคือ AI ผู้ช่วยเภสัชกร สอบถามเรื่องยาได้เลยครับ</p></div></div>`;
     userInput.value = '';
     setThinking(false);
 });
 
-// Modal Control
+// --- Chatbot Toggle ---
 const fabToggle = document.getElementById('fab-chat-toggle');
-const chatModal = document.getElementById('chatbot-modal');
-const chatbotCloseBtn = document.getElementById('chatbot-close-btn');
+fabToggle.addEventListener('click', () => { chatModal.classList.remove('chatbot-hidden'); fabToggle.style.opacity = '0'; });
+document.getElementById('chatbot-close-btn').addEventListener('click', () => { chatModal.classList.add('chatbot-hidden'); fabToggle.style.opacity = '1'; });
 
-fabToggle.addEventListener('click', () => {
-    chatModal.classList.remove('chatbot-hidden');
-    fabToggle.style.opacity = '0';
+/** ==========================================
+ * HEALTH ASSESSMENT & RESULT DIALOG LOGIC
+ * ========================================== */
+
+// 1. Chips Logic
+const diseaseChips = document.querySelectorAll('.chip-option');
+diseaseChips.forEach(chip => {
+    chip.addEventListener('click', () => {
+        const val = chip.getAttribute('data-val');
+        if (val === 'ไม่มี') {
+            // ถ้าเลือกไม่มี ให้เคลียร์อันอื่น
+            diseaseChips.forEach(c => c.classList.remove('selected'));
+            chip.classList.add('selected');
+        } else {
+            // ถ้าเลือกโรคอื่น ให้เอา 'ไม่มี' ออก
+            document.querySelector('.chip-option[data-val="ไม่มี"]').classList.remove('selected');
+            chip.classList.toggle('selected');
+        }
+    });
 });
-chatbotCloseBtn.addEventListener('click', () => {
-    chatModal.classList.add('chatbot-hidden');
-    fabToggle.style.opacity = '1';
+// Default select "ไม่มี"
+document.querySelector('.chip-option[data-val="ไม่มี"]').classList.add('selected');
+
+// 2. Modals Control
+function toggleHealthModal(show) {
+    healthModalOverlay.classList.toggle('hidden', !show);
+}
+function toggleResultModal(show) {
+    resultModalOverlay.classList.toggle('hidden', !show);
+}
+
+healthCheckBtn.addEventListener('click', () => toggleHealthModal(true));
+closeHealthModalBtn.addEventListener('click', () => toggleHealthModal(false));
+cancelHealthBtn.addEventListener('click', () => toggleHealthModal(false));
+
+closeResultModalBtn.addEventListener('click', () => toggleResultModal(false));
+
+// 3. Submit & Analyze
+submitHealthBtn.addEventListener('click', async () => {
+    // Collect Data
+    const age = document.getElementById('hf-age').value.trim() || '-';
+    const gender = document.getElementById('hf-gender').value;
+    const weight = document.getElementById('hf-weight').value.trim() || '-';
+    const height = document.getElementById('hf-height').value.trim() || '-';
+    const allergy = document.getElementById('hf-allergy').value.trim() || 'ไม่มี';
+    const symptoms = document.getElementById('hf-symptoms').value.trim();
+    
+    // Collect diseases
+    let selectedDiseases = Array.from(document.querySelectorAll('.chip-option.selected')).map(c => c.getAttribute('data-val'));
+    const otherDisease = document.getElementById('hf-disease-other').value.trim();
+    if(otherDisease) selectedDiseases.push(otherDisease);
+    if(selectedDiseases.length === 0) selectedDiseases = ['ไม่มี'];
+    const diseaseStr = selectedDiseases.join(', ');
+
+    if(!symptoms) {
+        alert("กรุณาระบุอาการที่ต้องการปรึกษา");
+        return;
+    }
+
+    // Close Form -> Open Result Loading
+    toggleHealthModal(false);
+    toggleResultModal(true);
+    
+    // Reset Result Content to Loading
+    resultContentArea.innerHTML = `
+        <div class="flex flex-col items-center justify-center py-10 space-y-4 text-gray-500">
+             <div class="w-10 h-10 border-4 border-gray-200 border-t-[#50b5a5] rounded-full animate-spin"></div>
+             <p>AI กำลังวิเคราะห์ข้อมูล...</p>
+        </div>`;
+
+    // Prompt Construction
+    const prompt = `ประเมินสุขภาพเบื้องต้น:
+    - ผู้ป่วย: ${gender} อายุ ${age} ปี (น้ำหนัก ${weight}kg สูง ${height}cm)
+    - โรคประจำตัว: ${diseaseStr}
+    - แพ้ยา: ${allergy}
+    - อาการ: "${symptoms}"
+    
+    ช่วยวิเคราะห์และตอบกลับโดยจัดรูปแบบ Markdown หัวข้อดังนี้:
+    1. **ผลวิเคราะห์**: สาเหตุที่เป็นไปได้ของอาการ
+    2. **ระดับความรุนแรง**: ประเมินความรุนแรง (ต่ำ/กลาง/สูง)
+    3. **การรักษาเบื้องต้น**: วิธีปฏิบัติตัวและดูแลตนเอง
+    4. **ยาที่ใช้รักษา**: แนะนำยาสามัญประจำบ้านหรือยาที่เกี่ยวข้อง (ถ้ามี)
+    5. **ควรพบแพทย์เมื่อไร**: สัญญาณอันตรายที่ต้องไปโรงพยาบาล`;
+
+    // AI Call
+    try {
+        // Construct history for the API (since it expects history array)
+        const tempHistory = [
+            { role: "user", parts: [{ text: "System Instruction: คุณคือ AI เภสัชกรผู้ช่วย มีหน้าที่วิเคราะห์สุขภาพเบื้องต้นตามข้อมูลที่ได้รับ ตอบกลับในรูปแบบ Markdown ภาษาไทย ตามหัวข้อที่กำหนด" }] },
+            { role: "model", parts: [{ text: "รับทราบครับ" }] },
+            { role: "user", parts: [{ text: prompt }] }
+        ];
+
+        const response = await fetch(NORMAL_CHAT_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ history: tempHistory }) 
+        });
+
+        if (!response.ok) throw new Error("การเชื่อมต่อขัดข้อง");
+        const data = await response.json();
+        const aiText = data.reply || data.text || "ไม่สามารถวิเคราะห์ได้ในขณะนี้";
+
+        // Display Result using Marked (Markdown Parser)
+        resultContentArea.innerHTML = marked.parse(aiText);
+
+    } catch (err) {
+        resultContentArea.innerHTML = `
+            <div class="text-center text-red-600 py-10">
+                <p class="text-xl font-bold">เกิดข้อผิดพลาด</p>
+                <p>${err.message}</p>
+                <button onclick="toggleResultModal(false)" class="mt-4 text-sm underline text-gray-500">ปิด</button>
+            </div>`;
+    }
 });
 
 </script>
