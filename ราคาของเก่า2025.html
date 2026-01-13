@@ -90,7 +90,7 @@
 <body class="text-gray-800 pb-24">
 
     <!-- Header -->
-    <header class="bg-gradient-to-r from-primary to-secondary text-white p-6 shadow-lg rounded-b-3xl relative overflow-hidden">
+    <header class="bg-gradient-to-r from-primary to-secondary text-white p-6 pb-10 shadow-lg rounded-b-[2.5rem] relative overflow-hidden z-0">
         <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-white opacity-10 rounded-full"></div>
         <div class="absolute bottom-0 left-0 -mb-4 -ml-4 w-16 h-16 bg-white opacity-10 rounded-full"></div>
         
@@ -106,8 +106,19 @@
         </div>
     </header>
 
+    <!-- Search Bar -->
+    <div class="px-4 -mt-6 relative z-10">
+        <div class="bg-white rounded-2xl shadow-lg flex items-center p-3 border border-gray-100 ring-1 ring-gray-50">
+            <i class="fa-solid fa-magnifying-glass text-gray-400 ml-2 text-lg"></i>
+            <input type="text" id="searchInput" class="flex-1 ml-3 outline-none text-gray-700 placeholder-gray-400 font-medium" placeholder="ค้นหา... (เช่น ขวด, เหล็ก)" onkeyup="handleSearch()">
+             <button onclick="clearSearch()" id="clearSearchBtn" class="text-gray-400 hover:text-gray-600 hidden pr-2 transition-colors">
+                <i class="fa-solid fa-times-circle text-lg"></i>
+            </button>
+        </div>
+    </div>
+
     <!-- Categories -->
-    <div class="mt-6 px-4">
+    <div class="mt-4 px-4">
         <div class="flex overflow-x-auto space-x-3 hide-scrollbar pb-2" id="categoryContainer">
             <button onclick="filterCategory('all')" class="cat-btn bg-gray-800 text-white px-4 py-2 rounded-full whitespace-nowrap shadow-sm active-cat text-sm">ทั้งหมด</button>
             <button onclick="filterCategory('paper')" class="cat-btn bg-white text-gray-600 px-4 py-2 rounded-full whitespace-nowrap shadow-sm border border-gray-100 text-sm"><i class="fa-solid fa-newspaper mr-1 text-gray-500"></i> กระดาษ</button>
@@ -246,7 +257,10 @@
 
     <script>
         // ================= CONFIG =================
+        // Use the same backend for both Chat and Price Updates
         const BACKEND_URL = 'https://odd-night-9879.tontakankeawpang321.workers.dev';
+        const STORAGE_KEY_DATA = 'eco_waste_data';
+        const STORAGE_KEY_LAST_UPDATE = 'eco_last_update_ts';
         
         // ================= DATA =================
         let wasteData = [
@@ -267,24 +281,45 @@
         ];
 
         let currentCategory = 'all';
+        let searchQuery = '';
         let basket = [];
         let selectedItem = null;
         let chatHistory = [];
+        let lastUpdateDate = new Date();
 
         // ================= INIT =================
         document.addEventListener('DOMContentLoaded', () => {
+            loadFromStorage();
             renderDate();
-            renderItems(wasteData);
             setupEventListeners();
         });
 
+        function loadFromStorage() {
+            const savedData = localStorage.getItem(STORAGE_KEY_DATA);
+            const savedTime = localStorage.getItem(STORAGE_KEY_LAST_UPDATE);
+
+            if (savedData) {
+                try {
+                    wasteData = JSON.parse(savedData);
+                    if (savedTime) {
+                        lastUpdateDate = new Date(savedTime);
+                    }
+                    console.log("Loaded saved data");
+                } catch (e) {
+                    console.error("Error loading cache", e);
+                }
+            } else {
+                console.log("Using default data (First time)");
+            }
+            applyFilters();
+            updateTimeDisplay();
+        }
+
         function setupEventListeners() {
-            // Calculator modal close on click outside
             document.getElementById('calculatorModal').addEventListener('click', (e) => {
                 if (e.target === document.getElementById('calculatorModal')) closeCalculator();
             });
 
-            // Chat setup
             document.getElementById('fab-chat-toggle').addEventListener('click', () => {
                 document.getElementById('chatbot-modal').classList.remove('chatbot-hidden');
                 document.getElementById('fab-chat-toggle').style.opacity = '0';
@@ -305,13 +340,59 @@
 
         // ================= MAIN LOGIC =================
         function renderDate() {
-            const date = new Date();
-            document.getElementById('currentDate').innerText = date.toLocaleDateString('th-TH', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            const displayDate = lastUpdateDate || new Date();
+            document.getElementById('currentDate').innerText = displayDate.toLocaleDateString('th-TH', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        }
+
+        function handleSearch() {
+            searchQuery = document.getElementById('searchInput').value.trim().toLowerCase();
+            const clearBtn = document.getElementById('clearSearchBtn');
+            if (searchQuery.length > 0) {
+                clearBtn.classList.remove('hidden');
+            } else {
+                clearBtn.classList.add('hidden');
+            }
+            applyFilters();
+        }
+
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            handleSearch();
+        }
+
+        function filterCategory(category) {
+            currentCategory = category;
+            
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                const isMatch = (category === 'all' && btn.innerText.includes('ทั้งหมด')) || btn.getAttribute('onclick').includes(`'${category}'`);
+                
+                if (isMatch) {
+                    btn.className = 'cat-btn bg-gray-800 text-white px-4 py-2 rounded-full whitespace-nowrap shadow-sm active-cat text-sm transition-all';
+                } else {
+                    btn.className = 'cat-btn bg-white text-gray-600 px-4 py-2 rounded-full whitespace-nowrap shadow-sm border border-gray-100 text-sm hover:bg-gray-50 transition-all';
+                }
+            });
+
+            applyFilters();
+        }
+
+        function applyFilters(animate = false) {
+            const filtered = wasteData.filter(item => {
+                const matchCategory = currentCategory === 'all' || item.category === currentCategory;
+                const matchSearch = item.name.toLowerCase().includes(searchQuery);
+                return matchCategory && matchSearch;
+            });
+            renderItems(filtered, animate);
         }
 
         function renderItems(items, animate = false) {
             const container = document.getElementById('priceList');
             container.innerHTML = '';
+            
+            if (items.length === 0) {
+                container.innerHTML = `<div class="text-center py-10 text-gray-400">ไม่พบรายการที่ค้นหา</div>`;
+                return;
+            }
             
             items.forEach((item, index) => {
                 const trendIcon = item.trend === 'up' ? '<i class="fa-solid fa-caret-up text-green-500 ml-1"></i>' : 
@@ -343,24 +424,6 @@
                 `;
                 container.appendChild(card);
             });
-        }
-
-        function filterCategory(category) {
-            currentCategory = category;
-            
-            // Update buttons
-            document.querySelectorAll('.cat-btn').forEach(btn => {
-                const isMatch = (category === 'all' && btn.innerText.includes('ทั้งหมด')) || btn.getAttribute('onclick').includes(`'${category}'`);
-                
-                if (isMatch) {
-                    btn.className = 'cat-btn bg-gray-800 text-white px-4 py-2 rounded-full whitespace-nowrap shadow-sm active-cat text-sm transition-all';
-                } else {
-                    btn.className = 'cat-btn bg-white text-gray-600 px-4 py-2 rounded-full whitespace-nowrap shadow-sm border border-gray-100 text-sm hover:bg-gray-50 transition-all';
-                }
-            });
-
-            const filtered = wasteData.filter(item => currentCategory === 'all' || item.category === currentCategory);
-            renderItems(filtered);
         }
 
         // ================= CALCULATOR & BASKET =================
@@ -418,7 +481,6 @@
 
         // ================= AI FUNCTIONS =================
         
-        // 1. Update Prices
         async function updatePricesWithAI() {
             const overlay = document.getElementById('aiLoadingOverlay');
             const loadingText = document.getElementById('aiLoadingText');
@@ -426,7 +488,6 @@
             loadingText.innerText = "กำลังเชื่อมต่อฐานข้อมูล...";
 
             try {
-                // สร้างรายการสินค้าปัจจุบันส่งไปให้ AI
                 const itemsList = wasteData.map(item => `{ "id": ${item.id}, "name": "${item.name}", "current": ${item.price} }`).join(", ");
 
                 const systemPrompt = "You are a backend API for a Thai recycling app. Your job is to return a JSON array of updated prices.";
@@ -435,18 +496,20 @@
                     Input Data: [${itemsList}]
                     
                     Rules:
-                    1. Vary prices slightly (+/- 5-15%) from "current".
+                    1. Generate NEW market prices for ALL items (simulate market fluctuation).
                     2. Randomize "trend" as "up", "down", or "stable".
                     3. Output ONLY valid JSON array: [{"id": 1, "price": 4.75, "trend": "up"}, ...]
                     4. No markdown, no explanation.
                 `;
 
-                const history = [{ role: "user", parts: [{ text: systemPrompt + "\n" + userPrompt }] }];
-
+                // Uses BACKEND_URL for price updates
                 const response = await fetch(BACKEND_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ history: history })
+                    body: JSON.stringify({ 
+                        mode: "update-price",
+                        message: systemPrompt + "\n" + userPrompt
+                    })
                 });
 
                 if (!response.ok) throw new Error("API Error");
@@ -454,23 +517,25 @@
                 const data = await response.json();
                 let jsonText = data.reply.replace(/```json/g, '').replace(/```/g, '').trim();
                 
-                // Try parsing
                 const newPrices = JSON.parse(jsonText);
 
-                // Update Local Data
-                let changeCount = 0;
                 wasteData = wasteData.map(original => {
                     const updated = newPrices.find(p => p.id === original.id);
-                    if (updated && updated.price !== original.price) {
-                        changeCount++;
+                    if (updated) {
                         return { ...original, price: updated.price, trend: updated.trend };
                     }
                     return original;
                 });
 
+                lastUpdateDate = new Date();
+                
+                localStorage.setItem(STORAGE_KEY_DATA, JSON.stringify(wasteData));
+                localStorage.setItem(STORAGE_KEY_LAST_UPDATE, lastUpdateDate.toISOString());
+
                 loadingText.innerText = "อัปเดตราคาเรียบร้อย!";
                 setTimeout(() => {
-                    renderItems(wasteData, true); // Re-render with flash animation
+                    applyFilters(true); // Re-render with flash animation respecting current filter
+                    renderDate(); 
                     updateTimeDisplay();
                     overlay.classList.add('hidden');
                 }, 800);
@@ -483,27 +548,25 @@
         }
 
         function updateTimeDisplay() {
-            const now = new Date();
-            document.getElementById('updateTime').innerText = `อัปเดต: ${now.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' })} น.`;
+            const timeStr = lastUpdateDate.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }) + " น.";
+            const dateStr = lastUpdateDate.toLocaleDateString('th-TH', { day: 'numeric', month: 'short' });
+            
+            document.getElementById('updateTime').innerText = `ข้อมูล: ${dateStr} ${timeStr}`;
             document.getElementById('statusDot').className = "w-2 h-2 rounded-full bg-green-500 mr-2 animate-pulse";
         }
 
-        // 2. Chatbot Logic
         async function handleChatSend() {
             const input = document.getElementById('user-input');
             const message = input.value.trim();
             if (!message) return;
 
-            // UI Update
             addChatBubble(message, true);
             input.value = '';
             setThinking(true);
             document.getElementById('send-btn').disabled = true;
 
-            // Prepare Context (Current Prices)
             const priceContext = wasteData.map(i => `- ${i.name}: ${i.price} บาท`).join("\n");
             
-            // Construct Prompt
             const prompt = `
                 ข้อมูลราคารับซื้อปัจจุบันในร้าน (ใช้อ้างอิงในการตอบ):
                 ${priceContext}
@@ -513,18 +576,17 @@
                 คำแนะนำ: ตอบสั้นๆ เข้าใจง่าย เป็นกันเอง ถ้าถามราคาให้ตอบตามข้อมูลด้านบน ถ้าไม่มีให้บอกว่าไม่มีรับซื้อ
             `;
 
-            // Append to local history for context (optional, but keep simple for now)
-            // Note: Sending fresh history array each time to API for simple stateless interaction or managing state locally
-            if (chatHistory.length === 0) {
-                 chatHistory.push({ role: "user", parts: [{ text: "You are a helpful recycling assistant in Thailand." }] });
-            }
             chatHistory.push({ role: "user", parts: [{ text: prompt }] });
 
             try {
+                // Uses BACKEND_URL for Chatbot
                 const response = await fetch(BACKEND_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ history: chatHistory })
+                    body: JSON.stringify({ 
+                        mode: "chat",
+                        message: prompt 
+                    })
                 });
 
                 const data = await response.json();
@@ -540,7 +602,6 @@
                 addChatBubble("ขออภัย ระบบขัดข้องชั่วคราวครับ", false);
             } finally {
                 document.getElementById('send-btn').disabled = false;
-                // Keep history small to avoid token limits on free tiers
                 if(chatHistory.length > 10) chatHistory = chatHistory.slice(-4);
             }
         }
