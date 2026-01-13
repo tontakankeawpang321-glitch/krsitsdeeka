@@ -1,172 +1,595 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EcoPrice AI</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เช็คราคาขยะรีไซเคิล (EcoPrice AI)</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
 
-<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Prompt', 'sans-serif'] },
+                    colors: {
+                        primary: '#10B981', secondary: '#065F46', accent: '#F59E0B',
+                        paper: '#F3F4F6', metal: '#9CA3AF', plastic: '#60A5FA', glass: '#A78BFA'
+                    }
+                }
+            }
+        }
+    </script>
 
-<style>
-body { font-family:'Prompt',sans-serif; background:#f0fdf4 }
-.chat-user { background:#10B981; color:#fff }
-.chat-ai { background:#fff }
-</style>
+    <style>
+        body { background-color: #f0fdf4; font-family: 'Prompt', sans-serif; }
+        .price-item { transition: all 0.3s ease; }
+        .price-flash { animation: flashHighlight 1s ease-out; }
+        @keyframes flashHighlight {
+            0% { background-color: #d1fae5; transform: scale(1.02); }
+            100% { background-color: white; transform: scale(1); }
+        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* Loading Animations */
+        @keyframes pulse-ring { 0% { transform: scale(0.8); opacity: 0.5; } 100% { transform: scale(1.2); opacity: 0; } }
+        .loading-ring::before {
+            content: ''; position: absolute; width: 100%; height: 100%; border-radius: 50%;
+            background-color: rgba(16, 185, 129, 0.5); animation: pulse-ring 1.5s infinite;
+        }
+
+        /* Chatbot CSS */
+        .chat-bubble { max-width: 80%; position: relative; }
+        .chat-bubble::before { content: ''; position: absolute; width: 0; height: 0; border-style: solid; }
+        .chat-bubble-user::before {
+            border-width: 0 12px 12px 12px; border-color: transparent transparent #10B981 transparent;
+            top: 0px; right: -8px; transform: rotate(45deg);
+        }
+        .chat-bubble-model::before {
+            border-width: 0 12px 12px 12px; border-color: transparent transparent white transparent;
+            top: 0px; left: -8px; transform: rotate(-45deg);
+        }
+        
+        .gemini-thinking-bar {
+            position: relative; width: 100%; height: 4px; background-color: #e0e0e0; border-radius: 2px; overflow: hidden;
+        }
+        .gemini-thinking-bar::before {
+            content: ''; position: absolute; top: 0; left: 0; height: 100%; width: 100%;
+            background: linear-gradient(90deg, #10B981, #34D399, #10B981);
+            background-size: 200% 100%; animation: thinking-gradient 2s linear infinite;
+        }
+        @keyframes thinking-gradient { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+        
+        /* Floating Buttons */
+        #fab-chat-toggle {
+            position: fixed; bottom: 100px; right: 20px;
+            width: 60px; height: 60px;
+            background-color: #10B981; color: white;
+            border: none; border-radius: 50%;
+            font-size: 24px; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            cursor: pointer; z-index: 40;
+            transition: transform 0.2s, opacity 0.3s;
+        }
+        #fab-chat-toggle:hover { transform: scale(1.05); background-color: #059669; }
+        
+        #chatbot-modal {
+            transition: opacity 0.3s, transform 0.3s;
+        }
+        .chatbot-hidden {
+            opacity: 0; pointer-events: none; transform: translateY(20px);
+        }
+    </style>
 </head>
+<body class="text-gray-800 pb-24">
 
-<body class="pb-24">
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-primary to-secondary text-white p-6 shadow-lg rounded-b-3xl relative overflow-hidden">
+        <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-white opacity-10 rounded-full"></div>
+        <div class="absolute bottom-0 left-0 -mb-4 -ml-4 w-16 h-16 bg-white opacity-10 rounded-full"></div>
+        
+        <div class="relative z-10 flex justify-between items-start">
+            <div>
+                <h1 class="text-2xl font-bold mb-1"><i class="fa-solid fa-recycle mr-2"></i>ราคารับซื้อวันนี้</h1>
+                <p class="text-emerald-100 text-sm" id="currentDate">กำลังโหลดวันที่...</p>
+            </div>
+            <button onclick="updatePricesWithAI()" class="bg-white bg-opacity-20 hover:bg-opacity-30 backdrop-blur-sm text-white text-xs px-3 py-2 rounded-lg flex items-center transition-all border border-white/30">
+                <i class="fa-solid fa-sync mr-2"></i>
+                อัปเดตตาราง
+            </button>
+        </div>
+    </header>
 
-<header class="bg-emerald-500 text-white p-4">
-  <h1 class="text-xl font-bold">AI รีไซเคิล</h1>
-</header>
-
-<main class="p-4 max-w-2xl mx-auto">
-  <div id="chat" class="space-y-3 mb-4">
-    <div class="chat-ai p-3 rounded shadow">
-      สวัสดีครับ ถามราคาขยะได้เลยครับ
+    <!-- Categories -->
+    <div class="mt-6 px-4">
+        <div class="flex overflow-x-auto space-x-3 hide-scrollbar pb-2" id="categoryContainer">
+            <button onclick="filterCategory('all')" class="cat-btn bg-gray-800 text-white px-4 py-2 rounded-full whitespace-nowrap shadow-sm active-cat text-sm">ทั้งหมด</button>
+            <button onclick="filterCategory('paper')" class="cat-btn bg-white text-gray-600 px-4 py-2 rounded-full whitespace-nowrap shadow-sm border border-gray-100 text-sm"><i class="fa-solid fa-newspaper mr-1 text-gray-500"></i> กระดาษ</button>
+            <button onclick="filterCategory('plastic')" class="cat-btn bg-white text-gray-600 px-4 py-2 rounded-full whitespace-nowrap shadow-sm border border-gray-100 text-sm"><i class="fa-solid fa-bottle-water mr-1 text-blue-400"></i> พลาสติก</button>
+            <button onclick="filterCategory('metal')" class="cat-btn bg-white text-gray-600 px-4 py-2 rounded-full whitespace-nowrap shadow-sm border border-gray-100 text-sm"><i class="fa-solid fa-gavel mr-1 text-orange-400"></i> โลหะ</button>
+            <button onclick="filterCategory('glass')" class="cat-btn bg-white text-gray-600 px-4 py-2 rounded-full whitespace-nowrap shadow-sm border border-gray-100 text-sm"><i class="fa-solid fa-wine-bottle mr-1 text-purple-400"></i> แก้ว</button>
+            <button onclick="filterCategory('electronic')" class="cat-btn bg-white text-gray-600 px-4 py-2 rounded-full whitespace-nowrap shadow-sm border border-gray-100 text-sm"><i class="fa-solid fa-microchip mr-1 text-red-400"></i> อิเล็กฯ</button>
+        </div>
     </div>
-  </div>
 
-  <div class="flex gap-2">
-    <input id="input" class="flex-1 border rounded p-2"
-      placeholder="เช่น ทองแดงวันนี้เท่าไหร่">
-    <button onclick="sendChat()"
-      class="bg-emerald-500 text-white px-4 rounded">ส่ง</button>
-  </div>
-</main>
+    <!-- Price List Area -->
+    <div class="mt-4 px-4">
+        <div class="flex justify-between items-center mb-2">
+            <h2 class="font-semibold text-lg text-gray-700">รายการราคา (บาท/กก.)</h2>
+            <span class="text-xs text-gray-500 bg-white px-2 py-1 rounded-md shadow-sm border border-gray-100 flex items-center">
+                <div id="statusDot" class="w-2 h-2 rounded-full bg-gray-300 mr-2"></div>
+                <span id="updateTime">รอการอัปเดต...</span>
+            </span>
+        </div>
+        <div id="priceList" class="space-y-3 pb-20">
+            <!-- Items will be injected here -->
+        </div>
+    </div>
 
-<script>
-/* ================= CONFIG ================= */
-const BACKEND_URL = "https://odd-night-9879.tontakankeawpang321.workers.dev";
+    <!-- Calculator Modal -->
+    <div id="calculatorModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-end sm:items-center justify-center backdrop-blur-sm transition-all">
+        <div class="bg-white w-full sm:w-96 rounded-t-3xl sm:rounded-2xl p-6 shadow-2xl animate-[slideUp_0.3s_ease-out]">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-gray-800 flex items-center"><i class="fa-solid fa-calculator text-primary mr-2"></i> คำนวณราคา</h3>
+                <button onclick="closeCalculator()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-times text-xl"></i></button>
+            </div>
+            <div class="bg-green-50 p-4 rounded-xl mb-4 flex items-center border border-green-100">
+                <div id="calcIcon" class="w-12 h-12 rounded-full bg-white flex items-center justify-center text-xl shadow-sm mr-3"></div>
+                <div>
+                    <h4 id="calcItemName" class="font-bold text-gray-800">ชื่อสินค้า</h4>
+                    <p class="text-sm text-gray-500">ราคา: <span id="calcItemPrice" class="font-semibold text-primary">0</span> บาท/กก.</p>
+                </div>
+            </div>
+            <div class="mb-6">
+                <label class="block text-sm font-medium text-gray-700 mb-2">น้ำหนัก (กิโลกรัม)</label>
+                <div class="flex items-center border-2 border-gray-200 rounded-xl overflow-hidden focus-within:border-primary transition-colors bg-white">
+                    <input type="number" id="weightInput" class="w-full p-3 outline-none text-lg font-semibold text-gray-800" placeholder="0.0" oninput="calculateTotal()">
+                    <span class="bg-gray-50 px-4 py-3 text-gray-500 font-medium border-l">กก.</span>
+                </div>
+            </div>
+            <div class="flex justify-between items-center border-t pt-4">
+                <span class="text-gray-500">รวมเป็นเงิน</span>
+                <span class="text-2xl font-bold text-primary" id="totalValue">0.00 ฿</span>
+            </div>
+            <button onclick="addToBasket()" class="w-full mt-5 bg-primary hover:bg-secondary text-white font-bold py-3 rounded-xl shadow-lg transition-transform active:scale-95">
+                <i class="fa-solid fa-plus-circle mr-2"></i> เพิ่มลงในรายการขาย
+            </button>
+        </div>
+    </div>
 
-/* ================= PRICE DATA ================= */
-let wasteData = [
-              { id: 1, name: 'กระดาษขาวดำ', category: 'paper', price: 4, trend: 'stable', icon: 'fa-file-alt', color: 'text-gray-500' },
-  { id: 2, name: 'กระดาษลูกฟูก (ลัง)', category: 'paper', price: 3, trend: 'stable', icon: 'fa-box-open', color: 'text-yellow-700' },
-  { id: 3, name: 'กระดาษหนังสือพิมพ์', category: 'paper', price: 2.5, trend: 'stable', icon: 'fa-newspaper', color: 'text-gray-600' },
-  { id: 4, name: 'กระดาษเล่ม/สมุด', category: 'paper', price: 2, trend: 'stable', icon: 'fa-book', color: 'text-blue-800' },
+    <!-- Basket Summary Bar -->
+    <div id="basketSummary" class="fixed bottom-0 left-0 w-full bg-white shadow-[0_-4px_20px_rgba(0,0,0,0.1)] p-4 rounded-t-2xl transform translate-y-full transition-transform duration-300 z-40 border-t border-gray-100">
+        <div class="max-w-3xl mx-auto flex justify-between items-center">
+            <div>
+                <p class="text-xs text-gray-500">รวมทั้งหมด (<span id="basketCount">0</span> รายการ)</p>
+                <h3 class="text-xl font-bold text-primary" id="basketTotal">0.00 ฿</h3>
+            </div>
+            <div class="flex space-x-2">
+                <button onclick="resetBasket()" class="bg-gray-100 text-gray-600 px-4 py-2 rounded-lg font-medium text-sm hover:bg-gray-200 transition">ล้าง</button>
+                <button class="bg-primary text-white px-6 py-2 rounded-lg font-bold shadow-md hover:bg-secondary transition flex items-center">
+                    สรุปรายการ <i class="fa-solid fa-arrow-right ml-2"></i>
+                </button>
+            </div>
+        </div>
+    </div>
 
-  { id: 5, name: 'ขวด PET (ใส)', category: 'plastic', price: 14, trend: 'stable', icon: 'fa-bottle-water', color: 'text-blue-400' },
-  { id: 6, name: 'ขวด PET (สี)', category: 'plastic', price: 8, trend: 'stable', icon: 'fa-bottle-water', color: 'text-green-500' },
-  { id: 7, name: 'พลาสติก HDPE', category: 'plastic', price: 18, trend: 'stable', icon: 'fa-jug-detergent', color: 'text-gray-300' },
-  { id: 8, name: 'พลาสติก PP', category: 'plastic', price: 10, trend: 'stable', icon: 'fa-chair', color: 'text-red-400' },
-  { id: 9, name: 'ท่อ PVC (ฟ้า)', category: 'plastic', price: 6, trend: 'stable', icon: 'fa-circle-notch', color: 'text-blue-600' },
+    <!-- Loading Overlay -->
+    <div id="aiLoadingOverlay" class="fixed inset-0 bg-black bg-opacity-70 z-50 hidden flex flex-col items-center justify-center backdrop-blur-sm">
+        <div class="relative w-24 h-24 mb-4 flex items-center justify-center loading-ring">
+            <i class="fa-solid fa-robot text-5xl text-white relative z-10"></i>
+        </div>
+        <h3 class="text-white text-xl font-bold mb-2">AI กำลังสำรวจตลาด...</h3>
+        <p class="text-emerald-200 text-sm animate-pulse" id="aiLoadingText">เชื่อมต่อเซิร์ฟเวอร์...</p>
+    </div>
 
-  { id: 10, name: 'ทองแดง (สายไฟปอก)', category: 'metal', price: 280, trend: 'up', icon: 'fa-bolt', color: 'text-orange-600' },
-  { id: 11, name: 'ทองแดง (เผา)', category: 'metal', price: 240, trend: 'stable', icon: 'fa-fire', color: 'text-red-700' },
-  { id: 12, name: 'อลูมิเนียม (กระป๋อง)', category: 'metal', price: 70, trend: 'stable', icon: 'fa-can-food', color: 'text-gray-400' },
-  { id: 13, name: 'อลูมิเนียม (หนา)', category: 'metal', price: 85, trend: 'stable', icon: 'fa-layer-group', color: 'text-gray-500' },
-  { id: 14, name: 'เหล็กหนา', category: 'metal', price: 9, trend: 'stable', icon: 'fa-weight-hanging', color: 'text-gray-700' },
-  { id: 15, name: 'เหล็กบาง/สังกะสี', category: 'metal', price: 7, trend: 'stable', icon: 'fa-sheet-plastic', color: 'text-gray-400' },
-  { id: 16, name: 'สแตนเลส 304', category: 'metal', price: 45, trend: 'stable', icon: 'fa-utensils', color: 'text-gray-400' },
+    <!-- Chat FAB -->
+    <button id="fab-chat-toggle" title="ถาม AI รีไซเคิล">
+        <i class="fa-solid fa-comments"></i>
+    </button>
 
-  { id: 17, name: 'ขวดแก้ว (รวม)', category: 'glass', price: 1, trend: 'stable', icon: 'fa-wine-bottle', color: 'text-amber-800' },
-  { id: 18, name: 'ขวดแก้ว (ใส)', category: 'glass', price: 2, trend: 'stable', icon: 'fa-wine-glass', color: 'text-blue-200' },
-  { id: 19, name: 'ขวดแก้ว (เขียว)', category: 'glass', price: 1.5, trend: 'stable', icon: 'fa-wine-glass', color: 'text-green-700' },
-  { id: 20, name: 'ขวดแก้ว (น้ำตาล)', category: 'glass', price: 1.2, trend: 'stable', icon: 'fa-wine-glass', color: 'text-amber-700' },
+    <!-- Chat Modal -->
+    <div id="chatbot-modal" class="fixed inset-0 bg-gray-100 z-50 chatbot-hidden flex flex-col h-full">
+        <!-- Chat Header -->
+        <header class="bg-[#10B981] text-white p-4 flex justify-between items-center shadow-md">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
+                    <i class="fa-solid fa-robot"></i>
+                </div>
+                <h1 class="text-lg font-bold font-sans text-white m-0">AI ผู้ช่วยรีไซเคิล</h1>
+            </div>
+            <div class="flex items-center gap-2">
+                <button id="new-chat-btn" class="bg-[#ecfdf5] hover:bg-[#d1fae5] text-[#10B981] font-bold py-1 px-3 rounded text-sm transition">
+                    <i class="fa-solid fa-rotate-left mr-1"></i> เริ่มใหม่
+                </button>
+                <button id="chatbot-close-btn" class="bg-black/20 hover:bg-black/30 text-white w-8 h-8 rounded-full flex items-center justify-center transition">
+                    <i class="fa-solid fa-times"></i>
+                </button>
+            </div>
+        </header>
 
-  { id: 21, name: 'เศษกระจกแตก', category: 'glass', price: 0.5, trend: 'down', icon: 'fa-triangle-exclamation', color: 'text-red-600' },
+        <!-- Chat Area -->
+        <main id="chat-history" class="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
+            <div class="flex items-start space-x-2">
+                <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white flex-shrink-0 text-sm">AI</div>
+                <div class="chat-bubble chat-bubble-model bg-white text-gray-800 p-3 rounded-lg shadow-sm border border-gray-100">
+                    <p>สวัสดีครับ! ผมคือ AI ผู้เชี่ยวชาญด้านรีไซเคิล ♻️<br>สอบถามราคาขยะ วิธีคัดแยก หรือร้านรับซื้อได้เลยครับ</p>
+                </div>
+            </div>
+        </main>
 
-  { id: 22, name: 'สายไฟรวม', category: 'electronic', price: 35, trend: 'stable', icon: 'fa-plug', color: 'text-yellow-500' },
-  { id: 23, name: 'แผงวงจร PCB', category: 'electronic', price: 120, trend: 'up', icon: 'fa-microchip', color: 'text-green-600' },
-  { id: 24, name: 'อะแดปเตอร์ไฟ', category: 'electronic', price: 15, trend: 'stable', icon: 'fa-charging-station', color: 'text-gray-500' },
-  { id: 25, name: 'แบตเตอรี่แห้ง', category: 'electronic', price: 10, trend: 'stable', icon: 'fa-battery-half', color: 'text-red-500' },
-  { id: 26, name: 'แบตเตอรี่ลิเธียม', category: 'electronic', price: 60, trend: 'up', icon: 'fa-battery-full', color: 'text-green-500' },
+        <!-- Thinking Indicator -->
+        <div id="thinking-indicator" class="px-4 py-2 hidden bg-gray-50">
+            <div class="flex items-center space-x-2">
+                <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white flex-shrink-0 text-xs">...</div>
+                <div class="chat-bubble chat-bubble-model bg-white text-gray-800 p-3 rounded-lg border border-gray-100 w-32">
+                    <div class="gemini-thinking-bar"></div>
+                </div>
+            </div>
+        </div>
 
-  { id: 27, name: 'โทรศัพท์มือถือเก่า', category: 'electronic', price: 40, trend: 'up', icon: 'fa-mobile-screen', color: 'text-blue-500' },
-  { id: 28, name: 'คอมพิวเตอร์เก่า', category: 'electronic', price: 18, trend: 'stable', icon: 'fa-desktop', color: 'text-gray-600' },
-  { id: 29, name: 'จอ LCD', category: 'electronic', price: 25, trend: 'stable', icon: 'fa-tv', color: 'text-black' },
-  { id: 30, name: 'สายชาร์จ', category: 'electronic', price: 12, trend: 'stable', icon: 'fa-cable-car', color: 'text-gray-400' },
+        <!-- Input Area -->
+        <footer class="bg-white p-3 shadow-inner border-t border-gray-200">
+            <div class="flex space-x-2">
+                <input id="user-input" type="text" placeholder="พิมพ์คำถาม (เช่น ขวดพลาสติกใสราคาเท่าไหร่)..." class="flex-1 p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#10B981] text-base text-gray-800 bg-gray-50 focus:bg-white transition">
+                <button id="send-btn" class="bg-[#10B981] hover:bg-[#059669] text-white font-bold px-4 rounded-xl shadow-sm transition active:scale-95">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </div>
+        </footer>
+    </div>
 
-  { id: 31, name: 'ถุงพลาสติกใส', category: 'plastic', price: 2, trend: 'down', icon: 'fa-bag-shopping', color: 'text-gray-300' },
-  { id: 32, name: 'ฟิล์มยืด', category: 'plastic', price: 5, trend: 'stable', icon: 'fa-scroll', color: 'text-blue-300' },
-  { id: 33, name: 'กล่องโฟม', category: 'plastic', price: 1, trend: 'down', icon: 'fa-cube', color: 'text-gray-200' },
-  { id: 34, name: 'พลาสติกแข็งผสม', category: 'plastic', price: 6, trend: 'stable', icon: 'fa-puzzle-piece', color: 'text-purple-400' },
-  { id: 35, name: 'ฝาขวดพลาสติก', category: 'plastic', price: 7, trend: 'stable', icon: 'fa-circle', color: 'text-red-500' },
-
-  { id: 36, name: 'ทองเหลือง', category: 'metal', price: 160, trend: 'up', icon: 'fa-ring', color: 'text-yellow-600' },
-  { id: 37, name: 'ตะกั่ว', category: 'metal', price: 55, trend: 'stable', icon: 'fa-weight-scale', color: 'text-gray-800' },
-  { id: 38, name: 'สายทองแดงไม่ปอก', category: 'metal', price: 180, trend: 'stable', icon: 'fa-wave-square', color: 'text-orange-500' },
-  { id: 39, name: 'เศษเหล็กรถยนต์', category: 'metal', price: 10, trend: 'up', icon: 'fa-car', color: 'text-gray-700' },
-  { id: 40, name: 'ลวดเหล็ก', category: 'metal', price: 8, trend: 'stable', icon: 'fa-grip-lines', color: 'text-gray-500' },
-
-  { id: 41, name: 'ยางรถยนต์', category: 'other', price: 3, trend: 'stable', icon: 'fa-circle-dot', color: 'text-black' },
-  { id: 42, name: 'เศษผ้า', category: 'other', price: 4, trend: 'stable', icon: 'fa-shirt', color: 'text-indigo-400' },
-  { id: 43, name: 'ไม้พาเลท', category: 'other', price: 2, trend: 'stable', icon: 'fa-tree', color: 'text-green-700' },
-  { id: 44, name: 'เศษไม้', category: 'other', price: 1.5, trend: 'stable', icon: 'fa-tree-city', color: 'text-brown-600' },
-
-  { id: 45, name: 'หลอด LED', category: 'electronic', price: 30, trend: 'up', icon: 'fa-lightbulb', color: 'text-green-400' },
-  { id: 46, name: 'หลอดไฟเก่า', category: 'electronic', price: 5, trend: 'stable', icon: 'fa-lightbulb', color: 'text-yellow-400' },
-
-  { id: 47, name: 'เครื่องใช้ไฟฟ้าเก่า', category: 'electronic', price: 15, trend: 'stable', icon: 'fa-blender', color: 'text-gray-500' },
-  { id: 48, name: 'ตู้เย็นเก่า', category: 'electronic', price: 12, trend: 'stable', icon: 'fa-snowflake', color: 'text-cyan-400' },
-  { id: 49, name: 'เครื่องซักผ้าเก่า', category: 'electronic', price: 14, trend: 'stable', icon: 'fa-water', color: 'text-blue-500' },
-  { id: 50, name: 'ไมโครเวฟเก่า', category: 'electronic', price: 10, trend: 'stable', icon: 'fa-box', color: 'text-gray-500' }
+    <script>
+        // ================= CONFIG =================
+        const BACKEND_URL = 'https://odd-night-9879.tontakankeawpang321.workers.dev';
+        
+        // ================= DATA =================
+        let wasteData = [
+            { id: 1, name: 'กระดาษขาวดำ', category: 'paper', price: 4.50, trend: 'stable', icon: 'fa-file-alt', color: 'text-gray-500' },
+            { id: 2, name: 'กระดาษลูกฟูก (ลัง)', category: 'paper', price: 3.20, trend: 'stable', icon: 'fa-box-open', color: 'text-yellow-700' },
+            { id: 3, name: 'กระดาษหนังสือพิมพ์', category: 'paper', price: 2.80, trend: 'down', icon: 'fa-newspaper', color: 'text-gray-600' },
+            { id: 4, name: 'สมุดเล่ม', category: 'paper', price: 3.00, trend: 'up', icon: 'fa-book', color: 'text-blue-400' },
+            { id: 10, name: 'ขวด PET ใส', category: 'plastic', price: 12.00, trend: 'up', icon: 'fa-bottle-water', color: 'text-blue-500' },
+            { id: 11, name: 'ขวดพลาสติกขุ่น (HDPE)', category: 'plastic', price: 8.50, trend: 'stable', icon: 'fa-jug-detergent', color: 'text-gray-400' },
+            { id: 12, name: 'พลาสติกกรอบ (รวม)', category: 'plastic', price: 2.50, trend: 'stable', icon: 'fa-utensils', color: 'text-red-400' },
+            { id: 20, name: 'เหล็กหนา', category: 'metal', price: 10.50, trend: 'up', icon: 'fa-weight-hanging', color: 'text-gray-700' },
+            { id: 21, name: 'เหล็กบาง (สังกะสี)', category: 'metal', price: 8.00, trend: 'stable', icon: 'fa-sheet-plastic', color: 'text-gray-500' },
+            { id: 22, name: 'กระป๋องอลูมิเนียม', category: 'metal', price: 38.00, trend: 'up', icon: 'fa-beer-mug-empty', color: 'text-green-500' },
+            { id: 23, name: 'ทองแดง (สายไฟ)', category: 'metal', price: 220.00, trend: 'up', icon: 'fa-plug', color: 'text-orange-600' },
+            { id: 30, name: 'ขวดเบียร์ (ลัง)', category: 'glass', price: 12.00, trend: 'stable', icon: 'fa-wine-bottle', color: 'text-amber-700' },
+            { id: 31, name: 'เศษแก้วสี', category: 'glass', price: 1.00, trend: 'stable', icon: 'fa-wine-glass', color: 'text-green-700' },
+            { id: 40, name: 'แผงวงจรเขียว', category: 'electronic', price: 150.00, trend: 'up', icon: 'fa-microchip', color: 'text-green-600' }
         ];
 
+        let currentCategory = 'all';
+        let basket = [];
+        let selectedItem = null;
+        let chatHistory = [];
 
-/* ================= HELPERS ================= */
-function priceContext(){
- return wasteData
-  .map(i=>`- ${i.name}: ${i.price} บาท/กก.`)
-  .join("\n");
-}
+        // ================= INIT =================
+        document.addEventListener('DOMContentLoaded', () => {
+            renderDate();
+            renderItems(wasteData);
+            setupEventListeners();
+        });
 
-function addChat(text,isUser){
- const box=document.getElementById('chat');
- const div=document.createElement('div');
- div.className=`p-3 rounded shadow ${isUser?'chat-user ml-auto':'chat-ai'}`;
- div.innerHTML=text.replace(/\n/g,'<br>');
- box.appendChild(div);
- box.scrollTop=box.scrollHeight;
-}
+        function setupEventListeners() {
+            // Calculator modal close on click outside
+            document.getElementById('calculatorModal').addEventListener('click', (e) => {
+                if (e.target === document.getElementById('calculatorModal')) closeCalculator();
+            });
 
-/* ================= SEND CHAT ================= */
-async function sendChat(){
- const input=document.getElementById('input');
- const q=input.value.trim();
- if(!q) return;
+            // Chat setup
+            document.getElementById('fab-chat-toggle').addEventListener('click', () => {
+                document.getElementById('chatbot-modal').classList.remove('chatbot-hidden');
+                document.getElementById('fab-chat-toggle').style.opacity = '0';
+            });
 
- addChat(q,true);
- input.value='';
+            document.getElementById('chatbot-close-btn').addEventListener('click', () => {
+                document.getElementById('chatbot-modal').classList.add('chatbot-hidden');
+                document.getElementById('fab-chat-toggle').style.opacity = '1';
+            });
 
- const payload={
-  history:[
-    {
-      role:"user",
-      parts:[{
-        text:
-`ราคาปัจจุบัน:
-${priceContext()}
+            document.getElementById('send-btn').addEventListener('click', handleChatSend);
+            document.getElementById('user-input').addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') handleChatSend();
+            });
 
-คำถาม: ${q}`
-      }]
-    }
-  ]
- };
+            document.getElementById('new-chat-btn').addEventListener('click', resetChat);
+        }
 
- const res=await fetch(BACKEND_URL,{
-  method:"POST",
-  headers:{ "Content-Type":"application/json" },
-  body:JSON.stringify(payload)
- });
+        // ================= MAIN LOGIC =================
+        function renderDate() {
+            const date = new Date();
+            document.getElementById('currentDate').innerText = date.toLocaleDateString('th-TH', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        }
 
- const data=await res.json();
- console.log("RAW AI:",data);
+        function renderItems(items, animate = false) {
+            const container = document.getElementById('priceList');
+            container.innerHTML = '';
+            
+            items.forEach((item, index) => {
+                const trendIcon = item.trend === 'up' ? '<i class="fa-solid fa-caret-up text-green-500 ml-1"></i>' : 
+                                  item.trend === 'down' ? '<i class="fa-solid fa-caret-down text-red-500 ml-1"></i>' : 
+                                  '<i class="fa-solid fa-minus text-gray-300 ml-1 text-xs"></i>';
+                
+                const card = document.createElement('div');
+                card.className = `price-item bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex justify-between items-center cursor-pointer hover:bg-gray-50 active:scale-[0.98] ${animate ? 'price-flash' : ''}`;
+                if(animate) card.style.animationDelay = `${index * 50}ms`;
+                
+                card.onclick = () => openCalculator(item);
+                
+                card.innerHTML = `
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center mr-3 text-xl ${item.color} shadow-inner">
+                            <i class="fa-solid ${item.icon}"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-medium text-gray-800 leading-tight">${item.name}</h3>
+                            <div class="text-xs text-gray-400 flex items-center mt-1">
+                                ตลาดกลาง ${trendIcon}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-xl font-bold text-primary tracking-tight">${item.price.toFixed(2)}</div>
+                        <div class="text-[10px] text-gray-400 font-medium">บาท/กก.</div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
 
- // ✅ กัน undefined ทุกกรณี
- const reply =
-   data.reply ||
-   data.text ||
-   data.result ||
-   data.candidates?.[0]?.content?.parts?.[0]?.text ||
-   "ขออภัย ระบบไม่สามารถตอบได้";
+        function filterCategory(category) {
+            currentCategory = category;
+            
+            // Update buttons
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                const isMatch = (category === 'all' && btn.innerText.includes('ทั้งหมด')) || btn.getAttribute('onclick').includes(`'${category}'`);
+                
+                if (isMatch) {
+                    btn.className = 'cat-btn bg-gray-800 text-white px-4 py-2 rounded-full whitespace-nowrap shadow-sm active-cat text-sm transition-all';
+                } else {
+                    btn.className = 'cat-btn bg-white text-gray-600 px-4 py-2 rounded-full whitespace-nowrap shadow-sm border border-gray-100 text-sm hover:bg-gray-50 transition-all';
+                }
+            });
 
- addChat(reply,false);
-}
-</script>
+            const filtered = wasteData.filter(item => currentCategory === 'all' || item.category === currentCategory);
+            renderItems(filtered);
+        }
 
+        // ================= CALCULATOR & BASKET =================
+        function openCalculator(item) {
+            selectedItem = item;
+            document.getElementById('calcItemName').innerText = item.name;
+            document.getElementById('calcItemPrice').innerText = item.price.toFixed(2);
+            document.getElementById('calcIcon').innerHTML = `<i class="fa-solid ${item.icon} ${item.color}"></i>`;
+            
+            const weightInput = document.getElementById('weightInput');
+            weightInput.value = '';
+            weightInput.focus();
+            
+            document.getElementById('totalValue').innerText = '0.00 ฿';
+            document.getElementById('calculatorModal').classList.remove('hidden');
+        }
+
+        function closeCalculator() {
+            document.getElementById('calculatorModal').classList.add('hidden');
+            selectedItem = null;
+        }
+
+        function calculateTotal() {
+            if (!selectedItem) return;
+            const weight = parseFloat(document.getElementById('weightInput').value) || 0;
+            document.getElementById('totalValue').innerText = (weight * selectedItem.price).toLocaleString('th-TH', { minimumFractionDigits: 2 }) + ' ฿';
+        }
+
+        function addToBasket() {
+            const weight = parseFloat(document.getElementById('weightInput').value) || 0;
+            if (weight <= 0) {
+                alert('กรุณาระบุน้ำหนักให้ถูกต้อง');
+                return;
+            }
+            basket.push({ ...selectedItem, weight, total: weight * selectedItem.price });
+            updateBasketUI();
+            closeCalculator();
+        }
+
+        function updateBasketUI() {
+            const basketBar = document.getElementById('basketSummary');
+            basket.length > 0 ? basketBar.classList.remove('translate-y-full') : basketBar.classList.add('translate-y-full');
+            
+            const total = basket.reduce((sum, item) => sum + item.total, 0);
+            document.getElementById('basketCount').innerText = basket.length;
+            document.getElementById('basketTotal').innerText = total.toLocaleString('th-TH', { minimumFractionDigits: 2 }) + ' ฿';
+        }
+
+        function resetBasket() {
+            if(confirm('ยืนยันการล้างรายการทั้งหมด?')) { 
+                basket = []; 
+                updateBasketUI(); 
+            }
+        }
+
+        // ================= AI FUNCTIONS =================
+        
+        // 1. Update Prices
+        async function updatePricesWithAI() {
+            const overlay = document.getElementById('aiLoadingOverlay');
+            const loadingText = document.getElementById('aiLoadingText');
+            overlay.classList.remove('hidden');
+            loadingText.innerText = "กำลังเชื่อมต่อฐานข้อมูล...";
+
+            try {
+                // สร้างรายการสินค้าปัจจุบันส่งไปให้ AI
+                const itemsList = wasteData.map(item => `{ "id": ${item.id}, "name": "${item.name}", "current": ${item.price} }`).join(", ");
+
+                const systemPrompt = "You are a backend API for a Thai recycling app. Your job is to return a JSON array of updated prices.";
+                const userPrompt = `
+                    Update these recycling prices based on 2025 market trends in Thailand.
+                    Input Data: [${itemsList}]
+                    
+                    Rules:
+                    1. Vary prices slightly (+/- 5-15%) from "current".
+                    2. Randomize "trend" as "up", "down", or "stable".
+                    3. Output ONLY valid JSON array: [{"id": 1, "price": 4.75, "trend": "up"}, ...]
+                    4. No markdown, no explanation.
+                `;
+
+                const history = [{ role: "user", parts: [{ text: systemPrompt + "\n" + userPrompt }] }];
+
+                const response = await fetch(BACKEND_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ history: history })
+                });
+
+                if (!response.ok) throw new Error("API Error");
+
+                const data = await response.json();
+                let jsonText = data.reply.replace(/```json/g, '').replace(/```/g, '').trim();
+                
+                // Try parsing
+                const newPrices = JSON.parse(jsonText);
+
+                // Update Local Data
+                let changeCount = 0;
+                wasteData = wasteData.map(original => {
+                    const updated = newPrices.find(p => p.id === original.id);
+                    if (updated && updated.price !== original.price) {
+                        changeCount++;
+                        return { ...original, price: updated.price, trend: updated.trend };
+                    }
+                    return original;
+                });
+
+                loadingText.innerText = "อัปเดตราคาเรียบร้อย!";
+                setTimeout(() => {
+                    renderItems(wasteData, true); // Re-render with flash animation
+                    updateTimeDisplay();
+                    overlay.classList.add('hidden');
+                }, 800);
+
+            } catch (error) {
+                console.error(error);
+                loadingText.innerText = "เกิดข้อผิดพลาด ลองใหม่อีกครั้ง";
+                setTimeout(() => overlay.classList.add('hidden'), 2000);
+            }
+        }
+
+        function updateTimeDisplay() {
+            const now = new Date();
+            document.getElementById('updateTime').innerText = `อัปเดต: ${now.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' })} น.`;
+            document.getElementById('statusDot').className = "w-2 h-2 rounded-full bg-green-500 mr-2 animate-pulse";
+        }
+
+        // 2. Chatbot Logic
+        async function handleChatSend() {
+            const input = document.getElementById('user-input');
+            const message = input.value.trim();
+            if (!message) return;
+
+            // UI Update
+            addChatBubble(message, true);
+            input.value = '';
+            setThinking(true);
+            document.getElementById('send-btn').disabled = true;
+
+            // Prepare Context (Current Prices)
+            const priceContext = wasteData.map(i => `- ${i.name}: ${i.price} บาท`).join("\n");
+            
+            // Construct Prompt
+            const prompt = `
+                ข้อมูลราคารับซื้อปัจจุบันในร้าน (ใช้อ้างอิงในการตอบ):
+                ${priceContext}
+                
+                คำถามจากลูกค้า: "${message}"
+                
+                คำแนะนำ: ตอบสั้นๆ เข้าใจง่าย เป็นกันเอง ถ้าถามราคาให้ตอบตามข้อมูลด้านบน ถ้าไม่มีให้บอกว่าไม่มีรับซื้อ
+            `;
+
+            // Append to local history for context (optional, but keep simple for now)
+            // Note: Sending fresh history array each time to API for simple stateless interaction or managing state locally
+            if (chatHistory.length === 0) {
+                 chatHistory.push({ role: "user", parts: [{ text: "You are a helpful recycling assistant in Thailand." }] });
+            }
+            chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+
+            try {
+                const response = await fetch(BACKEND_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ history: chatHistory })
+                });
+
+                const data = await response.json();
+                const reply = data.reply;
+
+                setThinking(false);
+                addChatBubble(reply, false);
+                chatHistory.push({ role: "model", parts: [{ text: reply }] });
+
+            } catch (error) {
+                console.error(error);
+                setThinking(false);
+                addChatBubble("ขออภัย ระบบขัดข้องชั่วคราวครับ", false);
+            } finally {
+                document.getElementById('send-btn').disabled = false;
+                // Keep history small to avoid token limits on free tiers
+                if(chatHistory.length > 10) chatHistory = chatHistory.slice(-4);
+            }
+        }
+
+        function addChatBubble(text, isUser) {
+            const container = document.getElementById('chat-history');
+            const div = document.createElement('div');
+            div.className = `flex items-start space-x-2 ${isUser ? 'flex-row-reverse space-x-reverse' : ''}`;
+            
+            const avatar = isUser ? 
+                `<div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 flex-shrink-0 text-sm"><i class="fa-solid fa-user"></i></div>` :
+                `<div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white flex-shrink-0 text-sm">AI</div>`;
+                
+            const bubbleClass = isUser ? 'chat-bubble-user bg-[#10B981] text-white' : 'chat-bubble-model bg-white text-gray-800 border border-gray-100';
+            
+            div.innerHTML = `
+                ${avatar}
+                <div class="chat-bubble ${bubbleClass} p-3 rounded-lg shadow-sm">
+                    <p class="text-sm leading-relaxed">${text.replace(/\n/g, '<br>')}</p>
+                </div>
+            `;
+            
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function setThinking(show) {
+            const indicator = document.getElementById('thinking-indicator');
+            const container = document.getElementById('chat-history');
+            if (show) {
+                indicator.classList.remove('hidden');
+                container.scrollTop = container.scrollHeight;
+            } else {
+                indicator.classList.add('hidden');
+            }
+        }
+
+        function resetChat() {
+            document.getElementById('chat-history').innerHTML = `
+                <div class="flex items-start space-x-2">
+                    <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white flex-shrink-0 text-sm">AI</div>
+                    <div class="chat-bubble chat-bubble-model bg-white text-gray-800 p-3 rounded-lg shadow-sm border border-gray-100">
+                        <p>สวัสดีครับ! ผมคือ AI ผู้เชี่ยวชาญด้านรีไซเคิล ♻️<br>สอบถามราคาขยะ วิธีคัดแยก หรือร้านรับซื้อได้เลยครับ</p>
+                    </div>
+                </div>
+            `;
+            chatHistory = [];
+        }
+
+    </script>
 </body>
 </html>
