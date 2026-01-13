@@ -517,7 +517,18 @@
                 const data = await response.json();
                 let jsonText = data.reply.replace(/```json/g, '').replace(/```/g, '').trim();
                 
-                const newPrices = JSON.parse(jsonText);
+                let newPrices;
+                try {
+                    if (!jsonText.trim().startsWith('[')) {
+                        throw new Error('AI did not return JSON');
+                    }
+                    newPrices = JSON.parse(jsonText);
+                } catch (e) {
+                    console.error("Invalid AI JSON:", jsonText);
+                    loadingText.innerText = "AI ตอบข้อมูลไม่ถูกต้อง ลองใหม่อีกครั้ง";
+                    setTimeout(() => overlay.classList.add('hidden'), 2000);
+                    return;
+                }
 
                 wasteData = wasteData.map(original => {
                     const updated = newPrices.find(p => p.id === original.id);
