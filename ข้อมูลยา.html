@@ -119,6 +119,9 @@
   .content-html table, .content-html th, .content-html td{ border:1px solid #ddd; }
   .content-html th, .content-html td{ padding:8px; }
 
+  .skeleton{ background:linear-gradient(90deg, #f6f7f9 25%, #eceff3 37%, #f6f7f9 63%); animation:shimmer 1.2s infinite; background-size: 200% 100%; }
+  @keyframes shimmer{ 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
   /* ====== สีข้อความตามหมวดหมู่ยา ====== */
   .cat-analgesic .drug-name{ color:#b45309 }      
   .cat-antipyretic .drug-name{ color:#2563eb }    
@@ -426,7 +429,7 @@
 
 <script>
 /** ================== CONFIG ================== **/
-const API_JSON_URL = 'https://tontakankeawpang321-glitch.vercel.app/api/chat'; 
+const API_JSON_URL = 'https://raw.githubusercontent.com/tontakankeawpang321-glitch/krsitsdeeka/main/drugs.json';
 const PAGE_SIZE = 12;
 
 /** =============== Utilities =============== **/
@@ -562,15 +565,33 @@ document.getElementById('q').addEventListener('keydown', e=>{ if(e.key==='Enter'
 document.getElementById('cat').addEventListener('change', applySearch);
 
 (async function init(){
-  try{ raw = await fetchData(); view = raw.slice(0); renderPage(); }
-  catch(e){ document.getElementById('grid').innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:24px; color:#b91c1c">Error: ${escapeHtml(e.message)}</div>`; }
+  // skeleton
+  document.getElementById('grid').innerHTML = Array.from({length:6}).map(()=>`
+    <div class="card">
+      <div class="skeleton" style="height:18px; width:70%; border-radius:8px; margin-bottom:8px"></div>
+      <div class="skeleton" style="height:10px; width:50%; border-radius:8px; margin-bottom:12px"></div>
+      <div class="skeleton" style="height:60px; border-radius:12px; margin-bottom:12px"></div>
+      <div class="skeleton" style="height:36px; width:120px; border-radius:10px"></div>
+    </div>
+  `).join('');
+
+  try{
+    raw = await fetchData();
+    view = raw.slice(0);
+    renderPage();
+  }catch(e){
+    document.getElementById('grid').innerHTML =
+      `<div style="grid-column:1/-1; text-align:center; padding:24px; color:#b91c1c">
+        เกิดข้อผิดพลาดในการโหลดข้อมูล: ${escapeHtml(e.message||String(e))}
+      </div>`;
+  }
 })();
 
 
 /** =========================================
     3. ส่วน Chatbot AI + Health Assessment Logic
     ========================================= */
-const NORMAL_CHAT_URL = 'https://tontakankeawpang321-glitch.vercel.app/krsitsdeeka/api/chat';
+const NORMAL_CHAT_URL = 'https://frosty-flower-5bd8.tontakankeawpang321.workers.dev';
 // Remove specific worker URL
 
 const SYSTEM_PROMPT = {
