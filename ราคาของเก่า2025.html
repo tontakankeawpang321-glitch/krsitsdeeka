@@ -1,233 +1,103 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>เช็คราคาขยะรีไซเคิล (EcoPrice AI)</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>เช็คราคาขยะรีไซเคิล (EcoPrice AI)</title>
 
-    <script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://cdn.tailwindcss.com"></script>
 
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: { sans: ['Prompt', 'sans-serif'] },
-                    colors: {
-                        primary: '#10B981', secondary: '#065F46', accent: '#F59E0B',
-                        paper: '#F3F4F6', metal: '#9CA3AF', plastic: '#60A5FA', glass: '#A78BFA'
-                    }
-                }
-            }
-        }
-    </script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: { sans: ['Prompt', 'sans-serif'] },
+      colors: {
+        primary: '#10B981', secondary: '#065F46'
+      }
+    }
+  }
+}
+</script>
 
-    <style>
-        body { background-color: #f0fdf4; font-family: 'Prompt', sans-serif; }
-        .price-item { transition: all 0.3s ease; }
-        .price-flash { animation: flashHighlight 1s ease-out; }
-        @keyframes flashHighlight {
-            0% { background-color: #d1fae5; transform: scale(1.02); }
-            100% { background-color: white; transform: scale(1); }
-        }
-        .hide-scrollbar::-webkit-scrollbar { display: none; }
-        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        @keyframes pulse-ring { 0% { transform: scale(0.8); opacity: 0.5; } 100% { transform: scale(1.2); opacity: 0; } }
-        .loading-ring::before {
-            content: ''; position: absolute; width: 100%; height: 100%; border-radius: 50%;
-            background-color: rgba(16, 185, 129, 0.5); animation: pulse-ring 1.5s infinite;
-        }
-
-        /* Chatbot CSS */
-        .chat-bubble::before { content: ''; position: absolute; width: 0; height: 0; border-style: solid; }
-        .chat-bubble-user::before {
-            border-width: 0 12px 12px 12px; border-color: transparent transparent #10B981 transparent;
-            top: -10px; right: 12px;
-        }
-        .chat-bubble-model::before {
-            border-width: 0 12px 12px 12px; border-color: transparent transparent #e5e7eb transparent;
-            top: -10px; left: 12px;
-        }
-        .gemini-thinking-bar {
-            position: relative; width: 100%; height: 4px; background-color: #e0e0e0; border-radius: 2px; overflow: hidden;
-        }
-        .gemini-thinking-bar::before {
-            content: ''; position: absolute; top: 0; left: 0; height: 100%; width: 100%;
-            background: linear-gradient(90deg, #10B981, #34D399, #10B981);
-            background-size: 200% 100%; animation: thinking-gradient 2s linear infinite;
-        }
-        @keyframes thinking-gradient { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-        
-        #fab-chat-toggle {
-            position: fixed; bottom: 90px; right: 20px; /* ปรับตำแหน่งให้สูงขึ้นนิดนึงหนี Basket */
-            width: 60px; height: 60px;
-            background-color: #10B981; color: white;
-            border: none; border-radius: 50%;
-            font-size: 28px; line-height: 60px; text-align: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            cursor: pointer; z-index: 998;
-            transition: transform 0.2s, opacity 0.3s;
-        }
-        #fab-chat-toggle:hover { transform: scale(1.05); background-color: #059669; }
-        
-        #chatbot-modal {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            z-index: 1000; transition: opacity 0.3s, transform 0.3s;
-            opacity: 1; transform: translateY(0); pointer-events: auto;
-        }
-        #chatbot-modal.chatbot-hidden {
-            opacity: 0; transform: translateY(100%); pointer-events: none;
-        }
-    </style>
+<style>
+body { background:#f0fdf4; font-family:'Prompt',sans-serif }
+.price-flash { animation: flash 1s }
+@keyframes flash {
+  0%{background:#d1fae5}
+  100%{background:#fff}
+}
+</style>
 </head>
-<body class="text-gray-800 pb-24">
 
-    <header class="bg-gradient-to-r from-primary to-secondary text-white p-6 shadow-lg rounded-b-3xl relative overflow-hidden">
-        <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-white opacity-10 rounded-full"></div>
-        <div class="absolute bottom-0 left-0 -mb-4 -ml-4 w-16 h-16 bg-white opacity-10 rounded-full"></div>
-        
-        <div class="relative z-10 flex justify-between items-start">
-            <div>
-                <h1 class="text-2xl font-bold mb-1"><i class="fa-solid fa-recycle mr-2"></i>ราคารับซื้อวันนี้</h1>
-                <p class="text-emerald-100 text-sm" id="currentDate">กำลังโหลดวันที่...</p>
-            </div>
-            <button onclick="updatePricesWithAI()" class="bg-white bg-opacity-20 hover:bg-opacity-30 backdrop-blur-sm text-white text-xs px-3 py-2 rounded-lg flex items-center transition-all border border-white/30">
-                <i class="fa-solid fa-sync mr-2"></i>
-                อัปเดตตาราง
-            </button>
-        </div>
+<body class="pb-24">
+
+<!-- ================= HEADER ================= -->
+<header class="bg-gradient-to-r from-primary to-secondary text-white p-6 rounded-b-3xl">
+  <div class="flex justify-between items-start">
+    <div>
+      <h1 class="text-2xl font-bold"><i class="fa-solid fa-recycle mr-2"></i>ราคารับซื้อวันนี้</h1>
+      <p id="currentDate" class="text-sm text-emerald-100"></p>
+    </div>
+    <button onclick="updatePricesWithAI()"
+      class="bg-white/20 px-3 py-2 rounded-lg text-xs border border-white/30">
+      <i class="fa-solid fa-sync mr-1"></i>อัปเดตตาราง
+    </button>
+  </div>
+</header>
+
+<!-- ================= PRICE LIST ================= -->
+<div class="px-4 mt-4">
+  <div class="flex justify-between items-center mb-2">
+    <h2 class="font-semibold">รายการราคา (บาท/กก.)</h2>
+    <span class="text-xs bg-white px-2 py-1 rounded border flex items-center">
+      <span id="statusDot" class="w-2 h-2 bg-gray-300 rounded-full mr-2"></span>
+      <span id="updateTime">รอการอัปเดต...</span>
+    </span>
+  </div>
+  <div id="priceList" class="space-y-3"></div>
+</div>
+
+<!-- ================= CHAT FLOAT ================= -->
+<button id="fab-chat-toggle"
+class="fixed bottom-24 right-4 w-14 h-14 rounded-full bg-primary text-white text-2xl shadow">
+💬
+</button>
+
+<div id="chatbot-modal" class="fixed inset-0 bg-gray-100 hidden z-50">
+  <div class="flex flex-col h-full">
+    <header class="bg-primary text-white p-3 flex justify-between">
+      <b>AI รีไซเคิล</b>
+      <button onclick="closeChat()">✖</button>
     </header>
 
-    <div class="mt-6 px-4">
-        <div class="flex overflow-x-auto space-x-3 hide-scrollbar pb-2" id="categoryContainer">
-            <button onclick="filterCategory('all')" class="cat-btn bg-gray-800 text-white px-4 py-2 rounded-full whitespace-nowrap shadow-sm active-cat">ทั้งหมด</button>
-            <button onclick="filterCategory('paper')" class="cat-btn bg-white text-gray-600 px-4 py-2 rounded-full whitespace-nowrap shadow-sm border border-gray-100"><i class="fa-solid fa-newspaper mr-1 text-gray-500"></i> กระดาษ</button>
-            <button onclick="filterCategory('plastic')" class="cat-btn bg-white text-gray-600 px-4 py-2 rounded-full whitespace-nowrap shadow-sm border border-gray-100"><i class="fa-solid fa-bottle-water mr-1 text-blue-400"></i> พลาสติก</button>
-            <button onclick="filterCategory('metal')" class="cat-btn bg-white text-gray-600 px-4 py-2 rounded-full whitespace-nowrap shadow-sm border border-gray-100"><i class="fa-solid fa-gavel mr-1 text-orange-400"></i> โลหะ</button>
-            <button onclick="filterCategory('glass')" class="cat-btn bg-white text-gray-600 px-4 py-2 rounded-full whitespace-nowrap shadow-sm border border-gray-100"><i class="fa-solid fa-wine-bottle mr-1 text-purple-400"></i> แก้ว</button>
-        </div>
-    </div>
+    <main id="chat-history" class="flex-1 overflow-y-auto p-3 space-y-3">
+      <div class="bg-white p-3 rounded shadow">
+        สวัสดีครับ ถามราคาขยะได้เลยครับ
+      </div>
+    </main>
 
-    <div class="mt-4 px-4">
-        <div class="flex justify-between items-center mb-2">
-            <h2 class="font-semibold text-lg text-gray-700">รายการราคา (บาท/กก.)</h2>
-            <span class="text-xs text-gray-500 bg-white px-2 py-1 rounded-md shadow-sm border border-gray-100 flex items-center">
-                <div id="statusDot" class="w-2 h-2 rounded-full bg-gray-300 mr-2"></div>
-                <span id="updateTime">รอการอัปเดต...</span>
-            </span>
-        </div>
-        <div id="priceList" class="space-y-3 pb-20"></div>
-    </div>
+    <footer class="p-3 bg-white flex gap-2">
+      <input id="user-input" class="flex-1 border rounded p-2"
+        placeholder="ถามราคา เช่น ทองแดงวันนี้">
+      <button onclick="handleChatSend()"
+        class="bg-primary text-white px-4 rounded">ส่ง</button>
+    </footer>
+  </div>
+</div>
 
-    <div id="aiLoadingOverlay" class="fixed inset-0 bg-black bg-opacity-60 z-50 hidden flex flex-col items-center justify-center backdrop-blur-sm">
-        <div class="relative w-24 h-24 mb-4 flex items-center justify-center loading-ring">
-            <i class="fa-solid fa-robot text-5xl text-white relative z-10"></i>
-        </div>
-        <h3 class="text-white text-xl font-bold mb-2">AI กำลังทำงาน...</h3>
-        <p class="text-emerald-200 text-sm animate-pulse" id="aiLoadingText">เชื่อมต่อฐานข้อมูล...</p>
-    </div>
-
-    <div id="calculatorModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-end sm:items-center justify-center">
-        <div class="bg-white w-full sm:w-96 rounded-t-3xl sm:rounded-2xl p-6 animate-fade-in shadow-2xl">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-bold text-gray-800 flex items-center"><i class="fa-solid fa-calculator text-primary mr-2"></i> คำนวณราคา</h3>
-                <button onclick="closeCalculator()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-times text-xl"></i></button>
-            </div>
-            <div class="bg-green-50 p-4 rounded-xl mb-4 flex items-center">
-                <div id="calcIcon" class="w-12 h-12 rounded-full bg-white flex items-center justify-center text-xl shadow-sm mr-3"></div>
-                <div>
-                    <h4 id="calcItemName" class="font-bold text-gray-800">ชื่อสินค้า</h4>
-                    <p class="text-sm text-gray-500">ราคา: <span id="calcItemPrice" class="font-semibold text-primary">0</span> บาท/กก.</p>
-                </div>
-            </div>
-            <div class="mb-6">
-                <label class="block text-sm font-medium text-gray-700 mb-2">น้ำหนัก (กิโลกรัม)</label>
-                <div class="flex items-center border-2 border-gray-200 rounded-xl overflow-hidden focus-within:border-primary transition-colors">
-                    <input type="number" id="weightInput" class="w-full p-3 outline-none text-lg font-semibold" placeholder="0.0" oninput="calculateTotal()">
-                    <span class="bg-gray-100 px-4 py-3 text-gray-500 font-medium">กก.</span>
-                </div>
-            </div>
-            <div class="flex justify-between items-center border-t pt-4">
-                <span class="text-gray-500">ราคารวมโดยประมาณ</span>
-                <span class="text-2xl font-bold text-primary" id="totalValue">0.00 ฿</span>
-            </div>
-            <button onclick="addToBasket()" class="w-full mt-5 bg-primary hover:bg-secondary text-white font-bold py-3 rounded-xl shadow-lg transition-transform active:scale-95">
-                <i class="fa-solid fa-plus-circle mr-2"></i> เพิ่มลงในรายการขาย
-            </button>
-        </div>
-    </div>
-
-    <div id="basketSummary" class="fixed bottom-0 left-0 w-full bg-white shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] p-4 rounded-t-2xl transform translate-y-full transition-transform duration-300 z-40">
-        <div class="max-w-3xl mx-auto flex justify-between items-center">
-            <div>
-                <p class="text-xs text-gray-500">รวมทั้งหมด (<span id="basketCount">0</span> รายการ)</p>
-                <h3 class="text-xl font-bold text-primary" id="basketTotal">0.00 ฿</h3>
-            </div>
-            <div class="flex space-x-2">
-                <button onclick="resetBasket()" class="bg-gray-200 text-gray-600 px-4 py-2 rounded-lg font-medium text-sm">ล้าง</button>
-                <button class="bg-primary text-white px-6 py-2 rounded-lg font-bold shadow-md hover:bg-secondary">สรุปรายการ</button>
-            </div>
-        </div>
-    </div>
-
-    <button id="fab-chat-toggle" title="ถาม AI รีไซเคิล">
-        <i class="fa-solid fa-comments"></i>
-    </button>
-
-    <div id="chatbot-modal" class="chatbot-hidden">
-        <div class="flex flex-col h-screen bg-gray-100">
-            <header class="bg-[#10B981] text-white p-4 flex justify-between items-center shadow-md">
-                <div class="flex items-center gap-2">
-                    <span class="text-2xl">♻️</span>
-                    <h1 class="text-lg font-bold font-sans text-white m-0">AI ผู้ช่วยรีไซเคิล</h1>
-                </div>
-                <div>
-                    <button id="new-chat-btn" class="bg-[#ecfdf5] hover:bg-[#d1fae5] text-[#10B981] font-bold py-1 px-3 rounded mr-2 text-sm">
-                        เริ่มใหม่
-                    </button>
-                    <button id="chatbot-close-btn" class="bg-gray-700 hover:bg-gray-900 text-white font-bold py-1 px-3 rounded text-sm">
-                        ปิด
-                    </button>
-                </div>
-            </header>
-
-            <main id="chat-history" class="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
-                <div class="flex items-start space-x-2">
-                    <span class="text-2xl">🤖</span>
-                    <div class="chat-bubble chat-bubble-model bg-white text-gray-800 p-3 rounded-lg max-w-lg relative border border-gray-200 shadow-sm">
-                        <p>สวัสดีครับ ผมคือ AI ผู้เชี่ยวชาญด้านขยะรีไซเคิล ถามราคาขยะ วิธีคัดแยก หรือร้านรับซื้อได้เลยครับ</p>
-                    </div>
-                </div>
-            </main>
-
-            <div id="thinking-indicator" class="p-4 hidden bg-gray-50">
-                <div class="flex items-center space-x-2">
-                    <span class="text-2xl">🤖</span>
-                    <div class="chat-bubble chat-bubble-model bg-white text-gray-800 p-3 rounded-lg max-w-lg relative border border-gray-200">
-                        <div class="gemini-thinking-bar"></div>
-                    </div>
-                </div>
-            </div>
-
-            <footer class="bg-white p-3 shadow-inner border-t border-gray-200 m-0 w-full max-w-full">
-                <div class="flex space-x-2">
-                    <input id="user-input" type="text" placeholder="พิมพ์คำถาม (เช่น ขวดพลาสติกใสราคาเท่าไหร่)..." class="flex-1 p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#10B981] font-sans text-base text-gray-800">
-                    <button id="send-btn" class="bg-[#10B981] hover:bg-[#059669] text-white font-bold py-2 px-4 rounded-xl shadow-sm">
-                        ส่ง
-                    </button>
-                </div>
-            </footer>
-        </div>
-    </div>
-
-    <script>
-// ✅ เปลี่ยนจาก '/api/chat' เป็นลิงก์เต็มของ Vercel
+<script>
+/* ================= CONFIG ================= */
 const BACKEND_URL = 'https://odd-night-9879.tontakankeawpang321.workers.dev';
-        // --- Data Mockup (เริ่มด้วยราคา 0) ---
-        let wasteData = [
+
+// ⭐ NEW: cooldown ประหยัดโควต้า
+let lastAIUpdate = 0;
+const AI_COOLDOWN = 30 * 60 * 1000;
+
+/* ================= DATA ================= */
+let wasteData = [
               { id: 1, name: 'กระดาษขาวดำ', category: 'paper', price: 4, trend: 'stable', icon: 'fa-file-alt', color: 'text-gray-500' },
   { id: 2, name: 'กระดาษลูกฟูก (ลัง)', category: 'paper', price: 3, trend: 'stable', icon: 'fa-box-open', color: 'text-yellow-700' },
   { id: 3, name: 'กระดาษหนังสือพิมพ์', category: 'paper', price: 2.5, trend: 'stable', icon: 'fa-newspaper', color: 'text-gray-600' },
@@ -291,290 +161,122 @@ const BACKEND_URL = 'https://odd-night-9879.tontakankeawpang321.workers.dev';
   { id: 50, name: 'ไมโครเวฟเก่า', category: 'electronic', price: 10, trend: 'stable', icon: 'fa-box', color: 'text-gray-500' }
         ];
 
-        let currentCategory = 'all';
-        let basket = [];
-        let selectedItem = null;
 
-        document.addEventListener('DOMContentLoaded', () => {
-            renderDate();
-            renderItems(wasteData);
-        });
+/* ================= INIT ================= */
+document.getElementById('currentDate').innerText =
+ new Date().toLocaleDateString('th-TH',{dateStyle:'full'});
+renderItems();
 
-        // --- 🟢 ฟังก์ชัน 1: อัปเดตตารางราคาด้วย AI (Overwrite Logic) ---
-        async function updatePricesWithAI() {
-            const overlay = document.getElementById('aiLoadingOverlay');
-            const loadingText = document.getElementById('aiLoadingText');
-            overlay.classList.remove('hidden');
-            loadingText.innerText = "AI กำลังสำรวจราคาตลาด...";
+/* ================= RENDER ================= */
+function renderItems(animate=false){
+ const box=document.getElementById('priceList');
+ box.innerHTML='';
+ wasteData.forEach((i,idx)=>{
+  const el=document.createElement('div');
+  el.className=`bg-white p-4 rounded shadow flex justify-between ${animate?'price-flash':''}`;
+  el.innerHTML=`
+   <div>
+    <b>${i.name}</b>
+    <div class="text-xs text-gray-400">${i.trend}</div>
+   </div>
+   <div class="font-bold text-primary">${i.price.toFixed(2)}</div>
+  `;
+  box.appendChild(el);
+ });
+}
 
-            try {
-                // ส่งข้อมูลไปให้ AI ประเมินราคาใหม่ (Baseline price included)
-                const itemsList = wasteData.map(item => `{ "id": ${item.id}, "name": "${item.name}", "current_price": ${item.price} }`).join(", ");
+/* ================= AI UPDATE ================= */
+async function updatePricesWithAI(){
+ const now=Date.now();
+ if(now-lastAIUpdate<AI_COOLDOWN){
+  alert('ตลาดยังไม่เปลี่ยนครับ');
+  return;
+ }
+ lastAIUpdate=now;
 
-                const systemPrompt = "You are a recycling price expert in Thailand. Generate REALISTIC buying prices (THB/kg) for recycling centers.";
-                const userPrompt = `
-                    Update prices for these items based on current market trends (Year 2025): [${itemsList}]
-                    
-                    Instructions:
-                    1. Use "current_price" as a baseline. If 0, start with a realistic market price.
-                    2. Adjust prices slightly (+/- 5-10%) to simulate market fluctuation.
-                    3. Return ONLY a JSON string array: [{"id": 1, "price": 5.50, "trend": "up"}, ...]
-                `;
+ const items=wasteData.map(i=>({
+  id:i.id,name:i.name,current_price:i.price
+ }));
 
-                const chatHistory = [{ role: "user", parts: [{ text: systemPrompt + "\n\n" + userPrompt }] }];
+ const systemPrompt=`
+You are a recycling price analyst in Thailand.
+Rules:
+- Use current_price as baseline
+- Change ONLY 10–20% of items
+- Typical movement +/- 3–8%
+- Most items stay unchanged
+- Return ONLY JSON
+`;
 
-                const response = await fetch(BACKEND_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ history: chatHistory })
-                });
+ const response=await fetch(BACKEND_URL,{
+  method:'POST',
+  headers:{'Content-Type':'application/json'},
+  body:JSON.stringify({
+    history:[{role:'user',parts:[{text:systemPrompt+JSON.stringify(items)}]}]
+  })
+ });
 
-                if (!response.ok) throw new Error("Connection failed");
+ const data=await response.json();
+ const json=JSON.parse(data.reply.replace(/```json|```/g,''));
 
-                const data = await response.json();
-                let aiText = data.reply.replace(/```json/g, '').replace(/```/g, '').trim();
-                const newPrices = JSON.parse(aiText);
+ let changed=0;
+ wasteData=wasteData.map(it=>{
+  const u=json.find(x=>x.id===it.id);
+  if(!u) return it;
+  if(Number(u.price)===Number(it.price)) return it;
+  changed++;
+  return {...it,price:u.price,trend:u.trend};
+ });
 
-                // ทับราคาเดิมทันที
-                wasteData = wasteData.map(originalItem => {
-                    const updateItem = newPrices.find(p => p.id === originalItem.id);
-                    if (updateItem) {
-                        return { ...originalItem, price: updateItem.price, trend: updateItem.trend };
-                    }
-                    return originalItem;
-                });
+ renderItems(true);
+ updateTime(changed);
+}
 
-                loadingText.innerText = "อัปเดตราคาสำเร็จ!";
-                setTimeout(() => {
-                    filterItems(true);
-                    updateTimeDisplay();
-                    overlay.classList.add('hidden');
-                }, 800);
+/* ================= TIME ================= */
+function updateTime(changed){
+ document.getElementById('statusDot').className=
+  'w-2 h-2 bg-green-500 rounded-full mr-2';
+ document.getElementById('updateTime').innerText=
+  changed===0?'ตลาดทรงตัว':
+  'อัปเดต '+new Date().toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'});
+}
 
-            } catch (error) {
-                console.error("AI Update Error:", error);
-                loadingText.innerText = "เกิดข้อผิดพลาด";
-                setTimeout(() => overlay.classList.add('hidden'), 2000);
-            }
-        }
+/* ================= CHAT ================= */
+function getPriceContext(){
+ return wasteData.map(i=>`- ${i.name}: ${i.price} บาท/กก.`).join('\n');
+}
 
-        // --- 🟢 ฟังก์ชัน 2: ระบบแชทถามตอบ (Conversational AI) ---
-        // System Prompt: ผู้เชี่ยวชาญรีไซเคิล
-        const CHAT_SYSTEM_PROMPT = {
-            role: "user",
-            parts: [{ text: "System Instruction: คุณคือ AI ผู้เชี่ยวชาญด้าน 'ขยะรีไซเคิลและสิ่งแวดล้อม' (Recycling Expert) มีหน้าที่ตอบคำถามเกี่ยวกับราคารับซื้อของเก่า (อ้างอิงราคาตลาดทั่วไปในไทย), วิธีคัดแยกขยะแต่ละประเภท (พลาสติก, แก้ว, กระดาษ, โลหะ), และให้ความรู้เรื่องการลดโลกร้อน ตอบด้วยภาษาที่สุภาพและเข้าใจง่าย" }]
-        };
-        const CHAT_SYSTEM_ACK = {
-            role: "model",
-            parts: [{ text: "รับทราบครับ ผมพร้อมให้ข้อมูลเรื่องขยะรีไซเคิลแล้วครับ" }]
-        };
+async function handleChatSend(){
+ const q=document.getElementById('user-input').value.trim();
+ if(!q) return;
+ addChat(q,true);
 
-        let chatHistory = [CHAT_SYSTEM_PROMPT, CHAT_SYSTEM_ACK];
+ const prompt=`ราคาปัจจุบัน:\n${getPriceContext()}\n\nคำถาม:${q}`;
 
-        const chatHistoryEl = document.getElementById('chat-history');
-        const userInput = document.getElementById('user-input');
-        const sendBtn = document.getElementById('send-btn');
-        const newChatBtn = document.getElementById('new-chat-btn');
-        const thinkingIndicator = document.getElementById('thinking-indicator');
+ const res=await fetch(BACKEND_URL,{
+  method:'POST',
+  headers:{'Content-Type':'application/json'},
+  body:JSON.stringify({history:[{role:'user',parts:[{text:prompt}]}]})
+ });
 
-        function addChatBubble(message, isUser = true) {
-            const bubbleType = isUser ? 'user' : 'model';
-            const icon = isUser ? '👤' : '🤖';
-            const bgClass = isUser ? 'bg-[#10B981] text-white' : 'bg-white text-gray-800 border border-gray-200';
-            
-            const wrap = document.createElement('div');
-            wrap.className = `flex items-start space-x-2 ${isUser ? 'flex-row-reverse space-x-reverse' : ''}`;
-            
-            const bubble = document.createElement('div');
-            bubble.className = `chat-bubble chat-bubble-${bubbleType} ${bgClass} p-3 rounded-lg max-w-lg relative shadow-sm`;
-            bubble.innerHTML = `<p>${message.replace(/\n/g, '<br>')}</p>`;
-            
-            wrap.innerHTML = `<span class="text-2xl">${icon}</span>`;
-            wrap.appendChild(bubble);
-            
-            chatHistoryEl.appendChild(wrap);
-            chatHistoryEl.scrollTop = chatHistoryEl.scrollHeight;
-        }
+ const data=await res.json();
+ addChat(data.reply,false);
+ document.getElementById('user-input').value='';
+}
 
-        function setThinking(on) {
-            thinkingIndicator.classList.toggle('hidden', !on);
-            if (on) chatHistoryEl.scrollTop = chatHistoryEl.scrollHeight;
-        }
+function addChat(text,isUser){
+ const box=document.getElementById('chat-history');
+ const div=document.createElement('div');
+ div.className=`p-3 rounded shadow ${isUser?'bg-primary text-white ml-auto':'bg-white'}`;
+ div.innerHTML=text;
+ box.appendChild(div);
+ box.scrollTop=box.scrollHeight;
+}
 
-        async function handleChatSend() {
-            const message = (userInput.value || '').trim();
-            if (!message) return;
-
-            addChatBubble(message, true);
-            userInput.value = '';
-            setThinking(true);
-            sendBtn.disabled = true;
-
-            chatHistory.push({ role: "user", parts: [{ text: message }] });
-
-            try {
-                const response = await fetch(BACKEND_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ history: chatHistory }) 
-                });
-
-                if (!response.ok) throw new Error("Server error");
-
-                const data = await response.json(); 
-                const aiReply = data.reply;
-
-                chatHistory.push({ role: "model", parts: [{ text: aiReply }] });
-                setThinking(false);
-                addChatBubble(aiReply, false);
-
-            } catch (err) {
-                console.error("Chat Error:", err);
-                setThinking(false);
-                addChatBubble("ขออภัย เกิดข้อผิดพลาดในการเชื่อมต่อ กรุณาลองใหม่ครับ", false);
-                chatHistory.pop();
-            } finally {
-                sendBtn.disabled = false;
-            }
-        }
-
-        sendBtn.addEventListener('click', handleChatSend);
-        userInput.addEventListener('keydown', e => { if (e.key === 'Enter') handleChatSend(); });
-
-        newChatBtn.addEventListener('click', () => {
-            chatHistory = [CHAT_SYSTEM_PROMPT, CHAT_SYSTEM_ACK];
-            chatHistoryEl.innerHTML = `
-                <div class="flex items-start space-x-2">
-                <span class="text-2xl">🤖</span>
-                <div class="chat-bubble chat-bubble-model bg-white text-gray-800 p-3 rounded-lg max-w-lg relative border border-gray-200 shadow-sm">
-                    <p>สวัสดีครับ เริ่มสนทนาเรื่องขยะรีไซเคิลใหม่ได้เลยครับ</p>
-                </div>
-                </div>`;
-            userInput.value = '';
-            setThinking(false);
-        });
-
-        // --- Helper Functions ---
-        function renderDate() {
-            const date = new Date();
-            document.getElementById('currentDate').innerText = date.toLocaleDateString('th-TH', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-        }
-
-        function updateTimeDisplay() {
-            const now = new Date();
-            document.getElementById('updateTime').innerText = `อัปเดตล่าสุด: ${now.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' })} น.`;
-            document.getElementById('statusDot').className = "w-2 h-2 rounded-full bg-green-500 mr-2 animate-pulse";
-        }
-
-        function renderItems(items, animate = false) {
-            const container = document.getElementById('priceList');
-            container.innerHTML = '';
-            items.forEach((item, index) => {
-                const trendIcon = item.trend === 'up' ? '<i class="fa-solid fa-caret-up text-green-500"></i>' : 
-                                  item.trend === 'down' ? '<i class="fa-solid fa-caret-down text-red-500"></i>' : 
-                                  '<i class="fa-solid fa-minus text-gray-400"></i>';
-                
-                const priceDisplay = item.price === 0 ? '<span class="text-gray-400 text-sm">กดอัปเดต</span>' : item.price.toFixed(2);
-
-                const card = document.createElement('div');
-                card.className = `price-item bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex justify-between items-center cursor-pointer hover:bg-gray-50 ${animate ? 'price-flash' : ''}`;
-                if(animate) card.style.animationDelay = `${index * 30}ms`;
-                card.onclick = () => { if(item.price > 0) openCalculator(item); else alert('กรุณากดปุ่ม "อัปเดตตาราง" ด้านบนก่อนครับ'); };
-                
-                card.innerHTML = `
-                    <div class="flex items-center">
-                        <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center mr-3 text-lg ${item.color}"><i class="fa-solid ${item.icon}"></i></div>
-                        <div>
-                            <h3 class="font-medium text-gray-800">${item.name}</h3>
-                            <div class="text-xs text-gray-400 flex items-center">ตลาดกลาง ${trendIcon}</div>
-                        </div>
-                    </div>
-                    <div class="text-right">
-                        <div class="text-lg font-bold text-primary">${priceDisplay}</div>
-                        <div class="text-xs text-gray-500">บาท/กก.</div>
-                    </div>
-                `;
-                container.appendChild(card);
-            });
-        }
-
-        function filterCategory(category) {
-            currentCategory = category;
-            document.querySelectorAll('.cat-btn').forEach(btn => {
-                const isMatch = (category === 'all' && btn.innerText.includes('ทั้งหมด')) || btn.getAttribute('onclick').includes(category);
-                btn.className = isMatch ? 'cat-btn bg-gray-800 text-white px-4 py-2 rounded-full whitespace-nowrap shadow-sm active-cat' 
-                                        : 'cat-btn bg-white text-gray-600 px-4 py-2 rounded-full whitespace-nowrap shadow-sm border border-gray-100';
-            });
-            filterItems();
-        }
-
-        function filterItems(animate = false) {
-            const filtered = wasteData.filter(item => currentCategory === 'all' || item.category === currentCategory);
-            renderItems(filtered, animate);
-        }
-
-        // --- Calculator & Basket Logic ---
-        function openCalculator(item) {
-            selectedItem = item;
-            document.getElementById('calcItemName').innerText = item.name;
-            document.getElementById('calcItemPrice').innerText = item.price.toFixed(2);
-            document.getElementById('calcIcon').innerHTML = `<i class="fa-solid ${item.icon} ${item.color}"></i>`;
-            document.getElementById('weightInput').value = '';
-            document.getElementById('totalValue').innerText = '0.00 ฿';
-            document.getElementById('calculatorModal').classList.remove('hidden');
-            document.getElementById('weightInput').focus();
-        }
-
-        function closeCalculator() {
-            document.getElementById('calculatorModal').classList.add('hidden');
-            selectedItem = null;
-        }
-
-        function calculateTotal() {
-            if (!selectedItem) return;
-            const weight = parseFloat(document.getElementById('weightInput').value) || 0;
-            document.getElementById('totalValue').innerText = (weight * selectedItem.price).toLocaleString('th-TH', { minimumFractionDigits: 2 }) + ' ฿';
-        }
-
-        function addToBasket() {
-            const weight = parseFloat(document.getElementById('weightInput').value) || 0;
-            if (weight <= 0) return;
-            basket.push({ ...selectedItem, weight, total: weight * selectedItem.price });
-            updateBasketUI();
-            closeCalculator();
-        }
-
-        function updateBasketUI() {
-            const basketBar = document.getElementById('basketSummary');
-            basket.length > 0 ? basketBar.classList.remove('translate-y-full') : basketBar.classList.add('translate-y-full');
-            const total = basket.reduce((sum, item) => sum + item.total, 0);
-            document.getElementById('basketCount').innerText = basket.length;
-            document.getElementById('basketTotal').innerText = total.toLocaleString('th-TH', { minimumFractionDigits: 2 }) + ' ฿';
-        }
-
-        function resetBasket() {
-            if(confirm('ล้างรายการทั้งหมด?')) { basket = []; updateBasketUI(); }
-        }
-
-        window.onclick = function(e) {
-            if (e.target == document.getElementById('calculatorModal')) closeCalculator();
-        }
-
-        // --- Chatbot Modal Control ---
-        const fabToggle = document.getElementById('fab-chat-toggle');
-        const chatModal = document.getElementById('chatbot-modal');
-        const chatbotCloseBtn = document.getElementById('chatbot-close-btn');
-
-        fabToggle.addEventListener('click', () => {
-            chatModal.classList.remove('chatbot-hidden');
-            fabToggle.style.opacity = '0';
-        });
-        chatbotCloseBtn.addEventListener('click', () => {
-            chatModal.classList.add('chatbot-hidden');
-            fabToggle.style.opacity = '1';
-        });
-    </script>
+/* ================= CHAT UI ================= */
+const chat=document.getElementById('chatbot-modal');
+document.getElementById('fab-chat-toggle').onclick=()=>chat.classList.remove('hidden');
+function closeChat(){chat.classList.add('hidden')}
+</script>
 </body>
-
 </html>
-
