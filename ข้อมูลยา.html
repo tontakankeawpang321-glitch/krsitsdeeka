@@ -660,7 +660,10 @@ async function handleSend() {
     addChatBubble(message, true);
     userInput.value = '';
     setThinking(true);
+    
+    // FIX 4: หน่วงเวลาปุ่มส่ง 5 วินาที เพื่อป้องกันการกดรัว (Rate Limiting)
     sendBtn.disabled = true;
+    setTimeout(() => sendBtn.disabled = false, 5000);
 
     chatHistory.push({ role: "user", parts: [{ text: message }] });
 
@@ -691,9 +694,8 @@ async function handleSend() {
         setThinking(false);
         addChatBubble(`เกิดข้อผิดพลาด: ${err.message}`, false);
         chatHistory.pop();
-    } finally {
-        sendBtn.disabled = false;
-    }
+    } 
+    // หมายเหตุ: เอา finally ออกเพื่อให้ปุ่มทำงานตาม setTimeout 5 วินาที
 }
 
 sendBtn.addEventListener('click', handleSend);
