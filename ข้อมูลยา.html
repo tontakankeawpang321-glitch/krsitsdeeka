@@ -591,15 +591,23 @@ document.getElementById('cat').addEventListener('change', applySearch);
 /** =========================================
     3. ส่วน Chatbot AI + Health Assessment Logic
     ========================================= */
-const NORMAL_CHAT_URL = 'https://frosty-flower-5bd8.tontakankeawpang321.workers.dev/';
-// Remove specific worker URL
+const API_URL = 'https://app.ai-tontakan.online/api/generate';
+const OLLAMA_MODEL = 'llama3.2:3b';
 
-// FIX 1: เปลี่ยน SYSTEM_PROMPT เป็น role "user" ตามคำแนะนำ (Gemini ไม่รับ role model เป็นข้อความแรก)
+// Helper Function: สร้าง Prompt String จากประวัติการแชท
+function constructPromptFromHistory(history) {
+    // แปลง role ให้เป็นชื่อที่ AI เข้าใจง่ายๆ
+    // model -> AI Pharmacist, user -> User
+    return history.map(msg => {
+        const roleName = msg.role === 'model' ? 'AI Pharmacist' : 'User';
+        return `${roleName}: ${msg.parts[0].text}`;
+    }).join('\n') + '\nAI Pharmacist:'; // จบด้วย AI เพื่อรอคำตอบ
+}
+
 const SYSTEM_PROMPT = {
     role: "user",
     parts: [{ text: "คุณคือ AI เภสัชกร ให้ข้อมูลยาเชิงความรู้ ไม่วินิจฉัยโรค" }]
 };
-// เพิ่ม Model Ack เพื่อให้ลำดับการสนทนาถูกต้อง (User -> Model -> User)
 const SYSTEM_ACK = {
     role: "model",
     parts: [{ text: "รับทราบครับ ผมพร้อมให้ข้อมูลยาและสุขภาพครับ" }]
@@ -652,7 +660,7 @@ function setThinking(on) {
     if (on) chatHistoryEl.scrollTop = chatHistoryEl.scrollHeight;
 }
 
-// --- Chat Logic (Normal) ---
+// --- Chat Logic (Ollama Local) ---
 async function handleSend() {
     const message = (userInput.value || '').trim();
     if (!message) return;
@@ -661,30 +669,37 @@ async function handleSend() {
     userInput.value = '';
     setThinking(true);
     
-    // FIX 4: หน่วงเวลาปุ่มส่ง 5 วินาที เพื่อป้องกันการกดรัว (Rate Limiting)
-    sendBtn.disabled = true;
-    setTimeout(() => sendBtn.disabled = false, 5000);
+    // FIX: เอาการหน่วงเวลาออกตามคำขอ (Method 2)
+    // sendBtn.disabled = true;
+    // setTimeout(() => sendBtn.disabled = false, 5000);
 
     chatHistory.push({ role: "user", parts: [{ text: message }] });
 
-    // FIX 3: จำกัด History ก่อนส่ง (เก็บ System Prompt ตัวแรกไว้ + 6 ข้อความล่าสุด)
-    // เพื่อป้องกัน Token เต็ม และลดโอกาส error จาก context ยาวเกินไป
-    let safeHistory = chatHistory;
+    // Limit History size locally before processing
     if (chatHistory.length > 8) { 
-         // เก็บ index 0, 1 (System Prompt + Ack) แล้วต่อด้วย 6 ข้อความสุดท้าย
-         safeHistory = [chatHistory[0], chatHistory[1], ...chatHistory.slice(2).slice(-6)];
+         // Keep system prompt + ack + last 6 messages
+         chatHistory = [chatHistory[0], chatHistory[1], ...chatHistory.slice(2).slice(-6)];
     }
 
+    // Convert array history to single string prompt for Ollama /api/generate
+    const fullPrompt = constructPromptFromHistory(chatHistory);
+
     try {
-        const response = await fetch(NORMAL_CHAT_URL, {
+        const response = await fetch(API_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ history: safeHistory }) 
+            body: JSON.stringify({ 
+                model: OLLAMA_MODEL,
+                prompt: fullPrompt,
+                stream: false
+            }) 
         });
 
-        if (!response.ok) throw new Error(`Server error: ${response.status}`);
-        const data = await response.json(); 
-        const aiReply = data.reply || data.text || "(ไม่ได้รับคำตอบจากระบบ)";
+        if (!response.ok) throw new Error("การเชื่อมต่อขัดข้อง");
+        const data = await response.json();
+        
+        // FIX: แก้ไขการรับค่า response และ fallback เป็นค่าว่างตามคำขอ (Method 1)
+        const aiReply = data.response || "";
 
         chatHistory.push({ role: "model", parts: [{ text: aiReply }] });
         setThinking(false);
@@ -692,16 +707,15 @@ async function handleSend() {
 
     } catch (err) {
         setThinking(false);
-        addChatBubble(`เกิดข้อผิดพลาด: ${err.message}`, false);
-        chatHistory.pop();
+        // FIX: ไม่แสดงข้อความ error ตามคำขอ (Method 1)
+        // addChatBubble(`เกิดข้อผิดพลาด...`, false);
     } 
-    // หมายเหตุ: เอา finally ออกเพื่อให้ปุ่มทำงานตาม setTimeout 5 วินาที
 }
 
 sendBtn.addEventListener('click', handleSend);
 userInput.addEventListener('keydown', e => { if (e.key === 'Enter') handleSend(); });
 newChatBtn.addEventListener('click', () => {
-    chatHistory = [SYSTEM_PROMPT, SYSTEM_ACK]; // Reset กลับไปเหลือแค่ System Prompt และ Ack
+    chatHistory = [SYSTEM_PROMPT, SYSTEM_ACK]; 
     chatHistoryEl.innerHTML = `<div class="flex items-start space-x-2"><span class="text-2xl">🤖</span><div class="chat-bubble chat-bubble-model bg-white text-gray-800 p-3 rounded-lg max-w-lg relative border border-gray-200 shadow-sm"><p>สวัสดีครับ ผมคือ AI ผู้ช่วยเภสัชกร สอบถามเรื่องยาได้เลยครับ</p></div></div>`;
     userInput.value = '';
     setThinking(false);
@@ -722,34 +736,26 @@ diseaseChips.forEach(chip => {
     chip.addEventListener('click', () => {
         const val = chip.getAttribute('data-val');
         if (val === 'ไม่มี') {
-            // ถ้าเลือกไม่มี ให้เคลียร์อันอื่น
             diseaseChips.forEach(c => c.classList.remove('selected'));
             chip.classList.add('selected');
         } else {
-            // ถ้าเลือกโรคอื่น ให้เอา 'ไม่มี' ออก
             document.querySelector('.chip-option[data-val="ไม่มี"]').classList.remove('selected');
             chip.classList.toggle('selected');
         }
     });
 });
-// Default select "ไม่มี"
 document.querySelector('.chip-option[data-val="ไม่มี"]').classList.add('selected');
 
 // 2. Modals Control
-function toggleHealthModal(show) {
-    healthModalOverlay.classList.toggle('hidden', !show);
-}
-function toggleResultModal(show) {
-    resultModalOverlay.classList.toggle('hidden', !show);
-}
+function toggleHealthModal(show) { healthModalOverlay.classList.toggle('hidden', !show); }
+function toggleResultModal(show) { resultModalOverlay.classList.toggle('hidden', !show); }
 
 healthCheckBtn.addEventListener('click', () => toggleHealthModal(true));
 closeHealthModalBtn.addEventListener('click', () => toggleHealthModal(false));
 cancelHealthBtn.addEventListener('click', () => toggleHealthModal(false));
-
 closeResultModalBtn.addEventListener('click', () => toggleResultModal(false));
 
-// 3. Submit & Analyze
+// 3. Submit & Analyze (Ollama Local)
 submitHealthBtn.addEventListener('click', async () => {
     // Collect Data
     const age = document.getElementById('hf-age').value.trim() || '-';
@@ -782,7 +788,7 @@ submitHealthBtn.addEventListener('click', async () => {
              <p>AI กำลังวิเคราะห์ข้อมูล...</p>
         </div>`;
 
-    // FIX 2: ปรับ Prompt ให้ Soft ลง หลีกเลี่ยงคำว่าวินิจฉัย เพื่อให้ AI กล้าตอบ
+    // FIX 2: ปรับ Prompt ให้ Soft ลง
     const prompt = `
     ข้อมูลสุขภาพเบื้องต้น (ไม่ใช่การวินิจฉัย):
     - เพศ: ${gender} อายุ ${age}
@@ -797,25 +803,22 @@ submitHealthBtn.addEventListener('click', async () => {
     4. สัญญาณที่ควรไปพบแพทย์
     `;
 
-    // AI Call
+    // AI Call (Ollama Local)
     try {
-        // Construct history for the API (since it expects history array)
-        // ใช้ SYSTEM_PROMPT ตัวใหม่ที่ role เป็น model
-        const tempHistory = [
-            SYSTEM_PROMPT,
-            SYSTEM_ACK,
-            { role: "user", parts: [{ text: prompt }] }
-        ];
-
-        const response = await fetch(NORMAL_CHAT_URL, {
+        const response = await fetch(API_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ history: tempHistory }) 
+            body: JSON.stringify({ 
+                model: OLLAMA_MODEL,
+                prompt: prompt, // Use the prompt string directly
+                stream: false
+            }) 
         });
 
         if (!response.ok) throw new Error("การเชื่อมต่อขัดข้อง");
         const data = await response.json();
-        const aiText = data.reply || data.text || "ไม่สามารถวิเคราะห์ได้ในขณะนี้";
+        // Ollama returns response in 'response' field
+        const aiText = data.response || "ไม่สามารถวิเคราะห์ได้ในขณะนี้";
 
         // Display Result using Marked (Markdown Parser)
         resultContentArea.innerHTML = marked.parse(aiText);
@@ -825,6 +828,7 @@ submitHealthBtn.addEventListener('click', async () => {
             <div class="text-center text-red-600 py-10">
                 <p class="text-xl font-bold">เกิดข้อผิดพลาด</p>
                 <p>${err.message}</p>
+                <p class="text-sm mt-2 text-gray-500">ตรวจสอบว่าเปิด Ollama (llama3.2:3b) แล้วหรือยัง</p>
                 <button onclick="toggleResultModal(false)" class="mt-4 text-sm underline text-gray-500">ปิด</button>
             </div>`;
     }
