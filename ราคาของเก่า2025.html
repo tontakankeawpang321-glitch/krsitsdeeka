@@ -262,21 +262,68 @@
         const STORAGE_KEY_LAST_UPDATE = 'eco_last_update_ts';
         
         // ================= DATA =================
-        let wasteData = [
-            { id: 1, name: 'กระดาษขาวดำ', category: 'paper', price: 4.50, trend: 'stable', icon: 'fa-file-alt', color: 'text-gray-500' },
-            { id: 2, name: 'กระดาษลูกฟูก (ลัง)', category: 'paper', price: 3.20, trend: 'stable', icon: 'fa-box-open', color: 'text-yellow-700' },
-            { id: 3, name: 'กระดาษหนังสือพิมพ์', category: 'paper', price: 2.80, trend: 'down', icon: 'fa-newspaper', color: 'text-gray-600' },
-            { id: 4, name: 'สมุดเล่ม', category: 'paper', price: 3.00, trend: 'up', icon: 'fa-book', color: 'text-blue-400' },
-            { id: 10, name: 'ขวด PET ใส', category: 'plastic', price: 12.00, trend: 'up', icon: 'fa-bottle-water', color: 'text-blue-500' },
-            { id: 11, name: 'ขวดพลาสติกขุ่น (HDPE)', category: 'plastic', price: 8.50, trend: 'stable', icon: 'fa-jug-detergent', color: 'text-gray-400' },
-            { id: 12, name: 'พลาสติกกรอบ (รวม)', category: 'plastic', price: 2.50, trend: 'stable', icon: 'fa-utensils', color: 'text-red-400' },
-            { id: 20, name: 'เหล็กหนา', category: 'metal', price: 10.50, trend: 'up', icon: 'fa-weight-hanging', color: 'text-gray-700' },
-            { id: 21, name: 'เหล็กบาง (สังกะสี)', category: 'metal', price: 8.00, trend: 'stable', icon: 'fa-sheet-plastic', color: 'text-gray-500' },
-            { id: 22, name: 'กระป๋องอลูมิเนียม', category: 'metal', price: 38.00, trend: 'up', icon: 'fa-beer-mug-empty', color: 'text-green-500' },
-            { id: 23, name: 'ทองแดง (สายไฟ)', category: 'metal', price: 220.00, trend: 'up', icon: 'fa-plug', color: 'text-orange-600' },
-            { id: 30, name: 'ขวดเบียร์ (ลัง)', category: 'glass', price: 12.00, trend: 'stable', icon: 'fa-wine-bottle', color: 'text-amber-700' },
-            { id: 31, name: 'เศษแก้วสี', category: 'glass', price: 1.00, trend: 'stable', icon: 'fa-wine-glass', color: 'text-green-700' },
-            { id: 40, name: 'แผงวงจรเขียว', category: 'electronic', price: 150.00, trend: 'up', icon: 'fa-microchip', color: 'text-green-600' }
+          let wasteData = [
+              { id: 1, name: 'กระดาษขาวดำ', category: 'paper', price: 4, trend: 'stable', icon: 'fa-file-alt', color: 'text-gray-500' },
+  { id: 2, name: 'กระดาษลูกฟูก (ลัง)', category: 'paper', price: 3, trend: 'stable', icon: 'fa-box-open', color: 'text-yellow-700' },
+  { id: 3, name: 'กระดาษหนังสือพิมพ์', category: 'paper', price: 2.5, trend: 'stable', icon: 'fa-newspaper', color: 'text-gray-600' },
+  { id: 4, name: 'กระดาษเล่ม/สมุด', category: 'paper', price: 2, trend: 'stable', icon: 'fa-book', color: 'text-blue-800' },
+
+  { id: 5, name: 'ขวด PET (ใส)', category: 'plastic', price: 14, trend: 'stable', icon: 'fa-bottle-water', color: 'text-blue-400' },
+  { id: 6, name: 'ขวด PET (สี)', category: 'plastic', price: 8, trend: 'stable', icon: 'fa-bottle-water', color: 'text-green-500' },
+  { id: 7, name: 'พลาสติก HDPE', category: 'plastic', price: 18, trend: 'stable', icon: 'fa-jug-detergent', color: 'text-gray-300' },
+  { id: 8, name: 'พลาสติก PP', category: 'plastic', price: 10, trend: 'stable', icon: 'fa-chair', color: 'text-red-400' },
+  { id: 9, name: 'ท่อ PVC (ฟ้า)', category: 'plastic', price: 6, trend: 'stable', icon: 'fa-circle-notch', color: 'text-blue-600' },
+
+  { id: 10, name: 'ทองแดง (สายไฟปอก)', category: 'metal', price: 280, trend: 'up', icon: 'fa-bolt', color: 'text-orange-600' },
+  { id: 11, name: 'ทองแดง (เผา)', category: 'metal', price: 240, trend: 'stable', icon: 'fa-fire', color: 'text-red-700' },
+  { id: 12, name: 'อลูมิเนียม (กระป๋อง)', category: 'metal', price: 70, trend: 'stable', icon: 'fa-can-food', color: 'text-gray-400' },
+  { id: 13, name: 'อลูมิเนียม (หนา)', category: 'metal', price: 85, trend: 'stable', icon: 'fa-layer-group', color: 'text-gray-500' },
+  { id: 14, name: 'เหล็กหนา', category: 'metal', price: 9, trend: 'stable', icon: 'fa-weight-hanging', color: 'text-gray-700' },
+  { id: 15, name: 'เหล็กบาง/สังกะสี', category: 'metal', price: 7, trend: 'stable', icon: 'fa-sheet-plastic', color: 'text-gray-400' },
+  { id: 16, name: 'สแตนเลส 304', category: 'metal', price: 45, trend: 'stable', icon: 'fa-utensils', color: 'text-gray-400' },
+
+  { id: 17, name: 'ขวดแก้ว (รวม)', category: 'glass', price: 1, trend: 'stable', icon: 'fa-wine-bottle', color: 'text-amber-800' },
+  { id: 18, name: 'ขวดแก้ว (ใส)', category: 'glass', price: 2, trend: 'stable', icon: 'fa-wine-glass', color: 'text-blue-200' },
+  { id: 19, name: 'ขวดแก้ว (เขียว)', category: 'glass', price: 1.5, trend: 'stable', icon: 'fa-wine-glass', color: 'text-green-700' },
+  { id: 20, name: 'ขวดแก้ว (น้ำตาล)', category: 'glass', price: 1.2, trend: 'stable', icon: 'fa-wine-glass', color: 'text-amber-700' },
+
+  { id: 21, name: 'เศษกระจกแตก', category: 'glass', price: 0.5, trend: 'down', icon: 'fa-triangle-exclamation', color: 'text-red-600' },
+
+  { id: 22, name: 'สายไฟรวม', category: 'electronic', price: 35, trend: 'stable', icon: 'fa-plug', color: 'text-yellow-500' },
+  { id: 23, name: 'แผงวงจร PCB', category: 'electronic', price: 120, trend: 'up', icon: 'fa-microchip', color: 'text-green-600' },
+  { id: 24, name: 'อะแดปเตอร์ไฟ', category: 'electronic', price: 15, trend: 'stable', icon: 'fa-charging-station', color: 'text-gray-500' },
+  { id: 25, name: 'แบตเตอรี่แห้ง', category: 'electronic', price: 10, trend: 'stable', icon: 'fa-battery-half', color: 'text-red-500' },
+  { id: 26, name: 'แบตเตอรี่ลิเธียม', category: 'electronic', price: 60, trend: 'up', icon: 'fa-battery-full', color: 'text-green-500' },
+
+  { id: 27, name: 'โทรศัพท์มือถือเก่า', category: 'electronic', price: 40, trend: 'up', icon: 'fa-mobile-screen', color: 'text-blue-500' },
+  { id: 28, name: 'คอมพิวเตอร์เก่า', category: 'electronic', price: 18, trend: 'stable', icon: 'fa-desktop', color: 'text-gray-600' },
+  { id: 29, name: 'จอ LCD', category: 'electronic', price: 25, trend: 'stable', icon: 'fa-tv', color: 'text-black' },
+  { id: 30, name: 'สายชาร์จ', category: 'electronic', price: 12, trend: 'stable', icon: 'fa-cable-car', color: 'text-gray-400' },
+
+  { id: 31, name: 'ถุงพลาสติกใส', category: 'plastic', price: 2, trend: 'down', icon: 'fa-bag-shopping', color: 'text-gray-300' },
+  { id: 32, name: 'ฟิล์มยืด', category: 'plastic', price: 5, trend: 'stable', icon: 'fa-scroll', color: 'text-blue-300' },
+  { id: 33, name: 'กล่องโฟม', category: 'plastic', price: 1, trend: 'down', icon: 'fa-cube', color: 'text-gray-200' },
+  { id: 34, name: 'พลาสติกแข็งผสม', category: 'plastic', price: 6, trend: 'stable', icon: 'fa-puzzle-piece', color: 'text-purple-400' },
+  { id: 35, name: 'ฝาขวดพลาสติก', category: 'plastic', price: 7, trend: 'stable', icon: 'fa-circle', color: 'text-red-500' },
+
+  { id: 36, name: 'ทองเหลือง', category: 'metal', price: 160, trend: 'up', icon: 'fa-ring', color: 'text-yellow-600' },
+  { id: 37, name: 'ตะกั่ว', category: 'metal', price: 55, trend: 'stable', icon: 'fa-weight-scale', color: 'text-gray-800' },
+  { id: 38, name: 'สายทองแดงไม่ปอก', category: 'metal', price: 180, trend: 'stable', icon: 'fa-wave-square', color: 'text-orange-500' },
+  { id: 39, name: 'เศษเหล็กรถยนต์', category: 'metal', price: 10, trend: 'up', icon: 'fa-car', color: 'text-gray-700' },
+  { id: 40, name: 'ลวดเหล็ก', category: 'metal', price: 8, trend: 'stable', icon: 'fa-grip-lines', color: 'text-gray-500' },
+
+  { id: 41, name: 'ยางรถยนต์', category: 'other', price: 3, trend: 'stable', icon: 'fa-circle-dot', color: 'text-black' },
+  { id: 42, name: 'เศษผ้า', category: 'other', price: 4, trend: 'stable', icon: 'fa-shirt', color: 'text-indigo-400' },
+  { id: 43, name: 'ไม้พาเลท', category: 'other', price: 2, trend: 'stable', icon: 'fa-tree', color: 'text-green-700' },
+  { id: 44, name: 'เศษไม้', category: 'other', price: 1.5, trend: 'stable', icon: 'fa-tree-city', color: 'text-brown-600' },
+
+  { id: 45, name: 'หลอด LED', category: 'electronic', price: 30, trend: 'up', icon: 'fa-lightbulb', color: 'text-green-400' },
+  { id: 46, name: 'หลอดไฟเก่า', category: 'electronic', price: 5, trend: 'stable', icon: 'fa-lightbulb', color: 'text-yellow-400' },
+
+  { id: 47, name: 'เครื่องใช้ไฟฟ้าเก่า', category: 'electronic', price: 15, trend: 'stable', icon: 'fa-blender', color: 'text-gray-500' },
+  { id: 48, name: 'ตู้เย็นเก่า', category: 'electronic', price: 12, trend: 'stable', icon: 'fa-snowflake', color: 'text-cyan-400' },
+  { id: 49, name: 'เครื่องซักผ้าเก่า', category: 'electronic', price: 14, trend: 'stable', icon: 'fa-water', color: 'text-blue-500' },
+  { id: 50, name: 'ไมโครเวฟเก่า', category: 'electronic', price: 10, trend: 'stable', icon: 'fa-box', color: 'text-gray-500' }
         ];
 
         let currentCategory = 'all';
@@ -651,3 +698,4 @@
     </script>
 </body>
 </html>
+
