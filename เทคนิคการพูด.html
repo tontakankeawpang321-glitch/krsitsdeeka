@@ -430,18 +430,16 @@ document.querySelectorAll("#filters .filter-btn").forEach(btn=>{
 // ✅ เปลี่ยนจาก '/api/chat' เป็นลิงก์เต็มของ Vercel
 const BACKEND_URL = 'https://shy-fog-aa02.tontakankeawpang321.workers.dev';
 
-
-// System Prompt: โค้ชสอนการพูด
-const SYSTEM_PROMPT = {
-    role: "user",
-    parts: [{ text: "System Instruction: คุณคือ AI Communication Coach ที่เชี่ยวชาญด้านจิตวิทยาการสื่อสาร วาทศิลป์ และการพูดในที่สาธารณะ หน้าที่ของคุณคือแนะนำเทคนิคการพูด ร่างสคริปต์ (Script) สำหรับสถานการณ์ต่างๆ (เช่น การขาย, การเจรจา, การนำเสนองาน) และแนะนำโทนเสียงหรือภาษากายที่เหมาะสม จงตอบด้วยภาษาที่สุภาพ เป็นกันเอง และให้กำลังใจ" }]
-};
-const SYSTEM_ACK = {
-    role: "model",
-    parts: [{ text: "รับทราบครับ ผมพร้อมเป็นโค้ชช่วยแนะนำเทคนิคการพูดให้คุณแล้วครับ" }]
+// ✅ System Prompt (OpenAI format)
+const SYSTEM_MESSAGE = {
+  role: "system",
+  content:
+    "คุณคือ AI Communication Coach ที่เชี่ยวชาญด้านจิตวิทยาการสื่อสาร วาทศิลป์ " +
+    "และการพูดในที่สาธารณะ หน้าที่ของคุณคือแนะนำเทคนิคการพูด ร่างสคริปต์ " +
+    "และให้คำแนะนำที่สุภาพ เป็นกันเอง และให้กำลังใจ"
 };
 
-let chatHistory = [SYSTEM_PROMPT, SYSTEM_ACK];
+let chatHistory = [SYSTEM_MESSAGE];
 
 const chatHistoryEl = document.getElementById('chat-history');
 const userInput = document.getElementById('user-input');
@@ -449,113 +447,112 @@ const sendBtn = document.getElementById('send-btn');
 const newChatBtn = document.getElementById('new-chat-btn');
 const thinkingIndicator = document.getElementById('thinking-indicator');
 
+/* ---------- UI helpers ---------- */
 function addChatBubble(message, isUser = true) {
-    const bubbleType = isUser ? 'user' : 'model';
-    const icon = isUser ? '👤' : '🤖';
-    const bgClass = isUser ? 'bg-[#6366f1] text-white' : 'bg-white text-gray-800 border border-gray-200';
-    
-    const wrap = document.createElement('div');
-    wrap.className = `flex items-start space-x-2 ${isUser ? 'flex-row-reverse space-x-reverse' : ''}`;
-    
-    const bubble = document.createElement('div');
-    bubble.className = `chat-bubble chat-bubble-${bubbleType} ${bgClass} p-3 rounded-lg max-w-lg relative shadow-sm`;
-    bubble.innerHTML = `<p>${message.replace(/\n/g, '<br>')}</p>`;
-    
-    wrap.innerHTML = `<span class="text-2xl">${icon}</span>`;
-    wrap.appendChild(bubble);
-    
-    chatHistoryEl.appendChild(wrap);
-    chatHistoryEl.scrollTop = chatHistoryEl.scrollHeight;
+  const icon = isUser ? '👤' : '🤖';
+  const wrap = document.createElement('div');
+  wrap.className = `flex items-start space-x-2 ${isUser ? 'flex-row-reverse space-x-reverse' : ''}`;
+
+  const bubble = document.createElement('div');
+  bubble.className =
+    `chat-bubble ${isUser ? 'chat-bubble-user bg-[#6366f1] text-white' : 'chat-bubble-model bg-white text-gray-800 border border-gray-200'}
+     p-3 rounded-lg max-w-lg relative shadow-sm`;
+  bubble.innerHTML = `<p>${message.replace(/\n/g, '<br>')}</p>`;
+
+  wrap.innerHTML = `<span class="text-2xl">${icon}</span>`;
+  wrap.appendChild(bubble);
+
+  chatHistoryEl.appendChild(wrap);
+  chatHistoryEl.scrollTop = chatHistoryEl.scrollHeight;
 }
 
 function addChatError(message) {
-    const w = document.createElement('div');
-    w.className = 'flex justify-center my-2';
-    w.innerHTML = `<span class="bg-red-100 text-red-700 text-xs font-semibold px-3 py-1 rounded-full">${message}</span>`;
-    chatHistoryEl.appendChild(w);
-    chatHistoryEl.scrollTop = chatHistoryEl.scrollHeight;
+  const w = document.createElement('div');
+  w.className = 'flex justify-center my-2';
+  w.innerHTML = `<span class="bg-red-100 text-red-700 text-xs px-3 py-1 rounded-full">${message}</span>`;
+  chatHistoryEl.appendChild(w);
 }
 
 function setThinking(on) {
-    thinkingIndicator.classList.toggle('hidden', !on);
-    if (on) chatHistoryEl.scrollTop = chatHistoryEl.scrollHeight;
+  thinkingIndicator.classList.toggle('hidden', !on);
 }
 
+/* ---------- Send message ---------- */
 async function handleSend() {
-    const message = (userInput.value || '').trim();
-    if (!message) return;
+  const text = userInput.value.trim();
+  if (!text) return;
 
-    addChatBubble(message, true);
-    userInput.value = '';
-    setThinking(true);
-    sendBtn.disabled = true;
+  addChatBubble(text, true);
+  userInput.value = '';
+  sendBtn.disabled = true;
+  setThinking(true);
 
-    chatHistory.push({ role: "user", parts: [{ text: message }] });
+  chatHistory.push({ role: "user", content: text });
 
-    try {
-        const response = await fetch(BACKEND_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ history: chatHistory }) 
-        });
+  try {
+    const res = await fetch(BACKEND_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        mode: "chat",
+        message: text,
+        history: chatHistory.slice(0, -1) // ส่ง history ก่อนหน้า
+      })
+    });
 
-        if (!response.ok) {
-            const errData = await response.json();
-            throw new Error(errData.error || `Server error: ${response.status}`);
-        }
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Server error");
 
-        const data = await response.json(); 
-        const aiReply = data.reply;
+    const reply = data.reply || "ไม่สามารถตอบได้";
+    chatHistory.push({ role: "assistant", content: reply });
 
-        chatHistory.push({ role: "model", parts: [{ text: aiReply }] });
-        setThinking(false);
-        addChatBubble(aiReply, false);
+    setThinking(false);
+    addChatBubble(reply, false);
 
-    } catch (err) {
-        console.error("Fetch Error:", err);
-        setThinking(false);
-        addChatError(`เกิดข้อผิดพลาด: ${err.message}`);
-        chatHistory.pop();
-    } finally {
-        sendBtn.disabled = false;
-    }
+  } catch (err) {
+    console.error(err);
+    setThinking(false);
+    addChatError("เกิดข้อผิดพลาด: " + err.message);
+    chatHistory.pop();
+  } finally {
+    sendBtn.disabled = false;
+  }
 }
 
 sendBtn.addEventListener('click', handleSend);
 userInput.addEventListener('keydown', e => {
-    if (e.key === 'Enter') handleSend();
+  if (e.key === 'Enter') handleSend();
 });
 
-// Reset Chat
+/* ---------- Reset Chat ---------- */
 newChatBtn.addEventListener('click', () => {
-    chatHistory = [SYSTEM_PROMPT, SYSTEM_ACK];
-    chatHistoryEl.innerHTML = `
-        <div class="flex items-start space-x-2">
-        <span class="text-2xl">🤖</span>
-        <div class="chat-bubble chat-bubble-model bg-white text-gray-800 p-3 rounded-lg max-w-lg relative border border-gray-200 shadow-sm">
-            <p>สวัสดีครับ ผมคือ AI Communication Coach เริ่มปรึกษาเรื่องการพูดได้เลยครับ</p>
-        </div>
-        </div>`;
-    userInput.value = '';
-    setThinking(false);
+  chatHistory = [SYSTEM_MESSAGE];
+  chatHistoryEl.innerHTML = `
+    <div class="flex items-start space-x-2">
+      <span class="text-2xl">🤖</span>
+      <div class="chat-bubble chat-bubble-model bg-white text-gray-800 p-3 rounded-lg max-w-lg relative border border-gray-200 shadow-sm">
+        <p>สวัสดีครับ ผมคือ AI Communication Coach พร้อมช่วยคุณแล้วครับ</p>
+      </div>
+    </div>`;
 });
 
-// Modal Control
+/* ---------- Modal Control ---------- */
 const fabToggle = document.getElementById('fab-chat-toggle');
 const chatModal = document.getElementById('chatbot-modal');
 const chatbotCloseBtn = document.getElementById('chatbot-close-btn');
 
 fabToggle.addEventListener('click', () => {
-    chatModal.classList.remove('chatbot-hidden');
-    fabToggle.style.opacity = '0';
+  chatModal.classList.remove('chatbot-hidden');
+  fabToggle.style.opacity = '0';
 });
 chatbotCloseBtn.addEventListener('click', () => {
-    chatModal.classList.add('chatbot-hidden');
-    fabToggle.style.opacity = '1';
+  chatModal.classList.add('chatbot-hidden');
+  fabToggle.style.opacity = '1';
 });
 </script>
 </body>
 </html>
+
 
 
 
