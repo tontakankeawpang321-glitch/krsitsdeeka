@@ -591,8 +591,11 @@ document.getElementById('cat').addEventListener('change', applySearch);
 /** =========================================
     3. ส่วน Chatbot AI + Health Assessment Logic
     ========================================= */
-const API_URL = 'https://app.ai-tontakan.online/api/generate';
+const API_URL = 'https://api.ai-tontakan.online/api/generate';
+
+
 const OLLAMA_MODEL = 'llama3.2:3b';
+
 
 // Helper Function: สร้าง Prompt String จากประวัติการแชท
 function constructPromptFromHistory(history) {
