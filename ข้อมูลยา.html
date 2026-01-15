@@ -591,54 +591,14 @@ document.getElementById('cat').addEventListener('change', applySearch);
 /** =========================================
     3. ส่วน Chatbot AI + Health Assessment Logic
     ========================================= */
-const API_URL = 'https://api.ai-tontakan.online/api/generate';
+const API_URL = 'https://mute-unit-1629.tontakankeawpang.workers.dev/';
 
-
-
-const OLLAMA_MODEL = 'llama3.2:3b';
-
-async function callOllama(prompt) {
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 120000);
-
-  try {
-    const res = await fetch(API_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: OLLAMA_MODEL,
-        prompt,
-        stream: false
-      }),
-      signal: controller.signal
-    });
-
-    const text = await res.text();
-    if (!text || !text.trim().startsWith("{")) return "";
-
-    const json = JSON.parse(text);
-    return json.response || "";
-
-  } catch {
-    return "";
-  } finally {
-    clearTimeout(timeout);
-  }
-}
-// Helper Function: สร้าง Prompt String จากประวัติการแชท
-function constructPromptFromHistory(history) {
-    // แปลง role ให้เป็นชื่อที่ AI เข้าใจง่ายๆ
-    // model -> AI Pharmacist, user -> User
-    return history.map(msg => {
-        const roleName = msg.role === 'model' ? 'AI Pharmacist' : 'User';
-        return `${roleName}: ${msg.parts[0].text}`;
-    }).join('\n') + '\nAI Pharmacist:'; // จบด้วย AI เพื่อรอคำตอบ
-}
-
+// FIX 1: เปลี่ยน SYSTEM_PROMPT เป็น role "user" ตามคำแนะนำ
 const SYSTEM_PROMPT = {
     role: "user",
     parts: [{ text: "คุณคือ AI เภสัชกร ให้ข้อมูลยาเชิงความรู้ ไม่วินิจฉัยโรค" }]
 };
+// เพิ่ม Model Ack เพื่อให้ลำดับการสนทนาถูกต้อง (User -> Model -> User)
 const SYSTEM_ACK = {
     role: "model",
     parts: [{ text: "รับทราบครับ ผมพร้อมให้ข้อมูลยาและสุขภาพครับ" }]
@@ -691,31 +651,60 @@ function setThinking(on) {
     if (on) chatHistoryEl.scrollTop = chatHistoryEl.scrollHeight;
 }
 
-// --- Chat Logic (Ollama Local) ---
-async function handleSend() {
-  const message = (userInput.value || '').trim();
-  if (!message) return;
+// FIX 3: ฟังก์ชันกลางสำหรับเรียก AI Worker
+async function callAI(message, history = []) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 60000); // 60s timeout
 
-  addChatBubble(message, true);
-  userInput.value = '';
-  setThinking(true);
+  try {
+    const res = await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        message,
+        history
+      }),
+      signal: controller.signal
+    });
 
-  chatHistory.push({ role: "user", parts: [{ text: message }] });
+    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
 
-  if (chatHistory.length > 8) {
-    chatHistory = [chatHistory[0], chatHistory[1], ...chatHistory.slice(-6)];
-  }
+    const json = await res.json();
+    return json.reply || "";
 
-  const fullPrompt = constructPromptFromHistory(chatHistory);
-  const aiReply = await callOllama(fullPrompt);
-
-  setThinking(false);
-
-  if (aiReply) {
-    chatHistory.push({ role: "model", parts: [{ text: aiReply }] });
-    addChatBubble(aiReply, false);
+  } catch (e) {
+    console.error("AI Call Error:", e);
+    return "ระบบขัดข้องชั่วคราว กรุณาลองใหม่ (" + e.message + ")";
+  } finally {
+    clearTimeout(timeout);
   }
 }
+
+// --- Chat Logic ---
+async function handleSend() {
+    const message = (userInput.value || '').trim();
+    if (!message) return;
+
+    addChatBubble(message, true);
+    userInput.value = '';
+    setThinking(true);
+    
+    chatHistory.push({ role: "user", parts: [{ text: message }] });
+
+    // History slicing logic
+    let historyToSend = chatHistory;
+    if (chatHistory.length > 8) { 
+         historyToSend = [chatHistory[0], chatHistory[1], ...chatHistory.slice(2).slice(-6)];
+    }
+
+    // FIX 4.1: เรียกใช้ callAI
+    const aiReply = await callAI(message, historyToSend);
+
+    chatHistory.push({ role: "model", parts: [{ text: aiReply }] });
+    setThinking(false);
+    if (aiReply) addChatBubble(aiReply, false);
+}
+
 sendBtn.addEventListener('click', handleSend);
 userInput.addEventListener('keydown', e => { if (e.key === 'Enter') handleSend(); });
 newChatBtn.addEventListener('click', () => {
@@ -759,7 +748,7 @@ closeHealthModalBtn.addEventListener('click', () => toggleHealthModal(false));
 cancelHealthBtn.addEventListener('click', () => toggleHealthModal(false));
 closeResultModalBtn.addEventListener('click', () => toggleResultModal(false));
 
-// 3. Submit & Analyze (Ollama Local)
+// 3. Submit & Analyze
 submitHealthBtn.addEventListener('click', async () => {
     // Collect Data
     const age = document.getElementById('hf-age').value.trim() || '-';
@@ -807,20 +796,18 @@ submitHealthBtn.addEventListener('click', async () => {
     4. สัญญาณที่ควรไปพบแพทย์
     `;
 
-    
-      try {
-        const aiText = await callOllama(prompt);
-        resultContentArea.innerHTML = marked.parse(
-          aiText || "ไม่สามารถวิเคราะห์ได้ในขณะนี้"
-        );
+    // FIX 4.2: เรียกใช้ callAI
+    try {
+        const aiText = await callAI(prompt);
+        // Display Result using Marked (Markdown Parser)
+        resultContentArea.innerHTML = marked.parse(aiText);
     } catch (err) {
         resultContentArea.innerHTML = `
-          <div class="text-center text-red-600 py-10">
-            <p class="text-xl font-bold">เกิดข้อผิดพลาด</p>
-            <p>${err.message}</p>
-            <button onclick="toggleResultModal(false)"
-              class="mt-4 text-sm underline text-gray-500">ปิด</button>
-          </div>`;
+            <div class="text-center text-red-600 py-10">
+                <p class="text-xl font-bold">เกิดข้อผิดพลาด</p>
+                <p>${err.message}</p>
+                <button onclick="toggleResultModal(false)" class="mt-4 text-sm underline text-gray-500">ปิด</button>
+            </div>`;
     }
 });
 
