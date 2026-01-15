@@ -27,18 +27,19 @@
             background-image: radial-gradient(var(--vintage-gold) 0.5px, transparent 0.5px);
             background-size: 20px 20px;
             background-opacity: 0.03;
+            overflow-x: hidden;
         }
 
-        /* Global Black Text */
+        /* Force Black Text for readability */
         * { color: var(--ink) !important; border-color: #e5dbc5; }
 
         .thai-font { font-family: 'Srisakdi', cursive; }
 
-        /* Slim Header with Cute Accent */
+        /* Header Slim */
         .header-slim {
             background: linear-gradient(135deg, #4d0000, var(--royal-red));
             border-bottom: 4px solid var(--vintage-gold);
-            padding: 1.5rem 1rem;
+            padding: 1.25rem 1rem;
             position: relative;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
@@ -46,39 +47,39 @@
         .academic-logo {
             background: white;
             border: 2px solid var(--vintage-gold);
-            padding: 0.8rem 1.2rem;
+            padding: 0.6rem 1rem;
             display: inline-block;
-            border-radius: 15px; /* เพิ่มความมนให้น่ารัก */
-            box-shadow: 4px 4px 0px var(--vintage-gold);
+            border-radius: 12px;
+            box-shadow: 3px 3px 0px var(--vintage-gold);
         }
 
         /* Grid System - 2 Cols Mobile */
         .card-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
+            gap: 10px;
         }
 
         @media (min-width: 768px) {
-            .card-grid { grid-template-columns: repeat(3, 1fr); gap: 20px; }
+            .card-grid { grid-template-columns: repeat(3, 1fr); gap: 16px; }
         }
 
-        /* Thai Cards - Cute & Academic */
+        /* Thai Cards */
         .thai-card {
             background: #ffffff;
             border: 1px solid #e5dbc5;
-            padding: 0.8rem;
+            padding: 0.75rem;
             display: flex;
             flex-direction: column;
-            border-radius: 12px;
-            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border-radius: 10px;
+            transition: all 0.2s ease;
             position: relative;
         }
 
         .thai-card:hover {
             border-color: var(--vintage-gold);
-            transform: translateY(-4px) scale(1.02);
-            box-shadow: 0 8px 20px rgba(163, 128, 41, 0.15);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(163, 128, 41, 0.1);
         }
 
         .card-tag {
@@ -86,40 +87,29 @@
             font-weight: 800;
             color: var(--vintage-gold) !important;
             margin-bottom: 4px;
-            display: flex;
-            align-items: center;
-            gap: 2px;
         }
 
-        /* Cute Buttons */
+        /* Compact Buttons */
         .btn-cute {
             display: block;
             width: 100%;
             text-align: center;
-            padding: 0.5rem;
+            padding: 0.4rem;
             background: #000;
             color: #fff !important;
             font-size: 9px;
             font-weight: 700;
-            border-radius: 8px;
+            border-radius: 6px;
             transition: all 0.2s;
-            border-bottom: 3px solid #333;
+            border-bottom: 2px solid #333;
         }
 
-        .btn-cute:active {
-            transform: translateY(2px);
-            border-bottom-width: 1px;
-        }
+        .btn-cute:active { transform: translateY(1px); border-bottom-width: 1px; }
 
-        .btn-cute:hover {
-            background: var(--royal-red);
-            border-color: #3d0000;
-        }
-
-        /* Search wrap with cute icon */
+        /* Search wrap */
         .search-wrap {
             max-width: 400px;
-            margin: -1rem auto 1.5rem;
+            margin: -0.85rem auto 1.5rem;
             padding: 0 1rem;
             z-index: 30;
             position: relative;
@@ -128,35 +118,41 @@
         .search-field {
             width: 100%;
             background: white;
-            border: 2px solid var(--vintage-gold);
-            padding: 0.5rem 1rem 0.5rem 2.5rem;
-            font-size: 0.8rem;
+            border: 1.5px solid var(--vintage-gold);
+            padding: 0.5rem 1rem 0.5rem 2.25rem;
+            font-size: 0.75rem;
             outline: none;
-            border-radius: 99px; /* วงรีให้น่ารัก */
+            border-radius: 99px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
         }
 
-        /* Chat UI - Friendly Academic */
+        /* Chat UI */
         .chat-window {
             background: #fff;
-            border-top: 6px solid var(--royal-red);
+            border-top: 5px solid var(--royal-red);
             border-radius: 20px 20px 0 0;
             box-shadow: 0 -10px 40px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 500px;
         }
 
         .bubble-ai { background: #fdfaf3; border: 1px solid #efe5d5; border-radius: 2px 15px 15px 15px; }
         .bubble-user { background: var(--royal-red); border-radius: 15px 2px 15px 15px; }
         .bubble-user p { color: white !important; }
 
-        /* Floating Button - Cute AI Icon */
+        /* Floating Button - Auto Hide on open */
         #fab-chat {
             background: var(--royal-red);
-            border: 2px solid var(--gold-light);
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1.5px solid var(--gold-light);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        #fab-chat:hover { transform: scale(1.1) rotate(5deg); }
+        #fab-chat.hidden-fab {
+            transform: scale(0);
+            opacity: 0;
+            pointer-events: none;
+        }
 
-        .sparkle { color: var(--vintage-gold) !important; font-size: 10px; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
     </style>
 </head>
 <body class="antialiased">
@@ -164,74 +160,67 @@
     <!-- Header -->
     <header class="header-slim text-center">
         <div class="academic-logo relative z-10">
-            <h1 class="text-xl md:text-3xl thai-font mb-0.5">✨ หอวิชาการนาฏศิลป์ 🎭</h1>
-            <p class="text-[8px] font-bold tracking-[0.25em] uppercase opacity-50">Siam Arts Academic Archive</p>
+            <h1 class="text-xl md:text-2xl thai-font mb-0.5">✨ หอวิชาการนาฏศิลป์ 🎭</h1>
+            <p class="text-[7px] font-bold tracking-[0.2em] uppercase opacity-50">Academic Archive v.2025</p>
         </div>
     </header>
 
-    <!-- Search -->
+    <!-- Search Section -->
     <div class="search-wrap">
         <div class="relative">
-            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-xs">🔍</span>
-            <input type="text" id="search-input" class="search-field" placeholder="สืบค้นตำราไทย..." autocomplete="off">
+            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[10px]">🔍</span>
+            <input type="text" id="search-input" class="search-field" placeholder="สืบค้นตำรานาฏศิลป์..." autocomplete="off">
         </div>
     </div>
 
     <!-- Main Content -->
     <main class="max-w-4xl mx-auto px-4 mb-20">
-        
-        <div class="flex items-center justify-between mb-4 border-b-2 border-dashed border-gray-200 pb-2">
-            <div>
-                <h2 class="text-sm font-bold flex items-center gap-2">🌸 สารบัญวิชาการ</h2>
-            </div>
-            <div class="text-[8px] font-bold opacity-30 tracking-widest">
-                EST. 2025
-            </div>
+        <div class="flex items-center justify-between mb-4 border-b border-gray-100 pb-2">
+            <h2 class="text-xs font-bold">🌸 สารบัญวิชาการ</h2>
+            <span class="text-[7px] opacity-30 font-bold uppercase tracking-widest">Digital Manuscript</span>
         </div>
 
-        <!-- Grid 2 Cols Mobile -->
         <div id="lesson-grid" class="card-grid">
             <!-- Content via JS -->
         </div>
 
-        <!-- Quiz Section -->
-        <div class="mt-10 text-center">
-            <a id="btnQuiz" href="#" target="_blank" class="inline-flex items-center gap-3 bg-black px-6 py-3 rounded-2xl border-2 border-vintage-gold shadow-lg hover:bg-gray-900 transition-all transform active:scale-95">
-                <span class="text-xl">📜</span>
+        <!-- Quiz CTA -->
+        <div class="mt-8 text-center">
+            <a id="btnQuiz" href="#" target="_blank" class="inline-flex items-center gap-2 bg-black px-5 py-2.5 rounded-xl border border-vintage-gold shadow-md hover:bg-gray-900 active:scale-95 transition-all">
+                <span class="text-lg">📜</span>
                 <div class="text-left">
-                    <p class="text-white text-[11px] font-bold m-0" style="color:white !important;">ทดสอบมาตรฐานความรู้ ✨</p>
-                    <p class="text-vintage-gold text-[7px] font-bold m-0" style="color:#d4af37 !important;">๕๐๐ ข้อคำถามหลักสูตรไทย</p>
+                    <p class="text-white text-[10px] font-bold m-0" style="color:white !important;">ทดสอบมาตรฐานความรู้ ✨</p>
+                    <p class="text-vintage-gold text-[6px] font-bold m-0" style="color:#d4af37 !important;">๕๐๐ ข้อคำถามหลักสูตร</p>
                 </div>
             </a>
-            <p class="mt-6 text-[7px] font-bold tracking-[0.3em] opacity-30 uppercase">Academic Division • Crow Studio</p>
         </div>
     </main>
 
     <!-- Floating Chat Button -->
-    <button id="fab-chat" class="fixed bottom-6 right-6 w-14 h-14 text-white rounded-full flex flex-col items-center justify-center z-50 shadow-2xl active:scale-90 transition-transform">
-        <span class="text-[7px] font-bold mb-0.5" style="color:white !important;">TALK TO</span>
-        <span class="text-xl" style="color:white !important;">🤖</span>
+    <button id="fab-chat" class="fixed bottom-6 right-6 w-12 h-12 text-white rounded-full flex flex-col items-center justify-center z-50 shadow-2xl active:scale-90 transition-all">
+        <span class="text-[7px] font-bold" style="color:white !important;">AI</span>
+        <span class="text-lg" style="color:white !important;">🤖</span>
     </button>
 
     <!-- Chat Modal -->
-    <div id="chatbot-modal" class="fixed inset-0 flex items-end md:items-center justify-center p-0 md:p-4 bg-black/50 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
-        <div class="chat-window w-full max-w-md h-[80dvh] md:h-[70vh] flex flex-col transform translate-y-full transition-transform duration-300 overflow-hidden md:rounded-3xl">
+    <div id="chatbot-modal" class="fixed inset-0 flex items-end md:items-center justify-center p-0 md:p-4 bg-black/40 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="chat-window h-[85dvh] md:h-[70vh] flex flex-col transform translate-y-full transition-transform duration-300 overflow-hidden md:rounded-3xl">
             <!-- Chat Header -->
-            <header class="p-4 border-b flex justify-between items-center bg-gray-50/50">
+            <header class="p-4 border-b flex justify-between items-center bg-gray-50/80 backdrop-blur-md">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 border-2 border-royal-red flex items-center justify-center text-xl bg-white shadow-sm rounded-full">🎓</div>
+                    <div class="w-9 h-9 border border-royal-red flex items-center justify-center text-lg bg-white shadow-sm rounded-full">🎓</div>
                     <div>
-                        <h3 class="font-bold text-[11px] thai-font">วิทยากร AI 🌸</h3>
-                        <span class="text-[7px] font-bold tracking-widest text-vintage-gold uppercase" style="color:#a38029 !important;">Knowledge Expert</span>
+                        <h3 class="font-bold text-[10px] thai-font">วิทยากร AI 🌸</h3>
+                        <span class="text-[6px] font-bold tracking-widest text-vintage-gold uppercase" style="color:#a38029 !important;">Knowledge Expert</span>
                     </div>
                 </div>
-                <button id="close-chat" class="p-2 text-royal-red hover:rotate-90 transition-transform">
+                <button id="close-chat" class="p-2 text-royal-red">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                 </button>
             </header>
 
             <!-- Messages -->
-            <div id="chat-history" class="flex-1 overflow-y-auto p-5 space-y-4 no-scrollbar bg-[#fdfdfb]">
+            <div id="chat-history" class="flex-1 overflow-y-auto p-4 space-y-4 no-scrollbar bg-[#fdfdfb]">
                 <div class="flex items-start gap-2">
                     <div class="w-8 h-8 border border-vintage-gold flex items-center justify-center text-xs bg-white flex-shrink-0 rounded-full">📜</div>
                     <div class="bubble-ai p-3 text-[10px] md:text-xs leading-relaxed shadow-sm">
@@ -242,13 +231,13 @@
 
             <!-- Input Area -->
             <div class="p-4 bg-white border-t border-gray-100">
-                <div id="thinking" class="mb-2 hidden">
-                    <span class="text-[7px] font-bold text-vintage-gold animate-bounce uppercase">กำลังเปิดตำราอ่าน... 📖</span>
+                <div id="thinking" class="mb-1 hidden">
+                    <span class="text-[7px] font-bold text-vintage-gold animate-pulse">กำลังสืบค้นตำราวิชาการ... 📖</span>
                 </div>
                 <div class="flex items-center gap-2">
-                    <input id="user-input" type="text" placeholder="สอบถามข้อมูลศิลปะ..." class="flex-1 border-b-2 border-gray-100 py-2 text-[11px] focus:outline-none focus:border-royal-red bg-transparent">
-                    <button id="send-btn" class="w-9 h-9 bg-black text-white rounded-full flex items-center justify-center hover:bg-royal-red transition-all shadow-md">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                    <input id="user-input" type="text" placeholder="พิมพ์ข้อความที่นี่..." class="flex-1 border-b border-gray-100 py-2 text-[10px] focus:outline-none focus:border-royal-red bg-transparent">
+                    <button id="send-btn" class="w-8 h-8 bg-black text-white rounded-full flex items-center justify-center shadow-md active:scale-90 transition-transform">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
                     </button>
                 </div>
             </div>
@@ -258,19 +247,19 @@
 <script>
     const LESSONS = [
         ["ปฐมบทนาฏศิลป์", "กำเนิดและวิวัฒนาการตั้งแต่โบราณกาลสู่ปัจจุบัน", "https://sites.google.com/view/nardtasinthai/%E0%B8%97%E0%B8%A1%E0%B8%B2%E0%B9%81%E0%B8%A5%E0%B8%B0%E0%B8%84%E0%B8%A7%E0%B8%B2%E0%B8%A1%E0%B8%AA%E0%B8%B2%E0%B8%84%E0%B8%8D%E0%B8%82%E0%B8%AD%E0%B8%87%E0%B8%99%E0%B8%B2%E0%B8%8F%E0%B8%A8%E0%B8%A5%E0%B8%9B%E0%B9%84%E0%B8%97%E0%B8%A2"],
-        ["ประเภทการแสดง", "โขน ละคร รำ ระบำ และอัตลักษณ์ไทยพื้นเมือง", "https://sites.google.com/view/nardtasinthai/%E0%B8%9B%E0%B8%A3%E0%B8%B0%E0%B9%80%E0%B8%A0%E0%B8%97"],
+        ["ประเภทการแสดง", "โขน ละคร รำ ระบำ และอัตลักษณ์ไทย", "https://sites.google.com/view/nardtasinthai/%E0%B8%9B%E0%B8%A3%E0%B8%B0%E0%B9%80%E0%B8%A0%E0%B8%97"],
         ["จารีตไหว้ครู", "ความศรัทธาและความกตัญญูในประเพณีนาฏศิลป์", "https://sites.google.com/view/nardtasinthai/%E0%B8%9E%E0%B8%98%E0%B9%84%E0%B8%AB%E0%B8%A7%E0%B8%84%E0%B8%A3%E0%B8%99%E0%B8%B2%E0%B8%8F%E0%B8%A8%E0%B8%A5%E0%B8%9B"],
-        ["เพลงหน้าพาทย์", "ดนตรีชั้นสูงที่ใช้สื่อความหมายและกิริยาตัวละคร", "https://sites.google.com/view/nardtasinthai/%E0%B9%80%E0%B8%9E%E0%B8%A5%E0%B8%87%E0%B8%AB%E0%B8%99%E0%B8%B2%E0%B8%9E%E0%B8%B2%E0%B8%97%E0%B8%A2"],
-        ["นาฏยศัพท์", "พื้นฐานภาษาท่าและการสื่ออารมณ์ผ่านการเคลื่อนไหว", "https://sites.google.com/view/nardtasinthai/%E0%B8%99%E0%B8%B2%E0%B8%8F%E0%B8%A8%E0%B8%A5%E0%B8%9B%E0%B9%84%E0%B8%97%E0%B8%A2"],
-        ["เครื่องแต่งกาย", "ความประณีตของหัวโขนและเครื่องพัสตราภรณ์ไทย", "https://sites.google.com/view/nardtasinthai/%E0%B8%AB%E0%B8%A7%E0%B9%82%E0%B8%82%E0%B8%99-%E0%B8%A5%E0%B8%B0%E0%B8%84%E0%B8%A3-%E0%B9%81%E0%B8%A5%E0%B8%B0%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B9%81%E0%B8%95%E0%B8%87%E0%B8%81%E0%B8%B2%E0%B8%A2"],
-        ["ศาสตร์โขนหลวง", "ประวัติศาสตร์และวิธีการร่ายรำโขนแบบราชสำนัก", "https://sites.google.com/view/nardtasinthai/%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B9%81%E0%B8%AA%E0%B8%94%E0%B8%87%E0%B9%82%E0%B8%82%E0%B8%99"],
-        ["ระบำมาตรฐาน", "รูปแบบการร่ายรำที่เป็นต้นแบบแห่งศิลปะไทย", "https://sites.google.com/view/nardtasinthai/%E0%B8%A3%E0%B8%B0%E0%B8%9A%E0%B8%B2%E0%B8%A1%E0%B8%B2%E0%B8%95%E0%B8%A3%E0%B8%90%E0%B8%B2%E0%B8%99"],
-        ["โบราณคดีรำ", "การรังสรรค์ท่ารำจากหลักฐานทางโบราณประวัติศาสตร์", "https://sites.google.com/view/nardtasinthai/%E0%B8%A3%E0%B8%B0%E0%B8%9A%E0%B8%B2%E0%B9%82%E0%B8%9A%E0%B8%A3%E0%B8%B2%E0%B8%93%E0%B8%84%E0%B8%94"],
-        ["บุคคลสำคัญ", "เกียรติประวัติผู้สืบสายงานนาฏศิลป์ชั้นครูของชาติ", "https://sites.google.com/view/nardtasinthai/%E0%B8%9A%E0%B8%84%E0%B8%84%E0%B8%A5%E0%B8%AA%E0%B8%B2%E0%B8%84%E0%B8%8D%E0%B8%97%E0%B8%B2%E0%B8%87%E0%B8%94%E0%B8%B2%E0%B8%99%E0%B8%99%E0%B8%B2%E0%B8%8F%E0%B8%A8%E0%B8%A5%E0%B8%9B%E0%B9%84%E0%B8%97%E0%B8%A2"]
+        ["เพลงหน้าพาทย์", "ดนตรีชั้นสูงประกอบกิริยาตัวละคร", "https://sites.google.com/view/nardtasinthai/%E0%B9%80%E0%B8%9E%E0%B8%A5%E0%B8%87%E0%B8%AB%E0%B8%99%E0%B8%B2%E0%B8%9E%E0%B8%B2%E0%B8%97%E0%B8%A2"],
+        ["นาฏยศัพท์", "พื้นฐานภาษาท่าและการสื่ออารมณ์นาฏศิลป์", "https://sites.google.com/view/nardtasinthai/%E0%B8%99%E0%B8%B2%E0%B8%8F%E0%B8%A8%E0%B8%A5%E0%B8%9B%E0%B9%84%E0%B8%97%E0%B8%A2"],
+        ["เครื่องแต่งกาย", "ความประณีตของหัวโขนและเครื่องพัสตราภรณ์", "https://sites.google.com/view/nardtasinthai/%E0%B8%AB%E0%B8%A7%E0%B9%82%E0%B8%82%E0%B8%99-%E0%B8%A5%E0%B8%B0%E0%B8%84%E0%B8%A3-%E0%B9%81%E0%B8%A5%E0%B8%B0%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B9%81%E0%B8%95%E0%B8%87%E0%B8%81%E0%B8%B2%E0%B8%A2"],
+        ["ศาสตร์โขนหลวง", "ประวัติศาสตร์และวิธีการพากย์เจรจาโขน", "https://sites.google.com/view/nardtasinthai/%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B9%81%E0%B8%AA%E0%B8%94%E0%B8%87%E0%B9%82%E0%B8%82%E0%B8%99"],
+        ["ระบำมาตรฐาน", "รูปแบบการร่ายรำที่เป็นต้นแบบแห่งศิลปะ", "https://sites.google.com/view/nardtasinthai/%E0%B8%A3%E0%B8%B0%E0%B8%9A%E0%B8%B2%E0%B8%A1%E0%B8%B2%E0%B8%95%E0%B8%A3%E0%B8%90%E0%B8%B2%E0%B8%99"],
+        ["โบราณคดีรำ", "การฟื้นฟูท่ารำจากหลักฐานโบราณวัตถุ", "https://sites.google.com/view/nardtasinthai/%E0%B8%A3%E0%B8%B0%E0%B8%9A%E0%B8%B2%E0%B9%82%E0%B8%9A%E0%B8%A3%E0%B8%B2%E0%B8%93%E0%B8%84%E0%B8%94"],
+        ["บุคคลสำคัญ", "เกียรติประวัติผู้สืบสานมรดกทางนาฏศิลป์ไทย", "https://sites.google.com/view/nardtasinthai/%E0%B8%9A%E0%B8%84%E0%B8%84%E0%B8%A5%E0%B8%AA%E0%B8%B2%E0%B8%84%E0%B8%8D%E0%B8%97%E0%B8%B2%E0%B8%87%E0%B8%94%E0%B8%B2%E0%B8%99%E0%B8%99%E0%B8%B2%E0%B8%8F%E0%B8%A8%E0%B8%A5%E0%B8%9B%E0%B9%84%E0%B8%97%E0%B8%A2"]
     ];
 
     const QUIZ_URL = "https://sites.google.com/view/nardtasinthai/%E0%B9%81%E0%B8%9A%E0%B8%9A%E0%B8%97%E0%B8%94%E0%B8%AA%E0%B8%AD%E0%B8%9A%E0%B8%99%E0%B8%B2%E0%B8%8F%E0%B8%A8%E0%B8%A5%E0%B8%9B-500-%E0%B8%82%E0%B8%AD";
-    const BACKEND_URL = 'https://quiet-scene-f18b.tontakankeawpang321.workers.dev';
+    const BACKEND_URL = 'https://kodmai2025-github-io.vercel.app/api/chat';
 
     const grid = document.getElementById('lesson-grid');
     const searchInput = document.getElementById('search-input');
@@ -279,20 +268,19 @@
         const items = LESSONS.filter(l => l[0].includes(filter) || l[1].includes(filter));
         grid.innerHTML = items.map((l, i) => `
             <div class="thai-card">
-                <div class="card-tag">🌸 VOL. ${(i+1).toString().padStart(2,'0')}</div>
-                <h3 class="text-[10px] md:text-[11px] font-bold leading-tight mb-1 truncate">${l[0]}</h3>
-                <p class="text-[9px] opacity-60 leading-tight mb-3 flex-1 line-clamp-2">${l[1]}</p>
+                <div class="card-tag">VOL. ${(i+1).toString().padStart(2,'0')}</div>
+                <h3 class="text-[9px] md:text-[10px] font-bold leading-tight mb-1 truncate">${l[0]}</h3>
+                <p class="text-[8px] opacity-60 leading-tight mb-3 flex-1 line-clamp-2">${l[1]}</p>
                 <a href="${l[2]}" target="_blank" class="btn-cute">อ่านตำรา ✨</a>
             </div>
         `).join('');
-        if(!items.length) grid.innerHTML = '<p class="col-span-2 text-center py-10 opacity-40 text-[10px]">ไม่พบตำราที่ท่านต้องการสืบค้น</p>';
     }
 
     render();
     searchInput.addEventListener('input', e => render(e.target.value));
     document.getElementById('btnQuiz').href = QUIZ_URL;
 
-    // Worker Backend Interaction
+    // Chat Logic
     const fab = document.getElementById('fab-chat');
     const modal = document.getElementById('chatbot-modal');
     const historyEl = document.getElementById('chat-history');
@@ -304,14 +292,21 @@
         modal.classList.toggle('opacity-0', !on);
         modal.classList.toggle('pointer-events-none', !on);
         modal.querySelector('div').classList.toggle('translate-y-full', !on);
-        if(on) inputEl.focus();
+        
+        // Auto hide/show FAB button
+        if(on) {
+            fab.classList.add('hidden-fab');
+            inputEl.focus();
+        } else {
+            fab.classList.remove('hidden-fab');
+        }
     };
 
     fab.addEventListener('click', () => toggle(true));
     document.getElementById('close-chat').addEventListener('click', () => toggle(false));
 
     let history = [
-        { role: "user", parts: [{ text: "คุณคือวิทยากร AI นาฏศิลป์ไทยผู้ใจดี ตอบเป็นทางการเชิงวิชาการ ใช้ภาษาประณีตและสุภาพ ตัวหนังสือดำทั้งหมด" }] },
+        { role: "user", parts: [{ text: "คุณคือวิทยากร AI นาฏศิลป์ไทย ตอบสั้น กระชับ สุภาพ เป็นทางการ ตัวหนังสือดำทั้งหมด" }] },
         { role: "model", parts: [{ text: "รับทราบครับ" }] }
     ];
 
@@ -322,7 +317,7 @@
         
         const userDiv = document.createElement('div');
         userDiv.className = 'flex flex-row-reverse items-start gap-2';
-        userDiv.innerHTML = `<div class="bubble-user p-3 text-[10px] max-w-[85%] shadow-md"><p style="color:white !important;">${val}</p></div>`;
+        userDiv.innerHTML = `<div class="bubble-user p-2.5 text-[9px] max-w-[85%] shadow-sm"><p style="color:white !important;">${val}</p></div>`;
         historyEl.appendChild(userDiv);
         
         thinkingEl.classList.remove('hidden');
@@ -336,16 +331,15 @@
                 body: JSON.stringify({ history: [...history, { role: "user", parts: [{ text: val }] }] })
             });
             const data = await res.json();
-            const reply = data.reply || "ขอประทานอภัย ระบบสืบค้นขัดข้องชั่วคราวครับ";
+            const reply = data.reply || "ขอประทานอภัย ระบบขัดข้องครับ";
             
             const aiDiv = document.createElement('div');
             aiDiv.className = 'flex items-start gap-2';
-            aiDiv.innerHTML = `<div class="w-8 h-8 border border-vintage-gold flex items-center justify-center bg-white text-xs flex-shrink-0 rounded-full shadow-sm">📜</div><div class="bubble-ai p-3 text-[10px] shadow-sm max-w-[85%] leading-relaxed">${reply}</div>`;
+            aiDiv.innerHTML = `<div class="w-7 h-7 border border-vintage-gold flex items-center justify-center bg-white text-[10px] flex-shrink-0 rounded-full">📜</div><div class="bubble-ai p-2.5 text-[9px] shadow-sm max-w-[85%] leading-relaxed">${reply}</div>`;
             historyEl.appendChild(aiDiv);
             history.push({ role: "user", parts: [{ text: val }] }, { role: "model", parts: [{ text: reply }] });
-        } catch (e) {
-            console.error(e);
-        } finally {
+        } catch (e) { console.error(e); } 
+        finally {
             thinkingEl.classList.add('hidden');
             historyEl.scrollTop = historyEl.scrollHeight;
             sendBtn.disabled = false;
@@ -357,4 +351,3 @@
 </script>
 </body>
 </html>
-
