@@ -226,6 +226,22 @@
     cursor: pointer; display: grid; place-items: center; color: #636e72; font-size: 16px;
   }
   .modal-content { padding: 20px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  
+  /* --- Chat Interface Styles --- */
+  .chat-interface { display: flex; flex-direction: column; height: 100%; background: #f8f9fa; }
+  .chat-messages { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 15px; }
+  .chat-input-area { padding: 15px; background: #fff; border-top: 1px solid #eee; display: flex; gap: 10px; align-items: center; }
+  .chat-input { flex: 1; padding: 12px 16px; border: 1px solid #eee; background:#f8f9fa; border-radius: 30px; outline: none; font-family: inherit; font-size:16px; transition:0.3s; }
+  .chat-input:focus { background:#fff; border-color:var(--primary); box-shadow:0 0 0 3px var(--primary-soft); }
+  .btn-send { width: 48px; height: 48px; background: var(--primary); color: #fff; border-radius: 50%; border: none; cursor: pointer; display: grid; place-items: center; font-size:18px; box-shadow:0 4px 10px rgba(255, 159, 67, 0.3); transition:0.2s; }
+  .btn-send:active { transform:scale(0.9); }
+  
+  .msg { max-width: 80%; padding: 12px 18px; border-radius: 20px; font-size: 15px; line-height: 1.5; word-wrap: break-word; position:relative; }
+  .msg.user { align-self: flex-end; background: var(--primary); color: #fff; border-bottom-right-radius: 4px; box-shadow: 0 4px 15px rgba(255, 159, 67, 0.2); }
+  .msg.bot { align-self: flex-start; background: #fff; color: #333; border: 1px solid #eee; border-bottom-left-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
+  .typing-indicator { font-size: 12px; color: #888; margin-left: 20px; margin-bottom: 10px; display: none; font-style:italic; }
+
+  /* Info Modal Bubbles */
   .chat-bubble {
     background: #fff; padding: 12px 16px; border-radius: 16px; border-bottom-left-radius: 4px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.03); border: 1px solid #f1f2f6;
@@ -256,7 +272,9 @@
     box-shadow: 0 8px 20px rgba(0,0,0,0.3);
     z-index: 1000;
     border: none; cursor: pointer;
+    transition: transform 0.2s;
   }
+  .fab-ai:active { transform: scale(0.95); }
   .hidden { display: none !important; }
 </style>
 </head>
@@ -398,20 +416,30 @@
   </div>
 </div>
 
-<!-- Chatbot Dialog Modal -->
+<!-- Chatbot AI Interface Modal -->
 <div id="chatModal" class="modal-backdrop">
   <div class="modal-modern" style="height: 90vh; max-height: 90vh; display:flex; flex-direction:column;">
     <header class="modal-header" style="background:#f8f9fa; border-bottom:1px solid #ddd;">
-      <h2 class="modal-title" style="display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-robot" style="color:var(--primary)"></i> ผู้ช่วยอัจฉริยะ</h2>
+      <h2 class="modal-title" style="display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-robot" style="color:var(--primary)"></i> ผู้ช่วยอัจฉริยะ (AI)</h2>
       <button onclick="closeChat()" class="btn-close"><i class="fa-solid fa-xmark"></i></button>
     </header>
-    <div style="flex:1; background:#fff; position:relative; overflow:hidden;">
-      <iframe src="https://shy-fog-aa02.tontakankeawpang321.workers.dev/" style="width:100%; height:100%; border:none; display:block;" allow="microphone;"></iframe>
+    
+    <!-- Native Chat Interface -->
+    <div class="chat-interface">
+      <div class="chat-messages" id="chatHistory">
+        <div class="msg bot">สวัสดีค่ะคุณแม่ มีเรื่องลูกน้อยเรื่องไหนให้ช่วยดูแลคะ? 😊</div>
+      </div>
+      <div id="typingIndicator" class="typing-indicator">AI กำลังพิมพ์...</div>
+      <div class="chat-input-area">
+        <input type="text" id="chatInput" class="chat-input" placeholder="พิมพ์คำถามที่นี่..." onkeypress="if(event.key==='Enter') sendChat()">
+        <button class="btn-send" onclick="sendChat()"><i class="fa-solid fa-paper-plane"></i></button>
+      </div>
     </div>
+    
   </div>
 </div>
 
-<button onclick="openChat()" class="fab-ai">AI</button>
+<button onclick="openChat()" class="fab-ai"><i class="fa-solid fa-message"></i></button>
 
 <script>
 // Mock Data
@@ -594,9 +622,65 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('closeModal').onclick = closeModal;
   modalBackdrop.onclick = (e) => { if(e.target===modalBackdrop) closeModal(); };
   
-  // --- Chatbot Logic ---
-  window.openChat = () => { document.getElementById('chatModal').classList.add('show'); document.body.style.overflow = 'hidden'; }
-  window.closeChat = () => { document.getElementById('chatModal').classList.remove('show'); document.body.style.overflow = ''; }
+  // --- Chatbot Logic (API Connected) ---
+  const chatHistory = document.getElementById('chatHistory');
+  const chatInput = document.getElementById('chatInput');
+  const typingIndicator = document.getElementById('typingIndicator');
+  const API_URL = 'https://shy-fog-aa02.tontakankeawpang321.workers.dev/';
+
+  window.openChat = () => { 
+    document.getElementById('chatModal').classList.add('show'); 
+    document.body.style.overflow = 'hidden'; 
+    setTimeout(() => chatInput.focus(), 300);
+  }
+  
+  window.closeChat = () => { 
+    document.getElementById('chatModal').classList.remove('show'); 
+    document.body.style.overflow = ''; 
+  }
+
+  window.sendChat = async () => {
+    const text = chatInput.value.trim();
+    if(!text) return;
+
+    // 1. Add User Message
+    addMessage(text, 'user');
+    chatInput.value = '';
+    
+    // 2. Show Typing Indicator
+    typingIndicator.style.display = 'block';
+    
+    try {
+      // 3. Call API
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: text }) // Standard schema, adapt if needed
+      });
+
+      if (!response.ok) throw new Error('Network response was not ok');
+
+      const data = await response.json();
+      
+      // 4. Handle Response (Flexible for various API formats)
+      const replyText = data.reply || data.response || data.answer || data.message || JSON.stringify(data);
+      addMessage(replyText, 'bot');
+
+    } catch (error) {
+      console.error('Chat Error:', error);
+      addMessage("ขออภัยค่ะ ระบบขัดข้องชั่วคราว ลองใหม่อีกครั้งนะคะ 🙏", 'bot');
+    } finally {
+      typingIndicator.style.display = 'none';
+    }
+  };
+
+  function addMessage(text, sender) {
+    const msgDiv = document.createElement('div');
+    msgDiv.className = `msg ${sender}`;
+    msgDiv.innerText = text;
+    chatHistory.appendChild(msgDiv);
+    chatHistory.scrollTop = chatHistory.scrollHeight; // Auto scroll to bottom
+  }
 
   // --- Events ---
   searchInput.oninput = (e) => { searchTerm = e.target.value.toLowerCase(); currentPage=1; render(); };
