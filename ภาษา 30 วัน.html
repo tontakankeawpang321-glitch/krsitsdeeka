@@ -3,224 +3,237 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Crow Studio - Language Portal</title>
+    <title>Crow Studio - Classic Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Anuphan:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,700;1,400&family=Anuphan:wght@300;500&display=swap" rel="stylesheet">
     <style>
         :root {
-            --safe-area-bottom: env(safe-area-inset-bottom);
+            --ink: #1e293b;
+            --paper: #f4f1ea;
+            --border: #d1cfc7;
         }
         body {
-            font-family: 'Inter', 'Anuphan', sans-serif;
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-            min-height: 100vh;
+            font-family: 'Lora', 'Anuphan', serif;
+            background-color: var(--paper);
+            color: var(--ink);
+            background-image: url('https://www.transparenttextures.com/patterns/natural-paper.png');
+            overflow-x: hidden;
         }
-        .glass-morphism {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+        /* Classic Header Line */
+        .header-line {
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--ink), transparent);
+            margin: 1.5rem 0;
+            opacity: 0.3;
         }
-        .flag-card {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        /* Stamp Button - Classic Style */
+        .stamp-btn {
+            position: relative;
+            background: transparent;
+            border-radius: 50%;
+            aspect-ratio: 1/1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--ink);
+            overflow: hidden; /* ตัดรูปส่วนเกินออกให้เป็นวงกลม */
+            transition: all 0.2s ease;
+            cursor: pointer;
+            box-shadow: 0 0 0 4px transparent;
         }
-        .flag-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.1);
+        .stamp-btn::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border: 4px solid var(--paper); /* ขอบด้านในเพื่อให้ดูเหมือนตราปั๊มมีระยะห่างเล็กน้อย */
+            border-radius: 50%;
+            z-index: 10;
+            pointer-events: none;
         }
-        #chat-window {
-            height: calc(100% - 130px);
-            scrollbar-width: thin;
-            scrollbar-color: #cbd5e1 transparent;
+        /* Pressing Effect Like a Real Stamp */
+        .stamp-btn:active {
+            transform: scale(0.92);
+            filter: contrast(1.4) brightness(0.8);
         }
-        #chat-window::-webkit-scrollbar {
-            width: 4px;
+        .stamp-btn:hover {
+            border-width: 3px;
+            box-shadow: 0 8px 16px rgba(30, 41, 59, 0.15);
         }
-        #chat-window::-webkit-scrollbar-thumb {
-            background-color: #cbd5e1;
-            border-radius: 10px;
+        .stamp-btn img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* ปรับให้ภาพเต็มวงกลม */
+            filter: sepia(0.2) contrast(1.1) grayscale(0.2);
+            mix-blend-mode: multiply;
+            transition: all 0.3s ease;
         }
-        .chat-bubble-user {
-            border-radius: 18px 18px 2px 18px;
+        .stamp-btn:hover img {
+            filter: sepia(0) contrast(1.2) grayscale(0);
+            transform: scale(1.1);
         }
-        .chat-bubble-bot {
-            border-radius: 18px 18px 18px 2px;
+        /* Chatbot Classic UI */
+        .glass-panel {
+            background: rgba(244, 241, 234, 0.98);
+            border: 1px solid var(--ink);
+            box-shadow: 8px 8px 0px rgba(30, 41, 59, 0.1);
         }
-        @keyframes slideUp {
-            from { transform: translateY(20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+        .chat-input {
+            border: 1px solid var(--ink);
+            background: transparent;
         }
-        .animate-slide-up {
-            animation: slideUp 0.4s ease-out forwards;
+        /* Responsive Grid Fix */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
         }
+        @media (min-width: 640px) {
+            .grid-container { grid-template-columns: repeat(3, 1fr); }
+        }
+        @media (min-width: 1024px) {
+            .grid-container { grid-template-columns: repeat(4, 1fr); }
+        }
+        /* Fade-in for classic feel */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-entry { animation: fadeIn 0.8s ease forwards; }
     </style>
 </head>
-<body class="p-4 md:p-8">
+<body class="min-h-screen px-6 py-12 md:py-20">
 
-    <!-- Header Section -->
-    <header class="max-w-4xl mx-auto text-center mb-10 mt-6">
-        <h1 class="text-3xl md:text-4xl font-bold text-slate-800 mb-2">Language Learning</h1>
-        <p class="text-slate-500 uppercase tracking-widest text-sm font-semibold">Select your destination</p>
-    </header>
+    <div class="max-w-4xl mx-auto">
+        <!-- Brand Header -->
+        <header class="text-center mb-16 fade-entry">
+            <h2 class="text-xs uppercase tracking-[0.5em] mb-4 opacity-60 font-bold text-slate-500">Est. 2025</h2>
+            <h1 class="text-5xl md:text-7xl font-bold mb-2 tracking-tight italic">Crow Studio</h1>
+            <div class="header-line"></div>
+            <p class="text-sm md:text-lg italic opacity-70">
+                A Library of Endless Languages
+            </p>
+        </header>
 
-    <!-- Flag Grid Section -->
-    <main class="max-w-4xl mx-auto mb-20">
-        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-            <a href="https://sites.google.com/view/pasa30one/%E0%B8%AD%E0%B9%80%E0%B8%A1%E0%B8%A3%E0%B8%81%E0%B8%B2-us" target="_blank" class="flag-card glass-morphism p-4 rounded-2xl flex items-center space-x-3 group">
-                <img src="https://flagcdn.com/w80/us.png" class="w-10 h-7 rounded shadow-sm object-cover" alt="US">
-                <span class="font-bold text-slate-700 group-hover:text-blue-600">US</span>
-            </a>
-            <a href="https://sites.google.com/view/pasa30one/%E0%B8%A0%E0%B8%B2%E0%B8%A9%E0%B8%B2%E0%B8%AD%E0%B8%87%E0%B8%81%E0%B8%A4%E0%B8%A9-uk" target="_blank" class="flag-card glass-morphism p-4 rounded-2xl flex items-center space-x-3 group">
-                <img src="https://flagcdn.com/w80/gb.png" class="w-10 h-7 rounded shadow-sm object-cover" alt="UK">
-                <span class="font-bold text-slate-700 group-hover:text-blue-600">UK</span>
-            </a>
-            <a href="https://sites.google.com/view/pasa30one/%E0%B8%A0%E0%B8%B2%E0%B8%A9%E0%B8%B2%E0%B8%88%E0%B8%99-ch" target="_blank" class="flag-card glass-morphism p-4 rounded-2xl flex items-center space-x-3 group">
-                <img src="https://flagcdn.com/w80/cn.png" class="w-10 h-7 rounded shadow-sm object-cover" alt="China">
-                <span class="font-bold text-slate-700 group-hover:text-blue-600">CH</span>
-            </a>
-            <a href="https://sites.google.com/view/pasa30one/%E0%B8%9E%E0%B8%A1%E0%B8%B2-ma" target="_blank" class="flag-card glass-morphism p-4 rounded-2xl flex items-center space-x-3 group">
-                <img src="https://flagcdn.com/w80/mm.png" class="w-10 h-7 rounded shadow-sm object-cover" alt="Myanmar">
-                <span class="font-bold text-slate-700 group-hover:text-blue-600">MA</span>
-            </a>
-            <a href="https://sites.google.com/view/pasa30one/%E0%B8%A0%E0%B8%B2%E0%B8%A9%E0%B8%B2%E0%B8%8D%E0%B8%9B%E0%B8%99-jp" target="_blank" class="flag-card glass-morphism p-4 rounded-2xl flex items-center space-x-3 group">
-                <img src="https://flagcdn.com/w80/jp.png" class="w-10 h-7 rounded shadow-sm object-cover" alt="Japan">
-                <span class="font-bold text-slate-700 group-hover:text-blue-600">JP</span>
-            </a>
-            <a href="https://sites.google.com/view/pasa30one/%E0%B8%A0%E0%B8%B2%E0%B8%A9%E0%B8%B2%E0%B9%80%E0%B8%A1%E0%B8%A3%E0%B8%81%E0%B8%B2-us" target="_blank" class="flag-card glass-morphism p-4 rounded-2xl flex items-center space-x-3 group">
-                <img src="https://flagcdn.com/w80/kr.png" class="w-10 h-7 rounded shadow-sm object-cover" alt="Korea">
-                <span class="font-bold text-slate-700 group-hover:text-blue-600">KO</span>
-            </a>
-            <a href="https://sites.google.com/view/pasa30one/%E0%B8%81%E0%B8%A1%E0%B8%9E%E0%B8%8A%E0%B8%B2-kom" target="_blank" class="flag-card glass-morphism p-4 rounded-2xl flex items-center space-x-3 group">
-                <img src="https://flagcdn.com/w80/kh.png" class="w-10 h-7 rounded shadow-sm object-cover" alt="Cambodia">
-                <span class="font-bold text-slate-700 group-hover:text-blue-600">KOM</span>
-            </a>
-            <a href="https://sites.google.com/view/pasa30one/%E0%B8%A0%E0%B8%B2%E0%B8%A9%E0%B8%B2%E0%B9%80%E0%B8%A7%E0%B8%A2%E0%B8%94%E0%B8%99%E0%B8%B2%E0%B8%A1-vein" target="_blank" class="flag-card glass-morphism p-4 rounded-2xl flex items-center space-x-3 group">
-                <img src="https://flagcdn.com/w80/vn.png" class="w-10 h-7 rounded shadow-sm object-cover" alt="Vietnam">
-                <span class="font-bold text-slate-700 group-hover:text-blue-600">VEIN</span>
-            </a>
-            <a href="https://sites.google.com/view/pasa30one/%E0%B8%A0%E0%B8%B2%E0%B8%A9%E0%B8%B2%E0%B8%A3%E0%B8%AA%E0%B9%80%E0%B8%8B%E0%B8%A2-rus" target="_blank" class="flag-card glass-morphism p-4 rounded-2xl flex items-center space-x-3 group">
-                <img src="https://flagcdn.com/w80/ru.png" class="w-10 h-7 rounded shadow-sm object-cover" alt="Russia">
-                <span class="font-bold text-slate-700 group-hover:text-blue-600">RUS</span>
-            </a>
-            <a href="https://sites.google.com/view/pasa30one/%E0%B8%A0%E0%B8%B2%E0%B8%A9%E0%B8%B2%E0%B9%80%E0%B8%A2%E0%B8%AD%E0%B8%A3%E0%B8%A1%E0%B8%99-ge" target="_blank" class="flag-card glass-morphism p-4 rounded-2xl flex items-center space-x-3 group">
-                <img src="https://flagcdn.com/w80/de.png" class="w-10 h-7 rounded shadow-sm object-cover" alt="Germany">
-                <span class="font-bold text-slate-700 group-hover:text-blue-600">GE</span>
-            </a>
-            <a href="https://sites.google.com/view/pasa30one/%E0%B8%A0%E0%B8%B2%E0%B8%A9%E0%B8%B2%E0%B8%AA%E0%B9%80%E0%B8%9B%E0%B8%99-sp" target="_blank" class="flag-card glass-morphism p-4 rounded-2xl flex items-center space-x-3 group">
-                <img src="https://flagcdn.com/w80/es.png" class="w-10 h-7 rounded shadow-sm object-cover" alt="Spain">
-                <span class="font-bold text-slate-700 group-hover:text-blue-600 text-sm">SPAIN</span>
-            </a>
-        </div>
-    </main>
+        <!-- Classic Grid Area -->
+        <section class="grid-container mb-24">
+            <script>
+                const languages = [
+                    { id: 'us', name: 'USA', url: 'https://sites.google.com/view/pasa30one/%E0%B8%AD%E0%B9%80%E0%B8%A1%E0%B8%A3%E0%B8%81%E0%B8%B2-us' },
+                    { id: 'gb', name: 'Britain', url: 'https://sites.google.com/view/pasa30one/%E0%B8%A0%E0%B8%B2%E0%B8%A9%E0%B8%B2%E0%B8%AD%E0%B8%87%E0%B8%81%E0%B8%A4%E0%B8%A9-uk' },
+                    { id: 'cn', name: 'China', url: 'https://sites.google.com/view/pasa30one/%E0%B8%A0%E0%B8%B2%E0%B8%A9%E0%B8%B2%E0%B8%88%E0%B8%99-ch' },
+                    { id: 'mm', name: 'Myanmar', url: 'https://sites.google.com/view/pasa30one/%E0%B8%9E%E0%B8%A1%E0%B8%B2-ma' },
+                    { id: 'jp', name: 'Japan', url: 'https://sites.google.com/view/pasa30one/%E0%B8%A0%E0%B8%B2%E0%B8%A9%E0%B8%B2%E0%B8%8D%E0%B8%9B%E0%B8%99-jp' },
+                    { id: 'kr', name: 'Korea', url: 'https://sites.google.com/view/pasa30one/%E0%B8%A0%E0%B8%B2%E0%B8%A9%E0%B8%B2%E0%B9%80%E0%B8%A1%E0%B8%A3%E0%B8%81%E0%B8%B2-us' },
+                    { id: 'kh', name: 'Cambodia', url: 'https://sites.google.com/view/pasa30one/%E0%B8%81%E0%B8%A1%E0%B8%9E%E0%B8%8A%E0%B8%B2-kom' },
+                    { id: 'vn', name: 'Vietnam', url: 'https://sites.google.com/view/pasa30one/%E0%B8%A0%E0%B8%B2%E0%B8%A9%E0%B8%B2%E0%B9%80%E0%B8%A7%E0%B8%A2%E0%B8%94%E0%B8%99%E0%B8%B2%E0%B8%A1-vein' },
+                    { id: 'ru', name: 'Russia', url: 'https://sites.google.com/view/pasa30one/%E0%B8%A0%E0%B8%B2%E0%B8%A9%E0%B8%B2%E0%B8%A3%E0%B8%AA%E0%B9%80%E0%B8%8B%E0%B8%A2-rus' },
+                    { id: 'de', name: 'Germany', url: 'https://sites.google.com/view/pasa30one/%E0%B8%A0%E0%B8%B2%E0%B8%A9%E0%B8%B2%E0%B9%80%E0%B8%A2%E0%B8%AD%E0%B8%A3%E0%B8%A1%E0%B8%99-ge' },
+                    { id: 'es', name: 'Spain', url: 'https://sites.google.com/view/pasa30one/%E0%B8%A0%E0%B8%B2%E0%B8%A9%E0%B8%B2%E0%B8%AA%E0%B9%80%E0%B8%9B%E0%B8%99-sp' }
+                ];
+                
+                document.write(languages.map((lang) => `
+                    <div class="flex flex-col items-center space-y-4 fade-entry">
+                        <a href="${lang.url}" target="_blank" class="stamp-btn w-full max-w-[120px]">
+                            <img src="https://flagcdn.com/w160/${lang.id}.png" alt="${lang.name}">
+                        </a>
+                        <span class="text-[10px] font-bold tracking-[0.2em] uppercase opacity-50">${lang.name}</span>
+                    </div>
+                `).join(''));
+            </script>
+        </section>
 
-    <!-- Footer -->
-    <footer class="max-w-4xl mx-auto text-center py-6 text-slate-400 text-sm">
-        <p>© 2025 Crow Studio • FreeToLearn</p>
-    </footer>
+        <!-- Footer -->
+        <footer class="text-center py-12 opacity-40 border-t border-slate-300">
+            <p class="text-[10px] uppercase tracking-[0.3em]">
+                &copy; 2025 Crow Studio &bull; Archive Reference &bull; FreeToLearn
+            </p>
+        </footer>
+    </div>
 
-    <!-- Floating Chatbot UI -->
-    <div id="chat-widget" class="fixed bottom-6 right-6 z-50 flex flex-col items-end">
-        <!-- Chat Window -->
-        <div id="chat-container" class="hidden glass-morphism w-[90vw] sm:w-[380px] h-[500px] mb-4 rounded-3xl shadow-2xl flex flex-col overflow-hidden animate-slide-up">
-            <!-- Header -->
-            <div class="bg-blue-600 p-4 flex items-center justify-between text-white">
-                <div class="flex items-center space-x-2">
-                    <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                    <span class="font-semibold">Crow Assistant AI</span>
-                </div>
-                <button onclick="toggleChat()" class="hover:bg-blue-700 p-1 rounded">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                </button>
+    <!-- Classic Chat Interface -->
+    <div id="chat-widget" class="fixed bottom-8 right-8 z-50 flex flex-col items-end">
+        <div id="chat-box" class="hidden w-[calc(100vw-4rem)] sm:w-[320px] h-[450px] mb-6 rounded-lg overflow-hidden glass-panel flex flex-col shadow-2xl">
+            <div class="p-4 border-b border-slate-300 flex items-center justify-between bg-slate-100/50">
+                <span class="text-xs font-bold tracking-tighter uppercase italic">Librarian Assistant</span>
+                <button onclick="toggleChat()" class="text-lg leading-none hover:opacity-50">×</button>
             </div>
             
-            <!-- Messages -->
-            <div id="chat-window" class="flex-1 p-4 overflow-y-auto bg-slate-50/50 space-y-4">
-                <div class="flex flex-col items-start">
-                    <div class="chat-bubble-bot bg-white text-slate-700 p-3 shadow-sm text-sm max-w-[85%] border border-slate-100">
-                        สวัสดีครับ! ผมคือ AI ผู้ช่วยจาก Crow Studio มีอะไรให้ช่วยเกี่ยวกับการเรียนภาษาไหมครับ?
-                    </div>
+            <div id="chat-window" class="flex-1 p-6 overflow-y-auto space-y-4 text-sm italic leading-relaxed bg-white/30">
+                <div class="text-slate-500">
+                    "ยินดีต้อนรมีข้อมูลส่วนไหนที่คุณต้องการให้ผมค้นหาให้เป็นพิเศษไหมครับ?"
                 </div>
             </div>
 
-            <!-- Input -->
-            <div class="p-3 border-t border-slate-100 bg-white">
-                <div class="flex items-center space-x-2 bg-slate-100 p-2 rounded-2xl">
-                    <input type="text" id="user-input" placeholder="พิมพ์คำถามของคุณ..." class="bg-transparent flex-1 outline-none text-sm px-2 py-1 text-slate-700">
-                    <button id="send-btn" class="bg-blue-600 text-white p-2 rounded-xl hover:bg-blue-700 transition-colors">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                    </button>
+            <div class="p-4 border-t border-slate-200">
+                <div class="flex items-center space-x-2">
+                    <input type="text" id="user-input" placeholder="เขียนข้อความ..." class="chat-input flex-1 outline-none text-xs px-3 py-2 rounded border-slate-300">
+                    <button id="send-btn" class="font-bold text-xs hover:underline uppercase text-slate-800">ส่ง</button>
                 </div>
             </div>
         </div>
 
-        <!-- FAB Button -->
-        <button id="chat-fab" onclick="toggleChat()" class="bg-blue-600 text-white p-4 rounded-full shadow-lg hover:scale-110 transition-transform active:scale-95 flex items-center justify-center">
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
+        <!-- Chat Trigger Button (Stamp Style) -->
+        <button onclick="toggleChat()" class="bg-slate-800 text-white w-14 h-14 rounded-full shadow-2xl hover:bg-slate-700 active:scale-90 transition-all flex items-center justify-center border-4 border-white/20">
+            <svg id="fab-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+            </svg>
         </button>
     </div>
 
     <script>
-        const chatContainer = document.getElementById('chat-container');
+        const chatBox = document.getElementById('chat-box');
         const chatWindow = document.getElementById('chat-window');
         const userInput = document.getElementById('user-input');
         const sendBtn = document.getElementById('send-btn');
-        const apiKey = ""; // แพลตฟอร์มจะจัดเตรียมคีย์ให้ในสภาพแวดล้อมรันไทม์
-        
-        // สถานะการเปิด/ปิด
+
+        const WORKER_URL = "https://spring-bush-acec.tontakankeawpang321.workers.dev";
+
         let isOpen = false;
 
         function toggleChat() {
             isOpen = !isOpen;
-            chatContainer.classList.toggle('hidden', !isOpen);
+            chatBox.classList.toggle('hidden', !isOpen);
             if (isOpen) userInput.focus();
         }
 
-        // ฟังก์ชันส่งข้อความพร้อม Exponential Backoff
         async function fetchAIResponse(message, retries = 5, delay = 1000) {
-            const systemPrompt = "คุณคือผู้ช่วย AI ของ Crow Studio เว็บไซต์เรียนภาษาฟรี คุณชื่อว่า Crow AI ตอบคำถามอย่างเป็นมิตร กระชับ และช่วยเหลือผู้ใช้ในเรื่องการเรียนภาษา";
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
-
             try {
-                const response = await fetch(url, {
+                const response = await fetch(WORKER_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: [{ parts: [{ text: message }] }],
-                        systemInstruction: { parts: [{ text: systemPrompt }] }
-                    })
+                    body: JSON.stringify({ message: message })
                 });
 
                 if (!response.ok) {
                     if (response.status === 429 && retries > 0) {
-                        await new Promise(resolve => setTimeout(resolve, delay));
+                        await new Promise(r => setTimeout(r, delay));
                         return fetchAIResponse(message, retries - 1, delay * 2);
                     }
-                    throw new Error('API request failed');
+                    throw new Error('Worker error');
                 }
 
                 const data = await response.json();
-                return data.candidates?.[0]?.content?.parts?.[0]?.text || "ขออภัยครับ ผมไม่สามารถประมวลผลคำตอบได้ในขณะนี้";
+                return data.text || "ขออภัยครับ Librarian ไม่พบข้อมูลที่ต้องการ";
             } catch (error) {
                 if (retries > 0) {
-                    await new Promise(resolve => setTimeout(resolve, delay));
+                    await new Promise(r => setTimeout(r, delay));
                     return fetchAIResponse(message, retries - 1, delay * 2);
                 }
-                return "ขออภัยครับ เกิดข้อผิดพลาดในการเชื่อมต่อ กรุณาลองใหม่ภายหลัง";
+                return "การเชื่อมต่อกับหอจดหมายเหตุขัดข้องชั่วคราว... 📡";
             }
         }
 
         function appendMessage(text, role) {
             const div = document.createElement('div');
-            div.className = `flex flex-col ${role === 'user' ? 'items-end' : 'items-start'}`;
-            
+            div.className = `flex flex-col ${role === 'user' ? 'items-end' : 'items-start'} animate-fade-in`;
             const bubble = document.createElement('div');
             bubble.className = role === 'user' 
-                ? 'chat-bubble-user bg-blue-600 text-white p-3 shadow-sm text-sm max-w-[85%]' 
-                : 'chat-bubble-bot bg-white text-slate-700 p-3 shadow-sm text-sm max-w-[85%] border border-slate-100';
-            
-            bubble.textContent = text;
+                ? 'px-4 py-2 bg-slate-200 rounded-lg text-slate-800 text-xs shadow-sm' 
+                : 'px-0 py-2 text-slate-600 text-sm italic leading-relaxed';
+            bubble.textContent = (role === 'user' ? '' : '"') + text + (role === 'user' ? '' : '"');
             div.appendChild(bubble);
             chatWindow.appendChild(div);
-            chatWindow.scrollTop = chatWindow.scrollHeight;
+            chatWindow.scrollTo({ top: chatWindow.scrollHeight, behavior: 'smooth' });
         }
 
         async function handleSend() {
@@ -230,26 +243,19 @@
             appendMessage(text, 'user');
             userInput.value = '';
             
-            // แสดงสถานะกำลังพิมพ์
-            const loadingId = 'loading-' + Date.now();
-            const loadingDiv = document.createElement('div');
-            loadingDiv.id = loadingId;
-            loadingDiv.className = 'flex flex-col items-start';
-            loadingDiv.innerHTML = `<div class="chat-bubble-bot bg-slate-200 text-slate-500 p-2 text-xs italic animate-pulse">Crow กำลังพิมพ์...</div>`;
-            chatWindow.appendChild(loadingDiv);
+            const loading = document.createElement('div');
+            loading.className = 'text-[10px] opacity-40 italic';
+            loading.textContent = 'กำลังค้นหาจดหมายเหตุ...';
+            chatWindow.appendChild(loading);
             chatWindow.scrollTop = chatWindow.scrollHeight;
 
             const aiResponse = await fetchAIResponse(text);
-            
-            // ลบสถานะกำลังพิมพ์และเพิ่มคำตอบจริง
-            document.getElementById(loadingId).remove();
+            loading.remove();
             appendMessage(aiResponse, 'bot');
         }
 
         sendBtn.addEventListener('click', handleSend);
-        userInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') handleSend();
-        });
+        userInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleSend(); });
     </script>
 </body>
 </html>
