@@ -424,10 +424,7 @@ document.querySelectorAll("#filters .filter-btn").forEach(btn=>{
 (async function init(){ RAW = await loadCSV(); applyFilters(); })();
 
 
-/* =========================================
-    ส่วน Chatbot AI (Backend)
-   ========================================= */
-// ✅ เปลี่ยนจาก '/api/chat' เป็นลิงก์เต็มของ Vercel
+// ✅ URL Worker
 const BACKEND_URL = 'https://shy-fog-aa02.tontakankeawpang321.workers.dev';
 
 // ✅ System Prompt (OpenAI format)
@@ -550,8 +547,10 @@ chatbotCloseBtn.addEventListener('click', () => {
   fabToggle.style.opacity = '1';
 });
 </script>
+
 </body>
 </html>
+
 
 
 
