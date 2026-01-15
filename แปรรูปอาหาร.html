@@ -2,506 +2,556 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>เมนูแปรรูปอาหาร – Industrial AI</title>
-<link href="https://fonts.googleapis.com/css2?family=Kodchasan:wght@400;600;700&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>ศูนย์เรียนรู้แปรรูปอาหาร - Food Processing Fun</title>
+
+<!-- Performance: Preconnect -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdn.tailwindcss.com">
+
+<!-- Font -->
+<link href="https://fonts.googleapis.com/css2?family=Kodchasan:wght@400;500;700&family=Sarabun:wght@300;400;600&display=swap" rel="stylesheet">
+<!-- Tailwind CSS (CDN) -->
 <script src="https://cdn.tailwindcss.com"></script>
+<!-- Icon Library -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
   :root {
-    /* ✅ Industrial Theme Color Palette (New) */
-    --bg: #e5e7eb;          /* สีเทาคอนกรีต */
-    --card: #ffffff;        /* ขาวสะอาด */
-    --ink: #1f2937;         /* เทาเข้มเกือบดำ (Charcoal) */
-    --muted: #6b7280;       /* เทากลาง */
-    --line: #d1d5db;        /* เส้นขอบโลหะ */
-    --accent: #f59e0b;      /* สีเหลืองอุตสาหกรรม (Safety Yellow) */
-    --accent-hover: #d97706;/* เหลืองเข้ม */
-    --radius: 6px;          /* มุมมนน้อยลง ให้ดูแข็งแรงแบบโรงงาน */
-    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --primary: #FF9F1C;
+    --secondary: #2EC4B6;
+    --bg-color: #FFFDF7;
+    --text-main: #2D3436;
+    --card-bg: #ffffff;
   }
-  
-  * { box-sizing: border-box; }
-  
+
   body {
-    margin: 0;
-    background-color: var(--bg);
-    color: var(--ink);
-    font-family: 'Kodchasan', system-ui, sans-serif;
-    /* Pattern พื้นหลังแบบตะแกรงเหล็กจางๆ */
-    background-image: radial-gradient(#d1d5db 1px, transparent 1px);
-    background-size: 20px 20px;
+    font-family: 'Sarabun', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    /* Performance: ใช้ Fixed Background เพื่อลดการวาดภาพซ้ำเวลาเลื่อนหน้าจอ */
+    background-image: radial-gradient(#FF9F1C 0.5px, transparent 0.5px), radial-gradient(#2EC4B6 0.5px, var(--bg-color) 0.5px);
+    background-size: 24px 24px;
+    background-position: 0 0, 12px 12px;
+    background-attachment: fixed; 
+    -webkit-tap-highlight-color: transparent;
+    overflow-x: hidden; /* ป้องกันการเลื่อนซ้ายขวา */
   }
 
-  .wrap {
-    max-width: 1100px;
-    margin: auto;
-    padding: 30px 20px 100px;
-  }
+  h1, h2, h3, .brand-font { font-family: 'Kodchasan', sans-serif; }
 
-  .header-box {
-    text-align: center;
-    margin-bottom: 30px;
-    background: var(--card);
-    padding: 20px;
-    border-radius: var(--radius);
-    border-left: 5px solid var(--accent);
-    box-shadow: var(--shadow);
-  }
+  /* Optimized Animation */
+  .mascot-container { animation: float 3s ease-in-out infinite; will-change: transform; }
+  @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-8px); } 100% { transform: translateY(0px); } }
 
-  .title {
-    font-weight: 700;
-    font-size: clamp(24px, 5vw, 32px);
-    margin: 0;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: var(--ink);
+  .food-card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    border: 1px solid #f0f0f0;
+    touch-action: manipulation; /* เพิ่มความไวในการแตะบนมือถือ */
   }
+  .food-card:active { transform: scale(0.96); border-color: var(--primary); transition: transform 0.1s; }
+
+  /* Accordion Style */
+  details > summary { list-style: none; cursor: pointer; }
+  details > summary::-webkit-details-marker { display: none; }
+  details[open] summary ~ * { animation: sweep .25s ease-out; }
+  @keyframes sweep { 0% {opacity: 0; transform: translateY(-5px)} 100% {opacity: 1; transform: translateY(0)} }
   
-  .hint {
-    color: var(--muted);
-    font-size: 14px;
-    margin-top: 8px;
+  details summary .chevron { transition: transform 0.2s; }
+  details[open] summary .chevron { transform: rotate(180deg); }
+
+  /* Optimized Glass Effect (ลด Blur เพื่อประสิทธิภาพบนมือถือรุ่นเก่า) */
+  .glass-panel {
+    background: rgba(255, 255, 255, 0.98);
+    border: 1px solid rgba(255,255,255,0.2);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+  }
+  @supports (backdrop-filter: blur(8px)) {
+      .glass-panel { backdrop-filter: blur(8px); background: rgba(255, 255, 255, 0.95); }
   }
 
-  /* ✅ Search Bar Industrial Style */
-  .search-wrapper {
-    position: relative;
-    max-width: 600px;
-    margin: 0 auto 30px;
-  }
-  .search-bar {
-    display: flex;
-    align-items: center;
-    background: var(--card);
-    border: 2px solid var(--line);
-    border-radius: var(--radius);
-    padding: 0 16px;
-    height: 50px;
-    transition: all 0.2s;
-  }
-  .search-bar:focus-within {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.1);
-  }
-  .search-bar svg {
-    color: var(--muted);
-    width: 20px;
-    height: 20px;
-  }
-  .search-bar input {
-    width: 100%;
-    border: none;
-    outline: none;
-    background: transparent;
-    font-family: 'Kodchasan', sans-serif;
-    font-size: 16px;
-    color: var(--ink);
-    margin-left: 10px;
-    height: 100%;
-  }
-
-  /* ✅ Grid Layout */
-  .grid {
-    display: grid;
-    gap: 12px;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  }
+  .fab-btn { transition: transform 0.2s, box-shadow 0.2s; touch-action: manipulation; }
+  .fab-btn:active { transform: scale(0.90); }
   
-  /* ✅ Item Button Style (Label Tag Style) */
-  .item {
-    position: relative;
-    display: flex;
-    align-items: center;
-    padding: 14px 16px;
-    border-radius: var(--radius);
-    border: 1px solid var(--line);
-    background: var(--card);
-    font-size: 15px;
-    font-weight: 600;
-    color: var(--ink);
-    box-shadow: var(--shadow);
-    cursor: pointer;
-    transition: all 0.15s ease;
-    text-align: left;
-    overflow: hidden;
-  }
-  
-  /* แถบสีด้านข้างปุ่ม */
-  .item::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 4px;
-    background-color: var(--line);
-    transition: background-color 0.2s;
-  }
+  input[type=number]::-webkit-inner-spin-button, 
+  input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
 
-  .item:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-    border-color: var(--accent);
-  }
-  
-  .item:hover::before {
-    background-color: var(--accent);
-  }
-
-  .item:active {
-    transform: translateY(0);
-  }
-  
-  .num {
-    font-family: monospace;
-    margin-right: 12px;
-    font-weight: 700;
-    color: var(--muted);
-    font-size: 14px;
-    opacity: 0.7;
-    padding-left: 6px;
-  }
-
-  .item-name {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  footer {
-    text-align: center;
-    margin-top: 40px;
-    color: var(--muted);
-    font-size: 13px;
-  }
-
-  /* ===== CSS ของ Chatbot UI (Industrial Theme) ===== */
-  .chat-bubble::before { content: ''; position: absolute; width: 0; height: 0; border-style: solid; }
-  .chat-bubble-user::before {
-    border-width: 0 12px 12px 12px; border-color: transparent transparent #f59e0b transparent; /* Safety Yellow */
-    top: -10px; right: 12px;
-  }
-  .chat-bubble-model::before {
-    border-width: 0 12px 12px 12px; border-color: transparent transparent #e5e7eb transparent;
-    top: -10px; left: 12px;
-  }
-  .gemini-thinking-bar {
-    position: relative; width: 100%; height: 4px; background-color: #e0e0e0;
-    border-radius: 2px; overflow: hidden;
-  }
-  .gemini-thinking-bar::before {
-    content: ''; position: absolute; top: 0; left: 0; height: 100%; width: 100%;
-    background: linear-gradient(90deg, #f59e0b, #fbbf24, #f59e0b);
-    background-size: 200% 100%; animation: thinking-gradient 2s linear infinite;
-  }
-  @keyframes thinking-gradient { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-  
-  #fab-chat-toggle {
-    position: fixed; bottom: 25px; right: 25px;
-    width: 60px; height: 60px;
-    background-color: #f59e0b; /* Safety Yellow */
-    color: #1f2937; /* Dark Text for Contrast */
-    border: none; border-radius: 50%;
-    font-size: 28px; line-height: 60px; text-align: center;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-    cursor: pointer; z-index: 998;
-    transition: transform 0.2s, opacity 0.3s;
-    font-family: 'Kodchasan', sans-serif;
-    border: 2px solid #fff;
-  }
-  #fab-chat-toggle:hover { transform: scale(1.05); background-color: #fbbf24; }
-  
-  #chatbot-modal {
-    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-    z-index: 1000; transition: opacity 0.3s, transform 0.3s;
-    opacity: 1; transform: translateY(0); pointer-events: auto;
-  }
-  #chatbot-modal.chatbot-hidden {
-    opacity: 0; transform: translateY(100%); pointer-events: none;
-  }
+  /* Hide scrollbar but allow scrolling */
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 </style>
 </head>
-<body>
+<body class="pb-28">
 
-<div class="wrap">
-  <div class="header-box">
-    <div class="title">🏭 เมนูแปรรูปอาหาร</div>
-    <p class="hint">ฐานข้อมูลการถนอมอาหารและการแปรรูปผลผลิตทางการเกษตร</p>
-  </div>
+<!-- Header Section -->
+<div class="relative bg-white shadow-sm rounded-b-[30px] mb-6 pb-6 pt-6 px-4 border-b-4 border-orange-100 transform translate-z-0">
+  <div class="max-w-4xl mx-auto flex items-center justify-between relative z-10">
+    <!-- Logo -->
+    <div class="flex items-center gap-3">
+        <div class="mascot-container w-16 h-16 bg-orange-50 rounded-full flex items-center justify-center border-2 border-orange-200 shadow-sm">
+             <svg viewBox="0 0 200 200" width="40" height="40">
+                <rect x="50" y="70" width="100" height="90" rx="20" fill="#FF9F1C" stroke="#333" stroke-width="4"/>
+                <rect x="65" y="85" width="70" height="50" rx="10" fill="#333"/>
+                <circle cx="85" cy="105" r="5" fill="#2EC4B6"><animate attributeName="opacity" values="1;0;1" dur="2s" repeatCount="indefinite"/></circle>
+                <circle cx="115" cy="105" r="5" fill="#2EC4B6"><animate attributeName="opacity" values="1;0;1" dur="2s" repeatCount="indefinite"/></circle>
+                <path d="M85 120 Q100 130 115 120" stroke="#2EC4B6" stroke-width="3" fill="none"/>
+                <line x1="50" y1="100" x2="30" y2="90" stroke="#333" stroke-width="4"/>
+                <line x1="150" y1="100" x2="170" y2="90" stroke="#333" stroke-width="4"/>
+            </svg>
+        </div>
+        <div>
+            <h1 class="text-xl md:text-2xl font-bold brand-font text-gray-800 leading-none">
+              Food Tech <span class="text-orange-500">Hub</span>
+            </h1>
+            <p class="text-xs text-gray-500 mt-1">คลังความรู้ & เครื่องมือแปรรูป</p>
+        </div>
+    </div>
 
-  <div class="search-wrapper">
-    <div class="search-bar">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-      <input type="search" id="searchInput" placeholder="ค้นหาเมนู (เช่น แหนม, กล้วยฉาบ)...">
+    <!-- Top Tools -->
+    <div class="flex gap-2">
+        <button onclick="openModal('calendar-modal')" class="w-10 h-10 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center hover:bg-blue-100 transition shadow-sm border border-blue-100" title="ปฏิทินวัตถุดิบ">
+            <i class="fa-regular fa-calendar-days"></i>
+        </button>
+        <button onclick="openRecipeModal('ราคากลาง')" class="w-10 h-10 rounded-full bg-green-50 text-green-600 flex items-center justify-center hover:bg-green-100 transition shadow-sm border border-green-100 relative" title="ราคากลาง">
+            <i class="fa-solid fa-calculator"></i>
+            <span class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border border-white animate-pulse"></span>
+        </button>
     </div>
   </div>
 
-  <div class="grid" id="grid"></div>
-
-  <footer>
-    <p class="footer-links">
-      © 2025 Crow Studio |
-      <a href="https://sites.google.com/view/privacy-policy-pdpa-crow-studi/%E0%B8%AB%E0%B8%99%E0%B8%B2%E0%B9%81%E0%B8%A3%E0%B8%81">นโยบายความเป็นส่วนตัว</a> |
-      <a href="ลิงก์ข้อตกลง">ข้อตกลงการใช้งาน</a>
-    </p>
-  </footer>
+  <!-- Search Bar -->
+  <div class="max-w-4xl mx-auto mt-6">
+    <div class="relative">
+      <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+      <input type="search" id="searchInput" placeholder="ค้นหาเมนู (เช่น แหนม, กล้วยตาก)..." 
+             class="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 pl-10 pr-4 focus:ring-2 focus:ring-orange-300 focus:outline-none transition text-sm">
+    </div>
+  </div>
 </div>
 
-<button id="fab-chat-toggle" title="ถามผู้เชี่ยวชาญ">Ai</button>
+<!-- Main Content -->
+<div class="max-w-4xl mx-auto px-4 space-y-4" id="category-container"></div>
 
-<div id="chatbot-modal" class="chatbot-hidden">
-  <div class="flex flex-col h-screen bg-gray-100">
-    <header class="bg-[#1f2937] text-white p-4 flex justify-between items-center shadow-md border-b-4 border-[#f59e0b]">
-      <div class="flex items-center gap-2">
-          <span class="text-2xl">🥫</span>
-          <div>
-            <h1 class="text-lg font-bold font-sans text-white m-0">AI แปรรูปอาหาร</h1>
-            <p class="text-xs text-gray-400 m-0">ผู้ช่วยถนอมอาหาร & แพ็คเกจจิ้ง</p>
-          </div>
-      </div>
-      <div>
-        <button id="new-chat-btn" class="bg-[#f59e0b] hover:bg-[#d97706] text-[#1f2937] font-bold py-1 px-3 rounded mr-2 text-sm">
-          เริ่มใหม่
-        </button>
-        <button id="chatbot-close-btn" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-1 px-3 rounded text-sm">
-          ปิด
-        </button>
-      </div>
-    </header>
+<!-- Footer -->
+<footer class="mt-12 text-center text-gray-400 text-xs py-8">
+  <p>© 2025 Food Tech Hub | Lite & Stable Version</p>
+</footer>
 
-    <main id="chat-history" class="flex-1 overflow-y-auto p-4 space-y-4 bg-[#e5e7eb]">
-      <div class="flex items-start space-x-2">
-        <span class="text-2xl">🤖</span>
-        <div class="chat-bubble chat-bubble-model bg-white text-gray-800 p-3 rounded-lg max-w-lg relative border border-gray-200 shadow-sm">
-          <p>สวัสดีครับ ผมคือ AI ผู้เชี่ยวชาญด้านการแปรรูปและถนอมอาหาร หากมีข้อสงสัยเรื่องสูตร วิธีการทำ หรือการเก็บรักษา สอบถามได้เลยครับ</p>
+<!-- Floating Chat Button -->
+<button id="fab-chat-toggle" class="fab-btn fixed bottom-6 right-6 w-14 h-14 rounded-full bg-gradient-to-tr from-orange-400 to-orange-500 text-white flex items-center justify-center z-40 shadow-lg border-2 border-white">
+  <i class="fa-solid fa-robot text-xl"></i>
+</button>
+
+<!-- ================= MODALS ================= -->
+
+<!-- 1. Recipe & Cost Modal -->
+<div id="recipe-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/60 transition-opacity" onclick="closeModal('recipe-modal')"></div>
+    <div class="glass-panel w-full max-w-md bg-white rounded-2xl p-0 relative overflow-hidden transform transition-all scale-100 flex flex-col max-h-[90vh]">
+        
+        <!-- Header -->
+        <div class="bg-white border-b p-4 flex justify-between items-center sticky top-0 z-10 shadow-sm">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-orange-100 text-orange-500 flex items-center justify-center text-lg shrink-0">
+                    <i class="fa-solid fa-utensils"></i>
+                </div>
+                <div class="min-w-0">
+                    <h3 class="font-bold brand-font text-lg text-gray-800 truncate pr-2" id="recipe-title">ชื่อเมนู</h3>
+                    <p class="text-[10px] text-gray-400" id="recipe-category">หมวดหมู่</p>
+                </div>
+            </div>
+            <button onclick="closeModal('recipe-modal')" class="bg-gray-100 hover:bg-gray-200 rounded-full w-8 h-8 flex items-center justify-center text-gray-500 shrink-0"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+
+        <!-- Scrollable Content -->
+        <div class="overflow-y-auto flex-1 p-0 bg-gray-50 overscroll-contain">
+            
+            <!-- 1. Recipe Details -->
+            <div class="p-4 bg-white mb-2 shadow-sm">
+                <h4 class="font-bold text-gray-700 text-sm mb-2"><i class="fa-solid fa-list-check text-green-500 mr-2"></i>วิธีทำแบบย่อ</h4>
+                <div class="bg-green-50 rounded-xl p-3 border border-green-100">
+                    <ul class="text-xs text-gray-700 space-y-2 leading-relaxed" id="recipe-steps">
+                        <!-- JS Injected -->
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 2. Ingredient Prices -->
+            <div class="p-4 bg-white mb-2 shadow-sm">
+                <div class="flex justify-between items-start mb-2">
+                    <div>
+                        <h4 class="font-bold text-gray-700 text-sm"><i class="fa-solid fa-basket-shopping text-blue-500 mr-2"></i>ราคากลางวัตถุดิบ</h4>
+                        <p class="text-[10px] text-gray-400 mt-0.5" id="price-update-date"><i class="fa-regular fa-clock mr-1"></i>รออัปเดต...</p>
+                    </div>
+                    <button onclick="updateMarketPricesAI()" id="ai-update-btn" class="text-[10px] bg-blue-50 text-blue-600 border border-blue-100 px-2 py-1.5 rounded-lg active:bg-blue-200 transition flex items-center gap-1 shadow-sm select-none">
+                        <i class="fa-solid fa-rotate"></i> สำรวจตลาด (AI)
+                    </button>
+                </div>
+                <div class="border rounded-xl overflow-hidden mb-2">
+                    <table class="w-full text-xs">
+                        <thead class="bg-gray-100 text-gray-500">
+                            <tr>
+                                <th class="px-3 py-2 text-left w-2/3">วัตถุดิบ</th>
+                                <th class="px-3 py-2 text-right">ราคา/หน่วย</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100 bg-white" id="recipe-ingredients">
+                            <!-- JS Injected -->
+                        </tbody>
+                        <tfoot class="bg-blue-50 text-blue-800 font-bold border-t border-blue-100">
+                            <tr>
+                                <td class="px-3 py-2 text-left">รวมต้นทุนวัตถุดิบ</td>
+                                <td class="px-3 py-2 text-right whitespace-nowrap" id="ingredients-total-cost">0 บาท</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <p class="text-[10px] text-gray-400 text-right">*ราคาตลาดกลางโดยประมาณ</p>
+            </div>
+
+            <!-- 3. Simple Calculator -->
+            <div class="p-4 bg-white shadow-sm pb-8">
+                <h4 class="font-bold text-gray-700 text-sm mb-3"><i class="fa-solid fa-calculator text-orange-500 mr-2"></i>คำนวณต้นทุนต่อชิ้น</h4>
+                
+                <div class="bg-orange-50 p-3 rounded-xl border border-orange-100 mb-3 space-y-3">
+                    <div>
+                        <label class="block text-[10px] text-gray-500 mb-1">ต้นทุนรวมทั้งหมด (บาท)</label>
+                        <input type="number" id="calc-total-input" class="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 font-bold text-gray-700 focus:outline-none focus:border-orange-300 placeholder-gray-300" placeholder="เช่น 150" inputmode="decimal" oninput="liveCalculate()">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] text-gray-500 mb-1">จำนวนที่ทำได้ (ชิ้น/ถุง)</label>
+                        <input type="number" id="calc-units" class="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 font-bold text-gray-700 focus:outline-none focus:border-orange-300 placeholder-gray-300" placeholder="เช่น 100" inputmode="numeric" oninput="liveCalculate()">
+                    </div>
+                </div>
+
+                <div class="bg-green-100 rounded-xl p-3 text-center border border-green-200 shadow-inner">
+                    <p class="text-[10px] text-green-700 font-bold uppercase tracking-wider">ต้นทุนตกชิ้นละ</p>
+                    <div class="flex items-baseline justify-center gap-1 mt-1">
+                        <p class="text-3xl font-extrabold text-green-600" id="cost-per-unit">0.00</p>
+                        <p class="text-xs text-green-500 font-medium">บาท</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- 2. Calendar Modal -->
+<div id="calendar-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/50" onclick="closeModal('calendar-modal')"></div>
+    <div class="glass-panel w-full max-w-md bg-white rounded-2xl p-0 relative overflow-hidden">
+        <div class="bg-blue-500 p-4 flex justify-between items-center text-white">
+            <h3 class="font-bold brand-font"><i class="fa-regular fa-calendar-days mr-2"></i>ปฏิทินวัตถุดิบ</h3>
+            <button onclick="closeModal('calendar-modal')" class="hover:bg-white/20 rounded-full w-8 h-8 flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="p-6">
+            <div class="flex justify-between items-end mb-4 border-b pb-2">
+                <div>
+                    <p class="text-sm text-gray-400">เดือนปัจจุบัน</p>
+                    <h2 class="text-3xl font-bold text-gray-800 brand-font" id="calendar-month-display">-</h2>
+                </div>
+                <div class="text-5xl opacity-20"><i class="fa-solid fa-cloud-sun"></i></div>
+            </div>
+            <h4 class="font-bold text-gray-700 mb-3 text-sm flex items-center gap-2">
+                <span>🌾 วัตถุดิบน่าแปรรูป</span>
+                <span class="text-[10px] bg-blue-100 text-blue-600 px-2 rounded-full">ตลาดกลาง</span>
+            </h4>
+            <div class="grid grid-cols-2 gap-3" id="seasonal-items"></div>
+        </div>
+    </div>
+</div>
+
+<!-- 3. Chatbot Modal -->
+<div id="chatbot-modal" class="fixed inset-0 z-[60] hidden flex items-end sm:items-center justify-center pointer-events-none">
+  <div class="absolute inset-0 bg-black/40 transition-opacity opacity-0" id="chat-backdrop"></div>
+  <div class="bg-white w-full sm:w-[450px] h-[85vh] sm:h-[600px] rounded-t-3xl sm:rounded-2xl shadow-2xl flex flex-col transform transition-transform translate-y-full pointer-events-auto" id="chat-card">
+    <div class="bg-gradient-to-r from-orange-400 to-orange-500 p-4 rounded-t-3xl sm:rounded-t-2xl flex justify-between items-center text-white shadow-md">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-md border border-white/30">
+            <i class="fa-solid fa-robot text-xl"></i>
+        </div>
+        <div>
+          <h3 class="font-bold brand-font text-lg leading-tight">น้องแปรรูป AI</h3>
+          <p class="text-[10px] text-orange-100 bg-orange-600/30 px-2 py-0.5 rounded-full inline-block">Online</p>
         </div>
       </div>
-    </main>
-
-    <div id="thinking-indicator" class="p-4 hidden bg-[#e5e7eb]">
-      <div class="flex items-center space-x-2">
-        <span class="text-2xl">🤖</span>
-        <div class="chat-bubble chat-bubble-model bg-white text-gray-800 p-3 rounded-lg max-w-lg relative border border-gray-200">
-          <div class="gemini-thinking-bar"></div>
-        </div>
+      <div class="flex gap-2">
+         <button id="new-chat-btn" class="p-2 hover:bg-white/20 rounded-lg transition" title="ล้างแชท"><i class="fa-solid fa-rotate-right"></i></button>
+         <button id="chatbot-close-btn" class="p-2 hover:bg-white/20 rounded-lg transition" title="ปิด"><i class="fa-solid fa-chevron-down"></i></button>
       </div>
     </div>
-
-    <footer class="bg-white p-3 shadow-inner border-t border-gray-200 m-0 w-full max-w-full">
-      <div class="flex space-x-2">
-        <input id="user-input" type="text" placeholder="พิมพ์คำถาม (เช่น วิธีทำกล้วยตาก)..." class="flex-1 p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#f59e0b] font-sans text-base text-gray-800">
-        <button id="send-btn" class="bg-[#f59e0b] hover:bg-[#d97706] text-[#1f2937] font-bold py-2 px-4 rounded-xl shadow-sm">
-          ส่ง
+    <div id="chat-history" class="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50 overscroll-contain">
+        <div class="flex items-start gap-2">
+            <div class="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center text-lg border border-orange-200">🤖</div>
+            <div class="bg-white p-3 rounded-2xl rounded-tl-none border border-gray-100 text-sm shadow-sm text-gray-700 max-w-[85%]">
+                สวัสดีครับ! 🥗 วันนี้อยากลองแปรรูปอะไรดีครับ?
+            </div>
+        </div>
+    </div>
+    <div id="thinking-indicator" class="hidden px-4 pb-2 bg-slate-50 text-xs text-gray-400 flex items-center gap-2">
+        <span class="flex h-2 w-2 relative">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
+        </span>
+        กำลังคิดสูตร...
+    </div>
+    <div class="p-3 bg-white border-t border-gray-100 pb-6 sm:pb-3">
+      <div class="flex gap-2 items-end">
+        <textarea id="user-input" rows="1" placeholder="พิมพ์คำถาม..." 
+               class="flex-1 bg-gray-100 text-gray-700 border-0 rounded-2xl px-4 py-3 focus:ring-2 focus:ring-orange-400 outline-none transition text-sm resize-none overflow-hidden" style="min-height:44px; max-height:100px;"></textarea>
+        <button id="send-btn" class="bg-orange-500 hover:bg-orange-600 text-white rounded-full w-11 h-11 flex items-center justify-center shadow-lg shadow-orange-200 transition mb-0.5 transform active:scale-90 shrink-0">
+          <i class="fa-solid fa-paper-plane text-sm"></i>
         </button>
       </div>
-    </footer>
+    </div>
   </div>
 </div>
 
 <script>
-/* =========================
-   1. ส่วนจัดการรายการอาหาร (List Logic)
-   ========================= */
-const BASE_URL = "https://sites.google.com/view/panrobtang";
+/* ================= 1. DATABASE ================= */
+const foodCategories = {
+    "🥩 แปรรูปเนื้อสัตว์": [ "เนื้อเค็ม", "เนื้อสวรรค์", "เนื้อแผ่น", "เนื้อหยอง", "ไก่หยอง", "หมูหยอง", "แหนม", "ไส้กรอกเปรี้ยว", "กุนเชียง", "ปลาหวาน", "ปลายอ" ],
+    "🌶️ เครื่องปรุง & น้ำพริก": [ "น้ำพริกนรก", "น้ำพริกเผา", "ซอสพริก", "ซอสมะเขือเทศ", "น้ำปลา", "ปลาร้า", "ปลาเจ่า" ],
+    "🥬 ผัก & ผลไม้ดอง": [ "ขิงดอง", "ผักดองผสม", "มะหนาวดองเค็ม", "มะม่วงดอง", "เห็ดฟางดองสามรส", "ตั้งฉ่าย" ],
+    "🍌 ขนม & ของว่าง": [ "ข้าวเกรียบฟักทอง", "ข้าวเกรียบกุ้ง", "กล้วยอบเนย", "กล้วยฉาบ", "ขนุนทอดกรอบ", "มะขามแก้ว", "สัปปะรดกวน", "เผือกกวน", "ถั่วเคลือบโอวัลติน", "เยลลี่เห็ด" ],
+    "🥤 เครื่องดื่ม & แป้ง": [ "ไวน์สัปปะรด", "ไวน์กระเจี๊ยบ", "แป้งเชื้อข้าวหมาก", "น้ำเต้าหู้", "เต้าฮวย", "น้ำมะขามเปียก" ]
+};
 
-const items = [
-  "ข้าวเกรียบฟักทอง","ข้าวเกรียบกุ้ง","เนื้อเค็ม","เนื้อสวรรค์","เนื้อแผ่น","น้ำพริกนรก","น้ำพริกเผามันเทศเพิ่มเติม",
-  "น้ำพริกเผากากถั่วเหลือง","ซอสพริก","ซอสมะเขือเทศ","เนื้อหยอง","ไก่หยอง","หมูหยอง","แหนม","ไส้กรอกเปี้ยว","กุนเชียง",
-  "ไข่เค็ม","ไข่เค็มพรอก","น้ำปลา","ปลาร้า","ปลาเจ่า","ปลาจ่อมหรือปลาส้ม","ขิงดอง","ผักดองผสม","มะหนาวดองเค็ม",
-  "มะหนาวดองหวาน","ผักกาดเขียวปลีดองเปรี๊ยว","หน่อไม้อัดขวด","มะม่วงดอง","เห็ดฟางดองสามรส","ตั้งฉ่าย","ตั้งฉ่ายมะละกอ",
-  "น้ำส้มสายชู","น้ำส้มสายชูจากน้ำมะพร้าว","น้ำส้มสายชูจากกากสัปปะรด","ไวน์สัปปะรด","ไวน์กระเจี๊ยบ","ไวน์องุ่น",
-  "แป้งเชื้อข้าวหมาก","มะขามแก้ว","สัปปะรดกวน","มะเขือเทศเชื่อมแห้ง","เผือกหรือมันกวน","มะละกอสุกกวน","ถั่วเคลือบโอวัลติน",
-  "มะม่วงสายรุ้ง","แยมสัปปะรด","แย้มมะละกอดิบ","แยมส้มเขียวหวาน","น้ำเต้าหู้","ฟองเต้าหู้","เต้าหู้แข็ง","เต้าฮวย",
-  "ข้าวตูจากกากถั่วเหลือง","กากถั่วเหลืองกวน","น้ำมะขามเปียก","น้ำมะยม","น้ำกระเจี๊ยบ","น้ำมะเขือเทศ","น้ำพุทรา","น้ำมะตูม",
-  "ปลาหวาน","ปลายอ","ปลาบดชุปขนมปังป่น","น้ำพริกเผาเห็ด","เห็ดสวรรค์","เยลลี่เห็ดหูหนู","ข้าวเกรียบเห็ด",
-  "กล้วยอบเนย","กล้วยสมุนไพร","กล้วยฉาบ","ขนุนทอดกรอบ"
-];
+const recipeDB = {
+    "กล้วยฉาบ": { steps: ["1. ปอกเปลือกกล้วย แช่น้ำผสมน้ำมะนาว (กันดำ)", "2. ฝานกล้วยเป็นแผ่นบางตามยาว", "3. ทอดไฟกลางจนเหลืองกรอบ", "4. คลุกน้ำเชื่อมและเนย พักให้เย็นเก็บใส่ถุง"], ingredients: [{name: "กล้วยน้ำว้าดิบ", price: "15 บ./หวี"}, {name: "น้ำตาลทราย", price: "24 บ./kg"}, {name: "น้ำมันพืช", price: "48 บ./ลิตร"}, {name: "เนย/มาการีน", price: "35 บ./ถุง"}] },
+    "แหนม": { steps: ["1. บดเนื้อหมูและหนังหมูให้ละเอียด", "2. ผสมกระเทียม เกลือ ข้าวเหนียวสุก นวดให้เข้ากัน", "3. ใส่ดินประสิวเล็กน้อย (ถ้าใช้)", "4. ห่อด้วยใบตองหรือถุงพลาสติก มัดให้แน่น", "5. ทิ้งไว้ 2-3 วันจนมีรสเปรี้ยว"], ingredients: [{name: "เนื้อหมูบด", price: "140 บ./kg"}, {name: "หนังหมู", price: "60 บ./kg"}, {name: "กระเทียม", price: "80 บ./kg"}, {name: "เกลือ", price: "12 บ./ห่อ"}] },
+    "มะม่วงดอง": { steps: ["1. ปอกเปลือกมะม่วง ล้างยางให้สะอาด", "2. เรียงใส่โหลแก้วหรือถังหมัก", "3. ต้มน้ำเกลือ (เกลือ 1 ส่วน น้ำ 10 ส่วน) พักให้เย็น", "4. เทน้ำเกลือใส่จนท่วม กดให้จม", "5. ดองไว้ 15-30 วัน"], ingredients: [{name: "มะม่วงแก้วดิบ", price: "10-20 บ./kg"}, {name: "เกลือแกง", price: "12 บ./ห่อ"}, {name: "โหล/ถัง", price: "40-100 บ."}] }
+};
 
-const REMOVE_MARKS = /[\u0E31\u0E34-\u0E37\u0E38-\u0E39\u0E47\u0E4C\u0E48-\u0E4B]/g;
-function toSiteSlug(thaiName){
-  return thaiName.normalize('NFC')
-    .replace(REMOVE_MARKS,'')
-    .replace(/\s+/g,'');
+const seasonalData = { 0: ["มะขาม", "สตรอว์เบอร์รี"], 1: ["องุ่น", "กล้วยหอม"], 2: ["มะยงชิด", "มะม่วงดิบ"], 3: ["มะม่วงสุก", "ทุเรียน"], 4: ["เงาะ", "สละ"], 5: ["มังคุด", "หน่อไม้"], 6: ["ลำไย", "ข้าวโพด"], 7: ["ส้มโอ", "ลองกอง"], 8: ["ส้มเขียวหวาน", "ฝรั่ง"], 9: ["กระเจี๊ยบแดง", "มะขามป้อม"], 10: ["เผือก", "มันเทศ"], 11: ["พุทรา", "ผักกาดเขียว"] };
+const monthNames = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
+
+/* ================= 2. CORE LOGIC ================= */
+function initApp() {
+    renderCategories();
+    updateDate();
 }
 
-const grid = document.getElementById('grid');
-const searchInput = document.getElementById('searchInput');
-
-function render(list = items) {
-  if (list.length === 0) {
-    grid.innerHTML = `<p class="hint" style="text-align:center; grid-column:1/-1;">ไม่พบเมนูที่ค้นหา</p>`;
-    return;
-  }
-  grid.innerHTML = list.map((name, i) => {
-    // หา index ดั้งเดิมเพื่อแสดงลำดับที่ถูกต้อง
-    const originalIndex = items.indexOf(name) + 1;
-    // สร้างเลขให้เป็น 3 หลัก (001) เพื่อความสวยงามแบบโรงงาน
-    const formattedIndex = String(originalIndex).padStart(3, '0');
-    return `
-      <button class="item" data-name="${name}">
-        <span class="num">${formattedIndex}</span>
-        <span class="item-name">${name}</span>
-      </button>
-    `;
-  }).join('');
+function updateDate() {
+    const d = new Date();
+    // Optimized date string creation
+    document.getElementById('price-update-date').innerHTML = `<i class="fa-regular fa-clock mr-1"></i>อัปเดต: ${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()+543} ${d.getHours()}:${d.getMinutes().toString().padStart(2,'0')}`;
 }
 
-function applySearch() {
-  const searchTerm = searchInput.value.trim().toLowerCase();
-  if (!searchTerm) {
-    render(items);
-    return;
-  }
-  const filteredItems = items.filter(item => 
-    item.toLowerCase().includes(searchTerm)
-  );
-  render(filteredItems);
+function getRecipeData(name, categoryKey) {
+    if (recipeDB[name]) return recipeDB[name];
+    // Fallback data generation
+    let steps = [], ingredients = [];
+    if (categoryKey.includes("เนื้อสัตว์")) {
+        steps = ["1. เตรียมเนื้อสัตว์ ล้างให้สะอาด หั่นตามต้องการ", "2. หมักด้วยเกลือ น้ำตาล เครื่องเทศ 1-2 ชม.", "3. นำไปตากแดดหรืออบแห้งจนได้ที่", "4. นำไปทอดหรือย่างให้สุกก่อนบรรจุ"];
+        ingredients = [{name: "เนื้อสัตว์หลัก", price: "150 บ./kg"}, {name: "เครื่องปรุงรส", price: "30 บ./ชุด"}, {name: "แพ็คเกจ", price: "2 บ./ใบ"}];
+    } else if (categoryKey.includes("ดอง")) {
+        steps = ["1. ล้างวัตถุดิบและปอกเปลือก", "2. เคล้าเกลือเพื่อไล่น้ำออก พักไว้ 1 คืน", "3. ต้มน้ำเชื่อม/น้ำดอง พักให้เย็น", "4. เทใส่ภาชนะ ปิดฝาให้สนิท ดองไว้ 7-14 วัน"];
+        ingredients = [{name: "ผัก/ผลไม้สด", price: "20 บ./kg"}, {name: "น้ำตาล/เกลือ", price: "20 บ./kg"}, {name: "โหลแก้ว", price: "45 บ."}];
+    } else if (categoryKey.includes("ขนม")) {
+        steps = ["1. เตรียมแป้งหรือวัตถุดิบหลัก", "2. ผสมส่วนผสมทั้งหมด นวดให้เข้ากัน", "3. ขึ้นรูปหรือนำไปทอด/อบ", "4. พักให้เย็นสนิท เก็บใส่ภาชนะปิดมิดชิด"];
+        ingredients = [{name: "แป้ง/ธัญพืช", price: "35 บ./kg"}, {name: "น้ำตาล/กะทิ", price: "40 บ./ชุด"}, {name: "แก๊ส", price: "10 บ."}];
+    } else {
+        steps = ["1. เตรียมวัตถุดิบหลัก ล้างทำความสะอาด", "2. ปรุงรสตามสูตรมาตรฐาน", "3. ผ่านกระบวนการความร้อน (ต้ม/นึ่ง/ทอด)", "4. บรรจุใส่ภาชนะขณะร้อนหรือเย็นตามชนิด"];
+        ingredients = [{name: "วัตถุดิบหลัก", price: "50 บ./kg"}, {name: "เครื่องปรุง", price: "15 บ."}, {name: "บรรจุภัณฑ์", price: "3 บ."}];
+    }
+    return { steps, ingredients };
 }
 
-searchInput.addEventListener('input', applySearch);
+function openRecipeModal(name) {
+    let category = "ทั่วไป";
+    for (const [cat, items] of Object.entries(foodCategories)) {
+        if (items.includes(name)) { category = cat; break; }
+    }
+    const data = getRecipeData(name, category);
+    document.getElementById('recipe-title').innerText = name;
+    document.getElementById('recipe-category').innerText = category;
+    document.getElementById('recipe-steps').innerHTML = data.steps.map(s => `<li>${s}</li>`).join('');
+    renderIngredientsTable(data.ingredients);
+    
+    // Reset Calculator
+    document.getElementById('calc-total-input').value = '';
+    document.getElementById('calc-units').value = '';
+    document.getElementById('cost-per-unit').innerText = '0.00';
+    openModal('recipe-modal');
+}
 
-grid.addEventListener('click', e => {
-  const btn = e.target.closest('.item'); 
-  if (!btn) return;
-  const name = btn.dataset.name;
-  const slug = toSiteSlug(name);
-  const url  = `${BASE_URL}/${slug}`;
-  window.open(url, '_blank');
-});
+function renderIngredientsTable(ingredients) {
+    let total = 0;
+    const html = ingredients.map((ing) => {
+        const match = ing.price.match(/(\d+(\.\d+)?)/);
+        const val = match ? parseFloat(match[0]) : 0;
+        total += val;
+        return `<tr><td class="px-3 py-2 text-gray-600">${ing.name}</td><td class="px-3 py-2 text-right font-medium text-gray-800 price-cell" data-original="${val}" data-suffix="${ing.price.replace(match[0], '')}">${ing.price}</td></tr>`;
+    }).join('');
+    document.getElementById('recipe-ingredients').innerHTML = html;
+    document.getElementById('ingredients-total-cost').innerText = `~${Math.ceil(total)} บาท`;
+}
 
-// Initial render
-render();
+function updateMarketPricesAI() {
+    const btnIcon = document.querySelector('#ai-update-btn i');
+    if(btnIcon.classList.contains('fa-spin')) return; // Prevent double click
 
+    btnIcon.classList.add('fa-spin');
+    updateDate();
+    
+    // Optimize: Batch DOM updates handled by browser, but we minimize reflows by calculating first
+    const cells = document.querySelectorAll('.price-cell');
+    let newTotal = 0;
+    
+    cells.forEach(cell => {
+        const originalVal = parseFloat(cell.dataset.original);
+        const fluctuation = (Math.random() * 0.25) - 0.10;
+        const newVal = Math.ceil(originalVal * (1 + fluctuation));
+        cell.innerText = `${newVal}${cell.dataset.suffix}`;
+        newTotal += newVal;
+        cell.classList.add('text-green-600');
+    });
+    
+    document.getElementById('ingredients-total-cost').innerText = `~${newTotal} บาท`;
+    setTimeout(() => {
+        btnIcon.classList.remove('fa-spin');
+        cells.forEach(cell => cell.classList.remove('text-green-600'));
+    }, 600);
+}
 
-/* =========================================
-   2. ส่วน Chatbot AI (Backend)
-   ========================================= */
+function liveCalculate() {
+    const total = parseFloat(document.getElementById('calc-total-input').value) || 0;
+    const units = parseFloat(document.getElementById('calc-units').value) || 1;
+    const perUnit = units > 0 ? (total / units) : 0;
+    document.getElementById('cost-per-unit').innerText = perUnit.toFixed(2);
+}
+
+/* ================= 3. RENDER UI ================= */
+function renderCategories(filterText = "") {
+    const container = document.getElementById('category-container');
+    container.innerHTML = "";
+    let html = "";
+    let hasResult = false;
+
+    for (const [category, items] of Object.entries(foodCategories)) {
+        const filteredItems = items.filter(item => item.includes(filterText));
+        if (filteredItems.length > 0) {
+            hasResult = true;
+            const isOpen = filterText || category.includes("เนื้อสัตว์") ? "open" : "";
+            const itemsHtml = filteredItems.map(item => `
+                <div class="food-card p-3 flex flex-col gap-2 items-center text-center cursor-pointer hover:border-orange-300 group select-none" onclick="openRecipeModal('${item}')">
+                    <div class="w-10 h-10 rounded-full bg-orange-50 text-orange-500 flex items-center justify-center group-active:scale-90 transition">
+                        <i class="fa-solid fa-utensils text-sm"></i>
+                    </div>
+                    <span class="text-sm font-medium text-gray-600 line-clamp-2 leading-tight">${item}</span>
+                </div>
+            `).join('');
+
+            html += `
+                <details class="group bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden" ${isOpen}>
+                    <summary class="px-5 py-4 flex justify-between items-center font-bold text-gray-700 bg-gray-50/50 hover:bg-gray-100 transition select-none">
+                        <span class="flex items-center gap-2 text-base">${category} <span class="bg-white px-2 py-0.5 rounded-full text-xs border text-gray-400 font-normal">${filteredItems.length}</span></span>
+                        <i class="fa-solid fa-chevron-down text-gray-400 chevron text-sm"></i>
+                    </summary>
+                    <div class="p-4 grid grid-cols-2 md:grid-cols-3 gap-3 bg-white">${itemsHtml}</div>
+                </details>`;
+        }
+    }
+    
+    if (!hasResult) html = `<div class="text-center py-10 text-gray-400"><i class="fa-solid fa-box-open text-4xl mb-2 opacity-50"></i><br>ไม่พบเมนูที่ค้นหา</div>`;
+    container.innerHTML = html;
+}
+
+document.getElementById('searchInput').addEventListener('input', (e) => renderCategories(e.target.value.trim()));
+
+/* ================= 4. UTILS ================= */
+function openModal(id) {
+    document.getElementById(id).classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+    if(id === 'calendar-modal') initCalendar();
+}
+function closeModal(id) {
+    document.getElementById(id).classList.add('hidden');
+    document.body.style.overflow = '';
+}
+function initCalendar() {
+    const d = new Date();
+    const monthIdx = d.getMonth();
+    document.getElementById('calendar-month-display').innerText = monthNames[monthIdx];
+    const items = seasonalData[monthIdx] || ["ผักตามฤดูกาล", "ผลไม้ท้องถิ่น"];
+    const html = items.map(item => `<div class="bg-blue-50 text-blue-800 px-3 py-2 rounded-lg text-center font-bold text-sm border border-blue-100">${item}</div>`).join('');
+    document.getElementById('seasonal-items').innerHTML = html;
+}
+
+// Ensure DOM is ready (Stability)
+document.addEventListener('DOMContentLoaded', initApp);
+
+/* ================= 5. CHATBOT ================= */
 const BACKEND_URL = 'https://us-central1-law-ai-14740.cloudfunctions.net/api/chat';
+let chatHistory = [];
+const SYSTEM_PROMPT = { role: "user", parts: [{ text: "System Instruction: คุณคือ 'น้องแปรรูป' AI ผู้ช่วยด้านการถนอมอาหาร ร่าเริง สุภาพ ตอบสั้นกระชับ เน้นสูตรทำกินทำขาย" }] };
 
-// System Prompt: ผู้เชี่ยวชาญการแปรรูปอาหาร
-const SYSTEM_PROMPT = {
-    role: "user",
-    parts: [{ text: "System Instruction: คุณคือ AI ผู้เชี่ยวชาญด้าน 'การแปรรูปอาหารและการถนอมอาหาร' (Food Processing Expert) มีหน้าที่ให้คำแนะนำเกี่ยวกับสูตรอาหารแปรรูป, เทคนิคการถนอมอาหาร (ดอง, กวน, ตากแห้ง, แช่อิ่ม), การเลือกวัตถุดิบ, สุขอนามัยในการผลิต และบรรจุภัณฑ์ ตอบด้วยภาษาที่สุภาพ เป็นลำดับขั้นตอน เข้าใจง่าย" }]
-};
-const SYSTEM_ACK = {
-    role: "model",
-    parts: [{ text: "รับทราบครับ ผมพร้อมให้คำแนะนำด้านการแปรรูปอาหารแล้วครับ" }]
-};
-
-let chatHistory = [SYSTEM_PROMPT, SYSTEM_ACK];
-
-const chatHistoryEl = document.getElementById('chat-history');
+const fab = document.getElementById('fab-chat-toggle');
+const chatModal = document.getElementById('chatbot-modal');
+const chatBackdrop = document.getElementById('chat-backdrop');
+const chatCard = document.getElementById('chat-card');
+const chatClose = document.getElementById('chatbot-close-btn');
+const chatList = document.getElementById('chat-history');
 const userInput = document.getElementById('user-input');
 const sendBtn = document.getElementById('send-btn');
-const newChatBtn = document.getElementById('new-chat-btn');
-const thinkingIndicator = document.getElementById('thinking-indicator');
+const thinking = document.getElementById('thinking-indicator');
 
-function addChatBubble(message, isUser = true) {
-    const bubbleType = isUser ? 'user' : 'model';
-    const icon = isUser ? '👤' : '🤖';
-    const bgClass = isUser ? 'bg-[#f59e0b] text-[#1f2937] font-semibold' : 'bg-white text-gray-800 border border-gray-200';
-    
-    const wrap = document.createElement('div');
-    wrap.className = `flex items-start space-x-2 ${isUser ? 'flex-row-reverse space-x-reverse' : ''}`;
-    
-    const bubble = document.createElement('div');
-    bubble.className = `chat-bubble chat-bubble-${bubbleType} ${bgClass} p-3 rounded-lg max-w-lg relative shadow-sm`;
-    bubble.innerHTML = `<p>${message.replace(/\n/g, '<br>')}</p>`;
-    
-    wrap.innerHTML = `<span class="text-2xl">${icon}</span>`;
-    wrap.appendChild(bubble);
-    
-    chatHistoryEl.appendChild(wrap);
-    chatHistoryEl.scrollTop = chatHistoryEl.scrollHeight;
+fab.addEventListener('click', () => {
+    chatModal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+    requestAnimationFrame(() => { chatBackdrop.classList.remove('opacity-0'); chatCard.classList.remove('translate-y-full'); });
+    fab.classList.add('scale-0');
+    if(chatHistory.length === 0) chatHistory = [SYSTEM_PROMPT];
+});
+
+function closeChat() {
+    chatBackdrop.classList.add('opacity-0'); chatCard.classList.add('translate-y-full');
+    setTimeout(() => { chatModal.classList.add('hidden'); document.body.style.overflow = ''; }, 300);
+    fab.classList.remove('scale-0');
+}
+chatClose.addEventListener('click', closeChat);
+chatBackdrop.addEventListener('click', closeChat);
+
+function appendMsg(text, sender) {
+    const isUser = sender === 'user';
+    const div = document.createElement('div');
+    div.className = `flex items-start gap-2 ${isUser ? 'flex-row-reverse' : ''} mb-2 fade-in`;
+    div.innerHTML = `<div class="w-8 h-8 rounded-full flex items-center justify-center text-sm border ${isUser ? 'bg-gray-200' : 'bg-orange-100 border-orange-200'} shrink-0">${isUser ? '👤' : '🤖'}</div><div class="${isUser ? 'bg-orange-500 text-white' : 'bg-white border border-gray-100 text-gray-700'} p-3 rounded-2xl ${isUser ? 'rounded-tr-none' : 'rounded-tl-none'} text-sm shadow-sm max-w-[85%] leading-relaxed">${text.replace(/\n/g, '<br>')}</div>`;
+    chatList.appendChild(div);
+    chatList.scrollTop = chatList.scrollHeight;
 }
 
-function addChatError(message) {
-    const w = document.createElement('div');
-    w.className = 'flex justify-center my-2';
-    w.innerHTML = `<span class="bg-red-100 text-red-700 text-xs font-semibold px-3 py-1 rounded-full">${message}</span>`;
-    chatHistoryEl.appendChild(w);
-    chatHistoryEl.scrollTop = chatHistoryEl.scrollHeight;
-}
-
-function setThinking(on) {
-    thinkingIndicator.classList.toggle('hidden', !on);
-    if (on) chatHistoryEl.scrollTop = chatHistoryEl.scrollHeight;
-}
-
-async function handleSend() {
-    const message = (userInput.value || '').trim();
-    if (!message) return;
-
-    addChatBubble(message, true);
-    userInput.value = '';
-    setThinking(true);
-    sendBtn.disabled = true;
-
-    chatHistory.push({ role: "user", parts: [{ text: message }] });
+async function sendMessage() {
+    const text = userInput.value.trim();
+    if (!text) return;
+    userInput.value = ''; userInput.style.height = '44px';
+    appendMsg(text, 'user');
+    chatHistory.push({ role: "user", parts: [{ text: text }] });
+    thinking.classList.remove('hidden'); chatList.scrollTop = chatList.scrollHeight;
 
     try {
-        const response = await fetch(BACKEND_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ history: chatHistory }) 
-        });
-
-        if (!response.ok) {
-            const errData = await response.json();
-            throw new Error(errData.error || `Server error: ${response.status}`);
-        }
-
-        const data = await response.json(); 
-        const aiReply = data.reply;
-
-        chatHistory.push({ role: "model", parts: [{ text: aiReply }] });
-        setThinking(false);
-        addChatBubble(aiReply, false);
-
-    } catch (err) {
-        console.error("Fetch Error:", err);
-        setThinking(false);
-        addChatError(`เกิดข้อผิดพลาด: ${err.message}`);
-        chatHistory.pop();
-    } finally {
-        sendBtn.disabled = false;
-    }
+        const res = await fetch(BACKEND_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ history: chatHistory }) });
+        const data = await res.json();
+        const reply = data.reply || "ขออภัย ระบบขัดข้องชั่วคราว";
+        chatHistory.push({ role: "model", parts: [{ text: reply }] });
+        appendMsg(reply, 'model');
+    } catch (e) { appendMsg("เชื่อมต่อเซิร์ฟเวอร์ไม่ได้ครับ 😓", 'model'); } 
+    finally { thinking.classList.add('hidden'); }
 }
 
-sendBtn.addEventListener('click', handleSend);
-userInput.addEventListener('keydown', e => {
-    if (e.key === 'Enter') handleSend();
-});
-
-// Reset Chat
-newChatBtn.addEventListener('click', () => {
-    chatHistory = [SYSTEM_PROMPT, SYSTEM_ACK];
-    chatHistoryEl.innerHTML = `
-        <div class="flex items-start space-x-2">
-        <span class="text-2xl">🤖</span>
-        <div class="chat-bubble chat-bubble-model bg-white text-gray-800 p-3 rounded-lg max-w-lg relative border border-gray-200 shadow-sm">
-            <p>สวัสดีครับ เริ่มสนทนาเรื่องการแปรรูปอาหารใหม่ได้เลยครับ</p>
-        </div>
-        </div>`;
-    userInput.value = '';
-    setThinking(false);
-});
-
-// Modal Control
-const fabToggle = document.getElementById('fab-chat-toggle');
-const chatModal = document.getElementById('chatbot-modal');
-const chatbotCloseBtn = document.getElementById('chatbot-close-btn');
-
-fabToggle.addEventListener('click', () => {
-    chatModal.classList.remove('chatbot-hidden');
-    fabToggle.style.opacity = '0';
-});
-chatbotCloseBtn.addEventListener('click', () => {
-    chatModal.classList.add('chatbot-hidden');
-    fabToggle.style.opacity = '1';
-});
+sendBtn.addEventListener('click', sendMessage);
+userInput.addEventListener('input', function() { this.style.height = 'auto'; this.style.height = (this.scrollHeight) + 'px'; });
+document.getElementById('new-chat-btn').addEventListener('click', () => { chatList.innerHTML = `<div class="text-center text-xs text-gray-300 py-4">-- เริ่มการสนทนาใหม่ --</div>`; chatHistory = [SYSTEM_PROMPT]; });
 </script>
+
+<style>
+.fade-in { animation: fadeIn 0.3s ease-out forwards; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+</style>
 
 </body>
 </html>
