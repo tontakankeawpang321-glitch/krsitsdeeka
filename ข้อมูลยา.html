@@ -596,7 +596,34 @@ const API_URL = 'https://api.ai-tontakan.online/api/generate';
 
 const OLLAMA_MODEL = 'llama3.2:3b';
 
+async function callOllama(prompt) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 120000);
 
+  try {
+    const res = await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: OLLAMA_MODEL,
+        prompt,
+        stream: false
+      }),
+      signal: controller.signal
+    });
+
+    const text = await res.text();
+    if (!text || !text.trim().startsWith("{")) return "";
+
+    const json = JSON.parse(text);
+    return json.response || "";
+
+  } catch {
+    return "";
+  } finally {
+    clearTimeout(timeout);
+  }
+}
 // Helper Function: สร้าง Prompt String จากประวัติการแชท
 function constructPromptFromHistory(history) {
     // แปลง role ให้เป็นชื่อที่ AI เข้าใจง่ายๆ
@@ -665,56 +692,29 @@ function setThinking(on) {
 
 // --- Chat Logic (Ollama Local) ---
 async function handleSend() {
-    const message = (userInput.value || '').trim();
-    if (!message) return;
+  const message = (userInput.value || '').trim();
+  if (!message) return;
 
-    addChatBubble(message, true);
-    userInput.value = '';
-    setThinking(true);
-    
-    // FIX: เอาการหน่วงเวลาออกตามคำขอ (Method 2)
-    // sendBtn.disabled = true;
-    // setTimeout(() => sendBtn.disabled = false, 5000);
+  addChatBubble(message, true);
+  userInput.value = '';
+  setThinking(true);
 
-    chatHistory.push({ role: "user", parts: [{ text: message }] });
+  chatHistory.push({ role: "user", parts: [{ text: message }] });
 
-    // Limit History size locally before processing
-    if (chatHistory.length > 8) { 
-         // Keep system prompt + ack + last 6 messages
-         chatHistory = [chatHistory[0], chatHistory[1], ...chatHistory.slice(2).slice(-6)];
-    }
+  if (chatHistory.length > 8) {
+    chatHistory = [chatHistory[0], chatHistory[1], ...chatHistory.slice(-6)];
+  }
 
-    // Convert array history to single string prompt for Ollama /api/generate
-    const fullPrompt = constructPromptFromHistory(chatHistory);
+  const fullPrompt = constructPromptFromHistory(chatHistory);
+  const aiReply = await callOllama(fullPrompt);
 
-    try {
-        const response = await fetch(API_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-                model: OLLAMA_MODEL,
-                prompt: fullPrompt,
-                stream: false
-            }) 
-        });
+  setThinking(false);
 
-        if (!response.ok) throw new Error("การเชื่อมต่อขัดข้อง");
-        const data = await response.json();
-        
-        // FIX: แก้ไขการรับค่า response และ fallback เป็นค่าว่างตามคำขอ (Method 1)
-        const aiReply = data.response || "";
-
-        chatHistory.push({ role: "model", parts: [{ text: aiReply }] });
-        setThinking(false);
-        addChatBubble(aiReply, false);
-
-    } catch (err) {
-        setThinking(false);
-        // FIX: ไม่แสดงข้อความ error ตามคำขอ (Method 1)
-        // addChatBubble(`เกิดข้อผิดพลาด...`, false);
-    } 
+  if (aiReply) {
+    chatHistory.push({ role: "model", parts: [{ text: aiReply }] });
+    addChatBubble(aiReply, false);
+  }
 }
-
 sendBtn.addEventListener('click', handleSend);
 userInput.addEventListener('keydown', e => { if (e.key === 'Enter') handleSend(); });
 newChatBtn.addEventListener('click', () => {
@@ -806,34 +806,20 @@ submitHealthBtn.addEventListener('click', async () => {
     4. สัญญาณที่ควรไปพบแพทย์
     `;
 
-    // AI Call (Ollama Local)
-    try {
-        const response = await fetch(API_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-                model: OLLAMA_MODEL,
-                prompt: prompt, // Use the prompt string directly
-                stream: false
-            }) 
-        });
-
-        if (!response.ok) throw new Error("การเชื่อมต่อขัดข้อง");
-        const data = await response.json();
-        // Ollama returns response in 'response' field
-        const aiText = data.response || "ไม่สามารถวิเคราะห์ได้ในขณะนี้";
-
-        // Display Result using Marked (Markdown Parser)
-        resultContentArea.innerHTML = marked.parse(aiText);
-
+    
+      try {
+        const aiText = await callOllama(prompt);
+        resultContentArea.innerHTML = marked.parse(
+          aiText || "ไม่สามารถวิเคราะห์ได้ในขณะนี้"
+        );
     } catch (err) {
         resultContentArea.innerHTML = `
-            <div class="text-center text-red-600 py-10">
-                <p class="text-xl font-bold">เกิดข้อผิดพลาด</p>
-                <p>${err.message}</p>
-                <p class="text-sm mt-2 text-gray-500">ตรวจสอบว่าเปิด Ollama (llama3.2:3b) แล้วหรือยัง</p>
-                <button onclick="toggleResultModal(false)" class="mt-4 text-sm underline text-gray-500">ปิด</button>
-            </div>`;
+          <div class="text-center text-red-600 py-10">
+            <p class="text-xl font-bold">เกิดข้อผิดพลาด</p>
+            <p>${err.message}</p>
+            <button onclick="toggleResultModal(false)"
+              class="mt-4 text-sm underline text-gray-500">ปิด</button>
+          </div>`;
     }
 });
 
