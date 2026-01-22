@@ -2,260 +2,445 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Crow Studio - Classic Edition</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Military Lexicon | พจนานุกรมศัพท์ทหาร</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,700;1,400&family=Anuphan:wght@300;500&display=swap" rel="stylesheet">
+    <!-- Google Fonts: Saira Stencil One for headers, Sarabun for body -->
+    <link href="https://fonts.googleapis.com/css2?family=Saira+Stencil+One&family=Sarabun:wght@300;400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <style>
         :root {
-            --ink: #1e293b;
-            --paper: #f4f1ea;
-            --border: #d1cfc7;
+            --primary-color: #15803d; /* Tactical Green (Darker for Light Mode) */
+            --bg-color: #f3f4f6;      /* Light Gray Background */
+            --panel-bg: #ffffff;
+            --border-color: #d1d5db;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
         }
+
         body {
-            font-family: 'Lora', 'Anuphan', serif;
-            background-color: var(--paper);
-            color: var(--ink);
-            background-image: url('https://www.transparenttextures.com/patterns/natural-paper.png');
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Sarabun', sans-serif;
+            /* Lighter pattern overlay */
+            background-image: 
+                linear-gradient(rgba(243, 244, 246, 0.92), rgba(243, 244, 246, 0.96)),
+                url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
             overflow-x: hidden;
         }
-        /* Classic Header Line */
-        .header-line {
-            height: 1px;
-            background: linear-gradient(to right, transparent, var(--ink), transparent);
-            margin: 1.5rem 0;
-            opacity: 0.3;
+
+        .font-stencil {
+            font-family: 'Saira Stencil One', cursive;
         }
-        /* Stamp Button - Classic Style */
-        .stamp-btn {
-            position: relative;
-            background: transparent;
-            border-radius: 50%;
-            aspect-ratio: 1/1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 2px solid var(--ink);
-            overflow: hidden; /* ตัดรูปส่วนเกินออกให้เป็นวงกลม */
-            transition: all 0.2s ease;
-            cursor: pointer;
-            box-shadow: 0 0 0 4px transparent;
+        
+        .font-mono {
+            font-family: 'JetBrains Mono', monospace;
         }
-        .stamp-btn::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border: 4px solid var(--paper); /* ขอบด้านในเพื่อให้ดูเหมือนตราปั๊มมีระยะห่างเล็กน้อย */
-            border-radius: 50%;
+
+        /* Scanline Effect (Subtle for Light Mode) */
+        .scanline {
+            width: 100%;
+            height: 100px;
             z-index: 10;
+            background: linear-gradient(0deg, rgba(255,255,255,0) 0%, rgba(0, 0, 0, 0.03) 50%, rgba(255,255,255,0) 100%);
+            opacity: 0.5;
+            position: fixed;
+            bottom: 100%;
+            left: 0;
+            animation: scanline 8s linear infinite;
             pointer-events: none;
         }
-        /* Pressing Effect Like a Real Stamp */
-        .stamp-btn:active {
-            transform: scale(0.92);
-            filter: contrast(1.4) brightness(0.8);
+
+        @keyframes scanline {
+            0% { bottom: 100%; }
+            100% { bottom: -100px; }
         }
-        .stamp-btn:hover {
-            border-width: 3px;
-            box-shadow: 0 8px 16px rgba(30, 41, 59, 0.15);
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
         }
-        .stamp-btn img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover; /* ปรับให้ภาพเต็มวงกลม */
-            filter: sepia(0.2) contrast(1.1) grayscale(0.2);
-            mix-blend-mode: multiply;
+        ::-webkit-scrollbar-track {
+            background: #e5e7eb; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #9ca3af; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-color); 
+        }
+
+        /* Tactical Borders */
+        .tactical-border {
+            border: 1px solid var(--border-color);
+            position: relative;
+            background-color: white;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        .tactical-border::before, .tactical-border::after {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
             transition: all 0.3s ease;
         }
-        .stamp-btn:hover img {
-            filter: sepia(0) contrast(1.2) grayscale(0);
-            transform: scale(1.1);
+        .tactical-border::before { top: -1px; left: -1px; border-top: 2px solid var(--primary-color); border-left: 2px solid var(--primary-color); }
+        .tactical-border::after { bottom: -1px; right: -1px; border-bottom: 2px solid var(--primary-color); border-right: 2px solid var(--primary-color); }
+        
+        .tactical-border:hover {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
-        /* Chatbot Classic UI */
-        .glass-panel {
-            background: rgba(244, 241, 234, 0.98);
-            border: 1px solid var(--ink);
-            box-shadow: 8px 8px 0px rgba(30, 41, 59, 0.1);
+        .tactical-border:hover::before, .tactical-border:hover::after {
+            width: 100%;
+            height: 100%;
+            opacity: 0.2;
+            background-color: rgba(21, 128, 61, 0.05);
         }
-        .chat-input {
-            border: 1px solid var(--ink);
-            background: transparent;
+
+        /* Glitch Text Hover (Adapted for Light) */
+        .glitch-hover:hover {
+            text-shadow: 1px 0 var(--primary-color), -1px 0 rgba(255, 0, 0, 0.5);
         }
-        /* Responsive Grid Fix */
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 2rem;
-        }
-        @media (min-width: 640px) {
-            .grid-container { grid-template-columns: repeat(3, 1fr); }
-        }
-        @media (min-width: 1024px) {
-            .grid-container { grid-template-columns: repeat(4, 1fr); }
-        }
-        /* Fade-in for classic feel */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .fade-entry { animation: fadeIn 0.8s ease forwards; }
     </style>
 </head>
-<body class="min-h-screen px-6 py-12 md:py-20">
+<body class="min-h-screen flex flex-col">
 
-    <div class="max-w-4xl mx-auto">
-        <!-- Brand Header -->
-        <header class="text-center mb-16 fade-entry">
-            <h2 class="text-xs uppercase tracking-[0.5em] mb-4 opacity-60 font-bold text-slate-500">Est. 2025</h2>
-            <h1 class="text-5xl md:text-7xl font-bold mb-2 tracking-tight italic">Crow Studio</h1>
-            <div class="header-line"></div>
-            <p class="text-sm md:text-lg italic opacity-70">
-                A Library of Endless Languages
-            </p>
-        </header>
+    <div class="scanline"></div>
 
-        <!-- Classic Grid Area -->
-        <section class="grid-container mb-24">
-            <script>
-                const languages = [
-                    { id: 'us', name: 'USA', url: 'https://sites.google.com/view/pasa30one/%E0%B8%AD%E0%B9%80%E0%B8%A1%E0%B8%A3%E0%B8%81%E0%B8%B2-us' },
-                    { id: 'gb', name: 'Britain', url: 'https://sites.google.com/view/pasa30one/%E0%B8%A0%E0%B8%B2%E0%B8%A9%E0%B8%B2%E0%B8%AD%E0%B8%87%E0%B8%81%E0%B8%A4%E0%B8%A9-uk' },
-                    { id: 'cn', name: 'China', url: 'https://sites.google.com/view/pasa30one/%E0%B8%A0%E0%B8%B2%E0%B8%A9%E0%B8%B2%E0%B8%88%E0%B8%99-ch' },
-                    { id: 'mm', name: 'Myanmar', url: 'https://sites.google.com/view/pasa30one/%E0%B8%9E%E0%B8%A1%E0%B8%B2-ma' },
-                    { id: 'jp', name: 'Japan', url: 'https://sites.google.com/view/pasa30one/%E0%B8%A0%E0%B8%B2%E0%B8%A9%E0%B8%B2%E0%B8%8D%E0%B8%9B%E0%B8%99-jp' },
-                    { id: 'kr', name: 'Korea', url: 'https://sites.google.com/view/pasa30one/%E0%B8%A0%E0%B8%B2%E0%B8%A9%E0%B8%B2%E0%B9%80%E0%B8%A1%E0%B8%A3%E0%B8%81%E0%B8%B2-us' },
-                    { id: 'kh', name: 'Cambodia', url: 'https://sites.google.com/view/pasa30one/%E0%B8%81%E0%B8%A1%E0%B8%9E%E0%B8%8A%E0%B8%B2-kom' },
-                    { id: 'vn', name: 'Vietnam', url: 'https://sites.google.com/view/pasa30one/%E0%B8%A0%E0%B8%B2%E0%B8%A9%E0%B8%B2%E0%B9%80%E0%B8%A7%E0%B8%A2%E0%B8%94%E0%B8%99%E0%B8%B2%E0%B8%A1-vein' },
-                    { id: 'ru', name: 'Russia', url: 'https://sites.google.com/view/pasa30one/%E0%B8%A0%E0%B8%B2%E0%B8%A9%E0%B8%B2%E0%B8%A3%E0%B8%AA%E0%B9%80%E0%B8%8B%E0%B8%A2-rus' },
-                    { id: 'de', name: 'Germany', url: 'https://sites.google.com/view/pasa30one/%E0%B8%A0%E0%B8%B2%E0%B8%A9%E0%B8%B2%E0%B9%80%E0%B8%A2%E0%B8%AD%E0%B8%A3%E0%B8%A1%E0%B8%99-ge' },
-                    { id: 'es', name: 'Spain', url: 'https://sites.google.com/view/pasa30one/%E0%B8%A0%E0%B8%B2%E0%B8%A9%E0%B8%B2%E0%B8%AA%E0%B9%80%E0%B8%9B%E0%B8%99-sp' }
-                ];
-                
-                document.write(languages.map((lang) => `
-                    <div class="flex flex-col items-center space-y-4 fade-entry">
-                        <a href="${lang.url}" target="_blank" class="stamp-btn w-full max-w-[120px]">
-                            <img src="https://flagcdn.com/w160/${lang.id}.png" alt="${lang.name}">
-                        </a>
-                        <span class="text-[10px] font-bold tracking-[0.2em] uppercase opacity-50">${lang.name}</span>
-                    </div>
-                `).join(''));
-            </script>
-        </section>
-
-        <!-- Footer -->
-        <footer class="text-center py-12 opacity-40 border-t border-slate-300">
-            <p class="text-[10px] uppercase tracking-[0.3em]">
-                &copy; 2025 Crow Studio &bull; Archive Reference &bull; FreeToLearn
-            </p>
-        </footer>
-    </div>
-
-    <!-- Classic Chat Interface -->
-    <div id="chat-widget" class="fixed bottom-8 right-8 z-50 flex flex-col items-end">
-        <div id="chat-box" class="hidden w-[calc(100vw-4rem)] sm:w-[320px] h-[450px] mb-6 rounded-lg overflow-hidden glass-panel flex flex-col shadow-2xl">
-            <div class="p-4 border-b border-slate-300 flex items-center justify-between bg-slate-100/50">
-                <span class="text-xs font-bold tracking-tighter uppercase italic">Librarian Assistant</span>
-                <button onclick="toggleChat()" class="text-lg leading-none hover:opacity-50">×</button>
-            </div>
-            
-            <div id="chat-window" class="flex-1 p-6 overflow-y-auto space-y-4 text-sm italic leading-relaxed bg-white/30">
-                <div class="text-slate-500">
-                    "ยินดีต้อนรับสู่หอจดหมายเหตุ Crow Studio มีข้อมูลส่วนไหนที่คุณต้องการให้ผมค้นหาให้เป็นพิเศษไหมครับ?"
+    <!-- Header -->
+    <header class="w-full border-b border-gray-300 bg-white/90 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <i class="fa-solid fa-person-military-pointing text-green-700 text-3xl"></i>
+                <div>
+                    <h1 class="text-3xl font-stencil text-green-800 tracking-wider">MILITARY LEXICON</h1>
+                    <p class="text-xs text-gray-500 font-mono tracking-widest">TACTICAL VOCABULARY DATABASE</p>
                 </div>
             </div>
-
-            <div class="p-4 border-t border-slate-200">
-                <div class="flex items-center space-x-2">
-                    <input type="text" id="user-input" placeholder="เขียนข้อความ..." class="chat-input flex-1 outline-none text-xs px-3 py-2 rounded border-slate-300">
-                    <button id="send-btn" class="font-bold text-xs hover:underline uppercase text-slate-800">ส่ง</button>
+            
+            <!-- Search Bar -->
+            <div class="relative w-full md:w-1/2 group">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i class="fa-solid fa-magnifying-glass text-gray-400 group-focus-within:text-green-700 transition-colors"></i>
+                </div>
+                <input type="text" id="searchInput" 
+                    class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-none leading-5 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:bg-white focus:border-green-700 focus:ring-1 focus:ring-green-700 sm:text-sm font-mono transition-all duration-200 uppercase shadow-inner" 
+                    placeholder="SEARCH / ค้นหา (ENG/TH)...">
+                <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                    <span id="resultCount" class="text-xs text-gray-500 font-mono">READY</span>
                 </div>
             </div>
         </div>
+    </header>
 
-        <!-- Chat Trigger Button (Stamp Style) -->
-        <button onclick="toggleChat()" class="bg-slate-800 text-white w-14 h-14 rounded-full shadow-2xl hover:bg-slate-700 active:scale-90 transition-all flex items-center justify-center border-4 border-white/20">
-            <svg id="fab-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-            </svg>
-        </button>
-    </div>
+    <!-- Main Content -->
+    <main class="flex-grow container mx-auto px-4 py-8">
+        
+        <!-- Dashboard Stats -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 font-mono text-xs">
+            <div class="bg-white p-3 border-l-4 border-green-600 shadow-sm">
+                <div class="text-gray-500">SYSTEM STATUS</div>
+                <div class="text-green-700 font-bold">ONLINE</div>
+            </div>
+            <div class="bg-white p-3 border-l-4 border-green-600 shadow-sm">
+                <div class="text-gray-500">DATABASE VER.</div>
+                <div class="text-green-700 font-bold">2.4.1 (BETA)</div>
+            </div>
+            <div class="bg-white p-3 border-l-4 border-green-600 shadow-sm">
+                <div class="text-gray-500">TOTAL ENTRIES</div>
+                <div class="text-green-700 font-bold" id="totalEntriesDisplay">0</div>
+            </div>
+            <div class="bg-white p-3 border-l-4 border-green-600 shadow-sm">
+                <div class="text-gray-500">SECURE CONNECTION</div>
+                <div class="text-green-700 font-bold">ENCRYPTED</div>
+            </div>
+        </div>
 
+        <!-- Desktop Table Header (Hidden on Mobile) -->
+        <div class="hidden md:grid grid-cols-12 gap-4 px-6 py-3 bg-green-50 border-y border-green-200 text-green-800 font-stencil tracking-wider text-sm mb-4">
+            <div class="col-span-1 font-bold">#</div>
+            <div class="col-span-3 font-bold">TERMINOLOGY (ENG)</div>
+            <div class="col-span-3 font-bold">PRONUNCIATION</div>
+            <div class="col-span-4 font-bold">MEANING (TH)</div>
+            <div class="col-span-1 text-center font-bold">ACTION</div>
+        </div>
+
+        <!-- Vocabulary List Container -->
+        <div id="vocabList" class="space-y-4 md:space-y-0 bg-white md:bg-transparent shadow md:shadow-none rounded md:rounded-none">
+            <!-- Content will be injected here via JS -->
+            <div class="text-center py-20 text-gray-500 font-mono animate-pulse">
+                INITIALIZING DATABASE...
+            </div>
+        </div>
+
+        <!-- No Results State -->
+        <div id="noResults" class="hidden text-center py-20">
+            <i class="fa-solid fa-triangle-exclamation text-orange-500 text-5xl mb-4"></i>
+            <h2 class="text-2xl font-stencil text-gray-400">NO DATA FOUND</h2>
+            <p class="text-gray-500 font-mono text-sm mt-2">TARGET NOT LOCATED IN DATABASE</p>
+        </div>
+
+        <!-- Load More Button -->
+        <div class="mt-8 text-center">
+            <button id="loadMoreBtn" class="hidden px-8 py-3 bg-white border border-green-600 text-green-700 hover:bg-green-700 hover:text-white font-mono text-sm transition-all duration-300 shadow-sm uppercase">
+                Load More Data [+]
+            </button>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-gray-300 bg-gray-100 py-6 mt-auto">
+        <div class="container mx-auto text-center">
+            <p class="text-gray-500 text-xs font-mono">
+                MILITARY LEXICON SYSTEM © 2026 <br>
+                DESIGNED FOR TACTICAL USE
+            </p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Logic -->
     <script>
-        const chatBox = document.getElementById('chat-box');
-        const chatWindow = document.getElementById('chat-window');
-        const userInput = document.getElementById('user-input');
-        const sendBtn = document.getElementById('send-btn');
+        // Database of Military Terms
+        const vocabularyData = [
+            { en: "Ambush", ipa: "แอม-บุช", th: "การซุ่มโจมตี", cat: "Tactics" },
+            { en: "Assault Rifle", ipa: "อะ-ซอลท-ไร-เฟิล", th: "ปืนไรเฟิลจู่โจม", cat: "Weapon" },
+            { en: "Artillery", ipa: "อา-ทิล-เลอ-รี", th: "ปืนใหญ่", cat: "Weapon" },
+            { en: "Air Superiority", ipa: "แอร์-ซู-พี-เรีย-ริ-ที", th: "การครองอากาศ", cat: "Air Force" },
+            { en: "Barracks", ipa: "แบ-แร็คส", th: "โรงนอนทหาร", cat: "Facility" },
+            { en: "Battalion", ipa: "แบ-แทล-เลียน", th: "กองพัน", cat: "Unit" },
+            { en: "Brigade", ipa: "บริ-เกด", th: "กองพลน้อย", cat: "Unit" },
+            { en: "Bunker", ipa: "บัง-เกอร์", th: "หลุมหลบภัย, บังเกอร์", cat: "Defense" },
+            { en: "Camouflage", ipa: "คา-มู-ฟลาจ", th: "การพรางตัว", cat: "General" },
+            { en: "Casualty", ipa: "แคช-ชวล-ที", th: "ผู้บาดเจ็บหรือเสียชีวิต", cat: "Medical" },
+            { en: "Ceasefire", ipa: "ซีส-ไฟเออร์", th: "การหยุดยิง", cat: "Command" },
+            { en: "Chain of Command", ipa: "เชน-ออฟ-คอม-มานด์", th: "สายการบังคับบัญชา", cat: "Admin" },
+            { en: "Civilian", ipa: "ซิ-วิล-เลียน", th: "พลเรือน", cat: "Person" },
+            { en: "Collateral Damage", ipa: "คอ-แลท-เทอ-รัล-ดา-เมจ", th: "ความเสียหายข้างเคียง (ต่อพลเรือน/ทรัพย์สิน)", cat: "Damage" },
+            { en: "Combat", ipa: "คอม-แบท", th: "การรบ", cat: "Action" },
+            { en: "Company", ipa: "คอม-ปะ-นี", th: "กองร้อย", cat: "Unit" },
+            { en: "Convoy", ipa: "คอน-วอย", th: "ขบวนยานยนต์", cat: "Logistics" },
+            { en: "Corporal", ipa: "คอร์-ปอ-รัล", th: "สิบโท", cat: "Rank" },
+            { en: "Counterattack", ipa: "เคา-เตอร์-อะ-แทค", th: "การตีโต้ตอบ", cat: "Tactics" },
+            { en: "Curfew", ipa: "เคอร์-ฟิว", th: "การห้ามออกนอกเคหสถาน", cat: "Law" },
+            { en: "Deployed", ipa: "ดี-พลอย-ด", th: "ถูกส่งไปปฏิบัติหน้าที่", cat: "Status" },
+            { en: "Detachment", ipa: "ดี-แทช-เมนท์", th: "ชุดแยก, หน่วยแยก", cat: "Unit" },
+            { en: "Drill", ipa: "ดริล", th: "การฝึก, การสวนสนาม", cat: "Training" },
+            { en: "Enemy", ipa: "เอ-เน-มี", th: "ข้าศึก", cat: "Target" },
+            { en: "Engagement", ipa: "เอ็น-เกจ-เมนท์", th: "การปะทะ", cat: "Action" },
+            { en: "Extraction", ipa: "เอ็กซ์-แทรค-ชัน", th: "การถอนตัว, การช่วยเหลือออกมา", cat: "Ops" },
+            { en: "Flank", ipa: "แฟลงค์", th: "ปีก (ซ้าย/ขวา ของกองกำลัง)", cat: "Position" },
+            { en: "Formation", ipa: "ฟอร์-เม-ชัน", th: "รูปแบบขบวน", cat: "Tactics" },
+            { en: "Friendly Fire", ipa: "เฟรนด์-ลี-ไฟเออร์", th: "การยิงโดนพวกเดียวกันเอง", cat: "Incident" },
+            { en: "Garrison", ipa: "แก-ริ-ซัน", th: "กองรักษาการณ์", cat: "Facility" },
+            { en: "General", ipa: "เจน-เนอ-รัล", th: "นายพล", cat: "Rank" },
+            { en: "Grenade", ipa: "กรี-เนด", th: "ระเบิดมือ", cat: "Weapon" },
+            { en: "Guerrilla", ipa: "เกอ-ริล-ลา", th: "กองโจร", cat: "Unit" },
+            { en: "Headquarters (HQ)", ipa: "เฮด-ควอ-เตอร์", th: "กองบัญชาการ", cat: "Facility" },
+            { en: "Hostile", ipa: "ฮอส-ไทล์", th: "เป็นปรปักษ์, ฝ่ายตรงข้าม", cat: "Status" },
+            { en: "Howitzer", ipa: "ฮาว-อิต-เซอร์", th: "ปืนใหญ่วิถีโค้ง", cat: "Weapon" },
+            { en: "Infantry", ipa: "อิน-แฟน-ทรี", th: "ทหารราบ", cat: "Unit" },
+            { en: "Insurgent", ipa: "อิน-เซอร์-เจ้นท์", th: "ผู้ก่อความไม่สงบ", cat: "Person" },
+            { en: "Intelligence", ipa: "อิน-เทล-ลิ-เจนซ์", th: "ข่าวกรอง", cat: "Intel" },
+            { en: "Invasion", ipa: "อิน-เว-ชัน", th: "การรุกราน", cat: "Ops" },
+            { en: "Killed in Action (KIA)", ipa: "เค-ไอ-เอ", th: "เสียชีวิตในการรบ", cat: "Status" },
+            { en: "Lieutenant", ipa: "ลู-เท-นันท์", th: "ร้อยโท", cat: "Rank" },
+            { en: "Logistics", ipa: "โล-จิส-ติกส์", th: "การส่งกำลังบำรุง", cat: "Support" },
+            { en: "Machine Gun", ipa: "มะ-ชีน-กัน", th: "ปืนกล", cat: "Weapon" },
+            { en: "Maneuver", ipa: "มะ-นู-เวอร์", th: "การดำเนินกลยุทธ์", cat: "Tactics" },
+            { en: "Medic", ipa: "เม-ดิก", th: "เสนารักษ์", cat: "Role" },
+            { en: "Mercenary", ipa: "เมอ-ซี-เน-รี", th: "ทหารรับจ้าง", cat: "Person" },
+            { en: "Minefield", ipa: "ไมน์-ฟิลด์", th: "สนามทุ่นระเบิด", cat: "Area" },
+            { en: "Mission", ipa: "มิช-ชัน", th: "ภารกิจ", cat: "Ops" },
+            { en: "Mortar", ipa: "มอร์-ตาร์", th: "เครื่องยิงลูกระเบิด (ค.", cat: "Weapon" },
+            { en: "Neutralize", ipa: "นิว-ทรอ-ไลซ์", th: "ทำลายล้าง, ทำให้หมดสภาพ", cat: "Action" },
+            { en: "Night Vision", ipa: "ไนท์-วิ-ชัน", th: "กล้องมองกลางคืน", cat: "Equipment" },
+            { en: "Objective", ipa: "ออบ-เจก-ทีฟ", th: "เป้าหมายภารกิจ, วัตถุประสงค์", cat: "Ops" },
+            { en: "Offensive", ipa: "ออฟ-เฟน-ซีฟ", th: "การรุก", cat: "Tactics" },
+            { en: "Operation", ipa: "ออ-เปอ-เร-ชัน", th: "ยุทธการ", cat: "Ops" },
+            { en: "Paratrooper", ipa: "พา-รา-ทรู-เปอร์", th: "ทหารพลร่ม", cat: "Unit" },
+            { en: "Patrol", ipa: "พา-โทรล", th: "การลาดตระเวน", cat: "Action" },
+            { en: "Perimeter", ipa: "เพอ-ริ-มิ-เตอร์", th: "แนวรอบนอก, ขอบเขตป้องกัน", cat: "Area" },
+            { en: "Platoon", ipa: "พลา-ทูน", th: "หมวด", cat: "Unit" },
+            { en: "Private", ipa: "ไพร-เวท", th: "พลทหาร", cat: "Rank" },
+            { en: "Protocol", ipa: "โปร-โต-คอล", th: "ระเบียบปฏิบัติ", cat: "Admin" },
+            { en: "Radar", ipa: "เร-ดาร์", th: "เรดาร์", cat: "Equipment" },
+            { en: "Radio Silence", ipa: "เร-ดิ-โอ-ไซ-เลนซ์", th: "การงดใช้วิทยุ", cat: "Comms" },
+            { en: "Reconnaissance (Recon)", ipa: "รี-คอน-เน-ซานซ์", th: "การลาดตระเวนหาข่าว", cat: "Intel" },
+            { en: "Recruit", ipa: "รี-ครูท", th: "ทหารใหม่", cat: "Rank" },
+            { en: "Regiment", ipa: "เร-จิ-เมนท์", th: "กรมทหาร", cat: "Unit" },
+            { en: "Reinforcement", ipa: "รี-อิน-ฟอร์ซ-เมนท์", th: "กำลังเสริม", cat: "Support" },
+            { en: "Retreat", ipa: "รี-ทรีท", th: "การถอยทัพ", cat: "Action" },
+            { en: "Rules of Engagement (ROE)", ipa: "รูลส์-ออฟ-เอ็น-เกจ-เมนท์", th: "กฎการปะทะ", cat: "Law" },
+            { en: "Sabotage", ipa: "ซา-โบ-ทาจ", th: "การก่อวินาศกรรม", cat: "Action" },
+            { en: "Salute", ipa: "ซา-ลูท", th: "การทำความเคารพ", cat: "Protocol" },
+            { en: "Sector", ipa: "เซค-เตอร์", th: "พื้นที่รับผิดชอบ", cat: "Area" },
+            { en: "Sergeant", ipa: "ซาร์-เจนท์", th: "สิบเอก", cat: "Rank" },
+            { en: "Sniper", ipa: "สไน-เปอร์", th: "พลซุ่มยิง", cat: "Role" },
+            { en: "Special Forces", ipa: "สเป-เชียล-ฟอร์-เซส", th: "หน่วยรบพิเศษ", cat: "Unit" },
+            { en: "Squad", ipa: "สควอด", th: "หมู่ (ทหาร)", cat: "Unit" },
+            { en: "Stand Down", ipa: "สแตนด์-ดาวน์", th: "ผ่อนคลายความพร้อม, จบภารกิจ", cat: "Command" },
+            { en: "Strategy", ipa: "สแตรท-เต-จี", th: "ยุทธศาสตร์", cat: "Planning" },
+            { en: "Suppression Fire", ipa: "ซับ-เพรส-ชัน-ไฟเออร์", th: "การยิงกดดัน", cat: "Tactics" },
+            { en: "Surrender", ipa: "ซอ-เรน-เดอร์", th: "การยอมจำนน", cat: "Action" },
+            { en: "Tactics", ipa: "แทค-ติกส์", th: "ยุทธวิธี", cat: "Planning" },
+            { en: "Target", ipa: "ทาร์-เก็ต", th: "เป้าหมาย", cat: "Target" },
+            { en: "Terrain", ipa: "เทอร์-เรน", th: "ภูมิประเทศ", cat: "Geo" },
+            { en: "Treaty", ipa: "ทรี-ที", th: "สนธิสัญญา", cat: "Politics" },
+            { en: "Trench", ipa: "เทรนช์", th: "สนามเพลาะ", cat: "Defense" },
+            { en: "Uniform", ipa: "ยู-นิ-ฟอร์ม", th: "เครื่องแบบ", cat: "Gear" },
+            { en: "Unit", ipa: "ยู-นิต", th: "หน่วย", cat: "Unit" },
+            { en: "Vehicle", ipa: "วี-ฮิ-เคิล", th: "ยานพาหนะ", cat: "Logistics" },
+            { en: "Veteran", ipa: "เวท-เทอ-รัน", th: "ทหารผ่านศึก", cat: "Person" },
+            { en: "Victory", ipa: "วิก-ตอ-รี", th: "ชัยชนะ", cat: "Result" },
+            { en: "Warhead", ipa: "วอร์-เฮด", th: "หัวรบ", cat: "Weapon" },
+            { en: "Weapon", ipa: "เว-พอน", th: "อาวุธ", cat: "Weapon" },
+            { en: "Withdrawal", ipa: "วิธ-ดรอ-วัล", th: "การถอนตัว", cat: "Action" },
+            { en: "Zone", ipa: "โซน", th: "เขตพื้นที่", cat: "Area" },
+            { en: "Airborne", ipa: "แอร์-บอร์น", th: "พลร่ม, ส่งทางอากาศ", cat: "Unit" },
+            { en: "Amphibious", ipa: "แอม-ฟิ-เบียส", th: "สะเทินน้ำสะเทินบก", cat: "Type" },
+            { en: "Arsenal", ipa: "อาร์-เซ-นอล", th: "คลังแสง", cat: "Facility" },
+            { en: "Ballistic", ipa: "บอล-ลิส-ติก", th: "ขีปนาวุธ", cat: "Tech" },
+            { en: "Blockade", ipa: "บล็อก-เคด", th: "การปิดล้อม", cat: "Tactics" },
+            { en: "Briefing", ipa: "บรีฟ-ฟิง", th: "การสรุปสถานการณ์", cat: "Comms" },
+            { en: "Camaraderie", ipa: "คา-มา-รา-เด-รี", th: "ความสนิทสนมกลมเกลียวในหมู่คณะ", cat: "Morale" },
+            { en: "Checkpoint", ipa: "เช็ค-พอยท์", th: "จุดตรวจ", cat: "Control" },
+            { en: "Cipher", ipa: "ไซ-เฟอร์", th: "รหัสลับ", cat: "Intel" },
+            { en: "Colonel", ipa: "เคอ-เนล", th: "พันเอก", cat: "Rank" },
+            { en: "Command", ipa: "คอม-มานด์", th: "การบังคับบัญชา", cat: "Admin" },
+            { en: "Coordinates", ipa: "โค-ออ-ดิ-เนทส์", th: "พิกัด", cat: "Nav" }
+        ];
 
-        const WORKER_URL = https://late-wave-0b58.tontakankeawpang321.workers.dev";
+        // Sort data alphabetically
+        vocabularyData.sort((a, b) => a.en.localeCompare(b.en));
 
-        let isOpen = false;
+        // State Management
+        let currentDisplayCount = 20; 
+        const incrementCount = 20; 
+        let filteredData = [...vocabularyData];
 
-        function toggleChat() {
-            isOpen = !isOpen;
-            chatBox.classList.toggle('hidden', !isOpen);
-            if (isOpen) userInput.focus();
+        // DOM Elements
+        const vocabListEl = document.getElementById('vocabList');
+        const searchInputEl = document.getElementById('searchInput');
+        const resultCountEl = document.getElementById('resultCount');
+        const totalEntriesDisplayEl = document.getElementById('totalEntriesDisplay');
+        const noResultsEl = document.getElementById('noResults');
+        const loadMoreBtn = document.getElementById('loadMoreBtn');
+
+        // Initialize
+        function init() {
+            totalEntriesDisplayEl.textContent = vocabularyData.length;
+            renderList();
+            
+            // Event Listeners
+            searchInputEl.addEventListener('input', handleSearch);
+            loadMoreBtn.addEventListener('click', loadMore);
         }
 
-        async function fetchAIResponse(message, retries = 5, delay = 1000) {
-            try {
-                const response = await fetch(WORKER_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: message })
-                });
+        // Search Handler
+        function handleSearch(e) {
+            const query = e.target.value.toLowerCase().trim();
+            
+            filteredData = vocabularyData.filter(item => 
+                item.en.toLowerCase().includes(query) || 
+                item.th.includes(query) || 
+                item.ipa.includes(query)
+            );
 
-                if (!response.ok) {
-                    if (response.status === 429 && retries > 0) {
-                        await new Promise(r => setTimeout(r, delay));
-                        return fetchAIResponse(message, retries - 1, delay * 2);
-                    }
-                    throw new Error('Worker error');
-                }
+            currentDisplayCount = incrementCount; 
+            renderList();
+        }
 
-                const data = await response.json();
-                return data.text || "ขออภัยครับ Librarian ไม่พบข้อมูลที่ต้องการ";
-            } catch (error) {
-                if (retries > 0) {
-                    await new Promise(r => setTimeout(r, delay));
-                    return fetchAIResponse(message, retries - 1, delay * 2);
-                }
-                return "การเชื่อมต่อกับหอจดหมายเหตุขัดข้องชั่วคราว... 📡";
+        // Render List
+        function renderList() {
+            vocabListEl.innerHTML = '';
+            
+            if (filteredData.length === 0) {
+                noResultsEl.classList.remove('hidden');
+                loadMoreBtn.classList.add('hidden');
+                resultCountEl.textContent = "0 FOUND";
+                return;
+            } else {
+                noResultsEl.classList.add('hidden');
+                resultCountEl.textContent = `${filteredData.length} MATCHES`;
+            }
+
+            const itemsToRender = filteredData.slice(0, currentDisplayCount);
+
+            itemsToRender.forEach((item, index) => {
+                const card = document.createElement('div');
+                // Updated styling for Light Mode: White background with subtle border, nice hover effect
+                card.className = "tactical-border bg-white p-4 md:p-0 md:bg-transparent md:border-none md:border-b md:border-gray-200 transition-colors duration-200";
+                
+                // HTML Structure: Mobile Card + Desktop Row
+                card.innerHTML = `
+                    <!-- Desktop Layout (Hidden on mobile) -->
+                    <div class="hidden md:grid grid-cols-12 gap-4 items-center py-3 px-6 text-sm font-mono hover:bg-gray-50">
+                        <div class="col-span-1 text-gray-500 font-bold">#${String(index + 1).padStart(3, '0')}</div>
+                        <div class="col-span-3 font-bold text-green-700 text-base">${item.en}</div>
+                        <div class="col-span-3 text-gray-500 italic">${item.ipa}</div>
+                        <div class="col-span-4 text-gray-800">${item.th}</div>
+                        <div class="col-span-1 flex justify-center gap-2">
+                            <button onclick="speak('${item.en}')" class="text-gray-400 hover:text-green-700 transition-colors" title="Listen">
+                                <i class="fa-solid fa-volume-high"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Mobile Layout (Hidden on Desktop) -->
+                    <div class="md:hidden flex flex-col gap-2">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <span class="text-xs text-green-700 font-mono mb-1 block">[${item.cat}]</span>
+                                <h3 class="text-xl font-bold text-green-800 glitch-hover">${item.en}</h3>
+                                <p class="text-sm text-gray-500 italic">${item.ipa}</p>
+                            </div>
+                            <button onclick="speak('${item.en}')" class="p-2 text-gray-500 active:text-green-700 border border-gray-300 rounded bg-gray-50 hover:bg-white">
+                                <i class="fa-solid fa-volume-high"></i>
+                            </button>
+                        </div>
+                        <div class="mt-2 pt-2 border-t border-gray-100">
+                            <p class="text-gray-800">${item.th}</p>
+                        </div>
+                    </div>
+                `;
+                vocabListEl.appendChild(card);
+            });
+
+            if (currentDisplayCount < filteredData.length) {
+                loadMoreBtn.classList.remove('hidden');
+            } else {
+                loadMoreBtn.classList.add('hidden');
             }
         }
 
-        function appendMessage(text, role) {
-            const div = document.createElement('div');
-            div.className = `flex flex-col ${role === 'user' ? 'items-end' : 'items-start'} animate-fade-in`;
-            const bubble = document.createElement('div');
-            bubble.className = role === 'user' 
-                ? 'px-4 py-2 bg-slate-200 rounded-lg text-slate-800 text-xs shadow-sm' 
-                : 'px-0 py-2 text-slate-600 text-sm italic leading-relaxed';
-            bubble.textContent = (role === 'user' ? '' : '"') + text + (role === 'user' ? '' : '"');
-            div.appendChild(bubble);
-            chatWindow.appendChild(div);
-            chatWindow.scrollTo({ top: chatWindow.scrollHeight, behavior: 'smooth' });
+        // Load More Logic
+        function loadMore() {
+            currentDisplayCount += incrementCount;
+            renderList();
         }
 
-        async function handleSend() {
-            const text = userInput.value.trim();
-            if (!text) return;
-
-            appendMessage(text, 'user');
-            userInput.value = '';
-            
-            const loading = document.createElement('div');
-            loading.className = 'text-[10px] opacity-40 italic';
-            loading.textContent = 'กำลังค้นหาจดหมายเหตุ...';
-            chatWindow.appendChild(loading);
-            chatWindow.scrollTop = chatWindow.scrollHeight;
-
-            const aiResponse = await fetchAIResponse(text);
-            loading.remove();
-            appendMessage(aiResponse, 'bot');
+        // Text to Speech
+        function speak(text) {
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.9; 
+                utterance.pitch = 0.8; 
+                
+                window.speechSynthesis.cancel();
+                window.speechSynthesis.speak(utterance);
+            } else {
+                alert('Browser does not support Text-to-Speech');
+            }
         }
 
-        sendBtn.addEventListener('click', handleSend);
-        userInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleSend(); });
+        window.onload = init;
+
     </script>
 </body>
 </html>
