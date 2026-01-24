@@ -34,6 +34,7 @@
   .title{
     font-family:"Kodchasan","Sarabun",sans-serif; font-weight:700; letter-spacing:.2px;
     display:flex; align-items:center; gap:12px; margin-bottom:10px; padding:0 16px; color:#0b3b34;
+    flex-wrap: wrap; 
   }
   .badge{
     display:inline-flex; align-items:center; gap:6px;
@@ -211,6 +212,10 @@
       <div class="title">
         <span class="badge">ฐานข้อมูล</span>
         <div style="font-size:20px">ยารักษาโรค</div>
+        <!-- ปุ่มประเมินสุขภาพ (อยู่ใน Header หลัก) -->
+        <button id="health-check-btn" class="ml-2 bg-[#50b5a5] hover:bg-[#3d8f81] text-white font-bold py-1 px-3 rounded-full text-sm flex items-center gap-1 shadow-md transition-all border border-[#3d8f81]">
+             <span class="text-lg">🩺</span> <span>ประเมินสุขภาพ</span>
+        </button>
       </div>
 
       <div class="controls" aria-label="เครื่องมือค้นหาและตัวกรอง">
@@ -265,14 +270,12 @@
     </p>
   </footer>
 
-  <!-- FAB Button -->
+  <!-- FAB Button (สำหรับ Chatbot) -->
   <button id="fab-chat-toggle" title="ถามเภสัชกร AI">Ai</button>
 
   <!-- Chatbot Modal -->
   <div id="chatbot-modal" class="chatbot-hidden">
     <div class="flex flex-col h-screen bg-gray-100">
-      
-      <!-- Header Chatbot -->
       <header class="bg-[#50b5a5] text-white p-3 md:p-4 flex justify-between items-center shadow-md">
         <div class="flex items-center gap-2">
             <span class="text-xl md:text-2xl">💊</span>
@@ -282,11 +285,6 @@
             </div>
         </div>
         <div class="flex items-center gap-2">
-          <!-- ปุ่มประเมินสุขภาพ -->
-          <button id="health-check-btn" class="bg-white hover:bg-green-50 text-[#064e43] font-bold py-1.5 px-3 rounded-lg text-sm flex items-center gap-1 shadow-sm transition-all animate-pulse">
-             <span class="text-lg">🩺</span> <span class="hidden sm:inline">ประเมินสุขภาพ</span>
-          </button>
-
           <button id="new-chat-btn" class="bg-[#ddfff8] hover:bg-[#baf3ea] text-[#064e43] font-bold py-1.5 px-3 rounded-lg text-sm transition-colors">
             เริ่มใหม่
           </button>
@@ -296,19 +294,17 @@
         </div>
       </header>
 
-      <!-- Chat History -->
       <main id="chat-history" class="flex-1 overflow-y-auto p-4 space-y-4 bg-[#f0fdfa]">
         <div class="flex items-start space-x-2">
           <span class="text-2xl">🤖</span>
           <div class="chat-bubble chat-bubble-model bg-white text-gray-800 p-3 rounded-lg max-w-lg relative border border-gray-200 shadow-sm">
             <p>สวัสดีครับ ผมคือ AI ผู้ช่วยเภสัชกร สอบถามข้อมูลยาได้เลยครับ<br><br>
-            หากมีอาการป่วย แนะนำให้กดปุ่ม <strong>"🩺 ประเมินสุขภาพ"</strong> ด้านบน เพื่อให้ผมช่วยวิเคราะห์เบื้องต้นครับ
+            หากต้องการประเมินสุขภาพเบื้องต้น กดปุ่ม <strong>"🩺 ประเมินสุขภาพ"</strong> ที่ด้านบนสุดของหน้าเว็บได้เลยครับ
             </p>
           </div>
         </div>
       </main>
 
-      <!-- Thinking Indicator -->
       <div id="thinking-indicator" class="p-4 hidden bg-[#f0fdfa]">
         <div class="flex items-center space-x-2">
           <span class="text-2xl">🤖</span>
@@ -319,7 +315,6 @@
         </div>
       </div>
 
-      <!-- Input Area -->
       <footer class="bg-white p-3 shadow-inner border-t border-gray-200 m-0 w-full max-w-full z-10">
         <div class="flex space-x-2">
           <input id="user-input" type="text" placeholder="พิมพ์ชื่อยา หรืออาการป่วย..." class="flex-1 p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#50b5a5] font-sans text-base">
@@ -329,9 +324,11 @@
         </div>
       </footer>
     </div>
+  </div>
 
-    <!-- Health Assessment Dialog (Form) -->
-    <div id="health-modal-overlay" class="absolute inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm">
+  <!-- Health Assessment Dialog (Form) -->
+  <!-- z-index สูงกว่าทุก element เพื่อให้แสดงผลทับทุกอย่าง -->
+  <div id="health-modal-overlay" class="absolute inset-0 bg-black/60 z-[2000] hidden flex items-center justify-center p-4 backdrop-blur-sm fixed">
         <div class="bg-white rounded-2xl w-full max-w-lg shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
             <header class="p-3 border-b border-gray-100 flex justify-between items-center bg-[#50b5a5]">
                 <div class="flex items-center gap-2 text-white font-bold text-lg">
@@ -341,7 +338,6 @@
             </header>
             
             <div class="p-4 overflow-y-auto space-y-3 bg-slate-50">
-                <!-- Row 1: Basic Info (Compact) -->
                 <div class="grid grid-cols-4 gap-2">
                     <div class="col-span-2 sm:col-span-1">
                          <label class="health-form-label">เพศ</label>
@@ -364,7 +360,6 @@
                     </div>
                 </div>
 
-                <!-- Row 2: Chronic Diseases (Chips) -->
                 <div class="health-form-group">
                     <label class="health-form-label">โรคประจำตัว (เลือกได้มากกว่า 1)</label>
                     <div class="chip-group" id="disease-chips">
@@ -379,13 +374,11 @@
                     <input type="text" id="hf-disease-other" class="health-form-input mt-2" placeholder="อื่นๆ ระบุ...">
                 </div>
 
-                <!-- Row 3: Allergy -->
                 <div class="health-form-group">
                     <label class="health-form-label text-red-600">ประวัติแพ้ยา / อาหาร (สำคัญ)</label>
                     <input type="text" id="hf-allergy" class="health-form-input border-red-200 bg-red-50 focus:bg-white" placeholder="ระบุชื่อยาที่แพ้ หรือ 'ไม่มี'">
                 </div>
 
-                <!-- Row 4: Symptoms (Focus) -->
                 <div class="health-form-group">
                     <label class="health-form-label text-[#064e43] text-base">อาการที่ต้องการปรึกษา (ระบุละเอียด)</label>
                     <textarea id="hf-symptoms" rows="4" class="health-form-input border-[#50b5a5] shadow-sm text-base" placeholder="เช่น ปวดหัวตุบๆ ขมับขวา มา 2 วัน, มีไข้ต่ำๆ, เจ็บคอเวลากลืน..."></textarea>
@@ -402,7 +395,7 @@
     </div>
 
     <!-- Result Dialog (Popup) -->
-    <div id="result-modal-overlay" class="absolute inset-0 bg-black/70 z-[60] hidden flex items-center justify-center p-4 backdrop-blur-sm">
+    <div id="result-modal-overlay" class="absolute inset-0 bg-black/70 z-[2050] hidden flex items-center justify-center p-4 backdrop-blur-sm fixed">
         <div class="bg-white rounded-2xl w-full max-w-2xl shadow-2xl flex flex-col max-h-[85vh] overflow-hidden">
             <header class="p-4 border-b border-gray-100 flex justify-between items-center bg-white sticky top-0">
                 <div class="flex items-center gap-2 text-[#064e43] font-bold text-xl">
@@ -412,7 +405,6 @@
             </header>
             
             <div id="result-content-area" class="p-6 overflow-y-auto bg-[#fffdf7] text-gray-800 text-base leading-relaxed result-markdown">
-                <!-- Loading State -->
                 <div class="flex flex-col items-center justify-center py-10 space-y-4 text-gray-500">
                      <div class="w-10 h-10 border-4 border-gray-200 border-t-[#50b5a5] rounded-full animate-spin"></div>
                      <p>กำลังประมวลผลข้อมูลสุขภาพของคุณ...</p>
@@ -424,8 +416,6 @@
             </footer>
         </div>
     </div>
-
-  </div>
 
 <script>
 /** ================== CONFIG ================== **/
@@ -593,12 +583,10 @@ document.getElementById('cat').addEventListener('change', applySearch);
     ========================================= */
 const API_URL = 'https://mute-unit-1629.tontakankeawpang.workers.dev/';
 
-// FIX 1: เปลี่ยน SYSTEM_PROMPT เป็น role "user" ตามคำแนะนำ
 const SYSTEM_PROMPT = {
     role: "user",
     parts: [{ text: "คุณคือ AI เภสัชกร ให้ข้อมูลยาเชิงความรู้ ไม่วินิจฉัยโรค" }]
 };
-// เพิ่ม Model Ack เพื่อให้ลำดับการสนทนาถูกต้อง (User -> Model -> User)
 const SYSTEM_ACK = {
     role: "model",
     parts: [{ text: "รับทราบครับ ผมพร้อมให้ข้อมูลยาและสุขภาพครับ" }]
@@ -729,9 +717,11 @@ diseaseChips.forEach(chip => {
     chip.addEventListener('click', () => {
         const val = chip.getAttribute('data-val');
         if (val === 'ไม่มี') {
+            // ถ้าเลือกไม่มี ให้เคลียร์อันอื่น
             diseaseChips.forEach(c => c.classList.remove('selected'));
             chip.classList.add('selected');
         } else {
+            // ถ้าเลือกโรคอื่น ให้เอา 'ไม่มี' ออก
             document.querySelector('.chip-option[data-val="ไม่มี"]').classList.remove('selected');
             chip.classList.toggle('selected');
         }
@@ -746,6 +736,7 @@ function toggleResultModal(show) { resultModalOverlay.classList.toggle('hidden',
 healthCheckBtn.addEventListener('click', () => toggleHealthModal(true));
 closeHealthModalBtn.addEventListener('click', () => toggleHealthModal(false));
 cancelHealthBtn.addEventListener('click', () => toggleHealthModal(false));
+
 closeResultModalBtn.addEventListener('click', () => toggleResultModal(false));
 
 // 3. Submit & Analyze
