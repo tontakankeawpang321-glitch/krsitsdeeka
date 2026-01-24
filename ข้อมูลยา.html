@@ -327,7 +327,8 @@
   </div>
 
   <!-- Health Assessment Dialog (Form) -->
-  <div id="health-modal-overlay" class="absolute inset-0 bg-black/60 z-[2000] hidden flex items-center justify-center p-4 backdrop-blur-sm fixed">
+  <!-- FIX: Removed 'absolute', added 'fixed' and 'w-full h-full' to ensure visibility on mobile -->
+  <div id="health-modal-overlay" class="fixed inset-0 w-full h-full bg-black/60 z-[2000] hidden flex items-center justify-center p-4 backdrop-blur-sm">
         <div class="bg-white rounded-2xl w-full max-w-lg shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
             <header class="p-3 border-b border-gray-100 flex justify-between items-center bg-[#50b5a5]">
                 <div class="flex items-center gap-2 text-white font-bold text-lg">
@@ -336,7 +337,8 @@
                 <button id="close-health-modal" class="text-white/80 hover:text-white text-2xl leading-none">&times;</button>
             </header>
             
-            <div class="p-4 overflow-y-auto space-y-3 bg-slate-50">
+            <!-- Added ID for scroll reset -->
+            <div id="health-form-scroll-area" class="p-4 overflow-y-auto space-y-3 bg-slate-50">
                 <div class="grid grid-cols-4 gap-2">
                     <div class="col-span-2 sm:col-span-1">
                          <label class="health-form-label">เพศ</label>
@@ -394,7 +396,8 @@
     </div>
 
     <!-- Result Dialog (Popup) -->
-    <div id="result-modal-overlay" class="absolute inset-0 bg-black/70 z-[2050] hidden flex items-center justify-center p-4 backdrop-blur-sm fixed">
+    <!-- FIX: Removed 'absolute', added 'fixed' and 'w-full h-full' -->
+    <div id="result-modal-overlay" class="fixed inset-0 w-full h-full bg-black/70 z-[2050] hidden flex items-center justify-center p-4 backdrop-blur-sm">
         <div class="bg-white rounded-2xl w-full max-w-2xl shadow-2xl flex flex-col max-h-[85vh] overflow-hidden">
             <header class="p-4 border-b border-gray-100 flex justify-between items-center bg-white sticky top-0">
                 <div class="flex items-center gap-2 text-[#064e43] font-bold text-xl">
@@ -496,7 +499,7 @@ function renderPage(){
   document.getElementById('nextBtn').disabled = page>=totalPages;
 }
 
-/** =============== Modal Logic (Drug Info) =============== **/
+/** =============== Modal Logic (Drug Info & Lock Scroll) =============== **/
 let scrollY = 0;
 function lockBody(){
   // ป้องกันการ lock ซ้ำ ซึ่งจะทำให้ค่า scrollY หาย
@@ -508,7 +511,7 @@ function lockBody(){
   document.body.style.top = `-${scrollY}px`; 
   document.body.style.left = '0'; 
   document.body.style.right = '0';
-  // เพิ่มการตรวจสอบ element
+  // เพิ่มการตรวจสอบ element เพื่อให้แน่ใจว่าทำงานได้
   const main = document.getElementById('mainContent');
   if(main) main.setAttribute('inert','');
 }
@@ -524,7 +527,7 @@ function unlockBody(){
   if(main) main.removeAttribute('inert');
 }
 
-// ฟังก์ชันตรวจสอบว่าควรปลดล็อคหน้าจอหรือไม่ (ถ้าไม่มี Modal เปิดอยู่เลย)
+// ฟังก์ชันตรวจสอบว่าควรปลดล็อคหน้าจอหรือไม่ (ถ้าไม่มี Modal ใดๆ เปิดอยู่เลย)
 function attemptUnlockBody(){
     const isDrugOpen = document.getElementById('modalBackdrop').classList.contains('show');
     const isHealthOpen = !document.getElementById('health-modal-overlay').classList.contains('hidden');
@@ -552,7 +555,7 @@ function openDrugModal(encodedId, encodedName){
 }
 function closeModal(){
   document.getElementById('modalBackdrop').classList.remove('show');
-  attemptUnlockBody(); // เปลี่ยนจาก unlockBody() เป็น attemptUnlockBody()
+  attemptUnlockBody(); 
 }
 document.getElementById('closeModal').addEventListener('click', closeModal);
 document.getElementById('modalBackdrop').addEventListener('click', (e)=>{ if(e.target.id==='modalBackdrop') closeModal(); });
@@ -753,11 +756,14 @@ diseaseChips.forEach(chip => {
 });
 document.querySelector('.chip-option[data-val="ไม่มี"]').classList.add('selected');
 
-// 2. Modals Control (Updated for Mobile Scroll Lock)
+// 2. Modals Control (Updated for Mobile Scroll Lock & Reset)
 function toggleHealthModal(show) { 
     const el = document.getElementById('health-modal-overlay');
     if(show) {
         el.classList.remove('hidden');
+        // FIX: รีเซ็ต Scroll เมื่อเปิด Modal ใหม่
+        const scrollArea = document.getElementById('health-form-scroll-area');
+        if(scrollArea) scrollArea.scrollTop = 0;
         lockBody();
     } else {
         el.classList.add('hidden');
