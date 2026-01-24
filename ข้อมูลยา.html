@@ -327,7 +327,6 @@
   </div>
 
   <!-- Health Assessment Dialog (Form) -->
-  <!-- z-index สูงกว่าทุก element เพื่อให้แสดงผลทับทุกอย่าง -->
   <div id="health-modal-overlay" class="absolute inset-0 bg-black/60 z-[2000] hidden flex items-center justify-center p-4 backdrop-blur-sm fixed">
         <div class="bg-white rounded-2xl w-full max-w-lg shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
             <header class="p-3 border-b border-gray-100 flex justify-between items-center bg-[#50b5a5]">
@@ -500,15 +499,40 @@ function renderPage(){
 /** =============== Modal Logic (Drug Info) =============== **/
 let scrollY = 0;
 function lockBody(){
+  // ป้องกันการ lock ซ้ำ ซึ่งจะทำให้ค่า scrollY หาย
+  if(document.body.classList.contains('no-scroll')) return;
+
   scrollY = window.scrollY || document.documentElement.scrollTop;
-  document.body.classList.add('no-scroll'); document.body.style.position = 'fixed';
-  document.body.style.top = `-${scrollY}px`; document.body.style.left = '0'; document.body.style.right = '0';
-  document.getElementById('mainContent').setAttribute('inert','');
+  document.body.classList.add('no-scroll'); 
+  document.body.style.position = 'fixed';
+  document.body.style.top = `-${scrollY}px`; 
+  document.body.style.left = '0'; 
+  document.body.style.right = '0';
+  // เพิ่มการตรวจสอบ element
+  const main = document.getElementById('mainContent');
+  if(main) main.setAttribute('inert','');
 }
+
 function unlockBody(){
-  document.body.classList.remove('no-scroll'); document.body.style.position = '';
-  document.body.style.top = ''; document.body.style.left = ''; document.body.style.right = '';
-  window.scrollTo(0, scrollY); document.getElementById('mainContent').removeAttribute('inert');
+  document.body.classList.remove('no-scroll'); 
+  document.body.style.position = '';
+  document.body.style.top = ''; 
+  document.body.style.left = ''; 
+  document.body.style.right = '';
+  window.scrollTo(0, scrollY); 
+  const main = document.getElementById('mainContent');
+  if(main) main.removeAttribute('inert');
+}
+
+// ฟังก์ชันตรวจสอบว่าควรปลดล็อคหน้าจอหรือไม่ (ถ้าไม่มี Modal เปิดอยู่เลย)
+function attemptUnlockBody(){
+    const isDrugOpen = document.getElementById('modalBackdrop').classList.contains('show');
+    const isHealthOpen = !document.getElementById('health-modal-overlay').classList.contains('hidden');
+    const isResultOpen = !document.getElementById('result-modal-overlay').classList.contains('hidden');
+    
+    if(!isDrugOpen && !isHealthOpen && !isResultOpen){
+        unlockBody();
+    }
 }
 
 function openDrugModal(encodedId, encodedName){
@@ -528,7 +552,7 @@ function openDrugModal(encodedId, encodedName){
 }
 function closeModal(){
   document.getElementById('modalBackdrop').classList.remove('show');
-  unlockBody();
+  attemptUnlockBody(); // เปลี่ยนจาก unlockBody() เป็น attemptUnlockBody()
 }
 document.getElementById('closeModal').addEventListener('click', closeModal);
 document.getElementById('modalBackdrop').addEventListener('click', (e)=>{ if(e.target.id==='modalBackdrop') closeModal(); });
@@ -729,9 +753,27 @@ diseaseChips.forEach(chip => {
 });
 document.querySelector('.chip-option[data-val="ไม่มี"]').classList.add('selected');
 
-// 2. Modals Control
-function toggleHealthModal(show) { healthModalOverlay.classList.toggle('hidden', !show); }
-function toggleResultModal(show) { resultModalOverlay.classList.toggle('hidden', !show); }
+// 2. Modals Control (Updated for Mobile Scroll Lock)
+function toggleHealthModal(show) { 
+    const el = document.getElementById('health-modal-overlay');
+    if(show) {
+        el.classList.remove('hidden');
+        lockBody();
+    } else {
+        el.classList.add('hidden');
+        attemptUnlockBody();
+    }
+}
+function toggleResultModal(show) { 
+    const el = document.getElementById('result-modal-overlay');
+    if(show) {
+        el.classList.remove('hidden');
+        lockBody();
+    } else {
+        el.classList.add('hidden');
+        attemptUnlockBody();
+    }
+}
 
 healthCheckBtn.addEventListener('click', () => toggleHealthModal(true));
 closeHealthModalBtn.addEventListener('click', () => toggleHealthModal(false));
@@ -762,8 +804,9 @@ submitHealthBtn.addEventListener('click', async () => {
     }
 
     // Close Form -> Open Result Loading
-    toggleHealthModal(false);
+    // สลับลำดับ: เปิด Result ก่อนปิด Form เพื่อไม่ให้หน้าจอกระตุก (lock -> unlock -> lock)
     toggleResultModal(true);
+    toggleHealthModal(false);
     
     // Reset Result Content to Loading
     resultContentArea.innerHTML = `
