@@ -33,7 +33,7 @@
   }
   .title{
     font-family:"Kodchasan","Sarabun",sans-serif; font-weight:700; letter-spacing:.2px;
-    display:flex; align-items:center; gap:12px; margin-bottom:10px; padding:0 16px; color:#0b3b34;
+    display:flex; align-items:center; gap:8px; margin-bottom:10px; padding:0 16px; color:#0b3b34;
     flex-wrap: wrap; 
   }
   .badge{
@@ -212,9 +212,15 @@
       <div class="title">
         <span class="badge">ฐานข้อมูล</span>
         <div style="font-size:20px">ยารักษาโรค</div>
-        <!-- ปุ่มประเมินสุขภาพ (อยู่ใน Header หลัก) -->
-        <button id="health-check-btn" class="ml-2 bg-[#50b5a5] hover:bg-[#3d8f81] text-white font-bold py-1 px-3 rounded-full text-sm flex items-center gap-1 shadow-md transition-all border border-[#3d8f81]">
+        
+        <!-- ปุ่มประเมินสุขภาพ -->
+        <button id="health-check-btn" class="ml-1 bg-[#50b5a5] hover:bg-[#3d8f81] text-white font-bold py-1 px-3 rounded-full text-sm flex items-center gap-1 shadow-md transition-all border border-[#3d8f81]">
              <span class="text-lg">🩺</span> <span>ประเมินสุขภาพ</span>
+        </button>
+
+        <!-- ปุ่มเช็กสิทธิรักษาฟรีรายปี -->
+        <button id="rights-check-btn" class="ml-1 bg-amber-500 hover:bg-amber-600 text-white font-bold py-1 px-3 rounded-full text-sm flex items-center gap-1 shadow-md transition-all border border-amber-600">
+             <span class="text-lg">💳</span> <span>สิทธิรักษาฟรีรายปี</span>
         </button>
       </div>
 
@@ -327,7 +333,6 @@
   </div>
 
   <!-- Health Assessment Dialog (Form) -->
-  <!-- FIX: Removed 'absolute', added 'fixed' and 'w-full h-full' to ensure visibility on mobile -->
   <div id="health-modal-overlay" class="fixed inset-0 w-full h-full bg-black/60 z-[2000] hidden flex items-center justify-center p-4 backdrop-blur-sm">
         <div class="bg-white rounded-2xl w-full max-w-lg shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
             <header class="p-3 border-b border-gray-100 flex justify-between items-center bg-[#50b5a5]">
@@ -337,7 +342,6 @@
                 <button id="close-health-modal" class="text-white/80 hover:text-white text-2xl leading-none">&times;</button>
             </header>
             
-            <!-- Added ID for scroll reset -->
             <div id="health-form-scroll-area" class="p-4 overflow-y-auto space-y-3 bg-slate-50">
                 <div class="grid grid-cols-4 gap-2">
                     <div class="col-span-2 sm:col-span-1">
@@ -395,12 +399,86 @@
         </div>
     </div>
 
-    <!-- Result Dialog (Popup) -->
-    <!-- FIX: Removed 'absolute', added 'fixed' and 'w-full h-full' -->
+    <!-- Rights Check Dialog (Static Content & Update Button) -->
+    <div id="rights-modal-overlay" class="fixed inset-0 w-full h-full bg-black/60 z-[2000] hidden flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl w-full max-w-lg shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
+            <header class="p-3 border-b border-gray-100 flex justify-between items-center bg-amber-500">
+                <div class="flex items-center gap-2 text-white font-bold text-lg">
+                    <span>💳</span> สิทธิรักษาฟรีบัตรทอง (ประจำปี)
+                </div>
+                <button id="close-rights-modal" class="text-white/80 hover:text-white text-2xl leading-none">&times;</button>
+            </header>
+            
+            <div id="rights-form-scroll-area" class="p-0 overflow-y-auto bg-white" style="max-height: 60vh;">
+                <!-- Static Content Header -->
+                <div class="p-5 border-b border-gray-100 bg-amber-50">
+                    <h3 class="text-lg font-bold text-gray-800">สิทธิประโยชน์บัตรทอง (ครบวงจร)</h3>
+                    <p class="text-sm text-gray-600 mt-1">รวบรวมทุกสิทธิรักษาฟรีอัปเดต AI ประจำปี 2569</p>
+                    <div class="flex items-center gap-3 mt-2">
+                        <span class="text-[10px] font-bold bg-green-100 text-green-700 px-2 py-0.5 rounded border border-green-200">AI Verified</span>
+                        <span class="text-[10px] text-gray-500" id="rights-update-date">ล่าสุด: --/--/--</span>
+                    </div>
+                </div>
+                
+                <!-- List Content (Static Template) -->
+                <div class="p-5 space-y-5 text-sm">
+                    <div class="group">
+                        <h4 class="font-bold text-[#064e43] mb-1">UCEP: ฉุกเฉินวิกฤต มีสิทธิทุกที่</h4>
+                        <p class="text-gray-600 leading-relaxed">รักษาฟรี 72 ชม. แรกใน รพ. ที่ใกล้ที่สุด (รัฐและเอกชน) หากเจ็บป่วยฉุกเฉินวิกฤตถึงแก่ชีวิต</p>
+                    </div>
+                    <div class="group">
+                        <h4 class="font-bold text-[#064e43] mb-1">ตรวจและรักษาโรคทั่วไปฟรี</h4>
+                        <p class="text-gray-600 leading-relaxed">ครอบคลุมค่ารักษาพยาบาล ค่ายา ค่าเวชภัณฑ์ และค่าห้องสามัญในโรงพยาบาลตามสิทธิ</p>
+                    </div>
+                    <div class="group">
+                        <h4 class="font-bold text-[#064e43] mb-1">รับยาที่ร้านยาใกล้บ้านฟรี</h4>
+                        <p class="text-gray-600 leading-relaxed">ครอบคลุม 16 อาการเจ็บป่วยเล็กน้อย ปรึกษาเภสัชกรและรับยาได้ทันทีไม่ต้องไป รพ.</p>
+                    </div>
+                    <div class="group">
+                        <h4 class="font-bold text-[#064e43] mb-1">ล้างไต / ฟอกไตฟรี</h4>
+                        <p class="text-gray-600 leading-relaxed">ฟรีค่าล้างไตผ่านทางหน้าท้อง (แบบธรรมดาและอัตโนมัติ) และการฟอกเลือดด้วยเครื่องไตเทียม</p>
+                    </div>
+                    <div class="group">
+                        <h4 class="font-bold text-[#064e43] mb-1">ทันตกรรมครบวงจรฟรี</h4>
+                        <p class="text-gray-600 leading-relaxed">ถอนฟัน, อุดฟัน, ขูดหินปูน, ผ่าฟันคุด, เคลือบฟลูออไรด์ และทำฟันเทียม (ตามรอบที่กำหนด)</p>
+                    </div>
+                    <div class="group">
+                        <h4 class="font-bold text-[#064e43] mb-1">บริการแม่และเด็กฟรี</h4>
+                        <p class="text-gray-600 leading-relaxed">ฝากครรภ์คุณภาพ, คลอดบุตรฟรี, ตรวจคัดกรองโรคพันธุกรรมในเด็กแรกเกิด และวัคซีนพื้นฐาน</p>
+                    </div>
+                    <div class="group">
+                        <h4 class="font-bold text-[#064e43] mb-1">คัดกรองมะเร็งฟรี</h4>
+                        <p class="text-gray-600 leading-relaxed">มะเร็งปากมดลูก (HPV DNA), มะเร็งลำไส้ใหญ่ (FIT Test), มะเร็งเต้านม และมะเร็งช่องปาก</p>
+                    </div>
+                    <div class="group">
+                        <h4 class="font-bold text-[#064e43] mb-1">พบแพทย์ทางไกล (Telemedicine)</h4>
+                        <p class="text-gray-600 leading-relaxed">ปรึกษาแพทย์ผ่านแอปฯ สำหรับโรคทั่วไป พร้อมบริการส่งยาถึงบ้านฟรี (ผ่านแอปฯ ที่ร่วมโครงการ)</p>
+                    </div>
+                    <div class="group">
+                        <h4 class="font-bold text-[#064e43] mb-1">ตรวจสุขภาพและป้องกันโรค</h4>
+                        <p class="text-gray-600 leading-relaxed">ตรวจความดัน เบาหวาน ไขมันในเลือด และรับยาคุมกำเนิด ถุงยางอนามัย ฟรี</p>
+                    </div>
+                    <div class="group">
+                        <h4 class="font-bold text-[#064e43] mb-1">การฟื้นฟูสมรรถภาพ</h4>
+                        <p class="text-gray-600 leading-relaxed">บริการกายภาพบำบัด กิจกรรมบำบัด และอุปกรณ์สำหรับผู้พิการหรือผู้ป่วยติดเตียง</p>
+                    </div>
+                </div>
+            </div>
+
+            <footer class="p-3 border-t border-gray-100 flex justify-end gap-3 bg-white">
+                <button id="cancel-rights-btn" class="px-4 py-2 text-gray-500 hover:bg-gray-100 rounded-lg text-sm font-bold">ปิด</button>
+                <button id="submit-rights-btn" class="px-6 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-sm font-bold shadow-lg transition-all flex items-center gap-2">
+                    <span>🔄</span> อัปเดตสิทธิรักษาฟรีวันนี้
+                </button>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Result Dialog (Popup) - Shared -->
     <div id="result-modal-overlay" class="fixed inset-0 w-full h-full bg-black/70 z-[2050] hidden flex items-center justify-center p-4 backdrop-blur-sm">
         <div class="bg-white rounded-2xl w-full max-w-2xl shadow-2xl flex flex-col max-h-[85vh] overflow-hidden">
             <header class="p-4 border-b border-gray-100 flex justify-between items-center bg-white sticky top-0">
-                <div class="flex items-center gap-2 text-[#064e43] font-bold text-xl">
+                <div class="flex items-center gap-2 text-[#0f172a] font-bold text-xl">
                     <span>🤖</span> ผลการวิเคราะห์ (AI)
                 </div>
                 <button id="close-result-modal" class="text-gray-400 hover:text-gray-600 text-3xl leading-none">&times;</button>
@@ -409,12 +487,12 @@
             <div id="result-content-area" class="p-6 overflow-y-auto bg-[#fffdf7] text-gray-800 text-base leading-relaxed result-markdown">
                 <div class="flex flex-col items-center justify-center py-10 space-y-4 text-gray-500">
                      <div class="w-10 h-10 border-4 border-gray-200 border-t-[#50b5a5] rounded-full animate-spin"></div>
-                     <p>กำลังประมวลผลข้อมูลสุขภาพของคุณ...</p>
+                     <p>กำลังประมวลผลข้อมูล...</p>
                 </div>
             </div>
 
             <footer class="p-4 border-t border-gray-100 bg-gray-50 text-xs text-center text-gray-500">
-                คำเตือน: ผลลัพธ์จาก AI เป็นเพียงคำแนะนำเบื้องต้น ไม่ใช่การวินิจฉัยทางการแพทย์ โปรดพบแพทย์หากอาการรุนแรง
+                คำเตือน: ผลลัพธ์จาก AI เป็นเพียงคำแนะนำเบื้องต้น โปรดตรวจสอบกับหน่วยงานที่เกี่ยวข้องอีกครั้ง
             </footer>
         </div>
     </div>
@@ -502,16 +580,13 @@ function renderPage(){
 /** =============== Modal Logic (Drug Info & Lock Scroll) =============== **/
 let scrollY = 0;
 function lockBody(){
-  // ป้องกันการ lock ซ้ำ ซึ่งจะทำให้ค่า scrollY หาย
   if(document.body.classList.contains('no-scroll')) return;
-
   scrollY = window.scrollY || document.documentElement.scrollTop;
   document.body.classList.add('no-scroll'); 
   document.body.style.position = 'fixed';
   document.body.style.top = `-${scrollY}px`; 
   document.body.style.left = '0'; 
   document.body.style.right = '0';
-  // เพิ่มการตรวจสอบ element เพื่อให้แน่ใจว่าทำงานได้
   const main = document.getElementById('mainContent');
   if(main) main.setAttribute('inert','');
 }
@@ -527,13 +602,13 @@ function unlockBody(){
   if(main) main.removeAttribute('inert');
 }
 
-// ฟังก์ชันตรวจสอบว่าควรปลดล็อคหน้าจอหรือไม่ (ถ้าไม่มี Modal ใดๆ เปิดอยู่เลย)
 function attemptUnlockBody(){
     const isDrugOpen = document.getElementById('modalBackdrop').classList.contains('show');
     const isHealthOpen = !document.getElementById('health-modal-overlay').classList.contains('hidden');
+    const isRightsOpen = !document.getElementById('rights-modal-overlay').classList.contains('hidden');
     const isResultOpen = !document.getElementById('result-modal-overlay').classList.contains('hidden');
     
-    if(!isDrugOpen && !isHealthOpen && !isResultOpen){
+    if(!isDrugOpen && !isHealthOpen && !isRightsOpen && !isResultOpen){
         unlockBody();
     }
 }
@@ -582,7 +657,6 @@ document.getElementById('q').addEventListener('keydown', e=>{ if(e.key==='Enter'
 document.getElementById('cat').addEventListener('change', applySearch);
 
 (async function init(){
-  // skeleton
   document.getElementById('grid').innerHTML = Array.from({length:6}).map(()=>`
     <div class="card">
       <div class="skeleton" style="height:18px; width:70%; border-radius:8px; margin-bottom:8px"></div>
@@ -591,6 +665,15 @@ document.getElementById('cat').addEventListener('change', applySearch);
       <div class="skeleton" style="height:36px; width:120px; border-radius:10px"></div>
     </div>
   `).join('');
+
+  // Set Current Date in Rights Header
+  const dateEl = document.getElementById('rights-update-date');
+  if(dateEl) {
+      const now = new Date();
+      const thYear = (now.getFullYear() + 543).toString().slice(-2);
+      const months = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+      dateEl.textContent = `ล่าสุด: ${now.getDate()} ${months[now.getMonth()]} ${thYear}`;
+  }
 
   try{
     raw = await fetchData();
@@ -636,6 +719,13 @@ const closeHealthModalBtn = document.getElementById('close-health-modal');
 const cancelHealthBtn = document.getElementById('cancel-health-btn');
 const submitHealthBtn = document.getElementById('submit-health-btn');
 
+// NEW: Rights Check Elements
+const rightsCheckBtn = document.getElementById('rights-check-btn');
+const rightsModalOverlay = document.getElementById('rights-modal-overlay');
+const closeRightsModalBtn = document.getElementById('close-rights-modal');
+const cancelRightsBtn = document.getElementById('cancel-rights-btn');
+const submitRightsBtn = document.getElementById('submit-rights-btn');
+
 // Result Modal Elements
 const resultModalOverlay = document.getElementById('result-modal-overlay');
 const closeResultModalBtn = document.getElementById('close-result-modal');
@@ -666,10 +756,10 @@ function setThinking(on) {
     if (on) chatHistoryEl.scrollTop = chatHistoryEl.scrollHeight;
 }
 
-// FIX 3: ฟังก์ชันกลางสำหรับเรียก AI Worker
+// AI Call Function
 async function callAI(message, history = []) {
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 60000); // 60s timeout
+  const timeout = setTimeout(() => controller.abort(), 60000); 
 
   try {
     const res = await fetch(API_URL, {
@@ -706,13 +796,11 @@ async function handleSend() {
     
     chatHistory.push({ role: "user", parts: [{ text: message }] });
 
-    // History slicing logic
     let historyToSend = chatHistory;
     if (chatHistory.length > 8) { 
          historyToSend = [chatHistory[0], chatHistory[1], ...chatHistory.slice(2).slice(-6)];
     }
 
-    // FIX 4.1: เรียกใช้ callAI
     const aiReply = await callAI(message, historyToSend);
 
     chatHistory.push({ role: "model", parts: [{ text: aiReply }] });
@@ -729,13 +817,12 @@ newChatBtn.addEventListener('click', () => {
     setThinking(false);
 });
 
-// --- Chatbot Toggle ---
 const fabToggle = document.getElementById('fab-chat-toggle');
 fabToggle.addEventListener('click', () => { chatModal.classList.remove('chatbot-hidden'); fabToggle.style.opacity = '0'; });
 document.getElementById('chatbot-close-btn').addEventListener('click', () => { chatModal.classList.add('chatbot-hidden'); fabToggle.style.opacity = '1'; });
 
 /** ==========================================
- * HEALTH ASSESSMENT & RESULT DIALOG LOGIC
+ * MODALS LOGIC
  * ========================================== */
 
 // 1. Chips Logic
@@ -744,11 +831,9 @@ diseaseChips.forEach(chip => {
     chip.addEventListener('click', () => {
         const val = chip.getAttribute('data-val');
         if (val === 'ไม่มี') {
-            // ถ้าเลือกไม่มี ให้เคลียร์อันอื่น
             diseaseChips.forEach(c => c.classList.remove('selected'));
             chip.classList.add('selected');
         } else {
-            // ถ้าเลือกโรคอื่น ให้เอา 'ไม่มี' ออก
             document.querySelector('.chip-option[data-val="ไม่มี"]').classList.remove('selected');
             chip.classList.toggle('selected');
         }
@@ -756,12 +841,11 @@ diseaseChips.forEach(chip => {
 });
 document.querySelector('.chip-option[data-val="ไม่มี"]').classList.add('selected');
 
-// 2. Modals Control (Updated for Mobile Scroll Lock & Reset)
+// 2. Modals Control
 function toggleHealthModal(show) { 
     const el = document.getElementById('health-modal-overlay');
     if(show) {
         el.classList.remove('hidden');
-        // FIX: รีเซ็ต Scroll เมื่อเปิด Modal ใหม่
         const scrollArea = document.getElementById('health-form-scroll-area');
         if(scrollArea) scrollArea.scrollTop = 0;
         lockBody();
@@ -770,6 +854,21 @@ function toggleHealthModal(show) {
         attemptUnlockBody();
     }
 }
+
+// NEW: Rights Modal Toggle with Cache Logic
+function toggleRightsModal(show) {
+    const el = document.getElementById('rights-modal-overlay');
+    if(show) {
+        el.classList.remove('hidden');
+        const scrollArea = document.getElementById('rights-form-scroll-area');
+        if(scrollArea) scrollArea.scrollTop = 0;
+        lockBody();
+    } else {
+        el.classList.add('hidden');
+        attemptUnlockBody();
+    }
+}
+
 function toggleResultModal(show) { 
     const el = document.getElementById('result-modal-overlay');
     if(show) {
@@ -785,11 +884,16 @@ healthCheckBtn.addEventListener('click', () => toggleHealthModal(true));
 closeHealthModalBtn.addEventListener('click', () => toggleHealthModal(false));
 cancelHealthBtn.addEventListener('click', () => toggleHealthModal(false));
 
+// RIGHTS CHECK LOGIC: Open Static List First
+rightsCheckBtn.addEventListener('click', () => toggleRightsModal(true));
+
+closeRightsModalBtn.addEventListener('click', () => toggleRightsModal(false));
+cancelRightsBtn.addEventListener('click', () => toggleRightsModal(false));
+
 closeResultModalBtn.addEventListener('click', () => toggleResultModal(false));
 
-// 3. Submit & Analyze
+// 3. Submit Health
 submitHealthBtn.addEventListener('click', async () => {
-    // Collect Data
     const age = document.getElementById('hf-age').value.trim() || '-';
     const gender = document.getElementById('hf-gender').value;
     const weight = document.getElementById('hf-weight').value.trim() || '-';
@@ -797,7 +901,6 @@ submitHealthBtn.addEventListener('click', async () => {
     const allergy = document.getElementById('hf-allergy').value.trim() || 'ไม่มี';
     const symptoms = document.getElementById('hf-symptoms').value.trim();
     
-    // Collect diseases
     let selectedDiseases = Array.from(document.querySelectorAll('.chip-option.selected')).map(c => c.getAttribute('data-val'));
     const otherDisease = document.getElementById('hf-disease-other').value.trim();
     if(otherDisease) selectedDiseases.push(otherDisease);
@@ -809,19 +912,15 @@ submitHealthBtn.addEventListener('click', async () => {
         return;
     }
 
-    // Close Form -> Open Result Loading
-    // สลับลำดับ: เปิด Result ก่อนปิด Form เพื่อไม่ให้หน้าจอกระตุก (lock -> unlock -> lock)
     toggleResultModal(true);
     toggleHealthModal(false);
     
-    // Reset Result Content to Loading
     resultContentArea.innerHTML = `
         <div class="flex flex-col items-center justify-center py-10 space-y-4 text-gray-500">
              <div class="w-10 h-10 border-4 border-gray-200 border-t-[#50b5a5] rounded-full animate-spin"></div>
              <p>AI กำลังวิเคราะห์ข้อมูล...</p>
         </div>`;
 
-    // FIX 2: ปรับ Prompt ให้ Soft ลง
     const prompt = `
     ข้อมูลสุขภาพเบื้องต้น (ไม่ใช่การวินิจฉัย):
     - เพศ: ${gender} อายุ ${age}
@@ -836,10 +935,74 @@ submitHealthBtn.addEventListener('click', async () => {
     4. สัญญาณที่ควรไปพบแพทย์
     `;
 
-    // FIX 4.2: เรียกใช้ callAI
     try {
         const aiText = await callAI(prompt);
-        // Display Result using Marked (Markdown Parser)
+        resultContentArea.innerHTML = marked.parse(aiText);
+    } catch (err) {
+        resultContentArea.innerHTML = `
+            <div class="text-center text-red-600 py-10">
+                <p class="text-xl font-bold">เกิดข้อผิดพลาด</p>
+                <p>${err.message}</p>
+                <button onclick="toggleResultModal(false)" class="mt-4 text-sm underline text-gray-500">ปิด</button>
+            </div>`;
+    }
+});
+
+// 4. NEW: Update Rights Logic (Check Cache -> Call AI)
+submitRightsBtn.addEventListener('click', async () => {
+    const lastUpdate = localStorage.getItem('rightsLastUpdate');
+    const cachedResult = localStorage.getItem('rightsResult');
+    const ONE_DAY = 24 * 60 * 60 * 1000; // 24 Hours in ms
+
+    // Check Cache Validity
+    if (lastUpdate && cachedResult && (Date.now() - parseInt(lastUpdate) < ONE_DAY)) {
+        const dateObj = new Date(parseInt(lastUpdate));
+        const dateStr = dateObj.toLocaleString('th-TH');
+        
+        // Show cached result
+        toggleResultModal(true);
+        toggleRightsModal(false); // Close the list modal
+        
+        resultContentArea.innerHTML = `
+            <div class="p-3 mb-4 bg-green-50 text-green-800 text-sm rounded-lg border border-green-200">
+                ✅ <strong>ข้อมูลล่าสุดของวันนี้ (อัปเดตเมื่อ: ${dateStr})</strong><br>
+                ระบบจำกัดการอัปเดต 1 ครั้ง/วัน เพื่อความรวดเร็วครับ
+            </div>
+            ${marked.parse(cachedResult)}
+        `;
+        return;
+    }
+
+    // Process New Update
+    toggleResultModal(true);
+    toggleRightsModal(false);
+
+    resultContentArea.innerHTML = `
+        <div class="flex flex-col items-center justify-center py-10 space-y-4 text-gray-500">
+             <div class="w-10 h-10 border-4 border-gray-200 border-t-amber-500 rounded-full animate-spin"></div>
+             <p>AI กำลังค้นหาข้อมูลสิทธิบัตรทองล่าสุด...</p>
+        </div>`;
+
+    const prompt = `
+    ทำหน้าที่เป็นผู้เชี่ยวชาญสิทธิหลักประกันสุขภาพแห่งชาติ (บัตรทอง/30 บาท)
+    ช่วยสรุป **"สิทธิประโยชน์ฟรีทั้งหมดที่ประชาชนได้รับประจำปีนี้"** (อัปเดตล่าสุด)
+    ให้ครอบคลุมประชาชนทุกกลุ่มวัย โดยไม่ต้องระบุตัวบุคคล
+
+    กรุณาแสดงผลเป็นหัวข้อชัดเจน ดังนี้:
+    1. **สิทธิการรักษาพยาบาลทั่วไป (IPD/OPD/อุบัติเหตุ)**: ครอบคลุมอะไรบ้าง
+    2. **สิทธิสร้างเสริมสุขภาพและป้องกันโรค (P&P)**: แยกตามกลุ่มวัย (เด็กเล็ก/วัยเรียน/วัยทำงาน/ผู้สูงอายุ) เน้นการตรวจคัดกรองและวัคซีน
+    3. **สิทธิทันตกรรม**: ขูดหินปูน, อุดฟัน, ถอนฟัน
+    4. **สิทธิประโยชน์ใหม่ประจำปีนี้**: มีอะไรเพิ่มเติมบ้าง
+    5. **วิธีเข้ารับบริการ**: การใช้บัตรประชาชนใบเดียว, แอปเป๋าตัง
+    `;
+
+    try {
+        const aiText = await callAI(prompt);
+        
+        // Save result & timestamp to localStorage
+        localStorage.setItem('rightsResult', aiText);
+        localStorage.setItem('rightsLastUpdate', Date.now().toString());
+
         resultContentArea.innerHTML = marked.parse(aiText);
     } catch (err) {
         resultContentArea.innerHTML = `
