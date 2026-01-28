@@ -24,7 +24,7 @@
     </script>
 
     <style>
-        body { background-color: #f0fdf4; font-family: 'Prompt', sans-serif; }
+        body { background-color: #f0fdf4; font-family: 'Prompt', sans-serif; -webkit-tap-highlight-color: transparent; }
         .price-item { transition: all 0.3s ease; }
         .price-flash { animation: flashHighlight 1s ease-out; }
         @keyframes flashHighlight {
@@ -43,11 +43,29 @@
         .gemini-thinking-bar::before { content: ''; position: absolute; top: 0; left: 0; height: 100%; width: 100%; background: linear-gradient(90deg, #10B981, #34D399, #10B981); background-size: 200% 100%; animation: thinking-gradient 2s linear infinite; }
         @keyframes thinking-gradient { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
-        #fab-chat-toggle { position: fixed; bottom: 100px; right: 20px; width: 60px; height: 60px; background-color: #10B981; color: white; border-radius: 50%; font-size: 28px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.3); cursor: pointer; z-index: 45; transition: all 0.3s; }
+        /* FAB Position Adjusted for Bottom Nav */
+        #fab-chat-toggle { 
+            position: fixed; 
+            bottom: 90px; /* Raised to clear nav bar */
+            right: 20px; 
+            width: 56px; 
+            height: 56px; 
+            background-color: #10B981; 
+            color: white; 
+            border-radius: 50%; 
+            font-size: 24px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4); 
+            cursor: pointer; 
+            z-index: 45; 
+            transition: all 0.3s; 
+        }
         #chatbot-modal.chatbot-hidden { opacity: 0; transform: translateY(100%); pointer-events: none; }
         #chatbot-modal { position: fixed; inset: 0; z-index: 1000; transition: all 0.3s; }
 
-        /* FB Container Styling - Optimized to fill frame */
+        /* FB Container Styling */
         .fb-container {
             width: 100%;
             background: white;
@@ -58,99 +76,144 @@
         }
         .fb-display-wrapper {
             width: 100%;
-            min-height: 500px;
+            height: calc(100vh - 220px); /* Adjust height dynamically */
+            min-height: 400px;
             display: block;
             background: white;
+            position: relative;
         }
-        /* Ensure the SDK element expands */
-        .fb-page, .fb-page span, .fb-page iframe {
-            width: 100% !important;
+        .fb-display-wrapper iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
         }
+
+        /* Bottom Nav Styles */
+        .nav-item { transition: color 0.2s; position: relative; }
+        .nav-item.active { color: #10B981; }
+        .nav-item.active::after {
+            content: ''; position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+            width: 40px; height: 4px; background-color: #10B981; border-radius: 0 0 4px 4px;
+        }
+
+        /* Animation for View Switching */
+        .view-content { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
-<body class="text-gray-800 pb-24">
+<body class="text-gray-800 pb-24 bg-gray-50">
+    
     <!-- โหลด SDK ของ Facebook -->
     <div id="fb-root"></div>
     <script async defer crossorigin="anonymous" 
         src="https://connect.facebook.net/th_TH/sdk.js#xfbml=1&version=v19.0" nonce="abc123">
     </script>
 
-    <!-- Header -->
-    <header class="bg-gradient-to-r from-primary to-secondary text-white p-6 shadow-lg rounded-b-3xl relative overflow-hidden">
+    <!-- Header (Global) -->
+    <header class="bg-gradient-to-r from-primary to-secondary text-white p-6 pb-8 shadow-lg rounded-b-[2rem] relative overflow-hidden z-10">
         <div class="relative z-10 flex justify-between items-start">
             <div>
-                <h1 class="text-2xl font-bold mb-1"><i class="fa-solid fa-recycle mr-2"></i>EcoPrice AI</h1>
-                <p class="text-emerald-100 text-sm" id="currentDate">กำลังโหลดวันที่...</p>
+                <h1 class="text-2xl font-bold mb-1 flex items-center gap-2"><i class="fa-solid fa-recycle"></i> EcoPrice AI</h1>
+                <p class="text-emerald-100 text-sm opacity-90" id="currentDate">กำลังโหลดวันที่...</p>
             </div>
-            <button onclick="updatePricesWithAI()" class="bg-white bg-opacity-20 hover:bg-opacity-30 backdrop-blur-sm text-white text-xs px-3 py-2 rounded-lg border border-white/30 flex items-center">
-                <i class="fa-solid fa-sync mr-2"></i> อัปเดตราคา
+            <!-- Update button visible only on Price view (handled by JS) -->
+            <button id="updateBtn" onclick="updatePricesWithAI()" class="hidden bg-white/20 hover:bg-white/30 backdrop-blur-md text-white text-xs px-4 py-2 rounded-xl border border-white/20 flex items-center transition-all active:scale-95">
+                <i class="fa-solid fa-rotate mr-2"></i> อัปเดตราคา
             </button>
         </div>
     </header>
 
-    <!-- Content Area -->
-    <div class="mt-4 px-4 space-y-4">
-        
-        <!-- จอแสดงผล Facebook Group Plugin - Adjusted to fill frame -->
-        <div class="fb-container">
-            <div class="bg-[#1877F2] text-white px-4 py-3 flex items-center justify-between">
-                <div class="flex items-center text-sm font-bold">
-                    <i class="fa-brands fa-facebook mr-2 text-lg"></i> ชุมชนราคากลางขยะ
+    <!-- Main Content Area -->
+    <main class="relative -mt-4 z-20 px-4 pb-20">
+
+        <!-- VIEW 1: Community (Default) -->
+        <div id="view-community" class="view-content">
+            <div class="fb-container bg-white">
+                <div class="bg-[#1877F2] text-white px-5 py-4 flex items-center justify-between">
+                    <div class="flex items-center text-sm font-bold">
+                        <i class="fa-brands fa-facebook mr-3 text-xl"></i> ชุมชนราคากลางขยะ
+                    </div>
+                    <!-- ปุ่มลิงก์เว็บเดิม -->
+                    <a href="https://www.facebook.com/groups/2367668163390612/" target="_blank" class="text-[10px] bg-white/20 hover:bg-white/30 px-3 py-1.5 rounded-full font-medium backdrop-blur-sm transition-colors flex items-center">
+                        เปิดในแอป <i class="fa-solid fa-arrow-up-right-from-square ml-1"></i>
+                    </a>
                 </div>
-                <div class="text-[10px] bg-white/20 px-2 py-1 rounded-full font-medium">ไทม์ไลน์ล่าสุด</div>
-            </div>
-            <div class="fb-display-wrapper">
-                <div class="fb-page" 
-                    data-href="https://www.facebook.com/p/%E0%B8%A7%E0%B8%87%E0%B8%A9%E0%B9%8C%E0%B8%9E%E0%B8%B2%E0%B8%93%E0%B8%B4%E0%B8%8A%E0%B8%A2%E0%B9%8C%E0%B8%A3%E0%B8%B1%E0%B8%9A%E0%B8%8B%E0%B8%B7%E0%B9%89%E0%B8%AD%E0%B8%82%E0%B8%AD%E0%B8%87%E0%B9%80%E0%B8%81%E0%B9%88%E0%B8%B2-100064175737067/" 
-                    data-tabs="timeline" 
-                    data-width="500" 
-                    data-height="500" 
-                    data-small-header="false" 
-                    data-adapt-container-width="true" 
-                    data-hide-cover="false" 
-                    data-show-facepile="true">
-                    <blockquote cite="https://www.facebook.com/p/%E0%B8%A7%E0%B8%87%E0%B8%A9%E0%B9%8C%E0%B8%9E%E0%B8%B2%E0%B8%93%E0%B8%B4%E0%B8%8A%E0%B8%A2%E0%B9%8C%E0%B8%A3%E0%B8%B1%E0%B8%9A%E0%B8%8B%E0%B8%B7%E0%B9%89%E0%B8%AD%E0%B8%82%E0%B8%AD%E0%B8%87%E0%B9%80%E0%B8%81%E0%B9%88%E0%B8%B2-100064175737067/" class="fb-xfbml-parse-ignore">
-                        <a href="https://www.facebook.com/p/%E0%B8%A7%E0%B8%87%E0%B8%A9%E0%B9%8C%E0%B8%9E%E0%B8%B2%E0%B8%93%E0%B8%B4%E0%B8%8A%E0%B8%A2%E0%B9%8C%E0%B8%A3%E0%B8%B1%E0%B8%9A%E0%B8%8B%E0%B8%B7%E0%B9%89%E0%B8%AD%E0%B8%82%E0%B8%AD%E0%B8%87%E0%B9%80%E0%B8%81%E0%B9%88%E0%B8%B2-100064175737067/">กำลังโหลดชุมชน...</a>
-                    </blockquote>
+                <!-- ส่วนที่แก้ไข: ใช้โค้ด fb-page ตามที่คุณต้องการ -->
+                <div class="fb-display-wrapper">
+                    <div class="fb-page" 
+                        data-href="https://www.facebook.com/p/%E0%B8%A7%E0%B8%87%E0%B8%A9%E0%B9%8C%E0%B8%9E%E0%B8%B2%E0%B8%93%E0%B8%B4%E0%B8%8A%E0%B8%A2%E0%B9%8C%E0%B8%A3%E0%B8%B1%E0%B8%9A%E0%B8%8B%E0%B8%B7%E0%B9%89%E0%B8%AD%E0%B8%82%E0%B8%AD%E0%B8%87%E0%B9%80%E0%B8%81%E0%B9%88%E0%B8%B2-100064175737067/" 
+                        data-tabs="timeline" 
+                        data-width="500" 
+                        data-height="500" 
+                        data-small-header="false" 
+                        data-adapt-container-width="true" 
+                        data-hide-cover="false" 
+                        data-show-facepile="true">
+                        <blockquote cite="https://www.facebook.com/p/%E0%B8%A7%E0%B8%87%E0%B8%A9%E0%B9%8C%E0%B8%9E%E0%B8%B2%E0%B8%93%E0%B8%B4%E0%B8%8A%E0%B8%A2%E0%B9%8C%E0%B8%A3%E0%B8%B1%E0%B8%9A%E0%B8%8B%E0%B8%B7%E0%B9%89%E0%B8%AD%E0%B8%82%E0%B8%AD%E0%B8%87%E0%B9%80%E0%B8%81%E0%B9%88%E0%B8%B2-100064175737067/" class="fb-xfbml-parse-ignore">
+                            <a href="https://www.facebook.com/p/%E0%B8%A7%E0%B8%87%E0%B8%A9%E0%B9%8C%E0%B8%9E%E0%B8%B2%E0%B8%93%E0%B8%B4%E0%B8%8A%E0%B8%A2%E0%B9%8C%E0%B8%A3%E0%B8%B1%E0%B8%9A%E0%B8%8B%E0%B8%B7%E0%B9%89%E0%B8%AD%E0%B8%82%E0%B8%AD%E0%B8%87%E0%B9%80%E0%B8%81%E0%B9%88%E0%B8%B2-100064175737067/">กำลังโหลดชุมชน...</a>
+                        </blockquote>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Search Bar -->
-        <div class="relative group">
-            <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors"></i>
-            <input type="text" id="searchInput" oninput="handleSearch()" placeholder="ค้นหาชื่อขยะ เช่น ขวดพลาสติก, ลัง..." class="w-full pl-11 pr-4 py-3 bg-white rounded-2xl shadow-sm border border-gray-100 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all text-gray-700">
-        </div>
+        <!-- VIEW 2: Search & Price List (Hidden by default) -->
+        <div id="view-prices" class="view-content hidden space-y-4">
+            
+            <!-- Search Bar -->
+            <div class="bg-white p-2 rounded-2xl shadow-sm border border-gray-100">
+                <div class="relative">
+                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" id="searchInput" oninput="handleSearch()" placeholder="ค้นหาชื่อขยะ (เช่น ทองแดง, ขวดใส)..." class="w-full pl-11 pr-4 py-3 bg-gray-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all text-gray-700 placeholder-gray-400">
+                </div>
+            </div>
 
-        <!-- Category Horizontal Scroll -->
-        <div class="flex overflow-x-auto space-x-3 hide-scrollbar pb-2" id="categoryContainer">
-            <button onclick="filterCategory('all')" class="cat-btn bg-gray-800 text-white px-5 py-2 rounded-full whitespace-nowrap shadow-sm border-2 border-transparent">ทั้งหมด</button>
-            <button onclick="filterCategory('paper')" class="cat-btn bg-white text-gray-600 px-5 py-2 rounded-full whitespace-nowrap shadow-sm border border-gray-100"><i class="fa-solid fa-newspaper mr-1 text-gray-500"></i> กระดาษ</button>
-            <button onclick="filterCategory('plastic')" class="cat-btn bg-white text-gray-600 px-5 py-2 rounded-full whitespace-nowrap shadow-sm border border-gray-100"><i class="fa-solid fa-bottle-water mr-1 text-blue-400"></i> พลาสติก</button>
-            <button onclick="filterCategory('metal')" class="cat-btn bg-white text-gray-600 px-5 py-2 rounded-full whitespace-nowrap shadow-sm border border-gray-100"><i class="fa-solid fa-gavel mr-1 text-orange-400"></i> โลหะ</button>
-            <button onclick="filterCategory('glass')" class="cat-btn bg-white text-gray-600 px-5 py-2 rounded-full whitespace-nowrap shadow-sm border border-gray-100"><i class="fa-solid fa-wine-bottle mr-1 text-purple-400"></i> แก้ว</button>
-            <button onclick="filterCategory('electronic')" class="cat-btn bg-white text-gray-600 px-5 py-2 rounded-full whitespace-nowrap shadow-sm border border-gray-100"><i class="fa-solid fa-plug mr-1 text-yellow-500"></i> อิเล็กทรอนิกส์</button>
-            <button onclick="filterCategory('other')" class="cat-btn bg-white text-gray-600 px-5 py-2 rounded-full whitespace-nowrap shadow-sm border border-gray-100"><i class="fa-solid fa-ellipsis mr-1 text-gray-400"></i> อื่นๆ</button>
-        </div>
-    </div>
+            <!-- Categories -->
+            <div class="flex overflow-x-auto space-x-2 hide-scrollbar pb-1" id="categoryContainer">
+                <button onclick="filterCategory('all')" class="cat-btn bg-gray-800 text-white px-4 py-2 rounded-full whitespace-nowrap text-sm shadow-sm transition-transform active:scale-95">ทั้งหมด</button>
+                <button onclick="filterCategory('paper')" class="cat-btn bg-white text-gray-600 px-4 py-2 rounded-full whitespace-nowrap text-sm border border-gray-200 shadow-sm transition-transform active:scale-95"><i class="fa-solid fa-newspaper mr-1 text-gray-400"></i> กระดาษ</button>
+                <button onclick="filterCategory('plastic')" class="cat-btn bg-white text-gray-600 px-4 py-2 rounded-full whitespace-nowrap text-sm border border-gray-200 shadow-sm transition-transform active:scale-95"><i class="fa-solid fa-bottle-water mr-1 text-blue-400"></i> พลาสติก</button>
+                <button onclick="filterCategory('metal')" class="cat-btn bg-white text-gray-600 px-4 py-2 rounded-full whitespace-nowrap text-sm border border-gray-200 shadow-sm transition-transform active:scale-95"><i class="fa-solid fa-gavel mr-1 text-orange-400"></i> โลหะ</button>
+                <button onclick="filterCategory('glass')" class="cat-btn bg-white text-gray-600 px-4 py-2 rounded-full whitespace-nowrap text-sm border border-gray-200 shadow-sm transition-transform active:scale-95"><i class="fa-solid fa-wine-bottle mr-1 text-purple-400"></i> แก้ว</button>
+                <button onclick="filterCategory('electronic')" class="cat-btn bg-white text-gray-600 px-4 py-2 rounded-full whitespace-nowrap text-sm border border-gray-200 shadow-sm transition-transform active:scale-95"><i class="fa-solid fa-plug mr-1 text-yellow-500"></i> อิเล็กทรอนิกส์</button>
+                <button onclick="filterCategory('other')" class="cat-btn bg-white text-gray-600 px-4 py-2 rounded-full whitespace-nowrap text-sm border border-gray-200 shadow-sm transition-transform active:scale-95"><i class="fa-solid fa-ellipsis mr-1 text-gray-400"></i> อื่นๆ</button>
+            </div>
 
-    <!-- Price List Section -->
-    <div class="mt-4 px-4">
-        <div class="flex justify-between items-center mb-3">
-            <h2 class="font-bold text-lg text-gray-700">รายการราคาล่าสุด</h2>
-            <div id="statusIndicator" class="flex items-center text-[10px] text-gray-400 bg-white px-2 py-1 rounded-full shadow-sm border border-gray-50">
-                <div id="statusDot" class="w-1.5 h-1.5 rounded-full bg-green-500 mr-1.5 animate-pulse"></div>
-                <span id="updateTimeText">อัปเดตเรียลไทม์</span>
+            <!-- List Header -->
+            <div class="flex justify-between items-center px-1">
+                <h2 class="font-bold text-gray-700">รายการรับซื้อวันนี้</h2>
+                <div id="statusIndicator" class="flex items-center text-[10px] text-gray-500 bg-white px-2 py-1 rounded-lg border border-gray-100 shadow-sm">
+                    <div id="statusDot" class="w-1.5 h-1.5 rounded-full bg-green-500 mr-1.5 animate-pulse"></div>
+                    <span id="updateTimeText">Live Update</span>
+                </div>
+            </div>
+
+            <!-- Price List Items -->
+            <div id="priceList" class="space-y-3 pb-24">
+                <!-- Items injected by JS -->
+            </div>
+            
+            <div id="noResults" class="hidden py-12 text-center text-gray-400">
+                <div class="bg-gray-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <i class="fa-solid fa-box-open text-2xl"></i>
+                </div>
+                <p>ไม่พบรายการที่ค้นหา</p>
             </div>
         </div>
-        <div id="priceList" class="space-y-3 pb-20">
-            <!-- Items injected by JS -->
-        </div>
-        <div id="noResults" class="hidden py-10 text-center text-gray-400">
-            <i class="fa-solid fa-box-open text-4xl mb-2"></i>
-            <p>ไม่พบรายการที่ค้นหา</p>
-        </div>
-    </div>
+
+    </main>
+
+    <!-- Bottom Navigation Bar -->
+    <nav class="fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] z-50 h-[70px] flex justify-around items-center px-2 pb-1">
+        <button onclick="switchTab('community')" id="nav-community" class="nav-item active flex-1 flex flex-col items-center justify-center h-full text-gray-400 hover:bg-gray-50 active:bg-gray-100 rounded-xl mx-1">
+            <i class="fa-solid fa-users text-xl mb-1"></i>
+            <span class="text-[10px] font-medium">ชุมชน</span>
+        </button>
+        <button onclick="switchTab('prices')" id="nav-prices" class="nav-item flex-1 flex flex-col items-center justify-center h-full text-gray-400 hover:bg-gray-50 active:bg-gray-100 rounded-xl mx-1">
+            <i class="fa-solid fa-magnifying-glass-dollar text-xl mb-1"></i>
+            <span class="text-[10px] font-medium">เช็คราคา</span>
+        </button>
+    </nav>
 
     <!-- Loading Overlay -->
     <div id="aiLoadingOverlay" class="fixed inset-0 bg-black/60 z-[100] hidden flex flex-col items-center justify-center backdrop-blur-md">
@@ -165,10 +228,10 @@
 
     <!-- Calculator Modal -->
     <div id="calculatorModal" class="fixed inset-0 bg-black/50 z-[60] hidden flex items-end sm:items-center justify-center">
-        <div class="bg-white w-full sm:w-96 rounded-t-3xl sm:rounded-2xl p-6 shadow-2xl">
+        <div class="bg-white w-full sm:w-96 rounded-t-3xl sm:rounded-2xl p-6 shadow-2xl animate-fade-in-up">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-xl font-bold text-gray-800">คำนวณราคา</h3>
-                <button onclick="closeCalculator()" class="text-gray-400 p-2"><i class="fa-solid fa-times text-xl"></i></button>
+                <button onclick="closeCalculator()" class="text-gray-400 p-2 hover:bg-gray-100 rounded-full transition-colors"><i class="fa-solid fa-times text-xl"></i></button>
             </div>
             <div class="bg-emerald-50 p-4 rounded-2xl mb-4 flex items-center">
                 <div id="calcIcon" class="w-12 h-12 rounded-full bg-white flex items-center justify-center text-xl shadow-sm mr-3"></div>
@@ -194,21 +257,22 @@
         </div>
     </div>
 
-    <!-- Bottom Basket Summary -->
-    <div id="basketSummary" class="fixed bottom-0 left-0 w-full bg-white shadow-[0_-8px_30px_rgb(0,0,0,0.12)] p-4 rounded-t-3xl transform translate-y-full transition-transform duration-500 z-50">
+    <!-- Bottom Basket Summary (Positioned ABOVE Nav) -->
+    <div id="basketSummary" class="fixed bottom-[70px] left-0 w-full bg-white shadow-[0_-4px_20px_rgba(0,0,0,0.1)] p-4 rounded-t-3xl transform translate-y-[150%] transition-transform duration-500 z-40 border-t border-gray-100">
         <div class="max-w-3xl mx-auto flex justify-between items-center">
             <div class="flex items-center">
-                <div class="bg-primary/10 p-3 rounded-xl mr-3">
+                <div class="bg-primary/10 p-3 rounded-xl mr-3 relative">
                     <i class="fa-solid fa-basket-shopping text-primary text-xl"></i>
+                    <span id="basketBadge" class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">0</span>
                 </div>
                 <div>
-                    <p class="text-[10px] uppercase tracking-wider text-gray-400 font-bold">ยอดรวมประเมิน (<span id="basketCount">0</span> รายการ)</p>
+                    <p class="text-[10px] uppercase tracking-wider text-gray-400 font-bold">ยอดรวมประเมิน</p>
                     <h3 class="text-2xl font-black text-primary" id="basketTotal">0.00 ฿</h3>
                 </div>
             </div>
             <div class="flex space-x-2">
-                <button onclick="resetBasket()" class="text-gray-400 px-4 py-2 font-bold text-sm">ล้าง</button>
-                <button class="bg-primary hover:bg-secondary text-white px-6 py-3 rounded-xl font-bold text-sm shadow-md">บันทึก</button>
+                <button onclick="resetBasket()" class="text-gray-400 px-3 py-2 font-bold text-xs hover:text-red-500 transition-colors">ล้าง</button>
+                <button class="bg-gray-900 text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-md hover:bg-black transition-colors">สรุปรายการ</button>
             </div>
         </div>
     </div>
@@ -260,8 +324,34 @@
     </div>
 
     <script>
-        // --- Data Mockup ---
-        let wasteData = [
+        // --- Tab Switching Logic ---
+        function switchTab(tabName) {
+            // Hide all views
+            document.getElementById('view-community').classList.add('hidden');
+            document.getElementById('view-prices').classList.add('hidden');
+            
+            // Deactivate all nav items
+            document.getElementById('nav-community').classList.remove('active', 'text-primary');
+            document.getElementById('nav-prices').classList.remove('active', 'text-primary');
+            document.getElementById('nav-community').classList.add('text-gray-400');
+            document.getElementById('nav-prices').classList.add('text-gray-400');
+
+            // Show selected view and activate nav item
+            if (tabName === 'community') {
+                document.getElementById('view-community').classList.remove('hidden');
+                document.getElementById('nav-community').classList.add('active');
+                document.getElementById('nav-community').classList.replace('text-gray-400', 'text-primary');
+                document.getElementById('updateBtn').classList.add('hidden');
+            } else {
+                document.getElementById('view-prices').classList.remove('hidden');
+                document.getElementById('nav-prices').classList.add('active');
+                document.getElementById('nav-prices').classList.replace('text-gray-400', 'text-primary');
+                document.getElementById('updateBtn').classList.remove('hidden');
+            }
+        }
+
+        // --- Data Mockup & Existing Logic ---
+       let wasteData = [
               { id: 1, name: 'กระดาษขาวดำ', category: 'paper', price: 4, trend: 'stable', icon: 'fa-file-alt', color: 'text-gray-500' },
   { id: 2, name: 'กระดาษลูกฟูก (ลัง)', category: 'paper', price: 3, trend: 'stable', icon: 'fa-box-open', color: 'text-yellow-700' },
   { id: 3, name: 'กระดาษหนังสือพิมพ์', category: 'paper', price: 2.5, trend: 'stable', icon: 'fa-newspaper', color: 'text-gray-600' },
@@ -325,6 +415,7 @@
   { id: 50, name: 'ไมโครเวฟเก่า', category: 'electronic', price: 10, trend: 'stable', icon: 'fa-box', color: 'text-gray-500' }
         ];
 
+
         let currentCategory = 'all';
         let searchQuery = '';
         let basket = [];
@@ -333,6 +424,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             renderDate();
             filterItems();
+            switchTab('community'); // Default tab
         });
 
         function renderDate() {
@@ -351,9 +443,9 @@
             buttons.forEach(btn => {
                 const clickAttr = btn.getAttribute('onclick');
                 if (clickAttr.includes(`'${category}'`)) {
-                    btn.className = "cat-btn bg-gray-800 text-white px-5 py-2 rounded-full whitespace-nowrap shadow-sm border-2 border-transparent";
+                    btn.className = "cat-btn bg-gray-800 text-white px-4 py-2 rounded-full whitespace-nowrap text-sm shadow-sm transition-transform active:scale-95";
                 } else {
-                    btn.className = "cat-btn bg-white text-gray-600 px-5 py-2 rounded-full whitespace-nowrap shadow-sm border border-gray-100";
+                    btn.className = "cat-btn bg-white text-gray-600 px-4 py-2 rounded-full whitespace-nowrap text-sm border border-gray-200 shadow-sm transition-transform active:scale-95";
                 }
             });
             filterItems();
@@ -429,10 +521,11 @@
 
         function updateBasketUI() {
             const bar = document.getElementById('basketSummary');
-            if (basket.length > 0) bar.classList.remove('translate-y-full');
-            else bar.classList.add('translate-y-full');
+            const badge = document.getElementById('basketBadge');
+            if (basket.length > 0) bar.classList.remove('translate-y-[150%]');
+            else bar.classList.add('translate-y-[150%]');
             const total = basket.reduce((sum, item) => sum + item.total, 0);
-            document.getElementById('basketCount').innerText = basket.length;
+            badge.innerText = basket.length;
             document.getElementById('basketTotal').innerText = total.toLocaleString('th-TH', { minimumFractionDigits: 2 }) + ' ฿';
         }
 
