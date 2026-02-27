@@ -128,7 +128,6 @@
 
         /* Modern Button */
         .btn-modern {
-            margin-top: auto;
             width: 100%;
             padding: 0.6rem;
             background: var(--bg-color);
@@ -152,6 +151,32 @@
         }
 
         .btn-modern:hover svg { stroke: #fff; }
+
+        /* Podcast Button */
+        .btn-podcast {
+            width: 100%;
+            padding: 0.6rem;
+            background: #fff1f2;
+            color: #e11d48;
+            font-family: 'Prompt', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: all 0.2s;
+            border: 1px solid #fecdd3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        .btn-podcast:hover {
+            background: #e11d48;
+            color: #fff;
+            border-color: #e11d48;
+        }
+
+        .btn-podcast:hover svg { stroke: #fff; fill: #fff; }
 
         /* Quiz Banner */
         .quiz-banner {
@@ -287,19 +312,18 @@
 
 <script>
     const LESSONS = [
-        ["ปฐมบทนาฏศิลป์", "กำเนิดและวิวัฒนาการตั้งแต่โบราณกาลสู่ปัจจุบัน", "patombod/index.html"],
-        ["ประเภทการแสดง", "โขน ละคร รำ ระบำ และอัตลักษณ์ไทย", "papad/index.html"],
-        ["จารีตไหว้ครู", "ความศรัทธาและความกตัญญูในประเพณีนาฏศิลป์", "katanU/index.html"],
-        ["เพลงหน้าพาทย์", "ดนตรีชั้นสูงประกอบกิริยาตัวละคร", "peangnapard/index.html"],
-        ["นาฏยศัพท์", "พื้นฐานภาษาท่าและการสื่ออารมณ์นาฏศิลป์", "natayasub/index.html"],
-        ["เครื่องแต่งกาย", "ความประณีตของหัวโขนและเครื่องพัสตราภรณ์", "keangtainkay/index.html"],
-        ["ศาสตร์โขนหลวง", "ประวัติศาสตร์และวิธีการพากย์เจรจาโขน", "knone/index.html"],
-        ["ระบำมาตรฐาน", "รูปแบบการร่ายรำที่เป็นต้นแบบแห่งศิลปะ", "labommata/index.html"],
-        ["โบราณคดีรำ", "การฟื้นฟูท่ารำจากหลักฐานโบราณวัตถุ", "bolankad/index.html"],
-        ["บุคคลสำคัญ", "เกียรติประวัติผู้สืบสานมรดกทางนาฏศิลป์ไทย", "person/index.html"]
-    ];
+    ["ปฐมบทนาฏศิลป์", "กำเนิดและวิวัฒนาการตั้งแต่โบราณกาลสู่ปัจจุบัน", "patombod/index.html" , "https://youtu.be/ibuJxT89a3c"],
+        ["ประเภทการแสดง", "โขน ละคร รำ ระบำ และอัตลักษณ์ไทย", "papad/index.html", "patombod/index.html"],
+        ["จารีตไหว้ครู", "ความศรัทธาและความกตัญญูในประเพณีนาฏศิลป์", "katanU/index.html", "patombod/index.html"],
+        ["เพลงหน้าพาทย์", "ดนตรีชั้นสูงประกอบกิริยาตัวละคร", "peangnapard/index.html", "patombod/index.html"],
+        ["นาฏยศัพท์", "พื้นฐานภาษาท่าและการสื่ออารมณ์นาฏศิลป์", "natayasub/index.html", "patombod/index.html"],
+        ["เครื่องแต่งกาย", "ความประณีตของหัวโขนและเครื่องพัสตราภรณ์", "keangtainkay/index.html", "patombod/index.html"],
+        ["ศาสตร์โขนหลวง", "ประวัติศาสตร์และวิธีการพากย์เจรจาโขน", "knone/index.html", "patombod/index.html"],
+        ["ระบำมาตรฐาน", "รูปแบบการร่ายรำที่เป็นต้นแบบแห่งศิลปะ", "labommata/index.html", "patombod/index.html"],
+        ["โบราณคดีรำ", "การฟื้นฟูท่ารำจากหลักฐานโบราณวัตถุ", "bolankad/index.html", "patombod/index.html"],
+        ["บุคคลสำคัญ", "เกียรติประวัติผู้สืบสานมรดกทางนาฏศิลป์ไทย", "person/index.html", "patombod/index.html"]
 
-    const QUIZ_URL = "https://tontakankeawpang321-glitch.github.io/krsitsdeeka/natasikomtime.html";
+    const QUIZ_URL = "https://sites.google.com/view/nardtasinthai/%E0%B9%81%E0%B8%9A%E0%B8%9A%E0%B8%97%E0%B8%94%E0%B8%AA%E0%B8%AD%E0%B8%9A%E0%B8%99%E0%B8%B2%E0%B8%8F%E0%B8%A8%E0%B8%A5%E0%B8%9B-500-%E0%B8%82%E0%B8%AD";
     const BACKEND_URL = 'https://natasin.tontakankeawpang.workers.dev/';
 
     const grid = document.getElementById('lesson-grid');
@@ -312,13 +336,21 @@
                 <span class="vol-badge">บทที่ ${(i+1).toString().padStart(2,'0')}</span>
                 <h3 class="text-sm md:text-base font-bold font-display text-slate-800 leading-tight mb-2 truncate">${l[0]}</h3>
                 <p class="text-[10px] md:text-xs text-slate-500 leading-relaxed mb-4 flex-1 line-clamp-2">${l[1]}</p>
-                <a href="${l[2]}" target="_blank" class="btn-modern">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
-                        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
-                    </svg>
-                    เปิดอ่านตำรา
-                </a>
+                <div class="flex gap-2 mt-auto">
+                    <a href="${l[2]}" target="_blank" class="btn-modern flex-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                        </svg>
+                        ตำรา
+                    </a>
+                    <a href="${l[3]}" target="_blank" class="btn-podcast flex-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                        </svg>
+                        พอดแคสต์
+                    </a>
+                </div>
             </div>
         `).join('');
     }
@@ -397,7 +429,3 @@
 </script>
 </body>
 </html>
-
-
-
-
