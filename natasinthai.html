@@ -3,241 +3,282 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
-    <title>หอวิชาการนาฏศิลป์ไทย – ฉบับน่ารักและกะทัดรัด</title>
+    <title>หอวิชาการนาฏศิลป์ไทย – Neo Minimal</title>
 
-    <!-- Fonts -->
+    <!-- Fonts: เปลี่ยนเป็น Prompt สำหรับหัวข้อ และ Sarabun สำหรับเนื้อหา -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&family=Srisakdi:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;600;700&family=Sarabun:wght@400;500;600&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
         :root {
-            --royal-red: #5e0000;
-            --vintage-gold: #a38029;
-            --gold-light: #d4af37;
-            --paper: #fefcf8;
-            --ink: #000000;
+            --brand-dark: #1e1b4b; /* Deep Indigo */
+            --brand-accent: #d97706; /* Amber Gold */
+            --bg-color: #f8fafc; /* Slate 50 */
+            --card-bg: #ffffff;
+            --text-main: #0f172a; /* Slate 900 */
+            --text-muted: #64748b; /* Slate 500 */
         }
 
         body {
             font-family: 'Sarabun', sans-serif;
-            background-color: var(--paper);
-            color: var(--ink);
-            background-image: radial-gradient(var(--vintage-gold) 0.5px, transparent 0.5px);
-            background-size: 20px 20px;
-            background-opacity: 0.03;
+            background-color: var(--bg-color);
+            color: var(--text-main);
             overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* Force Black Text for readability */
-        * { color: var(--ink) !important; border-color: #e5dbc5; }
+        .font-display { font-family: 'Prompt', sans-serif; }
 
-        .thai-font { font-family: 'Srisakdi', cursive; }
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(to bottom, #ffffff, var(--bg-color));
+            padding: 4rem 1rem 2rem;
+            text-align: center;
+            border-bottom: 1px solid #e2e8f0;
+        }
 
-        /* Header Slim */
-        .header-slim {
-            background: linear-gradient(135deg, #4d0000, var(--royal-red));
-            border-bottom: 4px solid var(--vintage-gold);
-            padding: 1.25rem 1rem;
+        /* Search Bar Modern */
+        .search-modern {
+            width: 100%;
+            max-width: 480px;
+            margin: 0 auto;
             position: relative;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transform: translateY(50%);
+            z-index: 20;
         }
 
-        .academic-logo {
-            background: white;
-            border: 2px solid var(--vintage-gold);
-            padding: 0.6rem 1rem;
-            display: inline-block;
-            border-radius: 12px;
-            box-shadow: 3px 3px 0px var(--vintage-gold);
+        .search-modern input {
+            width: 100%;
+            padding: 1rem 1.5rem 1rem 3rem;
+            border-radius: 999px;
+            border: none;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            font-family: 'Prompt', sans-serif;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
         }
 
-        /* Grid System - 2 Cols Mobile */
+        .search-modern input:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.3);
+        }
+
+        /* Grid System - 2 Cols Always */
         .card-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
+            gap: 16px;
+            padding-top: 2rem;
         }
 
         @media (min-width: 768px) {
-            .card-grid { grid-template-columns: repeat(3, 1fr); gap: 16px; }
+            .card-grid { gap: 24px; }
         }
 
-        /* Thai Cards */
-        .thai-card {
-            background: #ffffff;
-            border: 1px solid #e5dbc5;
-            padding: 0.75rem;
+        /* Thai Cards - Book Style (Retained but restyled) */
+        .book-card {
+            background: var(--card-bg);
+            /* สันหนังสือสีครามเข้ม */
+            border-left: 12px solid var(--brand-dark); 
+            border-top: 1px solid #f1f5f9;
+            border-right: 1px solid #e2e8f0;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 1.25rem 1rem;
             display: flex;
             flex-direction: column;
-            border-radius: 10px;
-            transition: all 0.2s ease;
+            border-radius: 4px 16px 16px 4px; /* มุมหนังสือ */
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative;
+            /* เงากระดาษ */
+            box-shadow: 5px 5px 15px rgba(0,0,0,0.03), inset -4px 0 8px rgba(0,0,0,0.015); 
         }
 
-        .thai-card:hover {
-            border-color: var(--vintage-gold);
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(163, 128, 41, 0.1);
+        /* รอยพับกระดาษ */
+        .book-card::after {
+            content: '';
+            position: absolute;
+            left: 1px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to right, rgba(255,255,255,0.8), rgba(255,255,255,0));
+            box-shadow: 2px 0 3px rgba(0,0,0,0.05);
         }
 
-        .card-tag {
-            font-size: 8px;
-            font-weight: 800;
-            color: var(--vintage-gold) !important;
-            margin-bottom: 4px;
+        .book-card:hover {
+            transform: translateY(-8px) perspective(600px) rotateY(-3deg);
+            box-shadow: 12px 15px 20px rgba(30, 27, 75, 0.08), inset -4px 0 8px rgba(0,0,0,0.02);
+            border-color: #cbd5e1;
+            z-index: 10;
         }
 
-        /* Compact Buttons */
-        .btn-cute {
-            display: block;
-            width: 100%;
-            text-align: center;
-            padding: 0.4rem;
-            background: #000;
-            color: #fff !important;
-            font-size: 9px;
+        .vol-badge {
+            display: inline-block;
+            background: #f1f5f9;
+            color: var(--brand-dark);
+            font-size: 0.65rem;
             font-weight: 700;
-            border-radius: 6px;
-            transition: all 0.2s;
-            border-bottom: 2px solid #333;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            margin-bottom: 0.75rem;
+            font-family: 'Prompt', sans-serif;
         }
 
-        .btn-cute:active { transform: translateY(1px); border-bottom-width: 1px; }
-
-        /* Search wrap */
-        .search-wrap {
-            max-width: 400px;
-            margin: -0.85rem auto 1.5rem;
-            padding: 0 1rem;
-            z-index: 30;
-            position: relative;
-        }
-
-        .search-field {
+        /* Modern Button */
+        .btn-modern {
+            margin-top: auto;
             width: 100%;
-            background: white;
-            border: 1.5px solid var(--vintage-gold);
-            padding: 0.5rem 1rem 0.5rem 2.25rem;
+            padding: 0.6rem;
+            background: var(--bg-color);
+            color: var(--brand-dark);
+            font-family: 'Prompt', sans-serif;
             font-size: 0.75rem;
-            outline: none;
-            border-radius: 99px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            font-weight: 600;
+            border-radius: 8px;
+            transition: all 0.2s;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
         }
 
-        /* Chat UI */
+        .btn-modern:hover {
+            background: var(--brand-dark);
+            color: #fff;
+            border-color: var(--brand-dark);
+        }
+
+        .btn-modern:hover svg { stroke: #fff; }
+
+        /* Quiz Banner */
+        .quiz-banner {
+            background: linear-gradient(135deg, var(--brand-dark), #312e81);
+            border-radius: 20px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(30, 27, 75, 0.2);
+        }
+
+        /* Chat UI (Retained but colors adjusted) */
         .chat-window {
             background: #fff;
-            border-top: 5px solid var(--royal-red);
-            border-radius: 20px 20px 0 0;
-            box-shadow: 0 -10px 40px rgba(0,0,0,0.2);
+            border-radius: 24px 24px 0 0;
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.15);
             width: 100%;
             max-width: 500px;
         }
 
-        .bubble-ai { background: #fdfaf3; border: 1px solid #efe5d5; border-radius: 2px 15px 15px 15px; }
-        .bubble-user { background: var(--royal-red); border-radius: 15px 2px 15px 15px; }
-        .bubble-user p { color: white !important; }
-
-        /* Floating Button - Auto Hide on open */
+        .bubble-ai { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px 16px 16px 16px; color: var(--text-main); }
+        .bubble-user { background: var(--brand-dark); border-radius: 16px 4px 16px 16px; color: white !important; }
+        
         #fab-chat {
-            background: var(--royal-red);
-            border: 1.5px solid var(--gold-light);
+            background: var(--brand-dark);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        #fab-chat.hidden-fab {
-            transform: scale(0);
-            opacity: 0;
-            pointer-events: none;
-        }
-
+        #fab-chat:hover { background: #312e81; transform: scale(1.05); }
+        #fab-chat.hidden-fab { transform: scale(0); opacity: 0; pointer-events: none; }
+        
         .no-scrollbar::-webkit-scrollbar { display: none; }
     </style>
 </head>
-<body class="antialiased">
+<body>
 
-    <!-- Header -->
-    <header class="header-slim text-center">
-        <div class="academic-logo relative z-10">
-            <h1 class="text-xl md:text-2xl thai-font mb-0.5">✨ หอวิชาการนาฏศิลป์ 🎭</h1>
-            <p class="text-[7px] font-bold tracking-[0.2em] uppercase opacity-50">Academic Archive v.2025</p>
+    <!-- Hero Header -->
+    <header class="hero-section">
+        <div class="max-w-4xl mx-auto relative z-10">
+            <span class="text-xs font-bold tracking-widest text-brand-accent uppercase mb-2 block font-display">Digital Archive 2026</span>
+            <h1 class="text-3xl md:text-5xl font-bold font-display text-[#1e1b4b] mb-3 tracking-tight">หอวิชาการนาฏศิลป์</h1>
+            <p class="text-sm md:text-base text-slate-500 max-w-lg mx-auto leading-relaxed">
+                แหล่งรวบรวมองค์ความรู้ ตำรา และงานวิจัยทางด้านศิลปะการแสดงของไทย ในรูปแบบห้องสมุดดิจิทัล
+            </p>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="search-modern">
+            <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            <input type="text" id="search-input" placeholder="ค้นหาตำรา หรือ หัวข้อวิชาการ..." autocomplete="off">
         </div>
     </header>
 
-    <!-- Search Section -->
-    <div class="search-wrap">
-        <div class="relative">
-            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[10px]">🔍</span>
-            <input type="text" id="search-input" class="search-field" placeholder="สืบค้นตำรานาฏศิลป์..." autocomplete="off">
-        </div>
-    </div>
-
     <!-- Main Content -->
-    <main class="max-w-4xl mx-auto px-4 mb-20">
-        <div class="flex items-center justify-between mb-4 border-b border-gray-100 pb-2">
-            <h2 class="text-xs font-bold">🌸 สารบัญวิชาการ</h2>
-            <span class="text-[7px] opacity-30 font-bold uppercase tracking-widest">Digital Manuscript</span>
+    <main class="max-w-4xl mx-auto px-4 pb-24 pt-12">
+        <div class="flex items-end justify-between mb-6">
+            <h2 class="text-lg md:text-xl font-bold font-display text-slate-800">สารบัญวิชาการ <span class="text-brand-accent">.</span></h2>
+            <span class="text-xs text-slate-400 font-medium bg-slate-100 px-3 py-1 rounded-full">10 เล่ม</span>
         </div>
 
+        <!-- Book Grid -->
         <div id="lesson-grid" class="card-grid">
             <!-- Content via JS -->
         </div>
 
-        <!-- Quiz CTA -->
-        <div class="mt-8 text-center">
-            <a id="btnQuiz" href="#" target="_blank" class="inline-flex items-center gap-2 bg-black px-5 py-2.5 rounded-xl border border-vintage-gold shadow-md hover:bg-gray-900 active:scale-95 transition-all">
-                <span class="text-lg">📜</span>
-                <div class="text-left">
-                    <p class="text-white text-[10px] font-bold m-0" style="color:white !important;">ทดสอบมาตรฐานความรู้ ✨</p>
-                    <p class="text-vintage-gold text-[6px] font-bold m-0" style="color:#d4af37 !important;">๕๐๐ ข้อคำถามหลักสูตร</p>
-                </div>
+        <!-- Quiz CTA Banner -->
+        <div class="mt-16 text-center">
+            <a id="btnQuiz" href="#" target="_blank" class="quiz-banner block p-8 md:p-10 transition-transform hover:scale-[1.02] active:scale-95">
+                <div class="absolute -right-10 -top-10 w-40 h-40 bg-white opacity-5 rounded-full blur-2xl"></div>
+                <h3 class="text-xl md:text-2xl font-bold font-display mb-2">ทดสอบมาตรฐานความรู้</h3>
+                <p class="text-slate-300 text-sm md:text-base mb-6 font-light">คลังข้อสอบ ๕๐๐ ข้อ ตามหลักสูตรแกนกลาง</p>
+                <span class="inline-flex items-center gap-2 bg-white text-brand-dark px-6 py-2.5 rounded-full font-bold text-sm font-display shadow-lg">
+                    เริ่มทำแบบทดสอบ
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                </span>
             </a>
         </div>
     </main>
 
-    <!-- Floating Chat Button -->
-    <button id="fab-chat" class="fixed bottom-6 right-6 w-12 h-12 text-white rounded-full flex flex-col items-center justify-center z-50 shadow-2xl active:scale-90 transition-all">
-        <span class="text-[7px] font-bold" style="color:white !important;">AI</span>
-        <span class="text-lg" style="color:white !important;">🤖</span>
+    <!-- Floating Chat Button (AI) -->
+    <button id="fab-chat" class="fixed bottom-6 right-6 w-14 h-14 text-white rounded-full flex items-center justify-center z-50 shadow-2xl">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
     </button>
 
-    <!-- Chat Modal -->
-    <div id="chatbot-modal" class="fixed inset-0 flex items-end md:items-center justify-center p-0 md:p-4 bg-black/40 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
-        <div class="chat-window h-[85dvh] md:h-[70vh] flex flex-col transform translate-y-full transition-transform duration-300 overflow-hidden md:rounded-3xl">
+    <!-- Chat Modal (AI) -->
+    <div id="chatbot-modal" class="fixed inset-0 flex items-end md:items-center justify-center p-0 md:p-4 bg-slate-900/40 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300 z-50">
+        <div class="chat-window h-[85dvh] md:h-[75vh] flex flex-col transform translate-y-full transition-transform duration-300 overflow-hidden md:rounded-3xl border border-slate-200">
+            
             <!-- Chat Header -->
-            <header class="p-4 border-b flex justify-between items-center bg-gray-50/80 backdrop-blur-md">
+            <header class="p-4 border-b border-slate-100 flex justify-between items-center bg-white">
                 <div class="flex items-center gap-3">
-                    <div class="w-9 h-9 border border-royal-red flex items-center justify-center text-lg bg-white shadow-sm rounded-full">🎓</div>
+                    <div class="w-10 h-10 bg-indigo-50 text-indigo-600 flex items-center justify-center rounded-xl">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"></rect><circle cx="12" cy="5" r="2"></circle><path d="M12 7v4"></path><line x1="8" y1="16" x2="8" y2="16"></line><line x1="16" y1="16" x2="16" y2="16"></line></svg>
+                    </div>
                     <div>
-                        <h3 class="font-bold text-[10px] thai-font">วิทยากร AI 🌸</h3>
-                        <span class="text-[6px] font-bold tracking-widest text-vintage-gold uppercase" style="color:#a38029 !important;">Knowledge Expert</span>
+                        <h3 class="font-bold text-sm font-display text-slate-800">ผู้ช่วย AI วิชาการ</h3>
+                        <span class="text-[10px] text-emerald-600 font-medium flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Online
+                        </span>
                     </div>
                 </div>
-                <button id="close-chat" class="p-2 text-royal-red">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                <button id="close-chat" class="p-2 text-slate-400 hover:text-slate-700 bg-slate-50 rounded-full transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                 </button>
             </header>
 
             <!-- Messages -->
-            <div id="chat-history" class="flex-1 overflow-y-auto p-4 space-y-4 no-scrollbar bg-[#fdfdfb]">
-                <div class="flex items-start gap-2">
-                    <div class="w-8 h-8 border border-vintage-gold flex items-center justify-center text-xs bg-white flex-shrink-0 rounded-full">📜</div>
-                    <div class="bubble-ai p-3 text-[10px] md:text-xs leading-relaxed shadow-sm">
-                        ยินดีต้อนรับสู่หอวิชาการครับ มีสิ่งใดให้วิทยากร AI ช่วยสืบค้นเกี่ยวกับนาฏศิลป์ไทยไหมครับ? ✨
+            <div id="chat-history" class="flex-1 overflow-y-auto p-5 space-y-5 no-scrollbar bg-[#fcfcfc]">
+                <div class="flex items-start gap-3">
+                    <div class="w-8 h-8 bg-indigo-100 text-indigo-700 flex items-center justify-center text-xs flex-shrink-0 rounded-full font-bold">AI</div>
+                    <div class="bubble-ai p-3.5 text-sm leading-relaxed shadow-sm">
+                        สวัสดีครับ ผมคือผู้ช่วย AI ประจำหอวิชาการนาฏศิลป์ไทย มีหัวข้อใดที่คุณต้องการสืบค้นหรือให้ผมช่วยสรุปความรู้ให้ไหมครับ?
                     </div>
                 </div>
             </div>
 
             <!-- Input Area -->
-            <div class="p-4 bg-white border-t border-gray-100">
-                <div id="thinking" class="mb-1 hidden">
-                    <span class="text-[7px] font-bold text-vintage-gold animate-pulse">กำลังสืบค้นตำราวิชาการ... 📖</span>
+            <div class="p-4 bg-white border-t border-slate-100">
+                <div id="thinking" class="mb-2 hidden">
+                    <span class="text-xs font-medium text-slate-400 flex items-center gap-2">
+                        <svg class="animate-spin h-3 w-3 text-brand-dark" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                        AI กำลังประมวลผล...
+                    </span>
                 </div>
-                <div class="flex items-center gap-2">
-                    <input id="user-input" type="text" placeholder="พิมพ์ข้อความที่นี่..." class="flex-1 border-b border-gray-100 py-2 text-[10px] focus:outline-none focus:border-royal-red bg-transparent">
-                    <button id="send-btn" class="w-8 h-8 bg-black text-white rounded-full flex items-center justify-center shadow-md active:scale-90 transition-transform">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                <div class="flex items-center gap-2 bg-slate-50 p-1.5 rounded-full border border-slate-200 focus-within:border-brand-dark focus-within:ring-1 focus-within:ring-brand-dark transition-all">
+                    <input id="user-input" type="text" placeholder="ถามคำถามที่นี่..." class="flex-1 bg-transparent border-none py-2 px-4 text-sm focus:outline-none focus:ring-0">
+                    <button id="send-btn" class="w-10 h-10 bg-brand-dark text-white rounded-full flex items-center justify-center shadow-md hover:bg-indigo-900 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
                     </button>
                 </div>
             </div>
@@ -255,7 +296,7 @@
         ["ศาสตร์โขนหลวง", "ประวัติศาสตร์และวิธีการพากย์เจรจาโขน", "https://sites.google.com/view/nardtasinthai/%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B9%81%E0%B8%AA%E0%B8%94%E0%B8%87%E0%B9%82%E0%B8%82%E0%B8%99"],
         ["ระบำมาตรฐาน", "รูปแบบการร่ายรำที่เป็นต้นแบบแห่งศิลปะ", "https://sites.google.com/view/nardtasinthai/%E0%B8%A3%E0%B8%B0%E0%B8%9A%E0%B8%B2%E0%B8%A1%E0%B8%B2%E0%B8%95%E0%B8%A3%E0%B8%90%E0%B8%B2%E0%B8%99"],
         ["โบราณคดีรำ", "การฟื้นฟูท่ารำจากหลักฐานโบราณวัตถุ", "https://sites.google.com/view/nardtasinthai/%E0%B8%A3%E0%B8%B0%E0%B8%9A%E0%B8%B2%E0%B9%82%E0%B8%9A%E0%B8%A3%E0%B8%B2%E0%B8%93%E0%B8%84%E0%B8%94"],
-        ["บุคคลสำคัญ", "เกียรติประวัติผู้สืบสานมรดกทางนาฏศิลป์ไทย", "https://sites.google.com/view/nardtasinthai/%E0%B8%9A%E0%B8%84%E0%B8%84%E0%B8%A5%E0%B8%AA%E0%B8%B2%E0%B8%84%E0%B8%8D%E0%B8%97%E0%B8%B2%E0%B8%87%E0%B8%94%E0%B8%B2%E0%B8%99%E0%B8%99%E0%B8%B2%E0%B8%8F%E0%B8%A8%E0%B8%A5%E0%B8%9B%E0%B9%84%E0%B8%97%E0%B8%A2"]
+        ["บุคคลสำคัญ", "เกียรติประวัติผู้สืบสานมรดกทางนาฏศิลป์ไทย", ".person/index.html"]
     ];
 
     const QUIZ_URL = "https://sites.google.com/view/nardtasinthai/%E0%B9%81%E0%B8%9A%E0%B8%9A%E0%B8%97%E0%B8%94%E0%B8%AA%E0%B8%AD%E0%B8%9A%E0%B8%99%E0%B8%B2%E0%B8%8F%E0%B8%A8%E0%B8%A5%E0%B8%9B-500-%E0%B8%82%E0%B8%AD";
@@ -267,11 +308,17 @@
     function render(filter = "") {
         const items = LESSONS.filter(l => l[0].includes(filter) || l[1].includes(filter));
         grid.innerHTML = items.map((l, i) => `
-            <div class="thai-card">
-                <div class="card-tag">VOL. ${(i+1).toString().padStart(2,'0')}</div>
-                <h3 class="text-[9px] md:text-[10px] font-bold leading-tight mb-1 truncate">${l[0]}</h3>
-                <p class="text-[8px] opacity-60 leading-tight mb-3 flex-1 line-clamp-2">${l[1]}</p>
-                <a href="${l[2]}" target="_blank" class="btn-cute">อ่านตำรา ✨</a>
+            <div class="book-card">
+                <span class="vol-badge">บทที่ ${(i+1).toString().padStart(2,'0')}</span>
+                <h3 class="text-sm md:text-base font-bold font-display text-slate-800 leading-tight mb-2 truncate">${l[0]}</h3>
+                <p class="text-[10px] md:text-xs text-slate-500 leading-relaxed mb-4 flex-1 line-clamp-2">${l[1]}</p>
+                <a href="${l[2]}" target="_blank" class="btn-modern">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                    </svg>
+                    เปิดอ่านตำรา
+                </a>
             </div>
         `).join('');
     }
@@ -280,7 +327,7 @@
     searchInput.addEventListener('input', e => render(e.target.value));
     document.getElementById('btnQuiz').href = QUIZ_URL;
 
-    // Chat Logic
+    /* --- AI Chat Logic (Retained exactly as requested) --- */
     const fab = document.getElementById('fab-chat');
     const modal = document.getElementById('chatbot-modal');
     const historyEl = document.getElementById('chat-history');
@@ -293,7 +340,6 @@
         modal.classList.toggle('pointer-events-none', !on);
         modal.querySelector('div').classList.toggle('translate-y-full', !on);
         
-        // Auto hide/show FAB button
         if(on) {
             fab.classList.add('hidden-fab');
             inputEl.focus();
@@ -316,8 +362,8 @@
         inputEl.value = '';
         
         const userDiv = document.createElement('div');
-        userDiv.className = 'flex flex-row-reverse items-start gap-2';
-        userDiv.innerHTML = `<div class="bubble-user p-2.5 text-[9px] max-w-[85%] shadow-sm"><p style="color:white !important;">${val}</p></div>`;
+        userDiv.className = 'flex flex-row-reverse items-start gap-3';
+        userDiv.innerHTML = `<div class="bubble-user p-3.5 text-sm max-w-[85%] shadow-sm">${val}</div>`;
         historyEl.appendChild(userDiv);
         
         thinkingEl.classList.remove('hidden');
@@ -334,8 +380,8 @@
             const reply = data.reply || "ขอประทานอภัย ระบบขัดข้องครับ";
             
             const aiDiv = document.createElement('div');
-            aiDiv.className = 'flex items-start gap-2';
-            aiDiv.innerHTML = `<div class="w-7 h-7 border border-vintage-gold flex items-center justify-center bg-white text-[10px] flex-shrink-0 rounded-full">📜</div><div class="bubble-ai p-2.5 text-[9px] shadow-sm max-w-[85%] leading-relaxed">${reply}</div>`;
+            aiDiv.className = 'flex items-start gap-3';
+            aiDiv.innerHTML = `<div class="w-8 h-8 bg-indigo-100 text-indigo-700 flex items-center justify-center text-xs flex-shrink-0 rounded-full font-bold">AI</div><div class="bubble-ai p-3.5 text-sm shadow-sm max-w-[85%] leading-relaxed">${reply}</div>`;
             historyEl.appendChild(aiDiv);
             history.push({ role: "user", parts: [{ text: val }] }, { role: "model", parts: [{ text: reply }] });
         } catch (e) { console.error(e); } 
@@ -351,4 +397,3 @@
 </script>
 </body>
 </html>
-
