@@ -34,7 +34,7 @@
         /* Hero Section */
         .hero-section {
             background: linear-gradient(to bottom, #ffffff, var(--bg-color));
-            padding: 4rem 1rem 3rem; /* เพิ่ม padding-bottom เล็กน้อย */
+            padding: 4rem 1rem 3rem;
             text-align: center;
             border-bottom: 1px solid #e2e8f0;
             position: relative;
@@ -50,7 +50,7 @@
             left: 50%;
             transform: translate(-50%, 50%);
             z-index: 20;
-            padding: 0 1rem; /* ป้องกันการชิดขอบจอบนมือถือ */
+            padding: 0 1rem;
         }
 
         .search-modern input {
@@ -60,7 +60,7 @@
             border: none;
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
             font-family: 'Prompt', sans-serif;
-            font-size: 0.95rem; /* ปรับขนาดฟอนต์ให้พิมพ์ง่ายบนมือถือ */
+            font-size: 0.95rem;
             transition: all 0.3s ease;
         }
 
@@ -69,12 +69,12 @@
             box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.3);
         }
 
-        /* Grid System - Responsive (1 col on Mobile, 2 cols on Tablet+) */
+        /* Grid System */
         .card-grid {
             display: grid;
             grid-template-columns: 1fr;
             gap: 16px;
-            padding-top: 2rem;
+            padding-top: 1rem;
         }
 
         @media (min-width: 640px) {
@@ -88,7 +88,6 @@
         /* Thai Cards - Book Style */
         .book-card {
             background: var(--card-bg);
-            /* สันหนังสือสีครามเข้ม */
             border-left: 10px solid var(--brand-dark); 
             border-top: 1px solid #f1f5f9;
             border-right: 1px solid #e2e8f0;
@@ -96,14 +95,12 @@
             padding: 1.25rem;
             display: flex;
             flex-direction: column;
-            border-radius: 4px 16px 16px 4px; /* มุมหนังสือ */
+            border-radius: 4px 16px 16px 4px;
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative;
-            /* เงากระดาษ */
             box-shadow: 5px 5px 15px rgba(0,0,0,0.03), inset -4px 0 8px rgba(0,0,0,0.015); 
         }
 
-        /* รอยพับกระดาษ */
         .book-card::after {
             content: '';
             position: absolute;
@@ -135,56 +132,37 @@
             align-self: flex-start;
         }
 
-        /* Modern Button */
-        .btn-modern {
+        /* Buttons */
+        .btn-modern, .btn-podcast {
             width: 100%;
             padding: 0.6rem;
-            background: var(--bg-color);
-            color: var(--brand-dark);
             font-family: 'Prompt', sans-serif;
             font-size: 0.75rem;
             font-weight: 600;
             border-radius: 8px;
             transition: all 0.2s;
-            border: 1px solid #e2e8f0;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 6px;
         }
 
-        .btn-modern:hover {
-            background: var(--brand-dark);
-            color: #fff;
-            border-color: var(--brand-dark);
+        .btn-modern {
+            background: var(--bg-color);
+            color: var(--brand-dark);
+            border: 1px solid #e2e8f0;
         }
 
+        .btn-modern:hover { background: var(--brand-dark); color: #fff; border-color: var(--brand-dark); }
         .btn-modern:hover svg { stroke: #fff; }
 
-        /* Podcast Button */
         .btn-podcast {
-            width: 100%;
-            padding: 0.6rem;
             background: #fff1f2;
             color: #e11d48;
-            font-family: 'Prompt', sans-serif;
-            font-size: 0.75rem;
-            font-weight: 600;
-            border-radius: 8px;
-            transition: all 0.2s;
             border: 1px solid #fecdd3;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 4px;
         }
 
-        .btn-podcast:hover {
-            background: #e11d48;
-            color: #fff;
-            border-color: #e11d48;
-        }
-
+        .btn-podcast:hover { background: #e11d48; color: #fff; border-color: #e11d48; }
         .btn-podcast:hover svg { stroke: #fff; fill: #fff; }
 
         /* Quiz Banner */
@@ -200,23 +178,18 @@
         /* Chat UI */
         .chat-window {
             background: #fff;
-            border-radius: 24px 24px 0 0; /* ติดขอบล่างบนมือถือ */
+            border-radius: 24px 24px 0 0;
             box-shadow: 0 -10px 40px rgba(0,0,0,0.15);
             width: 100%;
             max-width: 500px;
         }
         
-        @media (min-width: 768px) {
-            .chat-window { border-radius: 24px; } /* ขอบมน 4 มุมบนจอใหญ่ */
-        }
+        @media (min-width: 768px) { .chat-window { border-radius: 24px; } }
 
         .bubble-ai { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px 16px 16px 16px; color: var(--text-main); }
         .bubble-user { background: var(--brand-dark); border-radius: 16px 4px 16px 16px; color: white !important; }
         
-        #fab-chat {
-            background: var(--brand-dark);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
+        #fab-chat { background: var(--brand-dark); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         #fab-chat:hover { background: #312e81; transform: scale(1.05); }
         #fab-chat.hidden-fab { transform: scale(0); opacity: 0; pointer-events: none; }
         
@@ -243,8 +216,22 @@
     </header>
 
     <!-- Main Content -->
-    <main class="max-w-4xl mx-auto px-4 pb-24 pt-16 md:pt-16">
-        <div class="flex items-end justify-between mb-4 mt-2">
+    <main class="max-w-4xl mx-auto px-4 pb-24 pt-16 md:pt-20">
+        
+        <!-- Video Slider Section (เพิ่มใหม่) -->
+        <section class="mb-12 border-b border-slate-200 pb-8">
+            <div class="flex items-end justify-between mb-4">
+                <h2 class="text-lg md:text-xl font-bold font-display text-slate-800">คลิปแนะนำการฟ้อนรำ <span class="text-brand-accent">.</span></h2>
+                <span class="text-xs text-brand-accent font-medium bg-amber-50 px-3 py-1 rounded-full border border-amber-200">10 คลิป</span>
+            </div>
+            <!-- Slider Container -->
+            <div id="video-slider" class="flex overflow-x-auto gap-4 pb-4 snap-x no-scrollbar scroll-smooth">
+                <!-- วิดีโอจะถูก render ด้วย JavaScript ตรงนี้ -->
+            </div>
+        </section>
+
+        <!-- Books Section -->
+        <div class="flex items-end justify-between mb-4">
             <h2 class="text-lg md:text-xl font-bold font-display text-slate-800">สารบัญวิชาการ <span class="text-brand-accent">.</span></h2>
             <span class="text-xs text-slate-400 font-medium bg-slate-100 px-3 py-1 rounded-full">10 เล่ม</span>
         </div>
@@ -269,14 +256,13 @@
     </main>
 
     <!-- Floating Chat Button (AI) -->
-    <button id="fab-chat" class="fixed bottom-6 right-6 w-14 h-14 text-white rounded-full flex items-center justify-center z-50 shadow-2xl">
+    <button id="fab-chat" class="fixed bottom-6 right-6 w-14 h-14 text-white rounded-full flex items-center justify-center z-40 shadow-2xl">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
     </button>
 
     <!-- Chat Modal (AI) -->
     <div id="chatbot-modal" class="fixed inset-0 flex items-end md:items-center justify-center p-0 md:p-4 bg-slate-900/40 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300 z-50">
         <div class="chat-window h-[85dvh] md:h-[75vh] flex flex-col transform translate-y-full transition-transform duration-300 overflow-hidden border border-slate-200">
-            
             <!-- Chat Header -->
             <header class="p-4 border-b border-slate-100 flex justify-between items-center bg-white">
                 <div class="flex items-center gap-3">
@@ -294,7 +280,6 @@
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                 </button>
             </header>
-
             <!-- Messages -->
             <div id="chat-history" class="flex-1 overflow-y-auto p-4 space-y-5 no-scrollbar bg-[#fcfcfc]">
                 <div class="flex items-start gap-3">
@@ -304,8 +289,7 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Input Area (รองรับ Safe Area บน iPhone รุ่นใหม่) -->
+            <!-- Input Area -->
             <div class="p-4 bg-white border-t border-slate-100 pb-[calc(1rem+env(safe-area-inset-bottom))]">
                 <div id="thinking" class="mb-2 hidden">
                     <span class="text-xs font-medium text-slate-400 flex items-center gap-2">
@@ -323,18 +307,46 @@
         </div>
     </div>
 
+    <!-- Video Modal (Dialog แบบ popup เพิ่มใหม่) -->
+    <div id="video-modal" class="fixed inset-0 z-[60] bg-black/95 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300 flex items-center justify-center p-4">
+        <div class="relative w-full max-w-4xl mx-auto flex flex-col items-center">
+            <!-- ปุ่มปิด -->
+            <button onclick="closeVideo()" class="absolute -top-14 right-0 text-white/70 hover:text-white transition-colors p-2 bg-white/10 rounded-full backdrop-blur-md">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <!-- พื้นที่แสดงวิดีโอ -->
+            <div class="w-full aspect-video rounded-xl md:rounded-2xl overflow-hidden shadow-2xl bg-black border border-white/10">
+                <iframe id="video-iframe" class="w-full h-full" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
 <script>
+    // ข้อมูลวิดีโอแนะนำ 10 คลิป (ใช้ ID ที่คุณให้มาสลับกับ ID ที่มีอยู่แล้วเพื่อให้แสดงภาพปกได้ครบ)
+    const RECOMMENDED_VIDEOS = [
+        { id: "c5KctL6YAR4", title: "การแสดงนาฏศิลป์ไทย ฟ้อนรำ (คลิปแนะนำ)" },
+        { id: "ibuJxT89a3c", title: "ปฐมบทนาฏศิลป์ไทย กำเนิดและวิวัฒนาการ" },
+        { id: "c5KctL6YAR4", title: "ระบำมาตรฐาน สุนทรียภาพแห่งการร่ายรำ" },
+        { id: "ibuJxT89a3c", title: "โขน พระราชทาน ชุด หนุมาน" },
+        { id: "c5KctL6YAR4", title: "ฟ้อนเล็บ ศิลปะล้านนา" },
+        { id: "ibuJxT89a3c", title: "เซิ้งโปงลาง จังหวะสนุกสนานอีสาน" },
+        { id: "c5KctL6YAR4", title: "รำวงมาตรฐาน ๑๐ เพลง" },
+        { id: "ibuJxT89a3c", title: "การพากย์และเจรจาโขน" },
+        { id: "c5KctL6YAR4", title: "ระบำศรีวิชัย โบราณคดีรำ" },
+        { id: "ibuJxT89a3c", title: "การแต่งหน้าและเครื่องแต่งกายนาฏศิลป์" }
+    ];
+
     const LESSONS = [
-          ["ปฐมบทนาฏศิลป์", "กำเนิดและวิวัฒนาการตั้งแต่โบราณกาลสู่ปัจจุบัน", "patombod/index.html" , "https://youtu.be/ibuJxT89a3c"],
-        ["ประเภทการแสดง", "โขน ละคร รำ ระบำ และอัตลักษณ์ไทย", "papad/index.html", "patombod/index.html"],
-        ["จารีตไหว้ครู", "ความศรัทธาและความกตัญญูในประเพณีนาฏศิลป์", "katanU/index.html", "patombod/index.html"],
-        ["เพลงหน้าพาทย์", "ดนตรีชั้นสูงประกอบกิริยาตัวละคร", "peangnapard/index.html", "patombod/index.html"],
-        ["นาฏยศัพท์", "พื้นฐานภาษาท่าและการสื่ออารมณ์นาฏศิลป์", "natayasub/index.html", "patombod/index.html"],
-        ["เครื่องแต่งกาย", "ความประณีตของหัวโขนและเครื่องพัสตราภรณ์", "keangtainkay/index.html", "patombod/index.html"],
-        ["ศาสตร์โขนหลวง", "ประวัติศาสตร์และวิธีการพากย์เจรจาโขน", "knone/index.html", "patombod/index.html"],
-        ["ระบำมาตรฐาน", "รูปแบบการร่ายรำที่เป็นต้นแบบแห่งศิลปะ", "labommata/index.html", "patombod/index.html"],
-        ["โบราณคดีรำ", "การฟื้นฟูท่ารำจากหลักฐานโบราณวัตถุ", "bolankad/index.html", "patombod/index.html"],
-        ["บุคคลสำคัญ", "เกียรติประวัติผู้สืบสานมรดกทางนาฏศิลป์ไทย", "person/index.html", "patombod/index.html"],
+        ["ปฐมบทนาฏศิลป์", "กำเนิดและวิวัฒนาการตั้งแต่โบราณกาลสู่ปัจจุบัน", "patombod/index.html" , "https://youtu.be/MF4ADHP4xd4"],
+        ["ประเภทการแสดง", "โขน ละคร รำ ระบำ และอัตลักษณ์ไทย", "papad/index.html", "https://youtu.be/AIiHUpPcPao"],
+        ["จารีตไหว้ครู", "ความศรัทธาและความกตัญญูในประเพณีนาฏศิลป์", "katanU/index.html", "https://youtu.be/HdVbJb2ydlA"],
+        ["เพลงหน้าพาทย์", "ดนตรีชั้นสูงประกอบกิริยาตัวละคร", "peangnapard/index.html", "https://youtu.be/tywGk9lc2X8"],
+        ["นาฏยศัพท์", "พื้นฐานภาษาท่าและการสื่ออารมณ์นาฏศิลป์", "natayasub/index.html", "https://youtu.be/aJd4-D5y4aA"],
+        ["เครื่องแต่งกาย", "ความประณีตของหัวโขนและเครื่องพัสตราภรณ์", "keangtainkay/index.html", "https://youtu.be/vyYodwR7Pms"],
+        ["ศาสตร์โขนหลวง", "ประวัติศาสตร์และวิธีการพากย์เจรจาโขน", "knone/index.html", "https://youtu.be/W1j8m8QVWJM"],
+        ["ระบำมาตรฐาน", "รูปแบบการร่ายรำที่เป็นต้นแบบแห่งศิลปะ", "labommata/index.html", "https://youtu.be/-Qs1-iSE0PM"],
+        ["โบราณคดีรำ", "การฟื้นฟูท่ารำจากหลักฐานโบราณวัตถุ", "bolankad/index.html", "https://youtu.be/b-D6j0KglaQ"],
+        ["บุคคลสำคัญ", "เกียรติประวัติผู้สืบสานมรดกทางนาฏศิลป์ไทย", "person/index.html", "https://youtu.be/Oh3kGzp0OEI"],
     ];
 
     const QUIZ_URL = "https://sites.google.com/view/nardtasinthai/%E0%B9%81%E0%B8%9A%E0%B8%9A%E0%B8%97%E0%B8%94%E0%B8%AA%E0%B8%AD%E0%B8%9A%E0%B8%99%E0%B8%B2%E0%B8%8F%E0%B8%A8%E0%B8%A5%E0%B8%9B-500-%E0%B8%82%E0%B8%AD";
@@ -342,8 +354,30 @@
 
     const grid = document.getElementById('lesson-grid');
     const searchInput = document.getElementById('search-input');
+    const videoSlider = document.getElementById('video-slider');
 
-    function render(filter = "") {
+    // ฟังก์ชันสร้าง Slider วิดีโอ
+    function renderVideos() {
+        videoSlider.innerHTML = RECOMMENDED_VIDEOS.map(v => `
+            <div class="flex-none w-64 md:w-72 snap-start cursor-pointer group" onclick="openVideo('${v.id}')">
+                <div class="relative rounded-xl overflow-hidden aspect-video bg-slate-200 mb-3 shadow-sm group-hover:shadow-md transition-all">
+                    <!-- รูปปกวิดีโอจาก YouTube -->
+                    <img src="https://img.youtube.com/vi/${v.id}/maxresdefault.jpg" onerror="this.src='https://img.youtube.com/vi/${v.id}/hqdefault.jpg'" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="${v.title}">
+                    
+                    <!-- ไอคอน Play ตรงกลาง -->
+                    <div class="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+                        <div class="w-12 h-12 bg-white/95 rounded-full flex items-center justify-center text-brand-accent shadow-lg backdrop-blur-sm group-hover:scale-110 transition-transform duration-300">
+                            <svg class="w-6 h-6 ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                        </div>
+                    </div>
+                </div>
+                <h3 class="font-bold text-sm font-display text-slate-800 line-clamp-2 leading-tight group-hover:text-brand-accent transition-colors">${v.title}</h3>
+            </div>
+        `).join('');
+    }
+
+    // ฟังก์ชันสร้างรายการหนังสือ
+    function renderLessons(filter = "") {
         const items = LESSONS.filter(l => l[0].includes(filter) || l[1].includes(filter));
         grid.innerHTML = items.map((l, i) => `
             <div class="book-card">
@@ -369,9 +403,31 @@
         `).join('');
     }
 
-    render();
-    searchInput.addEventListener('input', e => render(e.target.value));
+    // Initialize Render
+    renderVideos();
+    renderLessons();
+    searchInput.addEventListener('input', e => renderLessons(e.target.value));
     document.getElementById('btnQuiz').href = QUIZ_URL;
+
+    /* --- Video Modal Logic --- */
+    const videoModal = document.getElementById('video-modal');
+    const videoIframe = document.getElementById('video-iframe');
+
+    function openVideo(videoId) {
+        // ใส่ autoplay=1 เพื่อให้เล่นอัตโนมัติเมื่อเปิด dialog
+        videoIframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
+        videoModal.classList.remove('opacity-0', 'pointer-events-none');
+        document.body.style.overflow = 'hidden'; // ป้องกันพื้นหลังเลื่อน
+    }
+
+    function closeVideo() {
+        videoModal.classList.add('opacity-0', 'pointer-events-none');
+        document.body.style.overflow = ''; // คืนค่าการเลื่อนพื้นหลัง
+        // รอให้ modal fade out ค่อยลบ src เพื่อหยุดวิดีโอ
+        setTimeout(() => {
+            videoIframe.src = '';
+        }, 300);
+    }
 
     /* --- AI Chat Logic --- */
     const fab = document.getElementById('fab-chat');
@@ -389,8 +445,10 @@
         if(on) {
             fab.classList.add('hidden-fab');
             inputEl.focus();
+            document.body.style.overflow = 'hidden';
         } else {
             fab.classList.remove('hidden-fab');
+            document.body.style.overflow = '';
         }
     };
 
