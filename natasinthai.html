@@ -322,21 +322,21 @@
     </div>
 
 <script>
-    // ข้อมูลวิดีโอแนะนำ 10 คลิป (ใช้ ID ที่คุณให้มาสลับกับ ID ที่มีอยู่แล้วเพื่อให้แสดงภาพปกได้ครบ)
+    // ข้อมูลวิดีโอแนะนำ 10 คลิป (อัปเดต Video ID ให้ใช้งานได้จริงและไม่ซ้ำกัน)
     const RECOMMENDED_VIDEOS = [
         { id: "c5KctL6YAR4", title: "การแสดงนาฏศิลป์ไทย ฟ้อนรำ (คลิปแนะนำ)" },
-        { id: "ibuJxT89a3c", title: "ปฐมบทนาฏศิลป์ไทย กำเนิดและวิวัฒนาการ" },
-        { id: "c5KctL6YAR4", title: "ระบำมาตรฐาน สุนทรียภาพแห่งการร่ายรำ" },
-        { id: "ibuJxT89a3c", title: "โขน พระราชทาน ชุด หนุมาน" },
-        { id: "c5KctL6YAR4", title: "ฟ้อนเล็บ ศิลปะล้านนา" },
-        { id: "ibuJxT89a3c", title: "เซิ้งโปงลาง จังหวะสนุกสนานอีสาน" },
-        { id: "c5KctL6YAR4", title: "รำวงมาตรฐาน ๑๐ เพลง" },
-        { id: "ibuJxT89a3c", title: "การพากย์และเจรจาโขน" },
-        { id: "c5KctL6YAR4", title: "ระบำศรีวิชัย โบราณคดีรำ" },
-        { id: "ibuJxT89a3c", title: "การแต่งหน้าและเครื่องแต่งกายนาฏศิลป์" }
+        { id: "MF4ADHP4xd4", title: "ปฐมบทนาฏศิลป์ไทย กำเนิดและวิวัฒนาการ" },
+        { id: "-Qs1-iSE0PM", title: "ระบำมาตรฐาน สุนทรียภาพแห่งการร่ายรำ" },
+        { id: "W1j8m8QVWJM", title: "โขน พระราชทาน ชุด หนุมาน" },
+        { id: "aJd4-D5y4aA", title: "นาฏยศัพท์ พื้นฐานภาษาท่า" },
+        { id: "AIiHUpPcPao", title: "ประเภทการแสดง โขน ละคร" },
+        { id: "HdVbJb2ydlA", title: "จารีตไหว้ครู ความศรัทธา" },
+        { id: "tywGk9lc2X8", title: "เพลงหน้าพาทย์ ดนตรีชั้นสูง" },
+        { id: "b-D6j0KglaQ", title: "ระบำศรีวิชัย โบราณคดีรำ" },
+        { id: "vyYodwR7Pms", title: "การแต่งหน้าและเครื่องแต่งกายนาฏศิลป์" }
     ];
 
-    const LESSONS = [
+          const LESSONS = [
         ["ปฐมบทนาฏศิลป์", "กำเนิดและวิวัฒนาการตั้งแต่โบราณกาลสู่ปัจจุบัน", "patombod/index.html" , "https://youtu.be/MF4ADHP4xd4"],
         ["ประเภทการแสดง", "โขน ละคร รำ ระบำ และอัตลักษณ์ไทย", "papad/index.html", "https://youtu.be/AIiHUpPcPao"],
         ["จารีตไหว้ครู", "ความศรัทธาและความกตัญญูในประเพณีนาฏศิลป์", "katanU/index.html", "https://youtu.be/HdVbJb2ydlA"],
@@ -347,7 +347,7 @@
         ["ระบำมาตรฐาน", "รูปแบบการร่ายรำที่เป็นต้นแบบแห่งศิลปะ", "labommata/index.html", "https://youtu.be/-Qs1-iSE0PM"],
         ["โบราณคดีรำ", "การฟื้นฟูท่ารำจากหลักฐานโบราณวัตถุ", "bolankad/index.html", "https://youtu.be/b-D6j0KglaQ"],
         ["บุคคลสำคัญ", "เกียรติประวัติผู้สืบสานมรดกทางนาฏศิลป์ไทย", "person/index.html", "https://youtu.be/Oh3kGzp0OEI"],
-    ];
+   ];
 
     const QUIZ_URL = "https://sites.google.com/view/nardtasinthai/%E0%B9%81%E0%B8%9A%E0%B8%9A%E0%B8%97%E0%B8%94%E0%B8%AA%E0%B8%AD%E0%B8%9A%E0%B8%99%E0%B8%B2%E0%B8%8F%E0%B8%A8%E0%B8%A5%E0%B8%9B-500-%E0%B8%82%E0%B8%AD";
     const BACKEND_URL = 'https://natasin.tontakankeawpang.workers.dev/';
@@ -392,12 +392,12 @@
                         </svg>
                         ตำรา
                     </a>
-                    <a href="${l[3]}" target="_blank" class="btn-podcast flex-1">
+                    <button onclick="openVideoFromUrl('${l[3]}')" class="btn-podcast flex-1">
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <polygon points="5 3 19 12 5 21 5 3"></polygon>
                         </svg>
                         พอดแคสต์
-                    </a>
+                    </button>
                 </div>
             </div>
         `).join('');
@@ -427,6 +427,20 @@
         setTimeout(() => {
             videoIframe.src = '';
         }, 300);
+    }
+
+    // ฟังก์ชันสำหรับแปลงลิงก์ YouTube เป็น Video ID เพื่อนำไปเปิดใน Dialog
+    function openVideoFromUrl(url) {
+        if (!url) return;
+        let videoId = "";
+        if (url.includes('youtu.be/')) {
+            videoId = url.split('youtu.be/')[1].split('?')[0]; // สำหรับลิงก์ youtu.be/xxxx
+        } else if (url.includes('youtube.com/watch')) {
+            videoId = url.split('v=')[1].split('&')[0]; // สำหรับลิงก์ youtube.com/watch?v=xxxx
+        } else {
+            videoId = url;
+        }
+        openVideo(videoId);
     }
 
     /* --- AI Chat Logic --- */
