@@ -6,221 +6,138 @@
     <title>Military Lexicon | พจนานุกรมศัพท์ทหาร</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts: Saira Stencil One for headers, Sarabun for body -->
-    <link href="https://fonts.googleapis.com/css2?family=Saira+Stencil+One&family=Sarabun:wght@300;400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <!-- FontAwesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Sarabun:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Phosphor Icons (Modern & Clean) -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
     <style>
         :root {
-            --primary-color: #15803d; /* Tactical Green */
-            --bg-color: #f3f4f6;      /* Light Gray Background */
-            --panel-bg: #ffffff;
-            --border-color: #d1d5db;
-            --text-main: #1f2937;
-            --text-muted: #6b7280;
+            --primary: #10b981; /* Emerald 500 */
+            --primary-dark: #047857; /* Emerald 700 */
+            --bg-base: #0f172a; /* Slate 900 */
+            --surface: #1e293b; /* Slate 800 */
         }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
             font-family: 'Sarabun', sans-serif;
+            background-color: var(--bg-base);
+            color: #f8fafc;
+            /* Tactical grid background */
             background-image: 
-                linear-gradient(rgba(243, 244, 246, 0.92), rgba(243, 244, 246, 0.96)),
-                url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-            overflow-x: hidden;
+                linear-gradient(rgba(15, 23, 42, 0.95), rgba(15, 23, 42, 0.95)),
+                url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h40v40H0V0zm20 20h20v20H20V20zM0 20h20v20H0V20z' fill='%231e293b' fill-opacity='0.4' fill-rule='evenodd'/%3E%3C/svg%3E");
+            min-height: 100vh;
         }
 
-        .font-stencil {
-            font-family: 'Saira Stencil One', cursive;
+        .font-military {
+            font-family: 'Black Ops One', cursive;
         }
-        
+
         .font-mono {
             font-family: 'JetBrains Mono', monospace;
         }
 
-        /* Scanline Effect */
-        .scanline {
-            width: 100%;
-            height: 100px;
-            z-index: 10;
-            background: linear-gradient(0deg, rgba(255,255,255,0) 0%, rgba(0, 0, 0, 0.03) 50%, rgba(255,255,255,0) 100%);
-            opacity: 0.5;
-            position: fixed;
-            bottom: 100%;
-            left: 0;
-            animation: scanline 8s linear infinite;
-            pointer-events: none;
-        }
-
-        @keyframes scanline {
-            0% { bottom: 100%; }
-            100% { bottom: -100px; }
-        }
-
         /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-base); }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+        /* Card Hover Effects */
+        .vocab-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid #334155;
         }
-        ::-webkit-scrollbar-track {
-            background: #e5e7eb; 
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #9ca3af; 
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--primary-color); 
+        .vocab-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.15);
         }
 
-        /* Tactical Borders */
-        .tactical-border {
-            border: 1px solid var(--border-color);
-            position: relative;
-            background-color: white;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-        }
-        .tactical-border::before, .tactical-border::after {
-            content: '';
-            position: absolute;
-            width: 8px;
-            height: 8px;
-            transition: all 0.3s ease;
-        }
-        .tactical-border::before { top: -1px; left: -1px; border-top: 2px solid var(--primary-color); border-left: 2px solid var(--primary-color); }
-        .tactical-border::after { bottom: -1px; right: -1px; border-bottom: 2px solid var(--primary-color); border-right: 2px solid var(--primary-color); }
-        
-        .tactical-border:hover {
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
-        .tactical-border:hover::before, .tactical-border:hover::after {
-            width: 100%;
-            height: 100%;
-            opacity: 0.2;
-            background-color: rgba(21, 128, 61, 0.05);
-        }
-
-        /* Glitch Text Hover */
-        .glitch-hover:hover {
-            text-shadow: 1px 0 var(--primary-color), -1px 0 rgba(255, 0, 0, 0.5);
-        }
+        /* Category Scrollbar Hiding */
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col">
+<body class="flex flex-col items-center p-4 md:p-8">
 
-    <div class="scanline"></div>
+    <div class="w-full max-w-5xl space-y-8">
+        
+        <!-- Header Section -->
+        <header class="bg-slate-800/80 backdrop-blur-md rounded-[2rem] p-6 md:p-10 shadow-2xl border border-slate-700 flex flex-col md:flex-row justify-between items-center gap-6 relative overflow-hidden">
+            <!-- Decorative accent -->
+            <div class="absolute top-0 left-0 w-2 h-full bg-emerald-500"></div>
 
-    <!-- Header -->
-    <header class="w-full border-b border-gray-300 bg-white/90 backdrop-blur-md sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
-            <div class="flex items-center gap-3">
-                <i class="fa-solid fa-person-military-pointing text-green-700 text-3xl"></i>
+            <div class="flex items-center gap-6 z-10 text-center md:text-left">
+                <div class="w-16 h-16 bg-slate-900 rounded-2xl flex items-center justify-center text-emerald-500 shadow-inner border border-slate-700 shrink-0">
+                    <i class="ph-fill ph-crosshair text-4xl animate-pulse" style="animation-duration: 3s;"></i>
+                </div>
                 <div>
-                    <h1 class="text-3xl font-stencil text-green-800 tracking-wider">MILITARY LEXICON</h1>
-                    <p class="text-xs text-gray-500 font-mono tracking-widest">TACTICAL VOCABULARY DATABASE</p>
+                    <h1 class="text-3xl md:text-5xl font-military text-white tracking-widest mb-1 drop-shadow-lg">
+                        MILITARY LEXICON
+                    </h1>
+                    <p class="text-emerald-400 font-mono text-sm md:text-base tracking-wider uppercase flex items-center justify-center md:justify-start gap-2">
+                        <i class="ph-bold ph-database"></i> Tactical Vocabulary Database
+                    </p>
                 </div>
             </div>
-            
+
+            <!-- Total Stats -->
+            <div class="bg-slate-900 px-6 py-4 rounded-2xl border border-slate-700 flex items-center gap-4 z-10 w-full md:w-auto justify-center">
+                <div class="text-slate-400">
+                    <p class="text-[10px] font-mono tracking-widest uppercase mb-1">Total Entries</p>
+                    <p class="text-3xl font-bold text-white leading-none" id="total-count">0</p>
+                </div>
+                <div class="h-10 w-[1px] bg-slate-700 mx-2"></div>
+                <div class="text-slate-400">
+                    <p class="text-[10px] font-mono tracking-widest uppercase mb-1">Status</p>
+                    <p class="text-emerald-500 font-bold font-mono text-sm flex items-center gap-1">
+                        <i class="ph-fill ph-check-circle"></i> ONLINE
+                    </p>
+                </div>
+            </div>
+        </header>
+
+        <!-- Search & Filter Controls -->
+        <div class="space-y-4">
             <!-- Search Bar -->
-            <div class="relative w-full md:w-1/2 group">
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <i class="fa-solid fa-magnifying-glass text-gray-400 group-focus-within:text-green-700 transition-colors"></i>
+            <div class="relative group">
+                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <i class="ph-bold ph-magnifying-glass text-slate-400 group-focus-within:text-emerald-500 text-xl transition-colors"></i>
                 </div>
                 <input type="text" id="searchInput" 
-                    class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-none leading-5 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:bg-white focus:border-green-700 focus:ring-1 focus:ring-green-700 sm:text-sm font-mono transition-all duration-200 uppercase shadow-inner" 
-                    placeholder="SEARCH / ค้นหา (ENG/TH)...">
-                <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
-                    <span id="resultCount" class="text-xs text-gray-500 font-mono">READY</span>
-                </div>
+                    class="block w-full pl-12 pr-4 py-4 bg-slate-800/80 border border-slate-700 rounded-2xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent font-mono text-lg transition-all shadow-lg backdrop-blur-sm" 
+                    placeholder="Search terms... (ENG / TH / IPA)">
             </div>
-        </div>
-    </header>
 
-    <!-- Main Content -->
-    <main class="flex-grow container mx-auto px-4 py-8">
-        
-        <!-- Dashboard Stats -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 font-mono text-xs">
-            <div class="bg-white p-3 border-l-4 border-green-600 shadow-sm">
-                <div class="text-gray-500">SYSTEM STATUS</div>
-                <div class="text-green-700 font-bold">ONLINE</div>
-            </div>
-            <div class="bg-white p-3 border-l-4 border-green-600 shadow-sm">
-                <div class="text-gray-500">DATABASE VER.</div>
-                <div class="text-green-700 font-bold">2.4.1 (BETA)</div>
-            </div>
-            <div class="bg-white p-3 border-l-4 border-green-600 shadow-sm">
-                <div class="text-gray-500">TOTAL ENTRIES</div>
-                <div class="text-green-700 font-bold" id="totalEntriesDisplay">0</div>
-            </div>
-            <div class="bg-white p-3 border-l-4 border-green-600 shadow-sm">
-                <div class="text-gray-500">AUDIO SYSTEM</div>
-                <div class="text-green-700 font-bold">NATIVE TTS READY</div>
-            </div>
-        </div>
-
-        <!-- Desktop Table Header (Hidden on Mobile) -->
-        <div class="hidden md:grid grid-cols-12 gap-4 px-6 py-3 bg-green-50 border-y border-green-200 text-green-800 font-stencil tracking-wider text-sm mb-4">
-            <div class="col-span-1 font-bold">#</div>
-            <div class="col-span-3 font-bold">TERMINOLOGY (ENG)</div>
-            <div class="col-span-3 font-bold">PRONUNCIATION</div>
-            <div class="col-span-4 font-bold">MEANING (TH)</div>
-            <div class="col-span-1 text-center font-bold">AUDIO</div>
-        </div>
-
-        <!-- Vocabulary List Container -->
-        <div id="vocabList" class="space-y-4 md:space-y-0 bg-white md:bg-transparent shadow md:shadow-none rounded md:rounded-none">
-            <!-- Content will be injected here via JS -->
-            <div class="text-center py-20 text-gray-500 font-mono animate-pulse">
-                INITIALIZING DATABASE...
-            </div>
-        </div>
-
-        <!-- No Results State -->
-        <div id="noResults" class="hidden text-center py-20">
-            <i class="fa-solid fa-triangle-exclamation text-orange-500 text-5xl mb-4"></i>
-            <h2 class="text-2xl font-stencil text-gray-400">NO DATA FOUND</h2>
-            <p class="text-gray-500 font-mono text-sm mt-2">TARGET NOT LOCATED IN DATABASE</p>
-        </div>
-
-        <!-- Load More Button -->
-        <div class="mt-8 text-center">
-            <button id="loadMoreBtn" class="hidden px-8 py-3 bg-white border border-green-600 text-green-700 hover:bg-green-700 hover:text-white font-mono text-sm transition-all duration-300 shadow-sm uppercase">
-                Load More Data [+]
-            </button>
-        </div>
-
-    </main>
-
-    <!-- Footer -->
-    <footer class="border-t border-gray-300 bg-gray-100 py-6 mt-auto">
-        <div class="container mx-auto text-center">
-            <p class="text-gray-500 text-xs font-mono">
-                MILITARY LEXICON SYSTEM © 2026 <br>
-                DESIGNED FOR TACTICAL USE
-            </p>
-        </div>
-    </footer>
-
-    <!-- Custom Alert Modal -->
-    <div id="customAlert" class="fixed inset-0 flex items-center justify-center z-[100] hidden bg-black/50 backdrop-blur-sm transition-opacity duration-300 opacity-0">
-        <div class="bg-white border-2 border-red-600 p-6 shadow-2xl max-w-sm w-full mx-4 relative transform scale-95 transition-transform duration-300" id="customAlertBox">
-            <div class="flex items-center gap-4 mb-4">
-                <i class="fa-solid fa-triangle-exclamation text-red-600 text-3xl"></i>
-                <h3 class="text-xl font-stencil text-red-700">SYSTEM ALERT</h3>
-            </div>
-            <p id="customAlertMessage" class="text-gray-700 font-mono mb-6 text-sm">Message goes here.</p>
-            <div class="text-right">
-                <button onclick="closeCustomAlert()" class="px-6 py-2 bg-red-600 text-white font-mono text-sm hover:bg-red-700 transition-colors shadow-sm">
-                    ACKNOWLEDGE
+            <!-- Categories Filter -->
+            <div class="flex gap-2 overflow-x-auto pb-2 hide-scrollbar" id="category-filters">
+                <button onclick="filterCategory('All')" class="cat-btn active px-5 py-2 rounded-xl text-sm font-bold tracking-wider font-mono whitespace-nowrap bg-emerald-600 text-white shadow-lg border border-emerald-500 transition-all">
+                    ALL
                 </button>
+                <!-- Generated dynamically via JS -->
             </div>
         </div>
+
+        <!-- Vocabulary Grid Container -->
+        <div id="vocab-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+            <!-- Content injected here via JS -->
+        </div>
+
+        <!-- Empty State (Hidden by default) -->
+        <div id="no-results" class="hidden flex-col items-center justify-center py-20 bg-slate-800/50 rounded-[2rem] border border-slate-700 border-dashed">
+            <i class="ph-duotone ph-warning-circle text-6xl text-slate-500 mb-4"></i>
+            <h3 class="text-xl font-bold text-slate-300">No matching records found</h3>
+            <p class="text-slate-500 font-mono text-sm mt-2">Try adjusting your search parameters</p>
+        </div>
+
     </div>
 
-    <!-- JavaScript Logic -->
     <script>
-        // Database of Military Terms
+        // --------------------------------------------------------
+        // DATABASE: The original Military Terminology Data
+        // --------------------------------------------------------
         const vocabularyData = [
             { en: "Ambush", ipa: "แอม-บุช", th: "การซุ่มโจมตี", cat: "Tactics" },
             { en: "Assault Rifle", ipa: "อะ-ซอลท-ไร-เฟิล", th: "ปืนไรเฟิลจู่โจม", cat: "Weapon" },
@@ -330,210 +247,192 @@
             { en: "Coordinates", ipa: "โค-ออ-ดิ-เนทส์", th: "พิกัด", cat: "Nav" }
         ];
 
-        // Sort data alphabetically
+        // Sort alphabetically by English word
         vocabularyData.sort((a, b) => a.en.localeCompare(b.en));
 
-        // State Management
-        let currentDisplayCount = 20; 
-        const incrementCount = 20; 
-        let filteredData = [...vocabularyData];
-        
-        // Voice State
-        let availableVoices = [];
+        // --------------------------------------------------------
+        // STATE MANAGEMENT
+        // --------------------------------------------------------
+        let activeCategory = 'All';
+        let searchQuery = '';
 
-        // DOM Elements
-        const vocabListEl = document.getElementById('vocabList');
-        const searchInputEl = document.getElementById('searchInput');
-        const resultCountEl = document.getElementById('resultCount');
-        const totalEntriesDisplayEl = document.getElementById('totalEntriesDisplay');
-        const noResultsEl = document.getElementById('noResults');
-        const loadMoreBtn = document.getElementById('loadMoreBtn');
+        const gridEl = document.getElementById('vocab-grid');
+        const noResultsEl = document.getElementById('no-results');
+        const searchInput = document.getElementById('searchInput');
 
-        // Initialize
-        function init() {
-            totalEntriesDisplayEl.textContent = vocabularyData.length;
-            renderList();
+        // Extract Top Categories for filters (those with > 3 items, + some main ones)
+        const getPopularCategories = () => {
+            const counts = {};
+            vocabularyData.forEach(item => counts[item.cat] = (counts[item.cat] || 0) + 1);
+            return Object.keys(counts)
+                .filter(cat => counts[cat] >= 3 || ['Weapon', 'Unit', 'Tactics', 'Rank'].includes(cat))
+                .sort((a,b) => counts[b] - counts[a]); // Sort by most items
+        };
+
+        // --------------------------------------------------------
+        // INITIALIZATION
+        // --------------------------------------------------------
+        function initApp() {
+            document.getElementById('total-count').textContent = vocabularyData.length;
             
-            // Event Listeners
-            searchInputEl.addEventListener('input', handleSearch);
-            loadMoreBtn.addEventListener('click', loadMore);
+            // Build Category Filters
+            const filterContainer = document.getElementById('category-filters');
+            const topCats = getPopularCategories();
             
-            // Load voices early
-            if ('speechSynthesis' in window) {
-                availableVoices = window.speechSynthesis.getVoices();
-                window.speechSynthesis.onvoiceschanged = () => {
-                    availableVoices = window.speechSynthesis.getVoices();
-                };
-            }
-        }
-
-        // Search Handler
-        function handleSearch(e) {
-            const query = e.target.value.toLowerCase().trim();
-            
-            filteredData = vocabularyData.filter(item => 
-                item.en.toLowerCase().includes(query) || 
-                item.th.includes(query) || 
-                item.ipa.includes(query)
-            );
-
-            currentDisplayCount = incrementCount; 
-            renderList();
-        }
-
-        // Render List
-        function renderList() {
-            vocabListEl.innerHTML = '';
-            
-            if (filteredData.length === 0) {
-                noResultsEl.classList.remove('hidden');
-                loadMoreBtn.classList.add('hidden');
-                resultCountEl.textContent = "0 FOUND";
-                return;
-            } else {
-                noResultsEl.classList.add('hidden');
-                resultCountEl.textContent = `${filteredData.length} MATCHES`;
-            }
-
-            const itemsToRender = filteredData.slice(0, currentDisplayCount);
-
-            itemsToRender.forEach((item, index) => {
-                const card = document.createElement('div');
-                card.className = "tactical-border bg-white p-4 md:p-0 md:bg-transparent md:border-none md:border-b md:border-gray-200 transition-colors duration-200";
-                
-                // แปลงข้อความให้ปลอดภัยสำหรับนำไปใส่ในฟังก์ชัน onclick
-                const safeWord = item.en.replace(/'/g, "\\'").replace(/"/g, '&quot;');
-
-                card.innerHTML = `
-                    <!-- Desktop Layout -->
-                    <div class="hidden md:grid grid-cols-12 gap-4 items-center py-3 px-6 text-sm font-mono hover:bg-gray-50">
-                        <div class="col-span-1 text-gray-500 font-bold">#${String(index + 1).padStart(3, '0')}</div>
-                        <div class="col-span-3 font-bold text-green-700 text-base">${item.en}</div>
-                        <div class="col-span-3 text-gray-500 italic">${item.ipa}</div>
-                        <div class="col-span-4 text-gray-800">${item.th}</div>
-                        <div class="col-span-1 flex justify-center gap-2">
-                            <button onclick="speak('${safeWord}', this)" class="text-gray-400 hover:text-green-700 transition-all duration-200 transform hover:scale-110" title="Listen to Pronunciation">
-                                <i class="fa-solid fa-volume-high"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Mobile Layout -->
-                    <div class="md:hidden flex flex-col gap-2">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <span class="text-xs text-green-700 font-mono mb-1 block">[${item.cat}]</span>
-                                <h3 class="text-xl font-bold text-green-800 glitch-hover">${item.en}</h3>
-                                <p class="text-sm text-gray-500 italic">${item.ipa}</p>
-                            </div>
-                            <button onclick="speak('${safeWord}', this)" class="p-3 text-gray-500 active:text-green-700 border border-gray-300 rounded-lg bg-gray-50 hover:bg-white shadow-sm transition-all">
-                                <i class="fa-solid fa-volume-high"></i>
-                            </button>
-                        </div>
-                        <div class="mt-2 pt-2 border-t border-gray-100">
-                            <p class="text-gray-800">${item.th}</p>
-                        </div>
-                    </div>
-                `;
-                vocabListEl.appendChild(card);
+            topCats.forEach(cat => {
+                const btn = document.createElement('button');
+                btn.textContent = cat.toUpperCase();
+                btn.className = `cat-btn px-5 py-2 rounded-xl text-sm font-bold tracking-wider font-mono whitespace-nowrap bg-slate-800 text-slate-400 border border-slate-700 hover:bg-slate-700 transition-all`;
+                btn.onclick = () => filterCategory(cat, btn);
+                filterContainer.appendChild(btn);
             });
 
-            if (currentDisplayCount < filteredData.length) {
-                loadMoreBtn.classList.remove('hidden');
+            // Event Listeners
+            searchInput.addEventListener('input', (e) => {
+                searchQuery = e.target.value.toLowerCase();
+                renderCards();
+            });
+
+            // Make sure voices are loaded for SpeechSynthesis
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.getVoices();
+                window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+            }
+
+            renderCards();
+        }
+
+        // --------------------------------------------------------
+        // RENDERING LOGIC
+        // --------------------------------------------------------
+        function filterCategory(cat, btnElement = null) {
+            activeCategory = cat;
+            
+            // Update UI buttons
+            const allBtns = document.querySelectorAll('.cat-btn');
+            allBtns.forEach(b => {
+                b.classList.remove('bg-emerald-600', 'text-white', 'border-emerald-500', 'shadow-lg');
+                b.classList.add('bg-slate-800', 'text-slate-400', 'border-slate-700');
+            });
+
+            if (btnElement) {
+                btnElement.classList.remove('bg-slate-800', 'text-slate-400', 'border-slate-700');
+                btnElement.classList.add('bg-emerald-600', 'text-white', 'border-emerald-500', 'shadow-lg');
             } else {
-                loadMoreBtn.classList.add('hidden');
+                // If "All" is clicked (it's the first button)
+                allBtns[0].classList.remove('bg-slate-800', 'text-slate-400', 'border-slate-700');
+                allBtns[0].classList.add('bg-emerald-600', 'text-white', 'border-emerald-500', 'shadow-lg');
+            }
+
+            renderCards();
+        }
+
+        function renderCards() {
+            gridEl.innerHTML = '';
+            
+            const filtered = vocabularyData.filter(item => {
+                const matchesCat = activeCategory === 'All' || item.cat === activeCategory;
+                const matchesSearch = item.en.toLowerCase().includes(searchQuery) || 
+                                      item.th.includes(searchQuery) || 
+                                      item.ipa.includes(searchQuery);
+                return matchesCat && matchesSearch;
+            });
+
+            if (filtered.length === 0) {
+                noResultsEl.classList.remove('hidden');
+                gridEl.classList.add('hidden');
+            } else {
+                noResultsEl.classList.add('hidden');
+                gridEl.classList.remove('hidden');
+                
+                filtered.forEach(item => {
+                    const safeWord = item.en.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                    
+                    const card = document.createElement('div');
+                    card.className = "vocab-card bg-slate-800/80 backdrop-blur-sm rounded-[1.5rem] p-5 flex flex-col justify-between h-full relative group";
+                    
+                    card.innerHTML = `
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <span class="inline-block px-2 py-1 bg-slate-700 text-emerald-400 text-[10px] font-bold font-mono rounded uppercase tracking-widest mb-2 border border-slate-600">
+                                    [ ${item.cat} ]
+                                </span>
+                                <h3 class="text-2xl font-bold text-white mb-1 group-hover:text-emerald-400 transition-colors">${item.en}</h3>
+                                <p class="text-slate-400 font-mono text-sm italic">${item.ipa}</p>
+                            </div>
+                            
+                            <!-- Audio Button (Big & Obvious) -->
+                            <button onclick="speak('${safeWord}', this)" class="w-12 h-12 rounded-xl bg-slate-700 text-slate-300 flex items-center justify-center hover:bg-emerald-500 hover:text-white hover:shadow-lg hover:shadow-emerald-500/30 transition-all active:scale-95 shrink-0" title="Listen">
+                                <i class="ph-fill ph-speaker-high text-2xl pointer-events-none"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="pt-4 border-t border-slate-700 mt-auto">
+                            <p class="text-slate-200 text-lg">${item.th}</p>
+                        </div>
+                    `;
+                    gridEl.appendChild(card);
+                });
             }
         }
 
-        // Load More Logic
-        function loadMore() {
-            currentDisplayCount += incrementCount;
-            renderList();
-        }
-
-        // --- Custom Alert Logic ---
-        function showCustomAlert(msg) {
-            document.getElementById('customAlertMessage').textContent = msg;
-            const alertOverlay = document.getElementById('customAlert');
-            const alertBox = document.getElementById('customAlertBox');
-            
-            alertOverlay.classList.remove('hidden');
-            setTimeout(() => {
-                alertOverlay.classList.remove('opacity-0');
-                alertBox.classList.remove('scale-95');
-                alertBox.classList.add('scale-100');
-            }, 10);
-        }
-
-        function closeCustomAlert() {
-            const alertOverlay = document.getElementById('customAlert');
-            const alertBox = document.getElementById('customAlertBox');
-            
-            alertOverlay.classList.add('opacity-0');
-            alertBox.classList.remove('scale-100');
-            alertBox.classList.add('scale-95');
-            
-            setTimeout(() => {
-                alertOverlay.classList.add('hidden');
-            }, 300); 
-        }
-
-        // --- ระบบสร้างเสียงอัตโนมัติ (Online Audio API) ---
+        // --------------------------------------------------------
+        // AUDIO SYSTEM (Bulletproof TTS)
+        // --------------------------------------------------------
         function speak(text, btnElement) {
-            // เข้ารหัสข้อความ
-            const encodedText = encodeURIComponent(text);
-            
-            // ใช้บริการดึงไฟล์เสียง MP3 แบบอัตโนมัติ (US English) 
-            // เสถียรกว่า Native TTS ที่มักจะเจอปัญหาในบางเบราว์เซอร์
-            const audioUrl = `https://dict.youdao.com/dictvoice?audio=${encodedText}&type=2`;
-            const audio = new Audio(audioUrl);
-
-            // ตัวแปรสำหรับควบคุม UI ของไอคอนลำโพง
-            let originalClasses = "fa-solid fa-volume-high";
+            // UI Visual Feedback
             let icon = null;
-
-            // สร้าง Visual Feedback (ไอคอนกระพริบเปลี่ยนสีตอนพูด)
+            let originalClass = "ph-fill ph-speaker-high text-2xl pointer-events-none";
+            
             if (btnElement) {
                 icon = btnElement.querySelector('i');
                 if (icon) {
-                    originalClasses = icon.className; 
-                    icon.className = 'fa-solid fa-volume-high fa-beat text-green-600';
+                    originalClass = icon.className;
+                    // Change to active/pulsing state
+                    icon.className = 'ph-fill ph-speaker-high text-2xl text-white animate-pulse pointer-events-none';
+                    btnElement.classList.add('bg-emerald-500', 'text-white', 'shadow-lg', 'shadow-emerald-500/50');
+                    btnElement.classList.remove('bg-slate-700', 'text-slate-300');
                 }
             }
-            
-            // ฟังก์ชันคืนค่าไอคอนกลับเป็นเหมือนเดิม
+
             const resetIcon = () => {
-                if (icon) icon.className = originalClasses;
+                if (icon && btnElement) {
+                    icon.className = originalClass;
+                    btnElement.classList.remove('bg-emerald-500', 'text-white', 'shadow-lg', 'shadow-emerald-500/50');
+                    btnElement.classList.add('bg-slate-700', 'text-slate-300');
+                }
             };
 
-            audio.onended = resetIcon;
-            
-            // หาก API แรกมีปัญหา ให้สลับไปใช้ Google TTS เป็นตัวสำรอง
-            audio.onerror = () => {
-                const fallbackUrl = `https://translate.google.com/translate_tts?ie=UTF-8&tl=en-US&client=tw-ob&q=${encodedText}`;
-                const fallbackAudio = new Audio(fallbackUrl);
-                
-                fallbackAudio.onended = resetIcon;
-                fallbackAudio.onerror = () => {
+            // ** THE SOLUTION TO THE AUDIO ISSUE **
+            // We use the browser's Native Speech Synthesis API. It is completely immune to 
+            // CORS blocking, iframe sandbox restrictions, and external server bans.
+            if ('speechSynthesis' in window) {
+                // VERY IMPORTANT: Clear the queue. If it bugs out and thinks it's still talking, 
+                // this forces it to reset.
+                window.speechSynthesis.cancel(); 
+
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'en-US'; // American English
+                utterance.rate = 0.85;    // Slightly slower for clarity
+
+                // Clean up UI when done or if error occurs
+                utterance.onend = resetIcon;
+                utterance.onerror = (e) => {
+                    console.error("Audio playback error:", e);
                     resetIcon();
-                    showCustomAlert('SYSTEM ERROR: ไม่สามารถดาวน์โหลดไฟล์เสียงได้ในขณะนี้');
+                    alert("ระบบเสียงขัดข้อง กรุณาตรวจสอบการตั้งค่าเบราว์เซอร์");
                 };
-                
-                fallbackAudio.play().catch(err => {
-                    resetIcon();
-                    showCustomAlert('SYSTEM ALERT: เบราว์เซอร์ของคุณบล็อกการเล่นเสียงอัตโนมัติ');
-                });
-            };
 
-            // สั่งเล่นเสียง
-            audio.play().catch(err => {
-                console.warn("Audio API 1 failed, trying fallback...", err);
-                audio.onerror(); // เรียกใช้ Fallback
-            });
+                // Play
+                window.speechSynthesis.speak(utterance);
+            } else {
+                resetIcon();
+                alert("เบราว์เซอร์ของคุณไม่รองรับระบบเสียง (TTS)");
+            }
         }
 
-        // Start App
-        window.onload = init;
+        // Boot App
+        window.onload = initApp;
 
     </script>
 </body>
