@@ -218,7 +218,7 @@
     <!-- Main Content -->
     <main class="max-w-4xl mx-auto px-4 pb-24 pt-16 md:pt-20">
         
-        <!-- Video Slider Section (เพิ่มใหม่) -->
+        <!-- Video Slider Section -->
         <section class="mb-12 border-b border-slate-200 pb-8">
             <div class="flex items-end justify-between mb-4">
                 <h2 class="text-lg md:text-xl font-bold font-display text-slate-800">คลิปแนะนำการฟ้อนรำ <span class="text-brand-accent">.</span></h2>
@@ -307,7 +307,7 @@
         </div>
     </div>
 
-    <!-- Video Modal (Dialog แบบ popup เพิ่มใหม่) -->
+    <!-- Video Modal (Dialog แบบ popup) -->
     <div id="video-modal" class="fixed inset-0 z-[60] bg-black/95 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300 flex items-center justify-center p-4">
         <div class="relative w-full max-w-4xl mx-auto flex flex-col items-center">
             <!-- ปุ่มปิด -->
@@ -322,21 +322,25 @@
     </div>
 
 <script>
-    // ข้อมูลวิดีโอแนะนำ 10 คลิป (อัปเดต Video ID ให้ใช้งานได้จริงและไม่ซ้ำกัน)
+    // -------------------------------------------------------------
+    // วิดีโอแนะนำ 10 คลิป (เตรียมไว้ให้สำหรับใส่ไอดีวิดีโอจากเพลย์ลิสต์)
+    // -------------------------------------------------------------
+    // วิธีแก้: นำรหัสวิดีโอ 11 ตัว (เช่น c5KctL6YAR4) มาใส่แทนที่คำว่า "รหัสวิดีโอที่_..."
     const RECOMMENDED_VIDEOS = [
-        { id: "c5KctL6YAR4", title: "การแสดงนาฏศิลป์ไทย ฟ้อนรำ (คลิปแนะนำ)" },
-        { id: "MF4ADHP4xd4", title: "ปฐมบทนาฏศิลป์ไทย กำเนิดและวิวัฒนาการ" },
-        { id: "-Qs1-iSE0PM", title: "ระบำมาตรฐาน สุนทรียภาพแห่งการร่ายรำ" },
-        { id: "W1j8m8QVWJM", title: "โขน พระราชทาน ชุด หนุมาน" },
-        { id: "aJd4-D5y4aA", title: "นาฏยศัพท์ พื้นฐานภาษาท่า" },
-        { id: "AIiHUpPcPao", title: "ประเภทการแสดง โขน ละคร" },
-        { id: "HdVbJb2ydlA", title: "จารีตไหว้ครู ความศรัทธา" },
-        { id: "tywGk9lc2X8", title: "เพลงหน้าพาทย์ ดนตรีชั้นสูง" },
-        { id: "b-D6j0KglaQ", title: "ระบำศรีวิชัย โบราณคดีรำ" },
-        { id: "vyYodwR7Pms", title: "การแต่งหน้าและเครื่องแต่งกายนาฏศิลป์" }
+         { id: "aCxBsZUDlMUHVCyY", title: "ระบำพรหมาสตร์" },
+         { id: "uLblESOwJ77XfGMm", title: "ระบำกฤดาภินิหาร" },
+        { id: "hXcZKFEoaaiWoP3n", title: "วิวัฒนาการนาฏศิลป์ไทย" },
+        { id: "5224ECRAKAptWMMA", title: "ภาษาท่านาฏศิลป์" },
+        { id: "mIxXkEJOiyygpBhF", title: "ดนตรี-นาฏศิลป์ | ม.1" },
+        { id: "GI1Ey90ZwShid0aA", title: "เครื่องดนตรีและวงดนตรีไทย (1/2) | ดนตรี ม.1 ดนตรี-นาฏศิลป์ ม. 1" },
+        { id: "FQOxT3IUObiVQj6O", title: "รูปแบบการแสดงนาฏศิลป์" },
+        { id: "4L6DNF23QhFfa5pZ", title: "ความงามของนาฏศิลป์ไทย" },
+        { id: "n0MEmyCAPTr8G7ZA", title: "นาฏกรรมโขน ตอนที่ ๑" },
+        { id: "uhYm_PBPrglS-Th8", title: "นาฏกรรมโขน ตอนที่ ๒" }
+            
     ];
 
-          const LESSONS = [
+    const LESSONS = [
         ["ปฐมบทนาฏศิลป์", "กำเนิดและวิวัฒนาการตั้งแต่โบราณกาลสู่ปัจจุบัน", "patombod/index.html" , "https://youtu.be/MF4ADHP4xd4"],
         ["ประเภทการแสดง", "โขน ละคร รำ ระบำ และอัตลักษณ์ไทย", "papad/index.html", "https://youtu.be/AIiHUpPcPao"],
         ["จารีตไหว้ครู", "ความศรัทธาและความกตัญญูในประเพณีนาฏศิลป์", "katanU/index.html", "https://youtu.be/HdVbJb2ydlA"],
