@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- แก้ปัญหาการบล็อก API ของ Google ด้วยการปิดส่งข้อมูล Referrer -->
+    <meta name="referrer" content="no-referrer">
     <title>Military Lexicon | พจนานุกรมศัพท์ทหาร</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -476,47 +478,62 @@
             }, 300); 
         }
 
-        // --- Fix: Using Google Translate TTS API (Audio Element) ---
+        // --- Fix: Ultimate TTS Function (Google API + Local Fallback) ---
         function speak(text, btnElement) {
-            // เข้ารหัสข้อความให้อยู่ในรูปแบบที่ URL รองรับ
+            // เข้ารหัสข้อความ
             const encodedText = encodeURIComponent(text);
             
-            // ใช้ URL ของ Google Translate TTS
-            const audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=en-US&q=${encodedText}`;
+            // ใช้ Google Translate TTS (ทำงานร่วมกับ <meta name="referrer" content="no-referrer"> ด้านบน)
+            const audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&tl=en-US&client=tw-ob&q=${encodedText}`;
             
-            // สร้างออบเจกต์ Audio เพื่อเล่นเสียง
+            // สร้างออบเจกต์ Audio
             const audio = new Audio(audioUrl);
+            audio.volume = 1.0; 
 
             // ตัวแปรสำหรับเก็บ class เดิมของไอคอน
             let originalClasses = "fa-solid fa-volume-high";
             let icon = null;
 
-            // Visual Feedback: เปลี่ยนไอคอนเมื่อกำลังเล่นเสียง
+            // Visual Feedback: เปลี่ยนไอคอนและสีกระพริบ
             if (btnElement) {
                 icon = btnElement.querySelector('i');
                 if (icon) {
                     originalClasses = icon.className; 
-                    // ใส่เอฟเฟกต์กระพริบและเปลี่ยนสี
                     icon.className = 'fa-solid fa-volume-high fa-beat-fade text-green-600';
                 }
             }
             
-            // ฟังก์ชันรีเซ็ตไอคอนกลับเป็นเหมือนเดิม
+            // รีเซ็ตไอคอนกลับเมื่อเสียงจบ
             const resetIcon = () => {
                 if (icon) icon.className = originalClasses;
             };
 
+            // สร้างระบบสำรอง (Fallback) เผื่อ API ของ Google โดนบล็อก
+            const playLocalFallback = () => {
+                if ('speechSynthesis' in window) {
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    utterance.lang = 'en-US';
+                    utterance.rate = 0.9;
+                    utterance.onend = resetIcon;
+                    utterance.onerror = resetIcon;
+                    window.speechSynthesis.speak(utterance);
+                } else {
+                    resetIcon();
+                    showCustomAlert('SYSTEM ERROR: AUDIO FAILED\n(ไม่สามารถเล่นเสียงได้ กรุณาตรวจสอบการตั้งค่าเบราว์เซอร์)');
+                }
+            };
+
             audio.onended = resetIcon;
+            
+            // ถ้า Google API พัง (Error 403 หรือเน็ตหลุด) ให้สลับไปใช้เสียงสำรอง
             audio.onerror = () => {
-                resetIcon();
-                showCustomAlert('SYSTEM ERROR: UNABLE TO FETCH AUDIO\n(ไม่สามารถดึงข้อมูลเสียงจาก Google ได้ หรือไม่มีการเชื่อมต่ออินเทอร์เน็ต)');
+                playLocalFallback();
             };
             
-            // สั่งเล่นเสียง
+            // สั่งเล่นเสียง Google API
             audio.play().catch(err => {
                 console.error("Audio playback failed:", err);
-                resetIcon();
-                showCustomAlert('SYSTEM ERROR: BROWSER BLOCKED AUDIO\n(เบราว์เซอร์ของคุณบล็อกการเล่นเสียง กรุณากดอนุญาตการเล่นเสียงบนเว็บนี้)');
+                playLocalFallback();
             });
         }
 
