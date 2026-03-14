@@ -3,8 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- แก้ปัญหาการบล็อก API ของ Google ด้วยการปิดส่งข้อมูล Referrer -->
-    <meta name="referrer" content="no-referrer">
     <title>Military Lexicon | พจนานุกรมศัพท์ทหาร</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -15,7 +13,7 @@
 
     <style>
         :root {
-            --primary-color: #15803d; /* Tactical Green (Darker for Light Mode) */
+            --primary-color: #15803d; /* Tactical Green */
             --bg-color: #f3f4f6;      /* Light Gray Background */
             --panel-bg: #ffffff;
             --border-color: #d1d5db;
@@ -27,7 +25,6 @@
             background-color: var(--bg-color);
             color: var(--text-main);
             font-family: 'Sarabun', sans-serif;
-            /* Lighter pattern overlay */
             background-image: 
                 linear-gradient(rgba(243, 244, 246, 0.92), rgba(243, 244, 246, 0.96)),
                 url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
@@ -42,7 +39,7 @@
             font-family: 'JetBrains Mono', monospace;
         }
 
-        /* Scanline Effect (Subtle for Light Mode) */
+        /* Scanline Effect */
         .scanline {
             width: 100%;
             height: 100px;
@@ -103,7 +100,7 @@
             background-color: rgba(21, 128, 61, 0.05);
         }
 
-        /* Glitch Text Hover (Adapted for Light) */
+        /* Glitch Text Hover */
         .glitch-hover:hover {
             text-shadow: 1px 0 var(--primary-color), -1px 0 rgba(255, 0, 0, 0.5);
         }
@@ -157,8 +154,8 @@
                 <div class="text-green-700 font-bold" id="totalEntriesDisplay">0</div>
             </div>
             <div class="bg-white p-3 border-l-4 border-green-600 shadow-sm">
-                <div class="text-gray-500">SECURE CONNECTION</div>
-                <div class="text-green-700 font-bold">ENCRYPTED</div>
+                <div class="text-gray-500">AUDIO SYSTEM</div>
+                <div class="text-green-700 font-bold">NATIVE TTS READY</div>
             </div>
         </div>
 
@@ -168,7 +165,7 @@
             <div class="col-span-3 font-bold">TERMINOLOGY (ENG)</div>
             <div class="col-span-3 font-bold">PRONUNCIATION</div>
             <div class="col-span-4 font-bold">MEANING (TH)</div>
-            <div class="col-span-1 text-center font-bold">ACTION</div>
+            <div class="col-span-1 text-center font-bold">AUDIO</div>
         </div>
 
         <!-- Vocabulary List Container -->
@@ -205,7 +202,7 @@
         </div>
     </footer>
 
-    <!-- Custom Alert Modal (Replaces standard alert) -->
+    <!-- Custom Alert Modal -->
     <div id="customAlert" class="fixed inset-0 flex items-center justify-center z-[100] hidden bg-black/50 backdrop-blur-sm transition-opacity duration-300 opacity-0">
         <div class="bg-white border-2 border-red-600 p-6 shadow-2xl max-w-sm w-full mx-4 relative transform scale-95 transition-transform duration-300" id="customAlertBox">
             <div class="flex items-center gap-4 mb-4">
@@ -238,7 +235,7 @@
             { en: "Ceasefire", ipa: "ซีส-ไฟเออร์", th: "การหยุดยิง", cat: "Command" },
             { en: "Chain of Command", ipa: "เชน-ออฟ-คอม-มานด์", th: "สายการบังคับบัญชา", cat: "Admin" },
             { en: "Civilian", ipa: "ซิ-วิล-เลียน", th: "พลเรือน", cat: "Person" },
-            { en: "Collateral Damage", ipa: "คอ-แลท-เทอ-รัล-ดา-เมจ", th: "ความเสียหายข้างเคียง (ต่อพลเรือน/ทรัพย์สิน)", cat: "Damage" },
+            { en: "Collateral Damage", ipa: "คอ-แลท-เทอ-รัล-ดา-เมจ", th: "ความเสียหายข้างเคียง", cat: "Damage" },
             { en: "Combat", ipa: "คอม-แบท", th: "การรบ", cat: "Action" },
             { en: "Company", ipa: "คอม-ปะ-นี", th: "กองร้อย", cat: "Unit" },
             { en: "Convoy", ipa: "คอน-วอย", th: "ขบวนยานยนต์", cat: "Logistics" },
@@ -274,15 +271,15 @@
             { en: "Mercenary", ipa: "เมอ-ซี-เน-รี", th: "ทหารรับจ้าง", cat: "Person" },
             { en: "Minefield", ipa: "ไมน์-ฟิลด์", th: "สนามทุ่นระเบิด", cat: "Area" },
             { en: "Mission", ipa: "มิช-ชัน", th: "ภารกิจ", cat: "Ops" },
-            { en: "Mortar", ipa: "มอร์-ตาร์", th: "เครื่องยิงลูกระเบิด (ค.", cat: "Weapon" },
+            { en: "Mortar", ipa: "มอร์-ตาร์", th: "เครื่องยิงลูกระเบิด", cat: "Weapon" },
             { en: "Neutralize", ipa: "นิว-ทรอ-ไลซ์", th: "ทำลายล้าง, ทำให้หมดสภาพ", cat: "Action" },
             { en: "Night Vision", ipa: "ไนท์-วิ-ชัน", th: "กล้องมองกลางคืน", cat: "Equipment" },
-            { en: "Objective", ipa: "ออบ-เจก-ทีฟ", th: "เป้าหมายภารกิจ, วัตถุประสงค์", cat: "Ops" },
+            { en: "Objective", ipa: "ออบ-เจก-ทีฟ", th: "เป้าหมายภารกิจ", cat: "Ops" },
             { en: "Offensive", ipa: "ออฟ-เฟน-ซีฟ", th: "การรุก", cat: "Tactics" },
             { en: "Operation", ipa: "ออ-เปอ-เร-ชัน", th: "ยุทธการ", cat: "Ops" },
             { en: "Paratrooper", ipa: "พา-รา-ทรู-เปอร์", th: "ทหารพลร่ม", cat: "Unit" },
             { en: "Patrol", ipa: "พา-โทรล", th: "การลาดตระเวน", cat: "Action" },
-            { en: "Perimeter", ipa: "เพอ-ริ-มิ-เตอร์", th: "แนวรอบนอก, ขอบเขตป้องกัน", cat: "Area" },
+            { en: "Perimeter", ipa: "เพอ-ริ-มิ-เตอร์", th: "แนวรอบนอก", cat: "Area" },
             { en: "Platoon", ipa: "พลา-ทูน", th: "หมวด", cat: "Unit" },
             { en: "Private", ipa: "ไพร-เวท", th: "พลทหาร", cat: "Rank" },
             { en: "Protocol", ipa: "โปร-โต-คอล", th: "ระเบียบปฏิบัติ", cat: "Admin" },
@@ -325,7 +322,7 @@
             { en: "Ballistic", ipa: "บอล-ลิส-ติก", th: "ขีปนาวุธ", cat: "Tech" },
             { en: "Blockade", ipa: "บล็อก-เคด", th: "การปิดล้อม", cat: "Tactics" },
             { en: "Briefing", ipa: "บรีฟ-ฟิง", th: "การสรุปสถานการณ์", cat: "Comms" },
-            { en: "Camaraderie", ipa: "คา-มา-รา-เด-รี", th: "ความสนิทสนมกลมเกลียวในหมู่คณะ", cat: "Morale" },
+            { en: "Camaraderie", ipa: "คา-มา-รา-เด-รี", th: "ความสนิทสนมกลมเกลียว", cat: "Morale" },
             { en: "Checkpoint", ipa: "เช็ค-พอยท์", th: "จุดตรวจ", cat: "Control" },
             { en: "Cipher", ipa: "ไซ-เฟอร์", th: "รหัสลับ", cat: "Intel" },
             { en: "Colonel", ipa: "เคอ-เนล", th: "พันเอก", cat: "Rank" },
@@ -361,7 +358,7 @@
             searchInputEl.addEventListener('input', handleSearch);
             loadMoreBtn.addEventListener('click', loadMore);
             
-            // Load voices early (Fix for some browsers)
+            // Load voices early
             if ('speechSynthesis' in window) {
                 availableVoices = window.speechSynthesis.getVoices();
                 window.speechSynthesis.onvoiceschanged = () => {
@@ -404,21 +401,24 @@
                 const card = document.createElement('div');
                 card.className = "tactical-border bg-white p-4 md:p-0 md:bg-transparent md:border-none md:border-b md:border-gray-200 transition-colors duration-200";
                 
+                // แปลงข้อความให้ปลอดภัยสำหรับนำไปใส่ในฟังก์ชัน onclick
+                const safeWord = item.en.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+
                 card.innerHTML = `
-                    <!-- Desktop Layout (Hidden on mobile) -->
+                    <!-- Desktop Layout -->
                     <div class="hidden md:grid grid-cols-12 gap-4 items-center py-3 px-6 text-sm font-mono hover:bg-gray-50">
                         <div class="col-span-1 text-gray-500 font-bold">#${String(index + 1).padStart(3, '0')}</div>
                         <div class="col-span-3 font-bold text-green-700 text-base">${item.en}</div>
                         <div class="col-span-3 text-gray-500 italic">${item.ipa}</div>
                         <div class="col-span-4 text-gray-800">${item.th}</div>
                         <div class="col-span-1 flex justify-center gap-2">
-                            <button onclick="speak('${item.en.replace(/'/g, "\\'")}', this)" class="text-gray-400 hover:text-green-700 transition-colors" title="Listen">
+                            <button onclick="speak('${safeWord}', this)" class="text-gray-400 hover:text-green-700 transition-all duration-200 transform hover:scale-110" title="Listen to Pronunciation">
                                 <i class="fa-solid fa-volume-high"></i>
                             </button>
                         </div>
                     </div>
 
-                    <!-- Mobile Layout (Hidden on Desktop) -->
+                    <!-- Mobile Layout -->
                     <div class="md:hidden flex flex-col gap-2">
                         <div class="flex justify-between items-start">
                             <div>
@@ -426,7 +426,7 @@
                                 <h3 class="text-xl font-bold text-green-800 glitch-hover">${item.en}</h3>
                                 <p class="text-sm text-gray-500 italic">${item.ipa}</p>
                             </div>
-                            <button onclick="speak('${item.en.replace(/'/g, "\\'")}', this)" class="p-2 text-gray-500 active:text-green-700 border border-gray-300 rounded bg-gray-50 hover:bg-white">
+                            <button onclick="speak('${safeWord}', this)" class="p-3 text-gray-500 active:text-green-700 border border-gray-300 rounded-lg bg-gray-50 hover:bg-white shadow-sm transition-all">
                                 <i class="fa-solid fa-volume-high"></i>
                             </button>
                         </div>
@@ -478,62 +478,57 @@
             }, 300); 
         }
 
-        // --- Fix: Ultimate TTS Function (Google API + Local Fallback) ---
+        // --- ระบบสร้างเสียงอัตโนมัติ (Online Audio API) ---
         function speak(text, btnElement) {
             // เข้ารหัสข้อความ
             const encodedText = encodeURIComponent(text);
             
-            // ใช้ Google Translate TTS (ทำงานร่วมกับ <meta name="referrer" content="no-referrer"> ด้านบน)
-            const audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&tl=en-US&client=tw-ob&q=${encodedText}`;
-            
-            // สร้างออบเจกต์ Audio
+            // ใช้บริการดึงไฟล์เสียง MP3 แบบอัตโนมัติ (US English) 
+            // เสถียรกว่า Native TTS ที่มักจะเจอปัญหาในบางเบราว์เซอร์
+            const audioUrl = `https://dict.youdao.com/dictvoice?audio=${encodedText}&type=2`;
             const audio = new Audio(audioUrl);
-            audio.volume = 1.0; 
 
-            // ตัวแปรสำหรับเก็บ class เดิมของไอคอน
+            // ตัวแปรสำหรับควบคุม UI ของไอคอนลำโพง
             let originalClasses = "fa-solid fa-volume-high";
             let icon = null;
 
-            // Visual Feedback: เปลี่ยนไอคอนและสีกระพริบ
+            // สร้าง Visual Feedback (ไอคอนกระพริบเปลี่ยนสีตอนพูด)
             if (btnElement) {
                 icon = btnElement.querySelector('i');
                 if (icon) {
                     originalClasses = icon.className; 
-                    icon.className = 'fa-solid fa-volume-high fa-beat-fade text-green-600';
+                    icon.className = 'fa-solid fa-volume-high fa-beat text-green-600';
                 }
             }
             
-            // รีเซ็ตไอคอนกลับเมื่อเสียงจบ
+            // ฟังก์ชันคืนค่าไอคอนกลับเป็นเหมือนเดิม
             const resetIcon = () => {
                 if (icon) icon.className = originalClasses;
             };
 
-            // สร้างระบบสำรอง (Fallback) เผื่อ API ของ Google โดนบล็อก
-            const playLocalFallback = () => {
-                if ('speechSynthesis' in window) {
-                    const utterance = new SpeechSynthesisUtterance(text);
-                    utterance.lang = 'en-US';
-                    utterance.rate = 0.9;
-                    utterance.onend = resetIcon;
-                    utterance.onerror = resetIcon;
-                    window.speechSynthesis.speak(utterance);
-                } else {
-                    resetIcon();
-                    showCustomAlert('SYSTEM ERROR: AUDIO FAILED\n(ไม่สามารถเล่นเสียงได้ กรุณาตรวจสอบการตั้งค่าเบราว์เซอร์)');
-                }
-            };
-
             audio.onended = resetIcon;
             
-            // ถ้า Google API พัง (Error 403 หรือเน็ตหลุด) ให้สลับไปใช้เสียงสำรอง
+            // หาก API แรกมีปัญหา ให้สลับไปใช้ Google TTS เป็นตัวสำรอง
             audio.onerror = () => {
-                playLocalFallback();
+                const fallbackUrl = `https://translate.google.com/translate_tts?ie=UTF-8&tl=en-US&client=tw-ob&q=${encodedText}`;
+                const fallbackAudio = new Audio(fallbackUrl);
+                
+                fallbackAudio.onended = resetIcon;
+                fallbackAudio.onerror = () => {
+                    resetIcon();
+                    showCustomAlert('SYSTEM ERROR: ไม่สามารถดาวน์โหลดไฟล์เสียงได้ในขณะนี้');
+                };
+                
+                fallbackAudio.play().catch(err => {
+                    resetIcon();
+                    showCustomAlert('SYSTEM ALERT: เบราว์เซอร์ของคุณบล็อกการเล่นเสียงอัตโนมัติ');
+                });
             };
-            
-            // สั่งเล่นเสียง Google API
+
+            // สั่งเล่นเสียง
             audio.play().catch(err => {
-                console.error("Audio playback failed:", err);
-                playLocalFallback();
+                console.warn("Audio API 1 failed, trying fallback...", err);
+                audio.onerror(); // เรียกใช้ Fallback
             });
         }
 
@@ -543,4 +538,3 @@
     </script>
 </body>
 </html>
-
