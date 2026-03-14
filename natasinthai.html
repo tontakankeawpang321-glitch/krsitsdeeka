@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
     <title>หอวิชาการนาฏศิลป์ไทย – Neo Minimal</title>
 
-    <!-- Fonts: เปลี่ยนเป็น Prompt สำหรับหัวข้อ และ Sarabun สำหรับเนื้อหา -->
+    <!-- Fonts: Prompt สำหรับหัวข้อ และ Sarabun สำหรับเนื้อหา -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;600;700&family=Sarabun:wght@400;500;600&display=swap" rel="stylesheet">
@@ -34,9 +34,10 @@
         /* Hero Section */
         .hero-section {
             background: linear-gradient(to bottom, #ffffff, var(--bg-color));
-            padding: 4rem 1rem 2rem;
+            padding: 4rem 1rem 3rem; /* เพิ่ม padding-bottom เล็กน้อย */
             text-align: center;
             border-bottom: 1px solid #e2e8f0;
+            position: relative;
         }
 
         /* Search Bar Modern */
@@ -44,9 +45,12 @@
             width: 100%;
             max-width: 480px;
             margin: 0 auto;
-            position: relative;
-            transform: translateY(50%);
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translate(-50%, 50%);
             z-index: 20;
+            padding: 0 1rem; /* ป้องกันการชิดขอบจอบนมือถือ */
         }
 
         .search-modern input {
@@ -56,7 +60,7 @@
             border: none;
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
             font-family: 'Prompt', sans-serif;
-            font-size: 0.9rem;
+            font-size: 0.95rem; /* ปรับขนาดฟอนต์ให้พิมพ์ง่ายบนมือถือ */
             transition: all 0.3s ease;
         }
 
@@ -65,27 +69,31 @@
             box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.3);
         }
 
-        /* Grid System - 2 Cols Always */
+        /* Grid System - Responsive (1 col on Mobile, 2 cols on Tablet+) */
         .card-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: 1fr;
             gap: 16px;
             padding-top: 2rem;
         }
 
+        @media (min-width: 640px) {
+            .card-grid { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+        }
+        
         @media (min-width: 768px) {
             .card-grid { gap: 24px; }
         }
 
-        /* Thai Cards - Book Style (Retained but restyled) */
+        /* Thai Cards - Book Style */
         .book-card {
             background: var(--card-bg);
             /* สันหนังสือสีครามเข้ม */
-            border-left: 12px solid var(--brand-dark); 
+            border-left: 10px solid var(--brand-dark); 
             border-top: 1px solid #f1f5f9;
             border-right: 1px solid #e2e8f0;
             border-bottom: 1px solid #e2e8f0;
-            padding: 1.25rem 1rem;
+            padding: 1.25rem;
             display: flex;
             flex-direction: column;
             border-radius: 4px 16px 16px 4px; /* มุมหนังสือ */
@@ -108,8 +116,8 @@
         }
 
         .book-card:hover {
-            transform: translateY(-8px) perspective(600px) rotateY(-3deg);
-            box-shadow: 12px 15px 20px rgba(30, 27, 75, 0.08), inset -4px 0 8px rgba(0,0,0,0.02);
+            transform: translateY(-4px) perspective(600px) rotateY(-2deg);
+            box-shadow: 10px 12px 20px rgba(30, 27, 75, 0.08), inset -4px 0 8px rgba(0,0,0,0.02);
             border-color: #cbd5e1;
             z-index: 10;
         }
@@ -120,10 +128,11 @@
             color: var(--brand-dark);
             font-size: 0.65rem;
             font-weight: 700;
-            padding: 0.2rem 0.5rem;
+            padding: 0.25rem 0.5rem;
             border-radius: 4px;
             margin-bottom: 0.75rem;
             font-family: 'Prompt', sans-serif;
+            align-self: flex-start;
         }
 
         /* Modern Button */
@@ -188,13 +197,17 @@
             box-shadow: 0 10px 25px rgba(30, 27, 75, 0.2);
         }
 
-        /* Chat UI (Retained but colors adjusted) */
+        /* Chat UI */
         .chat-window {
             background: #fff;
-            border-radius: 24px 24px 0 0;
+            border-radius: 24px 24px 0 0; /* ติดขอบล่างบนมือถือ */
             box-shadow: 0 -10px 40px rgba(0,0,0,0.15);
             width: 100%;
             max-width: 500px;
+        }
+        
+        @media (min-width: 768px) {
+            .chat-window { border-radius: 24px; } /* ขอบมน 4 มุมบนจอใหญ่ */
         }
 
         .bubble-ai { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px 16px 16px 16px; color: var(--text-main); }
@@ -217,21 +230,21 @@
         <div class="max-w-4xl mx-auto relative z-10">
             <span class="text-xs font-bold tracking-widest text-brand-accent uppercase mb-2 block font-display">Digital Archive 2026</span>
             <h1 class="text-3xl md:text-5xl font-bold font-display text-[#1e1b4b] mb-3 tracking-tight">หอวิชาการนาฏศิลป์</h1>
-            <p class="text-sm md:text-base text-slate-500 max-w-lg mx-auto leading-relaxed">
+            <p class="text-sm md:text-base text-slate-500 max-w-lg mx-auto leading-relaxed px-4">
                 แหล่งรวบรวมองค์ความรู้ ตำรา และงานวิจัยทางด้านศิลปะการแสดงของไทย ในรูปแบบห้องสมุดดิจิทัล
             </p>
         </div>
 
         <!-- Search Bar -->
         <div class="search-modern">
-            <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            <svg class="absolute left-7 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
             <input type="text" id="search-input" placeholder="ค้นหาตำรา หรือ หัวข้อวิชาการ..." autocomplete="off">
         </div>
     </header>
 
     <!-- Main Content -->
-    <main class="max-w-4xl mx-auto px-4 pb-24 pt-12">
-        <div class="flex items-end justify-between mb-6">
+    <main class="max-w-4xl mx-auto px-4 pb-24 pt-16 md:pt-16">
+        <div class="flex items-end justify-between mb-4 mt-2">
             <h2 class="text-lg md:text-xl font-bold font-display text-slate-800">สารบัญวิชาการ <span class="text-brand-accent">.</span></h2>
             <span class="text-xs text-slate-400 font-medium bg-slate-100 px-3 py-1 rounded-full">10 เล่ม</span>
         </div>
@@ -243,7 +256,7 @@
 
         <!-- Quiz CTA Banner -->
         <div class="mt-16 text-center">
-            <a id="btnQuiz" href="#" target="_blank" class="quiz-banner block p-8 md:p-10 transition-transform hover:scale-[1.02] active:scale-95">
+            <a id="btnQuiz" href="#" target="_blank" class="quiz-banner block p-6 md:p-10 transition-transform hover:scale-[1.02] active:scale-95">
                 <div class="absolute -right-10 -top-10 w-40 h-40 bg-white opacity-5 rounded-full blur-2xl"></div>
                 <h3 class="text-xl md:text-2xl font-bold font-display mb-2">ทดสอบมาตรฐานความรู้</h3>
                 <p class="text-slate-300 text-sm md:text-base mb-6 font-light">คลังข้อสอบ ๕๐๐ ข้อ ตามหลักสูตรแกนกลาง</p>
@@ -262,7 +275,7 @@
 
     <!-- Chat Modal (AI) -->
     <div id="chatbot-modal" class="fixed inset-0 flex items-end md:items-center justify-center p-0 md:p-4 bg-slate-900/40 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300 z-50">
-        <div class="chat-window h-[85dvh] md:h-[75vh] flex flex-col transform translate-y-full transition-transform duration-300 overflow-hidden md:rounded-3xl border border-slate-200">
+        <div class="chat-window h-[85dvh] md:h-[75vh] flex flex-col transform translate-y-full transition-transform duration-300 overflow-hidden border border-slate-200">
             
             <!-- Chat Header -->
             <header class="p-4 border-b border-slate-100 flex justify-between items-center bg-white">
@@ -283,7 +296,7 @@
             </header>
 
             <!-- Messages -->
-            <div id="chat-history" class="flex-1 overflow-y-auto p-5 space-y-5 no-scrollbar bg-[#fcfcfc]">
+            <div id="chat-history" class="flex-1 overflow-y-auto p-4 space-y-5 no-scrollbar bg-[#fcfcfc]">
                 <div class="flex items-start gap-3">
                     <div class="w-8 h-8 bg-indigo-100 text-indigo-700 flex items-center justify-center text-xs flex-shrink-0 rounded-full font-bold">AI</div>
                     <div class="bubble-ai p-3.5 text-sm leading-relaxed shadow-sm">
@@ -292,8 +305,8 @@
                 </div>
             </div>
 
-            <!-- Input Area -->
-            <div class="p-4 bg-white border-t border-slate-100">
+            <!-- Input Area (รองรับ Safe Area บน iPhone รุ่นใหม่) -->
+            <div class="p-4 bg-white border-t border-slate-100 pb-[calc(1rem+env(safe-area-inset-bottom))]">
                 <div id="thinking" class="mb-2 hidden">
                     <span class="text-xs font-medium text-slate-400 flex items-center gap-2">
                         <svg class="animate-spin h-3 w-3 text-brand-dark" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
@@ -302,7 +315,7 @@
                 </div>
                 <div class="flex items-center gap-2 bg-slate-50 p-1.5 rounded-full border border-slate-200 focus-within:border-brand-dark focus-within:ring-1 focus-within:ring-brand-dark transition-all">
                     <input id="user-input" type="text" placeholder="ถามคำถามที่นี่..." class="flex-1 bg-transparent border-none py-2 px-4 text-sm focus:outline-none focus:ring-0">
-                    <button id="send-btn" class="w-10 h-10 bg-brand-dark text-white rounded-full flex items-center justify-center shadow-md hover:bg-indigo-900 transition-colors">
+                    <button id="send-btn" class="w-10 h-10 bg-brand-dark text-white rounded-full flex items-center justify-center shadow-md hover:bg-indigo-900 transition-colors flex-shrink-0">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
                     </button>
                 </div>
@@ -335,8 +348,8 @@
         grid.innerHTML = items.map((l, i) => `
             <div class="book-card">
                 <span class="vol-badge">บทที่ ${(i+1).toString().padStart(2,'0')}</span>
-                <h3 class="text-sm md:text-base font-bold font-display text-slate-800 leading-tight mb-2 truncate">${l[0]}</h3>
-                <p class="text-[10px] md:text-xs text-slate-500 leading-relaxed mb-4 flex-1 line-clamp-2">${l[1]}</p>
+                <h3 class="text-base font-bold font-display text-slate-800 leading-tight mb-2 line-clamp-1">${l[0]}</h3>
+                <p class="text-xs text-slate-500 leading-relaxed mb-4 flex-1 line-clamp-2">${l[1]}</p>
                 <div class="flex gap-2 mt-auto">
                     <a href="${l[2]}" target="_blank" class="btn-modern flex-1">
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -360,7 +373,7 @@
     searchInput.addEventListener('input', e => render(e.target.value));
     document.getElementById('btnQuiz').href = QUIZ_URL;
 
-    /* --- AI Chat Logic (Retained exactly as requested) --- */
+    /* --- AI Chat Logic --- */
     const fab = document.getElementById('fab-chat');
     const modal = document.getElementById('chatbot-modal');
     const historyEl = document.getElementById('chat-history');
