@@ -260,13 +260,13 @@
         const noResultsEl = document.getElementById('no-results');
         const searchInput = document.getElementById('searchInput');
 
-        // Extract Top Categories for filters (those with > 3 items, + some main ones)
+        // Extract Top Categories for filters
         const getPopularCategories = () => {
             const counts = {};
             vocabularyData.forEach(item => counts[item.cat] = (counts[item.cat] || 0) + 1);
             return Object.keys(counts)
                 .filter(cat => counts[cat] >= 3 || ['Weapon', 'Unit', 'Tactics', 'Rank'].includes(cat))
-                .sort((a,b) => counts[b] - counts[a]); // Sort by most items
+                .sort((a,b) => counts[b] - counts[a]);
         };
 
         // --------------------------------------------------------
@@ -293,7 +293,7 @@
                 renderCards();
             });
 
-            // Make sure voices are loaded for SpeechSynthesis
+            // Initialize TTS voices
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.getVoices();
                 window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
@@ -308,7 +308,6 @@
         function filterCategory(cat, btnElement = null) {
             activeCategory = cat;
             
-            // Update UI buttons
             const allBtns = document.querySelectorAll('.cat-btn');
             allBtns.forEach(b => {
                 b.classList.remove('bg-emerald-600', 'text-white', 'border-emerald-500', 'shadow-lg');
@@ -319,7 +318,6 @@
                 btnElement.classList.remove('bg-slate-800', 'text-slate-400', 'border-slate-700');
                 btnElement.classList.add('bg-emerald-600', 'text-white', 'border-emerald-500', 'shadow-lg');
             } else {
-                // If "All" is clicked (it's the first button)
                 allBtns[0].classList.remove('bg-slate-800', 'text-slate-400', 'border-slate-700');
                 allBtns[0].classList.add('bg-emerald-600', 'text-white', 'border-emerald-500', 'shadow-lg');
             }
@@ -377,14 +375,13 @@
         }
 
         // --------------------------------------------------------
-        // AUDIO SYSTEM (Bulletproof TTS)
+        // AUDIO SYSTEM (Hybrid Native & Google TTS)
         // --------------------------------------------------------
-        // ใช้ตัวแปร Global เพื่อป้องกันเบราว์เซอร์ลบตัวแปรเสียงทิ้ง (Garbage Collection)
         window.currentAudio = null;
         window.currentUtterance = null;
 
         function speak(text, btnElement) {
-            // การจัดการ UI ไอคอนตอนกด
+            // UI Feedback
             let icon = null;
             let originalClass = "ph-fill ph-speaker-high text-2xl pointer-events-none";
             
@@ -406,46 +403,54 @@
                 }
             };
 
-            // หยุดเสียงเก่าทั้งหมดก่อน
-            if (window.currentAudio) {
-                window.currentAudio.pause();
-                window.currentAudio.currentTime = 0;
-            }
-            if (window.speechSynthesis) {
-                window.speechSynthesis.cancel();
-            }
-
-            // [เสียงหลัก] พยายามเรียกใช้ Google Translate TTS ก่อน
-            const url = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(text)}&tl=en-US&client=tw-ob`;
-            window.currentAudio = new Audio(url);
-            
-            window.currentAudio.onended = resetIcon;
-            
-            // หากเรียกเสียงหลักไม่สำเร็จหรือถูกบล็อก ให้สลับมาใช้ Native Voice แทน
-            window.currentAudio.play().catch((err) => {
-                console.warn("Google TTS failed, falling back to native synthesis...", err);
-                
-                if ('speechSynthesis' in window) {
-                    // กำหนดค่าตัวแปร Global ป้องกันการลบข้อมูลของเบราว์เซอร์
-                    window.currentUtterance = new SpeechSynthesisUtterance(text);
-                    window.currentUtterance.lang = 'en-US'; 
-                    window.currentUtterance.rate = 0.85;
-
-                    window.currentUtterance.onend = resetIcon;
-                    window.currentUtterance.onerror = (e) => {
-                        console.error("Native audio error:", e);
-                        resetIcon();
-                    };
-
-                    // ใช้ setTimeout เล็กน้อยเพื่อให้คำสั่ง cancel() ด้านบนทำงานเสร็จสมบูรณ์ก่อน
-                    // ป้องกัน Error {"isTrusted":true}
-                    setTimeout(() => {
-                        window.speechSynthesis.speak(window.currentUtterance);
-                    }, 50);
-                } else {
-                    resetIcon();
+            const playFallbackOnlineTTS = () => {
+                if (window.currentAudio) {
+                    window.currentAudio.pause();
+                    window.currentAudio.currentTime = 0;
                 }
-            });
+                const url = `https://translate.googleapis.com/translate_tts?client=gtx&ie=UTF-8&tl=en-US&q=${encodeURIComponent(text)}`;
+                window.currentAudio = new Audio(url);
+                window.currentAudio.crossOrigin = "anonymous";
+                window.currentAudio.onended = resetIcon;
+                window.currentAudio.onerror = resetIcon;
+                window.currentAudio.play().catch(err => {
+                    console.error("Fallback TTS failed:", err);
+                    resetIcon();
+                });
+            };
+
+            // เช็คว่าเป็น In-App Browser (เช่นเปิดใน LINE, Facebook หรือ IG) หรือไม่
+            const isWebView = /Line|FBAN|FBAV|Instagram/i.test(navigator.userAgent);
+
+            // หลักการทำงาน: เช็คก่อนว่าเบราว์เซอร์รองรับระบบเสียงปกติ (Native) ไหม
+            if ('speechSynthesis' in window && !isWebView) {
+                // ถ้าเป็นเบราว์เซอร์ปกติที่รองรับ (ไม่ใช่ในแอป LINE)
+                if (window.speechSynthesis.speaking || window.speechSynthesis.pending) {
+                    window.speechSynthesis.cancel();
+                }
+                
+                window.currentUtterance = new SpeechSynthesisUtterance(text);
+                window.currentUtterance.lang = 'en-US'; 
+                window.currentUtterance.rate = 0.85;
+
+                window.currentUtterance.onend = resetIcon;
+                window.currentUtterance.onerror = (e) => {
+                    console.warn("Native TTS Error, switching to Fallback...", e);
+                    playFallbackOnlineTTS();
+                };
+
+                window.speechSynthesis.speak(window.currentUtterance);
+                
+                // ตรวจสอบสำรองอีกชั้น เผื่อ Native TTS ทำงานเงียบแต่ไม่โยน Error
+                setTimeout(() => {
+                    if (!window.speechSynthesis.speaking && !window.speechSynthesis.pending) {
+                        playFallbackOnlineTTS();
+                    }
+                }, 100);
+            } else {
+                // ถ้าพบว่าไม่รองรับ หรือเปิดในแอป LINE ให้สลับไปดึงไฟล์เสียงออนไลน์มาเล่นแทนทันที
+                playFallbackOnlineTTS();
+            }
         }
 
         // Boot App
