@@ -203,6 +203,22 @@
         </div>
     </footer>
 
+    <!-- Custom Alert Modal (Replaces standard alert) -->
+    <div id="customAlert" class="fixed inset-0 flex items-center justify-center z-[100] hidden bg-black/50 backdrop-blur-sm transition-opacity duration-300 opacity-0">
+        <div class="bg-white border-2 border-red-600 p-6 shadow-2xl max-w-sm w-full mx-4 relative transform scale-95 transition-transform duration-300" id="customAlertBox">
+            <div class="flex items-center gap-4 mb-4">
+                <i class="fa-solid fa-triangle-exclamation text-red-600 text-3xl"></i>
+                <h3 class="text-xl font-stencil text-red-700">SYSTEM ALERT</h3>
+            </div>
+            <p id="customAlertMessage" class="text-gray-700 font-mono mb-6 text-sm">Message goes here.</p>
+            <div class="text-right">
+                <button onclick="closeCustomAlert()" class="px-6 py-2 bg-red-600 text-white font-mono text-sm hover:bg-red-700 transition-colors shadow-sm">
+                    ACKNOWLEDGE
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- JavaScript Logic -->
     <script>
         // Database of Military Terms
@@ -322,6 +338,9 @@
         let currentDisplayCount = 20; 
         const incrementCount = 20; 
         let filteredData = [...vocabularyData];
+        
+        // Voice State
+        let availableVoices = [];
 
         // DOM Elements
         const vocabListEl = document.getElementById('vocabList');
@@ -339,6 +358,14 @@
             // Event Listeners
             searchInputEl.addEventListener('input', handleSearch);
             loadMoreBtn.addEventListener('click', loadMore);
+            
+            // Load voices early (Fix for some browsers)
+            if ('speechSynthesis' in window) {
+                availableVoices = window.speechSynthesis.getVoices();
+                window.speechSynthesis.onvoiceschanged = () => {
+                    availableVoices = window.speechSynthesis.getVoices();
+                };
+            }
         }
 
         // Search Handler
@@ -373,10 +400,8 @@
 
             itemsToRender.forEach((item, index) => {
                 const card = document.createElement('div');
-                // Updated styling for Light Mode: White background with subtle border, nice hover effect
                 card.className = "tactical-border bg-white p-4 md:p-0 md:bg-transparent md:border-none md:border-b md:border-gray-200 transition-colors duration-200";
                 
-                // HTML Structure: Mobile Card + Desktop Row
                 card.innerHTML = `
                     <!-- Desktop Layout (Hidden on mobile) -->
                     <div class="hidden md:grid grid-cols-12 gap-4 items-center py-3 px-6 text-sm font-mono hover:bg-gray-50">
@@ -385,7 +410,7 @@
                         <div class="col-span-3 text-gray-500 italic">${item.ipa}</div>
                         <div class="col-span-4 text-gray-800">${item.th}</div>
                         <div class="col-span-1 flex justify-center gap-2">
-                            <button onclick="speak('${item.en}')" class="text-gray-400 hover:text-green-700 transition-colors" title="Listen">
+                            <button onclick="speak('${item.en.replace(/'/g, "\\'")}', this)" class="text-gray-400 hover:text-green-700 transition-colors" title="Listen">
                                 <i class="fa-solid fa-volume-high"></i>
                             </button>
                         </div>
@@ -399,7 +424,7 @@
                                 <h3 class="text-xl font-bold text-green-800 glitch-hover">${item.en}</h3>
                                 <p class="text-sm text-gray-500 italic">${item.ipa}</p>
                             </div>
-                            <button onclick="speak('${item.en}')" class="p-2 text-gray-500 active:text-green-700 border border-gray-300 rounded bg-gray-50 hover:bg-white">
+                            <button onclick="speak('${item.en.replace(/'/g, "\\'")}', this)" class="p-2 text-gray-500 active:text-green-700 border border-gray-300 rounded bg-gray-50 hover:bg-white">
                                 <i class="fa-solid fa-volume-high"></i>
                             </button>
                         </div>
@@ -424,21 +449,78 @@
             renderList();
         }
 
-        // Text to Speech
-        function speak(text) {
-            if ('speechSynthesis' in window) {
-                const utterance = new SpeechSynthesisUtterance(text);
-                utterance.lang = 'en-US';
-                utterance.rate = 0.9; 
-                utterance.pitch = 0.8; 
-                
-                window.speechSynthesis.cancel();
-                window.speechSynthesis.speak(utterance);
-            } else {
-                alert('Browser does not support Text-to-Speech');
-            }
+        // --- Custom Alert Logic ---
+        function showCustomAlert(msg) {
+            document.getElementById('customAlertMessage').textContent = msg;
+            const alertOverlay = document.getElementById('customAlert');
+            const alertBox = document.getElementById('customAlertBox');
+            
+            alertOverlay.classList.remove('hidden');
+            setTimeout(() => {
+                alertOverlay.classList.remove('opacity-0');
+                alertBox.classList.remove('scale-95');
+                alertBox.classList.add('scale-100');
+            }, 10);
         }
 
+        function closeCustomAlert() {
+            const alertOverlay = document.getElementById('customAlert');
+            const alertBox = document.getElementById('customAlertBox');
+            
+            alertOverlay.classList.add('opacity-0');
+            alertBox.classList.remove('scale-100');
+            alertBox.classList.add('scale-95');
+            
+            setTimeout(() => {
+                alertOverlay.classList.add('hidden');
+            }, 300); 
+        }
+
+        // --- Fix: Using Google Translate TTS API (Audio Element) ---
+        function speak(text, btnElement) {
+            // เข้ารหัสข้อความให้อยู่ในรูปแบบที่ URL รองรับ
+            const encodedText = encodeURIComponent(text);
+            
+            // ใช้ URL ของ Google Translate TTS
+            const audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=en-US&q=${encodedText}`;
+            
+            // สร้างออบเจกต์ Audio เพื่อเล่นเสียง
+            const audio = new Audio(audioUrl);
+
+            // ตัวแปรสำหรับเก็บ class เดิมของไอคอน
+            let originalClasses = "fa-solid fa-volume-high";
+            let icon = null;
+
+            // Visual Feedback: เปลี่ยนไอคอนเมื่อกำลังเล่นเสียง
+            if (btnElement) {
+                icon = btnElement.querySelector('i');
+                if (icon) {
+                    originalClasses = icon.className; 
+                    // ใส่เอฟเฟกต์กระพริบและเปลี่ยนสี
+                    icon.className = 'fa-solid fa-volume-high fa-beat-fade text-green-600';
+                }
+            }
+            
+            // ฟังก์ชันรีเซ็ตไอคอนกลับเป็นเหมือนเดิม
+            const resetIcon = () => {
+                if (icon) icon.className = originalClasses;
+            };
+
+            audio.onended = resetIcon;
+            audio.onerror = () => {
+                resetIcon();
+                showCustomAlert('SYSTEM ERROR: UNABLE TO FETCH AUDIO\n(ไม่สามารถดึงข้อมูลเสียงจาก Google ได้ หรือไม่มีการเชื่อมต่ออินเทอร์เน็ต)');
+            };
+            
+            // สั่งเล่นเสียง
+            audio.play().catch(err => {
+                console.error("Audio playback failed:", err);
+                resetIcon();
+                showCustomAlert('SYSTEM ERROR: BROWSER BLOCKED AUDIO\n(เบราว์เซอร์ของคุณบล็อกการเล่นเสียง กรุณากดอนุญาตการเล่นเสียงบนเว็บนี้)');
+            });
+        }
+
+        // Start App
         window.onload = init;
 
     </script>
