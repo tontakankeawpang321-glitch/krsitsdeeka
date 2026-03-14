@@ -76,9 +76,19 @@
             border: 1px solid var(--ink);
             box-shadow: 8px 8px 0px rgba(30, 41, 59, 0.1);
         }
-        .chat-input {
+        .chat-input, .search-input {
             border: 1px solid var(--ink);
             background: transparent;
+        }
+        .search-input {
+            border-top: none;
+            border-left: none;
+            border-right: none;
+            border-bottom: 1px solid rgba(30, 41, 59, 0.3);
+            transition: border-color 0.3s ease;
+        }
+        .search-input:focus {
+            border-bottom: 2px solid var(--ink);
         }
         /* Grid 2 Columns for Mobile Always */
         .grid-container {
@@ -97,18 +107,37 @@
             to { opacity: 1; transform: translateY(0); }
         }
         .fade-entry { animation: fadeIn 0.8s ease forwards; }
+        
+        /* Grid 2 Columns for Mobile Always */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+        @media (min-width: 640px) {
+            .grid-container { grid-template-columns: repeat(5, 1fr); }
+        }
+        @media (min-width: 1024px) {
+            .grid-container { grid-template-columns: repeat(6, 1fr); }
+        }
     </style>
 </head>
 <body class="min-h-screen px-6 py-12 md:py-20">
 
     <div class="max-w-4xl mx-auto">
-        <header class="text-center mb-16 fade-entry">
+        <header class="text-center mb-12 fade-entry">
             <h2 class="text-xs uppercase tracking-[0.5em] mb-4 opacity-60 font-bold text-slate-500">Est. 2025</h2>
             <h1 class="text-5xl md:text-7xl font-bold mb-2 tracking-tight italic">Crow Studio</h1>
             <div class="header-line"></div>
-            <p class="text-sm md:text-lg italic opacity-70">
+            <p class="text-sm md:text-lg italic opacity-70 mb-8">
                 A Library of Endless Languages
             </p>
+
+            <!-- Search Bar -->
+            <div class="max-w-md mx-auto relative group">
+                <svg class="w-4 h-4 absolute left-2 top-3 opacity-40 group-focus-within:opacity-80 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                <input type="text" id="searchInput" placeholder="Search archives..." class="search-input w-full py-2 pl-9 pr-4 outline-none italic text-sm text-center font-serif placeholder:text-slate-400">
+            </div>
         </header>
 
         <section class="grid-container mb-24" id="language-grid"></section>
@@ -150,15 +179,14 @@
     </div>
 
     <script>
-        // ประกาศตัวแปรและฟังก์ชันให้ชัดเจน
         const WORKER_URL = "https://your-worker-name.your-subdomain.workers.dev";
         const chatBox = document.getElementById('chat-box');
         const chatWindow = document.getElementById('chat-window');
         const userInput = document.getElementById('user-input');
         const sendBtn = document.getElementById('send-btn');
+        const searchInput = document.getElementById('searchInput');
         let isOpen = false;
 
-        // แก้ปัญหา toggleChat is not defined โดยการประกาศแบบชัดเจน
         window.toggleChat = function() {
             isOpen = !isOpen;
             if (chatBox) {
@@ -167,33 +195,68 @@
             }
         };
 
-        // แสดงผลรายการภาษา
+        // รายชื่อประเทศที่รองรับระบบเสียง (เตรียมไว้สำหรับทำแอพเสียงในอนาคต)
         const languages = [
+            { id: 'th', name: 'Thailand', url: '#' },
             { id: 'us', name: 'USA', url: 'https://sites.google.com/view/pasa30one/%E0%B8%AD%E0%B9%80%E0%B8%A1%E0%B8%A3%E0%B8%81%E0%B8%B2-us' },
             { id: 'gb', name: 'Britain', url: 'https://sites.google.com/view/pasa30one/%E0%B8%A0%E0%B8%B2%E0%B8%A9%E0%B8%B2%E0%B8%AD%E0%B8%87%E0%B8%81%E0%B8%A4%E0%B8%A9-uk' },
             { id: 'cn', name: 'China', url: 'https://sites.google.com/view/pasa30one/%E0%B8%A0%E0%B8%B2%E0%B8%A9%E0%B8%B2%E0%B8%88%E0%B8%99-ch' },
-            { id: 'mm', name: 'Myanmar', url: 'https://sites.google.com/view/pasa30one/%E0%B8%9E%E0%B8%A1%E0%B8%B2-ma' },
             { id: 'jp', name: 'Japan', url: 'https://sites.google.com/view/pasa30one/%E0%B8%A0%E0%B8%B2%E0%B8%A9%E0%B8%B2%E0%B8%8D%E0%B8%9B%E0%B8%99-jp' },
             { id: 'kr', name: 'Korea', url: 'https://sites.google.com/view/pasa30one/%E0%B8%A0%E0%B8%B2%E0%B8%A9%E0%B8%B2%E0%B9%80%E0%B8%A1%E0%B8%A3%E0%B8%81%E0%B8%B2-us' },
-            { id: 'kh', name: 'Cambodia', url: 'https://sites.google.com/view/pasa30one/%E0%B8%81%E0%B8%A1%E0%B8%9E%E0%B8%8A%E0%B8%B2-kom' },
             { id: 'vn', name: 'Vietnam', url: 'https://sites.google.com/view/pasa30one/%E0%B8%A0%E0%B8%B2%E0%B8%A9%E0%B8%B2%E0%B9%80%E0%B8%A7%E0%B8%A2%E0%B8%94%E0%B8%99%E0%B8%B2%E0%B8%A1-vein' },
+            { id: 'mm', name: 'Myanmar', url: 'https://sites.google.com/view/pasa30one/%E0%B8%9E%E0%B8%A1%E0%B8%B2-ma' },
+            { id: 'kh', name: 'Cambodia', url: 'https://sites.google.com/view/pasa30one/%E0%B8%81%E0%B8%A1%E0%B8%9E%E0%B8%8A%E0%B8%B2-kom' },
             { id: 'ru', name: 'Russia', url: 'https://sites.google.com/view/pasa30one/%E0%B8%A0%E0%B8%B2%E0%B8%A9%E0%B8%B2%E0%B8%A3%E0%B8%AA%E0%B9%80%E0%B8%8B%E0%B8%A2-rus' },
             { id: 'de', name: 'Germany', url: 'https://sites.google.com/view/pasa30one/%E0%B8%A0%E0%B8%B2%E0%B8%A9%E0%B8%B2%E0%B9%80%E0%B8%A2%E0%B8%AD%E0%B8%A3%E0%B8%A1%E0%B8%99-ge' },
-            { id: 'es', name: 'Spain', url: 'https://sites.google.com/view/pasa30one/%E0%B8%A0%E0%B8%B2%E0%B8%A9%E0%B8%B2%E0%B8%AA%E0%B9%80%E0%B8%9B%E0%B8%99-sp' }
+            { id: 'es', name: 'Spain', url: 'https://sites.google.com/view/pasa30one/%E0%B8%A0%E0%B8%B2%E0%B8%A9%E0%B8%B2%E0%B8%AA%E0%B9%80%E0%B8%9B%E0%B8%99-sp' },
+            { id: 'fr', name: 'France', url: '#' },
+            { id: 'it', name: 'Italy', url: '#' },
+            { id: 'in', name: 'India', url: '#' },
+            { id: 'id', name: 'Indonesia', url: '#' },
+            { id: 'pt', name: 'Portugal', url: '#' },
+            { id: 'nl', name: 'Netherlands', url: '#' },
+            { id: 'tr', name: 'Turkey', url: '#' },
+            { id: 'sa', name: 'Saudi Arabia', url: '#' },
+            { id: 'br', name: 'Brazil', url: '#' },
+            { id: 'se', name: 'Sweden', url: '#' },
+            { id: 'pl', name: 'Poland', url: '#' },
+            { id: 'ph', name: 'Philippines', url: '#' }
         ];
 
         const grid = document.getElementById('language-grid');
-        if (grid) {
-            grid.innerHTML = languages.map(lang => `
-                <div class="flex flex-col items-center space-y-4 fade-entry">
-                    <a href="${lang.url}" target="_blank" class="stamp-btn w-full max-w-[120px]">
-                        <img src="https://flagcdn.com/w160/${lang.id}.png" alt="${lang.name}">
-                    </a>
-                    <span class="text-[10px] font-bold tracking-[0.2em] uppercase opacity-50">${lang.name}</span>
-                </div>
-            `).join('');
+
+        // ฟังก์ชันสร้างและแสดง Grid
+        function renderGrid(dataToRender) {
+            if (grid) {
+                if (dataToRender.length === 0) {
+                    grid.innerHTML = `<div class="col-span-full text-center py-10 opacity-50 italic text-sm">No archives found.</div>`;
+                    return;
+                }
+
+                grid.innerHTML = dataToRender.map(lang => `
+                    <div class="flex flex-col items-center space-y-2 fade-entry">
+                        <a href="${lang.url}" target="_blank" class="stamp-btn w-full max-w-[80px]">
+                            <img src="https://flagcdn.com/w160/${lang.id}.png" alt="${lang.name}">
+                        </a>
+                        <span class="text-[10px] font-bold tracking-[0.2em] uppercase opacity-50 text-center">${lang.name}</span>
+                    </div>
+                `).join('');
+            }
         }
 
+        // ระบบค้นหา
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const filteredLanguages = languages.filter(lang => 
+                lang.name.toLowerCase().includes(searchTerm)
+            );
+            renderGrid(filteredLanguages);
+        });
+
+        // แสดง Grid ครั้งแรกเมื่อโหลดเว็บ
+        renderGrid(languages);
+
+        // ระบบ Chatbot เดิม
         async function fetchAIResponse(message, retries = 5, delay = 1000) {
             try {
                 const response = await fetch(WORKER_URL, {
