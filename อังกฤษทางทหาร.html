@@ -361,7 +361,7 @@
                                 <p class="text-slate-400 font-mono text-sm italic">${item.ipa}</p>
                             </div>
                             
-                            <!-- Audio Button (Big & Obvious) -->
+                            <!-- Audio Button -->
                             <button onclick="speak('${safeWord}', this)" class="w-12 h-12 rounded-xl bg-slate-700 text-slate-300 flex items-center justify-center hover:bg-emerald-500 hover:text-white hover:shadow-lg hover:shadow-emerald-500/30 transition-all active:scale-95 shrink-0" title="Listen">
                                 <i class="ph-fill ph-speaker-high text-2xl pointer-events-none"></i>
                             </button>
@@ -379,8 +379,12 @@
         // --------------------------------------------------------
         // AUDIO SYSTEM (Bulletproof TTS)
         // --------------------------------------------------------
+        // ใช้ตัวแปร Global เพื่อป้องกันเบราว์เซอร์ลบตัวแปรเสียงทิ้ง (Garbage Collection)
+        window.currentAudio = null;
+        window.currentUtterance = null;
+
         function speak(text, btnElement) {
-            // UI Visual Feedback
+            // การจัดการ UI ไอคอนตอนกด
             let icon = null;
             let originalClass = "ph-fill ph-speaker-high text-2xl pointer-events-none";
             
@@ -388,7 +392,6 @@
                 icon = btnElement.querySelector('i');
                 if (icon) {
                     originalClass = icon.className;
-                    // Change to active/pulsing state
                     icon.className = 'ph-fill ph-speaker-high text-2xl text-white animate-pulse pointer-events-none';
                     btnElement.classList.add('bg-emerald-500', 'text-white', 'shadow-lg', 'shadow-emerald-500/50');
                     btnElement.classList.remove('bg-slate-700', 'text-slate-300');
@@ -403,32 +406,46 @@
                 }
             };
 
-            // ** THE SOLUTION TO THE AUDIO ISSUE **
-            // We use the browser's Native Speech Synthesis API. It is completely immune to 
-            // CORS blocking, iframe sandbox restrictions, and external server bans.
-            if ('speechSynthesis' in window) {
-                // VERY IMPORTANT: Clear the queue. If it bugs out and thinks it's still talking, 
-                // this forces it to reset.
-                window.speechSynthesis.cancel(); 
-
-                const utterance = new SpeechSynthesisUtterance(text);
-                utterance.lang = 'en-US'; // American English
-                utterance.rate = 0.85;    // Slightly slower for clarity
-
-                // Clean up UI when done or if error occurs
-                utterance.onend = resetIcon;
-                utterance.onerror = (e) => {
-                    console.error("Audio playback error:", e);
-                    resetIcon();
-                    alert("ระบบเสียงขัดข้อง กรุณาตรวจสอบการตั้งค่าเบราว์เซอร์");
-                };
-
-                // Play
-                window.speechSynthesis.speak(utterance);
-            } else {
-                resetIcon();
-                alert("เบราว์เซอร์ของคุณไม่รองรับระบบเสียง (TTS)");
+            // หยุดเสียงเก่าทั้งหมดก่อน
+            if (window.currentAudio) {
+                window.currentAudio.pause();
+                window.currentAudio.currentTime = 0;
             }
+            if (window.speechSynthesis) {
+                window.speechSynthesis.cancel();
+            }
+
+            // [เสียงหลัก] พยายามเรียกใช้ Google Translate TTS ก่อน
+            const url = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(text)}&tl=en-US&client=tw-ob`;
+            window.currentAudio = new Audio(url);
+            
+            window.currentAudio.onended = resetIcon;
+            
+            // หากเรียกเสียงหลักไม่สำเร็จหรือถูกบล็อก ให้สลับมาใช้ Native Voice แทน
+            window.currentAudio.play().catch((err) => {
+                console.warn("Google TTS failed, falling back to native synthesis...", err);
+                
+                if ('speechSynthesis' in window) {
+                    // กำหนดค่าตัวแปร Global ป้องกันการลบข้อมูลของเบราว์เซอร์
+                    window.currentUtterance = new SpeechSynthesisUtterance(text);
+                    window.currentUtterance.lang = 'en-US'; 
+                    window.currentUtterance.rate = 0.85;
+
+                    window.currentUtterance.onend = resetIcon;
+                    window.currentUtterance.onerror = (e) => {
+                        console.error("Native audio error:", e);
+                        resetIcon();
+                    };
+
+                    // ใช้ setTimeout เล็กน้อยเพื่อให้คำสั่ง cancel() ด้านบนทำงานเสร็จสมบูรณ์ก่อน
+                    // ป้องกัน Error {"isTrusted":true}
+                    setTimeout(() => {
+                        window.speechSynthesis.speak(window.currentUtterance);
+                    }, 50);
+                } else {
+                    resetIcon();
+                }
+            });
         }
 
         // Boot App
