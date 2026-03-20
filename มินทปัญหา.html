@@ -183,6 +183,31 @@
         </div>
     </div>
 
+    <!-- YouTube Modal Dialog -->
+    <div id="youtubeModal" class="fixed inset-0 z-[60] hidden flex-col items-center justify-center px-4">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-slate-900/90 backdrop-blur-sm transition-opacity" onclick="closeYoutubeModal()"></div>
+        
+        <!-- Modal Content -->
+        <div class="relative w-full max-w-3xl bg-black rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden transform scale-95 opacity-0 transition-all duration-300" id="youtubeContent">
+            <!-- Header -->
+            <div class="px-4 py-3 border-b border-slate-800 flex justify-between items-center bg-slate-900 shrink-0">
+                <h3 class="text-white font-heading font-bold text-sm sm:text-base flex items-center gap-2">
+                    <svg class="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 24 24"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
+                    ฟังพอดแคสต์
+                </h3>
+                <button onclick="closeYoutubeModal()" class="text-slate-400 hover:text-red-500 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-full p-1.5 transition-colors shadow-sm focus:outline-none">
+                    <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            
+            <!-- Video Container (16:9 Aspect Ratio) -->
+            <div class="relative w-full pb-[56.25%] bg-black">
+                <iframe id="youtubeIframe" class="absolute top-0 left-0 w-full h-full" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer class="bg-white border-t-2 border-slate-100 text-slate-500 py-6 sm:py-8 text-center mt-auto">
         <div class="max-w-7xl mx-auto px-4">
@@ -331,7 +356,7 @@
         });
 
         // --- Logic สำหรับ Modal เลือกสื่อ ---
-        function setupModalButton(btnId, url, activeColors) {
+        function setupModalButton(btnId, url, activeColors, isYoutube = false) {
             const btn = document.getElementById(btnId);
             const icon = btn.querySelector('svg');
             const text = btn.querySelector('span');
@@ -339,7 +364,11 @@
             const baseBtnClass = "flex flex-col items-center justify-center p-3 sm:p-4 rounded-xl border-2 transition-all duration-200 group ";
             
             if (url) {
-                btn.onclick = () => window.open(url, '_blank');
+                if (isYoutube) {
+                    btn.onclick = () => openYoutubeModal(url);
+                } else {
+                    btn.onclick = () => window.open(url, '_blank');
+                }
                 btn.className = baseBtnClass + activeColors + " cursor-pointer hover:-translate-y-1 hover:shadow-md";
                 icon.className = "w-7 h-7 sm:w-8 sm:h-8 mb-2 transition-transform group-hover:scale-110";
             } else {
@@ -360,10 +389,11 @@
             document.getElementById('modalChapterNum').textContent = `ตอนที่ ${toThaiNum(chapter.id)}`;
             document.getElementById('modalTitle').textContent = chapter.title;
             
+            // ส่งค่า true ให้ปุ่มพอดแคสต์ (และวิดีโอ) เพื่อให้แสดงผลแบบ YouTube Dialog
             setupModalButton('btn-book', chapter.urls?.book, 'border-blue-200 bg-blue-50 text-blue-600 hover:border-blue-500 hover:bg-blue-100');
             setupModalButton('btn-cartoon', chapter.urls?.cartoon, 'border-orange-200 bg-orange-50 text-orange-600 hover:border-orange-500 hover:bg-orange-100');
-            setupModalButton('btn-video', chapter.urls?.video, 'border-red-200 bg-red-50 text-red-600 hover:border-red-500 hover:bg-red-100');
-            setupModalButton('btn-podcast', chapter.urls?.podcast, 'border-purple-200 bg-purple-50 text-purple-600 hover:border-purple-500 hover:bg-purple-100');
+            setupModalButton('btn-video', chapter.urls?.video, 'border-red-200 bg-red-50 text-red-600 hover:border-red-500 hover:bg-red-100', true);
+            setupModalButton('btn-podcast', chapter.urls?.podcast, 'border-purple-200 bg-purple-50 text-purple-600 hover:border-purple-500 hover:bg-purple-100', true);
             
             const modal = document.getElementById('mediaModal');
             const content = document.getElementById('modalContent');
@@ -387,6 +417,59 @@
             setTimeout(() => {
                 modal.classList.add('hidden');
                 modal.classList.remove('flex');
+            }, 300);
+        }
+
+        // --- Logic สำหรับ YouTube Modal ---
+        function getYoutubeEmbedUrl(url) {
+            let videoId = '';
+            if (url.includes('youtu.be/')) {
+                videoId = url.split('youtu.be/')[1].split('?')[0];
+            } else if (url.includes('youtube.com/watch')) {
+                try {
+                    videoId = new URL(url).searchParams.get('v');
+                } catch(e) {}
+            }
+            return videoId ? `https://www.youtube.com/embed/${videoId}?autoplay=1` : '';
+        }
+
+        function openYoutubeModal(url) {
+            const embedUrl = getYoutubeEmbedUrl(url);
+            if (!embedUrl) {
+                // หาก URL ไม่ใช่รูปแบบ YouTube ปกติ ให้เปิดแท็บใหม่เพื่อป้องกันปัญหา
+                window.open(url, '_blank');
+                return;
+            }
+            
+            closeModal(); // ปิดหน้าต่างเลือกสื่อเดิมก่อน
+            
+            const iframe = document.getElementById('youtubeIframe');
+            iframe.src = embedUrl;
+            
+            const modal = document.getElementById('youtubeModal');
+            const content = document.getElementById('youtubeContent');
+            
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            
+            setTimeout(() => {
+                content.classList.remove('scale-95', 'opacity-0');
+                content.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function closeYoutubeModal() {
+            const modal = document.getElementById('youtubeModal');
+            const content = document.getElementById('youtubeContent');
+            const iframe = document.getElementById('youtubeIframe');
+            
+            content.classList.remove('scale-100', 'opacity-100');
+            content.classList.add('scale-95', 'opacity-0');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                iframe.src = ''; // เคลียร์วิดีโอเมื่อปิด เพื่อให้เสียง YouTube หยุดเล่น
             }, 300);
         }
 
