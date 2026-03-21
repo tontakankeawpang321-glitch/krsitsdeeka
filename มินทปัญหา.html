@@ -2,10 +2,9 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>มิลินทปัญหา - ๓๖ ตอน</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>อนุพุทธประวัติ ๘๐ พระองค์</title>
     
-    <!-- ประกาศค่า config ไว้ล่วงหน้าเพื่อป้องกัน ReferenceError (tailwind is not defined) -->
     <script>
         window.tailwind = {
             config: {
@@ -16,12 +15,22 @@
                             heading: ['Prompt', 'sans-serif'],
                         },
                         colors: {
-                            tween: {
-                                bg: '#f0f9ff',      // sky-50
-                                primary: '#0ea5e9', // sky-500
-                                dark: '#0369a1',    // sky-700
-                                accent: '#f97316',  // orange-500
+                            monk: {
+                                50: '#fffbf7',
+                                100: '#ffedd5',
+                                200: '#fed7aa',
+                                primary: '#d97706',
+                                secondary: '#b45309',
+                                text: '#292524',
+                                textMuted: '#78716c',
+                                dark: '#1c1917',
+                                bg: '#faf9f6',
                             }
+                        },
+                        boxShadow: {
+                            'soft': '0 4px 20px -2px rgba(0,0,0,0.03)',
+                            'float': '0 12px 30px -8px rgba(217,119,6,0.15)',
+                            'sheet': '0 -10px 40px rgba(0,0,0,0.08)',
                         }
                     }
                 }
@@ -31,560 +40,614 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- ใช้ฟอนต์ Prompt ให้ดูวัยรุ่น ทันสมัย และ Sarabun สำหรับเนื้อหา -->
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700&family=Sarabun:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700&family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
     
     <style>
         body {
-            background-color: #f0f9ff;
-            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='#0ea5e9' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            background-color: theme('colors.monk.bg'); 
+            background-image: radial-gradient(circle at 50% 0%, #ffffff 0%, transparent 70%);
+            -webkit-tap-highlight-color: transparent;
         }
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #e0f2fe; }
-        ::-webkit-scrollbar-thumb { background: #7dd3fc; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #38bdf8; }
-        .fade-up { animation: fadeUp 0.4s ease-out forwards; }
-        @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(15px); }
+        
+        ::-webkit-scrollbar { width: 0px; background: transparent; }
+        * { scrollbar-width: none; }
+
+        .fade-in {
+            animation: fadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+            transform: translateY(15px);
+        }
+
+        @keyframes fadeIn {
             to { opacity: 1; transform: translateY(0); }
         }
+
+        .bottom-sheet {
+            transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+            transform: translateY(100%);
+        }
+        .bottom-sheet.open {
+            transform: translateY(0);
+        }
+        
+        .backdrop {
+            transition: opacity 0.3s ease;
+            opacity: 0;
+            pointer-events: none;
+        }
+        .backdrop.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .glass-header {
+            background: rgba(250, 249, 246, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+        }
+        
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        .card-group:hover .card-img {
+            transform: scale(1.05);
+        }
+        
+        .line-clamp-1 { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+        .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+        /* ปุ่มใน sheet ทั้งหมดเป็น button เหมือนกัน */
+        .sheet-btn {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border-radius: 1rem;
+            background: #f9f9f9;
+            border: 1px solid transparent;
+            cursor: pointer;
+            width: 100%;
+            text-align: left;
+            transition: all 0.2s;
+        }
+        .sheet-btn:hover { background: #fffbeb; border-color: #fcd34d; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+        .sheet-btn.disabled { opacity: 0.45; filter: grayscale(1); cursor: not-allowed; }
     </style>
 </head>
-<!-- เพิ่ม pb-20 เพื่อให้มีพื้นที่เหลือสำหรับ Bottom Navigation -->
-<body class="text-slate-800 antialiased min-h-screen flex flex-col selection:bg-tween-primary selection:text-white pb-20">
+<body class="text-monk-text antialiased min-h-screen flex flex-col selection:bg-monk-primary selection:text-white pb-28">
 
-    <!-- Header Section (Gaming/App Vibe) -->
-    <header class="bg-white border-b-4 border-tween-primary sticky top-0 z-40 shadow-sm">
-        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-3 sm:py-4">
-            <div class="flex flex-col md:flex-row justify-between items-center gap-3 sm:gap-4">
-                
-                <!-- Logo & Title -->
-                <div class="flex items-center gap-3 w-full md:w-auto">
-                    <div class="bg-gradient-to-br from-tween-primary to-blue-600 text-white p-2.5 rounded-xl shadow-md transform -rotate-2">
-                        <svg class="w-6 h-6 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                        </svg>
-                    </div>
-                    <div>
-                        <h1 class="text-lg sm:text-2xl font-heading font-bold text-slate-900 tracking-tight">มิลินทปัญหา</h1>
-                        <p class="text-[10px] sm:text-sm text-tween-dark font-medium font-heading">เปิดโลกแห่งปัญญา ๓๖ ตอน</p>
-                    </div>
+    <!-- Top Header -->
+    <header class="sticky top-0 z-40 glass-header shadow-sm">
+        <div class="max-w-3xl mx-auto px-5 py-3.5 sm:py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-amber-100 to-orange-50 flex items-center justify-center border border-amber-200/50 shadow-inner">
+                    <svg class="w-5 h-5 text-monk-primary" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.31-8.86c-1.77-.45-2.34-.94-2.34-1.67 0-.84.79-1.43 2.1-1.43 1.38 0 1.9.66 1.94 1.64h1.71c-.05-1.34-.87-2.57-2.49-2.97V5H10.9v1.69c-1.51.32-2.72 1.3-2.72 2.81 0 1.79 1.49 2.69 3.66 3.21 1.95.46 2.34 1.15 2.34 1.87 0 .53-.39 1.64-2.25 1.64-1.74 0-2.33-.97-2.4-1.92H7.73c.12 1.46 1.15 2.5 2.83 2.86V19h2.37v-1.65c1.76-.35 2.98-1.46 2.98-2.9 0-2.35-2.06-2.87-3.6-3.31z"/></svg>
                 </div>
-
-                <!-- Search Bar -->
-                <div class="w-full md:w-auto md:min-w-[320px] relative group">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <svg class="h-4 w-4 sm:h-5 sm:w-5 text-slate-400 group-focus-within:text-tween-primary transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                        </svg>
-                    </div>
-                    <input type="text" id="searchInput" placeholder="ค้นหาตอนที่อยากอ่าน..." 
-                        class="w-full pl-9 sm:pl-10 pr-4 py-2 sm:py-2.5 bg-slate-100 border-2 border-transparent rounded-xl focus:bg-white focus:outline-none focus:border-tween-primary text-sm font-heading transition-all duration-300">
+                <div>
+                    <h1 class="text-[19px] sm:text-xl font-heading font-bold text-monk-dark leading-none tracking-tight">อนุพุทธประวัติ</h1>
+                    <p class="text-[12px] sm:text-xs text-monk-primary font-medium mt-1">อสีติมหาสาวก ๘๐ พระองค์</p>
                 </div>
             </div>
+            <button onclick="window.switchTab('fav')" id="btn-top-fav" class="p-2.5 rounded-full text-stone-400 hover:text-red-500 hover:bg-red-50 transition-all active:scale-90 focus:outline-none relative">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                <div id="fav-dot" class="hidden absolute top-2 right-2 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white"></div>
+            </button>
         </div>
     </header>
 
-    <!-- Main Content -->
-    <main class="flex-grow w-full max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 py-6 sm:py-10">
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed top-24 left-1/2 transform -translate-x-1/2 -translate-y-4 z-[70] transition-all duration-400 ease-out opacity-0 pointer-events-none">
+        <div class="bg-stone-900/95 backdrop-blur-md text-white px-6 py-3 rounded-full shadow-2xl font-heading text-[13px] sm:text-sm flex items-center gap-3 whitespace-nowrap border border-white/10">
+            <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <span id="toastMessage">แจ้งเตือน</span>
+        </div>
+    </div>
+
+    <!-- Search Section -->
+    <section class="max-w-3xl mx-auto w-full px-5 pt-6 pb-2">
+        <div class="relative w-full group">
+            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none transition-colors group-focus-within:text-monk-primary text-stone-400">
+                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+            </div>
+            <input type="text" id="searchInput" placeholder="ค้นหาชื่อพระสาวก, ลำดับ..." 
+                class="w-full pl-11 pr-5 py-3.5 bg-white/70 backdrop-blur-sm border border-stone-200 rounded-full shadow-soft focus:outline-none focus:ring-2 focus:ring-monk-primary/20 focus:border-monk-primary focus:bg-white text-[15px] font-sans transition-all placeholder:text-stone-400 hover:bg-white">
+        </div>
         
-        <!-- No Results Message -->
-        <div id="noResults" class="hidden text-center py-16 fade-up">
-            <div class="text-5xl mb-3">🕵️‍♂️</div>
-            <p class="text-lg font-heading font-bold text-slate-700">อ๊ะ! หาไม่เจอ</p>
-            <p class="text-sm text-slate-500 mt-1">ลองพิมพ์คำอื่นดูอีกรอบนะ</p>
+        <div class="flex justify-between items-end mt-8 mb-4 px-1">
+            <h2 id="sectionTitle" class="text-lg font-heading font-bold text-stone-800 tracking-tight">รายนามทั้งหมด</h2>
+            <div class="bg-stone-100 px-3 py-1 rounded-full border border-stone-200/60">
+                <span id="itemCount" class="text-[11px] text-stone-600 font-bold font-heading">80 องค์</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content: Grid View -->
+    <main class="flex-grow w-full max-w-3xl mx-auto px-5">
+        
+        <div id="noResults" class="hidden flex-col items-center justify-center py-20 text-center">
+            <div class="w-20 h-20 bg-white rounded-full flex items-center justify-center mb-4 shadow-soft border border-stone-100">
+                <svg class="w-10 h-10 text-stone-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            </div>
+            <p class="text-lg font-heading font-semibold text-stone-700">ไม่พบข้อมูลที่ค้นหา</p>
+            <p class="text-sm text-stone-500 mt-1" id="noResultsText">ลองใช้คำค้นหาอื่นดูอีกครั้งครับ</p>
         </div>
 
-        <!-- Grid Container -->
-        <div id="chapterGrid" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-4 md:gap-5">
-            <!-- Cards will be injected here -->
-        </div>
-
+        <div id="chapterList" class="grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-5 pb-6"></div>
     </main>
 
-    <!-- Modal Dialog (Options) / หน้าเลือกอ่าน -->
-    <div id="mediaModal" class="fixed inset-0 z-50 hidden flex-col items-center justify-center px-4">
-        <!-- Backdrop -->
-        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" onclick="closeModal()"></div>
-        
-        <!-- Modal Content -->
-        <div class="relative w-full max-w-sm sm:max-w-md bg-white rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden transform scale-95 opacity-0 transition-all duration-300" id="modalContent">
+    <!-- Bottom Sheet -->
+    <div id="backdrop" class="fixed inset-0 bg-stone-900/40 backdrop z-50 backdrop-blur-[2px]" onclick="window.closeSheet()"></div>
+    
+    <div class="fixed inset-0 z-50 flex items-end justify-center pointer-events-none overflow-hidden">
+        <div id="bottomSheet" class="bottom-sheet bg-white w-full max-w-md rounded-t-[32px] shadow-sheet pointer-events-auto flex flex-col max-h-[88vh]">
             
-            <!-- Header -->
-            <div class="px-5 py-4 sm:px-6 sm:py-5 border-b-2 border-slate-100 flex justify-between items-start bg-slate-50">
-                <div>
-                    <span id="modalChapterNum" class="inline-block bg-tween-accent text-white text-[10px] sm:text-xs font-bold font-heading px-2 py-0.5 rounded-md mb-1.5 shadow-sm">ตอนที่ XX</span>
-                    <h3 id="modalTitle" class="text-slate-900 font-heading font-bold text-base sm:text-xl leading-tight">ชื่อตอน</h3>
+            <div class="w-full flex justify-center pt-4 pb-2" onclick="window.closeSheet()">
+                <div class="w-12 h-1.5 bg-stone-200 rounded-full cursor-pointer hover:bg-stone-300 transition-colors"></div>
+            </div>
+
+            <div class="px-6 py-2 flex justify-between items-start relative">
+                <div class="pr-12">
+                    <span id="sheetOrder" class="inline-block px-2.5 py-1 bg-amber-50 text-monk-secondary text-[10px] font-bold font-heading rounded-lg mb-2 border border-amber-100/50">องค์ที่ ๑</span>
+                    <h3 id="sheetTitle" class="text-[22px] font-heading font-bold text-stone-800 leading-tight">ชื่อพระสาวก</h3>
+                    <p id="sheetDesc" class="text-[13px] text-monk-textMuted mt-1.5 leading-relaxed">คำอธิบาย</p>
                 </div>
-                <div class="flex items-center gap-2">
-                    <!-- ปุ่มรายการโปรด (หัวใจ) -->
-                    <button id="btn-favorite" onclick="toggleFavorite()" class="text-slate-400 hover:text-red-500 bg-white hover:bg-red-50 border border-slate-200 rounded-full p-1.5 sm:p-2 transition-colors shadow-sm focus:outline-none">
-                        <svg id="icon-favorite" class="w-4 h-4 sm:w-5 sm:h-5 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
-                    </button>
-                    <!-- ปุ่มปิด -->
-                    <button onclick="closeModal()" class="text-slate-400 hover:text-red-500 bg-white hover:bg-red-50 border border-slate-200 rounded-full p-1.5 sm:p-2 transition-colors shadow-sm focus:outline-none">
-                        <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
-                    </button>
-                </div>
+                <button onclick="window.toggleFavorite()" class="absolute top-2 right-6 w-11 h-11 rounded-full flex items-center justify-center text-stone-400 hover:text-red-500 bg-white border border-stone-100 shadow-soft active:scale-90 transition-all focus:outline-none">
+                    <svg id="icon-favorite" class="w-6 h-6 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                </button>
             </div>
             
-            <!-- Options Body -->
-            <div class="p-5 sm:p-6">
-                <p class="text-slate-600 font-heading font-semibold text-xs sm:text-sm mb-4 text-center">เลือกรูปแบบที่อยากดูได้เลย! 👇</p>
-                <div class="grid grid-cols-2 gap-3 sm:gap-4">
-                    <!-- Book -->
-                    <button id="btn-book" class="flex flex-col items-center justify-center p-3 sm:p-4 rounded-xl border-2 transition-all duration-200 group">
-                        <svg class="w-7 h-7 sm:w-8 sm:h-8 mb-2 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-                        <span class="font-heading font-bold text-xs sm:text-sm">อ่านหนังสือ</span>
+            <div class="mx-6 my-4 border-t border-stone-100"></div>
+
+            <!-- ✅ ปุ่มทั้งหมดเป็น button ไม่ใช่ a tag + ใช้ data-url เก็บ URL -->
+            <div class="px-6 pb-10 overflow-y-auto">
+                <div class="flex flex-col gap-3">
+                    
+                    <button id="btn-book" class="sheet-btn group" data-url="" data-type="link">
+                        <div class="w-12 h-12 rounded-full bg-white shadow-sm text-orange-500 flex items-center justify-center mr-4 shrink-0 transition-transform group-hover:scale-105">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                        </div>
+                        <div class="text-left flex-grow">
+                            <div class="font-heading font-semibold text-[15px] text-stone-800 group-hover:text-amber-700 transition-colors">อ่านประวัติฉบับเต็ม</div>
+                            <div class="text-[11px] text-stone-400 mt-0.5">บทความบนเว็บไซต์ (เปิดแท็บใหม่)</div>
+                        </div>
+                        <svg class="w-5 h-5 text-stone-300 group-hover:text-amber-400 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                     </button>
-                    <!-- Cartoon -->
-                    <button id="btn-cartoon" class="flex flex-col items-center justify-center p-3 sm:p-4 rounded-xl border-2 transition-all duration-200 group">
-                        <svg class="w-7 h-7 sm:w-8 sm:h-8 mb-2 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                        <span class="font-heading font-bold text-xs sm:text-sm">หนังสือการ์ตูน</span>
+
+                    <button id="btn-cartoon" class="sheet-btn group" data-url="" data-type="link">
+                        <div class="w-12 h-12 rounded-full bg-white shadow-sm text-yellow-500 flex items-center justify-center mr-4 shrink-0 transition-transform group-hover:scale-105">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        </div>
+                        <div class="text-left flex-grow">
+                            <div class="font-heading font-semibold text-[15px] text-stone-800 group-hover:text-amber-700 transition-colors">ภาพการ์ตูน</div>
+                            <div class="text-[11px] text-stone-400 mt-0.5">เข้าใจง่ายสำหรับทุกวัย (เปิดแท็บใหม่)</div>
+                        </div>
+                        <svg class="w-5 h-5 text-stone-300 group-hover:text-amber-400 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                     </button>
-                    <!-- Video -->
-                    <button id="btn-video" class="flex flex-col items-center justify-center p-3 sm:p-4 rounded-xl border-2 transition-all duration-200 group">
-                        <svg class="w-7 h-7 sm:w-8 sm:h-8 mb-2 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        <span class="font-heading font-bold text-xs sm:text-sm">ดูวิดีโอ</span>
+                    
+                    <button id="btn-video" class="sheet-btn group" data-url="" data-type="youtube">
+                        <div class="w-12 h-12 rounded-full bg-white shadow-sm text-rose-500 flex items-center justify-center mr-4 shrink-0 transition-transform group-hover:scale-105">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
+                        </div>
+                        <div class="text-left flex-grow">
+                            <div class="font-heading font-semibold text-[15px] text-stone-800 group-hover:text-rose-700 transition-colors">ชมวิดีโอ</div>
+                            <div class="text-[11px] text-stone-400 mt-0.5">รับชม YouTube ภายในเว็บ</div>
+                        </div>
+                        <svg class="w-5 h-5 text-stone-300 group-hover:text-rose-400 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                     </button>
-                    <!-- Podcast -->
-                    <button id="btn-podcast" class="flex flex-col items-center justify-center p-3 sm:p-4 rounded-xl border-2 transition-all duration-200 group">
-                        <svg class="w-7 h-7 sm:w-8 sm:h-8 mb-2 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
-                        <span class="font-heading font-bold text-xs sm:text-sm">ฟังพอดแคสต์</span>
+
+                    <button id="btn-podcast" class="sheet-btn group" data-url="" data-type="youtube">
+                        <div class="w-12 h-12 rounded-full bg-white shadow-sm text-teal-500 flex items-center justify-center mr-4 shrink-0 transition-transform group-hover:scale-105">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
+                        </div>
+                        <div class="text-left flex-grow">
+                            <div class="font-heading font-semibold text-[15px] text-stone-800 group-hover:text-teal-700 transition-colors">ฟังพอดแคสต์</div>
+                            <div class="text-[11px] text-stone-400 mt-0.5">ฟังเสียงบรรยายภายในเว็บ</div>
+                        </div>
+                        <svg class="w-5 h-5 text-stone-300 group-hover:text-teal-400 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                     </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Favorites Modal Dialog -->
-    <div id="favoritesModal" class="fixed inset-0 z-50 hidden flex-col items-center justify-center px-4">
-        <!-- Backdrop -->
-        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" onclick="closeFavoritesModal()"></div>
-        
-        <!-- Favorites Content -->
-        <div class="relative w-full max-w-sm sm:max-w-md bg-white rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden transform scale-95 opacity-0 transition-all duration-300 flex flex-col max-h-[80vh]" id="favoritesContent">
-            
-            <!-- Header -->
-            <div class="px-5 py-4 sm:px-6 sm:py-5 border-b-2 border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
-                <h3 class="text-slate-900 font-heading font-bold text-base sm:text-xl flex items-center gap-2">
-                    <svg class="w-6 h-6 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path></svg>
-                    รายการโปรดของฉัน
-                </h3>
-                <button onclick="closeFavoritesModal()" class="text-slate-400 hover:text-red-500 bg-white hover:bg-red-50 border border-slate-200 rounded-full p-1.5 sm:p-2 transition-colors shadow-sm focus:outline-none">
-                    <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
-                </button>
-            </div>
-            
-            <!-- Favorites List Body -->
-            <div id="favoritesList" class="p-3 sm:p-4 overflow-y-auto flex-grow bg-white">
-                <!-- รายการโปรดจะถูกเพิ่มที่นี่ผ่าน JavaScript -->
-            </div>
-        </div>
+    <!-- Floating Bottom Nav -->
+    <div class="fixed bottom-6 left-0 w-full px-5 z-40 flex justify-center pointer-events-none">
+        <nav class="glass-nav px-8 py-3.5 rounded-full shadow-float pointer-events-auto flex items-center gap-10 border border-white">
+            <button onclick="window.switchTab('home')" id="nav-home" class="flex flex-col items-center gap-1.5 text-monk-primary transition-colors focus:outline-none group">
+                <svg class="w-6 h-6 group-active:scale-90 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                <span class="text-[11px] font-heading font-bold">หน้าแรก</span>
+            </button>
+            <div class="w-px h-8 bg-stone-200"></div>
+            <button onclick="window.switchTab('fav')" id="nav-fav" class="flex flex-col items-center gap-1.5 text-stone-400 hover:text-red-500 transition-colors focus:outline-none group">
+                <svg class="w-6 h-6 group-active:scale-90 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                <span class="text-[11px] font-heading font-bold">บันทึกไว้</span>
+            </button>
+        </nav>
     </div>
 
-    <!-- YouTube Modal Dialog -->
-    <div id="youtubeModal" class="fixed inset-0 z-[60] hidden flex-col items-center justify-center px-4">
-        <!-- Backdrop -->
-        <div class="absolute inset-0 bg-slate-900/90 backdrop-blur-sm transition-opacity" onclick="closeYoutubeModal()"></div>
-        
-        <!-- Modal Content -->
-        <div class="relative w-full max-w-3xl bg-black rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden transform scale-95 opacity-0 transition-all duration-300" id="youtubeContent">
-            <!-- Header -->
-            <div class="px-4 py-3 border-b border-slate-800 flex justify-between items-center bg-slate-900 shrink-0">
-                <h3 class="text-white font-heading font-bold text-sm sm:text-base flex items-center gap-2">
-                    <svg class="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 24 24"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
-                    ฟังพอดแคสต์
-                </h3>
-                <button onclick="closeYoutubeModal()" class="text-slate-400 hover:text-red-500 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-full p-1.5 transition-colors shadow-sm focus:outline-none">
-                    <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+    <!-- Scroll to Top FAB -->
+    <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" id="fab-top" class="fixed bottom-24 right-5 sm:right-8 z-30 bg-white/90 backdrop-blur text-stone-500 p-3.5 rounded-full shadow-soft border border-stone-200 active:scale-90 hover:text-monk-primary hover:border-monk-primary transition-all focus:outline-none opacity-0 translate-y-4 pointer-events-none">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"></path></svg>
+    </button>
+
+    <!-- YouTube Modal -->
+    <div id="ytBackdrop" class="fixed inset-0 bg-black/95 backdrop z-[60]" onclick="window.closeYoutube()" style="display:none"></div>
+    <div id="ytModal" class="fixed inset-0 z-[60] flex flex-col items-center justify-center px-4 pointer-events-none opacity-0 transition-opacity duration-300">
+        <div class="w-full max-w-4xl bg-stone-900 rounded-2xl overflow-hidden shadow-2xl pointer-events-auto flex flex-col border border-white/10">
+            <div class="px-4 py-3 flex justify-between items-center bg-stone-900 border-b border-white/10">
+                <div class="text-white/80 font-heading text-sm font-medium" id="ytModalTitle">กำลังเล่นวิดีโอ...</div>
+                <button onclick="window.closeYoutube()" class="text-stone-400 hover:text-white bg-stone-800 hover:bg-red-500 rounded-full p-2 transition-colors focus:outline-none">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
-            
-            <!-- Video Container (16:9 Aspect Ratio) -->
             <div class="relative w-full pb-[56.25%] bg-black">
-                <iframe id="youtubeIframe" class="absolute top-0 left-0 w-full h-full" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                <iframe id="youtubeIframe" class="absolute top-0 left-0 w-full h-full" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
             </div>
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="bg-white border-t-2 border-slate-100 text-slate-500 py-6 sm:py-8 text-center mt-auto">
-        <div class="max-w-7xl mx-auto px-4">
-            <p class="mb-1 font-heading font-bold text-slate-700">มิลินทปัญหา</p>
-            <p class="text-[10px] sm:text-xs text-slate-400">© 2026 Designed for Teens & Modern Readers</p>
-        </div>
-    </footer>
-
-    <!-- Bottom Navigation (แบบแอพ) -->
-    <nav class="fixed bottom-0 left-0 w-full bg-white border-t border-slate-200 z-40 shadow-[0_-4px_10px_rgba(0,0,0,0.05)] pb-safe">
-        <div class="max-w-md mx-auto flex justify-around items-center h-16 sm:h-16 px-2">
-            <!-- ปุ่มหน้าแรก -->
-            <button onclick="goHome()" class="flex flex-col items-center justify-center w-full h-full text-tween-primary hover:text-blue-600 transition-colors focus:outline-none">
-                <svg class="w-6 h-6 sm:w-7 sm:h-7 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-                <span class="text-[10px] sm:text-xs font-heading font-bold">หน้าแรก</span>
-            </button>
-            <!-- ปุ่มรายการโปรด -->
-            <button onclick="openFavoritesModal()" class="flex flex-col items-center justify-center w-full h-full text-slate-400 hover:text-red-500 transition-colors focus:outline-none">
-                <svg class="w-6 h-6 sm:w-7 sm:h-7 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
-                <span class="text-[10px] sm:text-xs font-heading font-bold">รายการโปรด</span>
-            </button>
-        </div>
-    </nav>
-
-    <!-- JavaScript Data and Logic -->
     <script>
-        // URL หลักสำหรับลิงก์ไปอ่านหนังสือ
-        const BASE_URL = "https://sites.google.com/view/milinder";
+        const DEFAULT_IMAGE_URL = 'https://images.unsplash.com/photo-1540455855018-c2b99fa2e41a?auto=format&fit=crop&q=80&w=400';
 
-        // URL รูปภาพหลัก (แก้ไขตรงนี้ที่เดียว รูปจะเปลี่ยนทั้ง 36 ตอน)
-        const DEFAULT_IMAGE_URL = 'https://lh3.googleusercontent.com/d/1fB6EeYFA53z9ZRG7NdVrYCnJMi2lhbxA=w800';
+        window.addEventListener('scroll', () => {
+            const fab = document.getElementById('fab-top');
+            if (window.scrollY > 300) {
+                fab.classList.remove('opacity-0', 'translate-y-4', 'pointer-events-none');
+                fab.classList.add('opacity-100', 'translate-y-0', 'pointer-events-auto');
+            } else {
+                fab.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none');
+                fab.classList.remove('opacity-100', 'translate-y-0', 'pointer-events-auto');
+            }
+        });
 
-        // ข้อมูล 36 ตอน พร้อม URL และรูปภาพ (image)
         const chapters = [
-            { id: 1, title: "ปัญหาเรื่องรถ (นามรูป)", desc: "เปรียบเทียบตัวเรากับชิ้นส่วนของรถยนต์", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-1`, cartoon: '', video: '', podcast: 'https://youtu.be/y9cLPnaCOBs' } },
-            { id: 2, title: "การเวียนว่ายตายเกิด", desc: "เกิดใหม่ได้ไงถ้าไม่มีวิญญาณลอยข้ามภพ", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-2`, cartoon: '', video: '', podcast: 'https://youtu.be/QIGWrKL2uvI' } },
-            { id: 3, title: "เรื่องของเวลา", desc: "อดีต อนาคต ปัจจุบัน สรุปมันมีจริงไหม", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-3`, cartoon: '', video: '', podcast: 'https://youtu.be/fzkHGZV-3_U' } },
-            { id: 4, title: "ที่ตั้งแห่งวิญญาณ", desc: "วิญญาณเกิดจากอะไร และซ่อนอยู่ที่ไหน", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-4`, cartoon: '', video: '', podcast: 'https://youtu.be/Ab4s65nqQZk' } },
-            { id: 5, title: "ลักษณะของมนสิการ", desc: "เคล็ดลับการตั้งใจและโฟกัสสิ่งต่างๆ", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-5`, cartoon: '', video: '', podcast: 'https://youtu.be/s8STOwsOlRg' } },
-            { id: 6, title: "ลักษณะของปัญญา", desc: "ปัญญาคือดาบวิเศษที่เอาไว้ตัดปัญหา", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-6`, cartoon: '', video: '', podcast: 'https://youtu.be/X-bd5ogTkds' } },
-            { id: 7, title: "ลักษณะของศีล", desc: "จุดเริ่มต้นความดีงาม เหมือนฐานรากตึก", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-7`, cartoon: '', video: '', podcast: 'https://youtu.be/uWDeb-DuKEc' } },
-            { id: 8, title: "ลักษณะของสมาธิ", desc: "ความนิ่งสงบที่เป็นหัวหน้าของความดีทั้งหมด", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-8`, cartoon: '', video: '', podcast: 'https://youtu.be/r_dH-4OjKus' } },
-            { id: 9, title: "ลักษณะของศรัทธา", desc: "ความเชื่อมั่นที่ทำให้ใจใสปิ๊ง", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-9`, cartoon: '', video: '', podcast: 'https://youtu.be/kfrefrd3h7s' } },
-            { id: 10, title: "ลักษณะของวิริยะ", desc: "ความขยันที่เป็นเสาเข็มค้ำจุนจิตใจ", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-10`, cartoon: '', video: '', podcast: 'https://youtu.be/_6Pu49cHYJM' } },
-            { id: 11, title: "ลักษณะของสติ", desc: "การรู้ตัวเท่าทันอารมณ์เหมือนยามเฝ้าประตู", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-11`, cartoon: '', video: '', podcast: 'https://youtu.be/6ZeI7dcxvFs' } },
-            { id: 12, title: "การเกิดและการดับ", desc: "ทุกสิ่งมีเกิดก็ต้องมีดับเป็นธรรมดา", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-12`, cartoon: '', video: '', podcast: 'https://youtu.be/0IbtAtXOZGE' } },
-            { id: 13, title: "ผู้เสวยผลกรรม", desc: "ทำดีได้ดี ทำชั่วได้ชั่ว ใครเป็นคนรับผล", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-13`, cartoon: '', video: '', podcast: 'https://youtu.be/v5ENzdYpYvY' } },
-            { id: 14, title: "การระลึกชาติ", desc: "กลไกความจำข้ามภพชาติทำงานยังไง", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-14`, cartoon: '', video: '', podcast: 'https://youtu.be/2z1GwD6qeHA' } },
-            { id: 15, title: "บุญและบาป", desc: "รู้ว่าผิดกับไม่รู้ว่าผิด ทำแบบไหนบาปกว่ากัน", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-15`, cartoon: '', video: '', podcast: 'https://youtu.be/w5VOdtsFctc' } },
-            { id: 16, title: "ความฝันคืออะไร", desc: "เราฝันได้ยังไง ฝันบอกเหตุมีจริงไหม", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-16`, cartoon: '', video: '', podcast: 'https://youtu.be/nh6H7gbEWKw' } },
-            { id: 17, title: "ลักษณะของนิพพาน", desc: "ดินแดนแห่งความสงบที่ไม่มีวันเป็นทุกข์", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-17`, cartoon: '', video: '', podcast: 'https://youtu.be/R5ZIJETzHEQ' } },
-            { id: 18, title: "พุทธานุสสติ", desc: "แค่คิดถึงพระพุทธเจ้าก็มีพลังบวกแล้ว", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-18`, cartoon: '', video: '', podcast: 'https://youtu.be/MLwvj1BUTTM' } },
-            { id: 19, title: "พระพุทธเจ้ามีจริงหรือ", desc: "หลักฐานยืนยันว่าพระพุทธองค์เคยมีชีวิตอยู่จริง", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-19`, cartoon: '', video: '', podcast: 'https://youtu.be/9rTNgCJGg3k' } },
-            { id: 20, title: "พระธาตุและเจดีย์", desc: "ทำไมเราถึงต้องไปไหว้เจดีย์ตามวัดต่างๆ", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-20`, cartoon: '', video: '', podcast: 'https://youtu.be/75yrDJhi8HQ' } },
-            { id: 21, title: "อำนาจแห่งกรรม", desc: "เหตุผลที่แต่ละคนเกิดมามีต้นทุนไม่เท่ากัน", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-21`, cartoon: '', video: '', podcast: 'https://youtu.be/OnYc59NqvxM' } },
-            { id: 22, title: "การอุทิศส่วนกุศล", desc: "การส่งต่อพลังบุญให้คนอื่นทำได้จริงหรือ", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-22`, cartoon: '', video: '', podcast: 'https://youtu.be/-JOP70HJ0GI' } },
-            { id: 23, title: "ทำไมคนเราจึงต่างกัน", desc: "หน้าตา ฐานะ ความฉลาด ถูกกำหนดจากอะไร", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-23`, cartoon: '', video: '', podcast: 'https://youtu.be/u3SPw0QRFC4' } },
-            { id: 24, title: "อายุขัยของมนุษย์", desc: "ทำไมบางคนอายุสั้น บางคนอายุยืนยาว", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-24`, cartoon: '', video: '', podcast: 'https://youtu.be/EUObCbCwj04' } },
-            { id: 25, title: "ภัยแห่งวัฏสงสาร", desc: "วงจรการเกิดแก่เจ็บตายที่หมุนวนไม่จบสิ้น", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-25`, cartoon: '', video: '', podcast: 'https://youtu.be/Ov4Rl9UHoyY' } },
-            { id: 26, title: "แผ่นดินไหว", desc: "แผ่นดินไหวเกิดจากอะไรตามคติความเชื่อ", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-26`, cartoon: '', video: '', podcast: 'https://youtu.be/58e4qLe72wo' } },
-            { id: 27, title: "อานิสงส์แห่งการบวช", desc: "ทำไมการบวชถึงเป็นทางลัดสู่ความสงบ", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-27`, cartoon: '', video: '', podcast: 'https://youtu.be/ZVsQ2YyD0Ok' } },
-            { id: 28, title: "ความบริสุทธิ์แห่งจิต", desc: "จิตที่ไร้กิเลส ใสปิ๊งเหมือนกระจก", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-28`, cartoon: '', video: '', podcast: 'https://youtu.be/v1LDUrg45Bo' } },
-            { id: 29, title: "พระอรหันต์มีความรู้สึกไหม", desc: "เมื่อท่านเจ็บตัว ท่านจะรู้สึกทุกข์ใจไหม", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-29`, cartoon: '', video: '', podcast: 'https://youtu.be/3brAOdeAPAE' } },
-            { id: 30, title: "การบำเพ็ญเพียร", desc: "การทรมานตัวเองใช่ทางดับทุกข์หรือเปล่า", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-30`, cartoon: '', video: '', podcast: 'https://youtu.be/oCUA7Y9_iPg' } },
-            { id: 31, title: "ความหมายของธรรมะ", desc: "ธรรมะคือความจริงของธรรมชาติรอบตัว", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-31`, cartoon: '', video: '', podcast: 'https://youtu.be/MV8_ncfleiY' } },
-            { id: 32, title: "ทางสายกลาง", desc: "บาลานซ์ชีวิตยังไงให้ไม่ตึงไม่หย่อนเกินไป", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-32`, cartoon: '', video: '', podcast: 'https://youtu.be/yMtlJw-LL_U' } },
-            { id: 33, title: "เทวดาและอมนุษย์", desc: "เรื่องราวของมิติคู่ขนาน เทพและวิญญาณ", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-33`, cartoon: '', video: '', podcast: 'https://youtu.be/MV8_ncfleiY' } },
-            { id: 34, title: "การหลุดพ้นจากกิเลส", desc: "สเต็ปการอัปเลเวลจิตใจเพื่อสู้กับกิเลส", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-34`, cartoon: '', video: '', podcast: 'https://youtu.be/C3wnDsnF7OA' } },
-            { id: 35, title: "บทสรุปแห่งปัญญา", desc: "ปัญญาคือขุมทรัพย์ที่ล้ำค่าที่สุดของมนุษย์", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-35`, cartoon: '', video: '', podcast: 'https://youtu.be/5-gCqYRngKs' } },
-            { id: 36, title: "ปัจฉิมกถา", desc: "บทสรุปแห่งคำถาม พระเจ้ามิลินท์เข้าใจแล้ว!", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-36`, cartoon: '', video: '', podcast: 'https://youtu.be/qGXHddzqjJY' } }
+            { id: 1, title: "พระอัญญาโกณฑัญญะ", desc: "ผู้รู้ราตรีนาน ภิกษุรูปแรกในพระพุทธศาสนา", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระอญญาโกณฑญญะ-๑", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 2, title: "พระวัปปะ", desc: "หนึ่งในปัญจวัคคีย์ ผู้บรรลุธรรมเป็นรูปที่สอง", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระวัปปะ", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 3, title: "พระภัททิยะ", desc: "หนึ่งในปัญจวัคคีย์ พระมหาสาวกผู้สละราชสมบัติ", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระภัททิยะ", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 4, title: "พระมหานามะ", desc: "หนึ่งในปัญจวัคคีย์ ผู้มีบทบาทในยุคต้น", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระมหานามะ", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 5, title: "พระอัสสชิ", desc: "หนึ่งในปัญจวัคคีย์ อาจารย์ของพระสารีบุตร", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระอัสสชิ", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 6, title: "พระยสะ", desc: "บุตรเศรษฐีผู้เบื่อหน่ายโลก สู่ความหลุดพ้น", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระยสะ", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 7, title: "พระปุณณชิ", desc: "สหายพระยสะ ผู้บรรลุธรรมตามพระศาสดา", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระปุณณชิ", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 8, title: "พระสุพาหุ", desc: "สหายพระยสะ หนึ่งในพระอรหันต์ชุดแรก", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระสุพาหุ", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 9, title: "พระวิมละ", desc: "สหายพระยสะ ผู้เลื่อมใสและออกบวชตาม", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระวิมละ", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 10, title: "พระควัมปติ", desc: "สหายพระยสะ ผู้มีฤทธิ์ห้ามกระแสน้ำได้", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระควัมปติ", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 11, title: "พระอุรุเวลกัสสปะ", desc: "อดีตชฎิล ผู้เลิศทางมีบริวารมาก", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระอุรุเวลกัสสปะ", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 12, title: "พระนทีกัสสปะ", desc: "ชฎิลผู้พี่น้อง ผู้ละทิ้งลัทธิเดิม", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระนทีกัสสปะ", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 13, title: "พระคยากัสสปะ", desc: "ชฎิลผู้พี่น้อง บรรลุอรหันต์พร้อมบริวาร", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระคยากัสสปะ", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 14, title: "พระสารีบุตร", desc: "อัครสาวกเบื้องขวา เลิศทางผู้มีปัญญามาก", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระสารีบุตร", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 15, title: "พระโมคคัลลานะ", desc: "อัครสาวกเบื้องซ้าย เลิศทางผู้มีฤทธิ์มาก", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระโมคคัลลานะ", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 16, title: "พระมหากัสสปะ", desc: "ผู้เลิศทางธุดงควัตร และประธานปฐมสังคายนา", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระมหากัสสปะ", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 17, title: "พระมหากัจจายนะ", desc: "ผู้เลิศทางอธิบายความย่อให้พิสดาร", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระมหากัจจายนะ", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 18, title: "พระอชิตะ", desc: "ศิษย์พราหมณ์พาวรี ๑๖ มาณพ", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระอชิตะ", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 19, title: "พระติสสเมตเตยยะ", desc: "ศิษย์พราหมณ์พาวรี ๑๖ มาณพ", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระติสสเมตเตยยะ", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 20, title: "พระปุณณกะ", desc: "ศิษย์พราหมณ์พาวรี ๑๖ มาณพ", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระปุณณกะ", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 21, title: "พระเมตตคู", desc: "ศิษย์พราหมณ์พาวรี ๑๖ มาณพ", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระเมตตคู", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 22, title: "พระโธตกะ", desc: "ศิษย์พราหมณ์พาวรี ๑๖ มาณพ", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระโธตกะ", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 23, title: "พระอุปสีวะ", desc: "ศิษย์พราหมณ์พาวรี ๑๖ มาณพ", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระอุปสีวะ", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 24, title: "พระนันทะ", desc: "พุทธอนุชา ผู้เลิศทางอินทรียสังวร", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระนันทะ", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 25, title: "พระเหมกะ", desc: "ศิษย์พราหมณ์พาวรี ๑๖ มาณพ", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระเหมกะ", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 26, title: "พระโตเทยยะ", desc: "ศิษย์พราหมณ์พาวรี ๑๖ มาณพ", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระโตเทยยะ", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 27, title: "พระกัปปะ", desc: "ศิษย์พราหมณ์พาวรี ๑๖ มาณพ", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระกัปปะ", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 28, title: "พระชตุกัณณี", desc: "ศิษย์พราหมณ์พาวรี ๑๖ มาณพ", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระชตุกัณณี", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 29, title: "พระภัทราวุธะ", desc: "ศิษย์พราหมณ์พาวรี ๑๖ มาณพ", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระภัทราวุธะ", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 30, title: "พระอุทยะ", desc: "ศิษย์พราหมณ์พาวรี ๑๖ มาณพ", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระอุทยะ", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 31, title: "พระโปสาละ", desc: "ศิษย์พราหมณ์พาวรี ๑๖ มาณพ", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระโปสาละ", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 32, title: "พระโมฆราช", desc: "ผู้เลิศทางทรงจีวรเศร้าหมอง ศิษย์พราหมณ์พาวรี", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระโมฆราช-๗", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 33, title: "พระปิงคิยะ", desc: "ศิษย์พราหมณ์พาวรี ๑๖ มาณพ", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระปิงคิยะ", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 34, title: "พระราธะ", desc: "ผู้เลิศทางมีปฏิภาณ", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระราธะ-๘", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 35, title: "พระปุณณมันตานีบุตร", desc: "ผู้เลิศทางพระธรรมกถึก (นักเทศน์)", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระปุณณมันตานีบุตร-๙", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 36, title: "พระกาฬุทายี", desc: "ผู้เลิศทางชักชวนตระกูลให้เลื่อมใส", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระกาฬุทายี-๑๐", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 37, title: "พระนันทมาณพ", desc: "ศิษย์พราหมณ์พาวรี ๑๖ มาณพ", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระนันทะ-๑๑", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 38, title: "พระราหุล", desc: "พุทธโอรส ผู้เลิศทางใคร่ในการศึกษา", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระราหุล-๑๒", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 39, title: "พระอุบาลี", desc: "อดีตช่างกัลบก ผู้เลิศทางทรงจำพระวินัย", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระอุบาลี", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 40, title: "พระภัททิยกาฬิโคธาบุตร", desc: "ผู้เลิศทางเกิดในตระกูลสูง", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระภัททิยะ-๑๔", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 41, title: "พระอนุรุทธะ", desc: "ผู้เลิศทางทิพยจักษุ (ตาทิพย์)", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระอนุรุทธะ-๑๕", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 42, title: "พระอานนท์", desc: "พุทธอุปัฏฐาก เลิศทางพหูสูต ผู้ทรงจำพุทธวจนะ", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระอานนท์-๑๖", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 43, title: "พระภัคคุ", desc: "พระประยูรญาติศากยวงศ์ผู้ออกบวช", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระภัคคุ", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 44, title: "พระกิมพิละ", desc: "ผู้กวดขันในการอยู่ร่วมกันด้วยความสามัคคี", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระกิมพิละ", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 45, title: "พระโสณโกฬิวิสะ", desc: "ผู้เลิศทางปรารภความเพียร", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระโสณโกฬิวิสะ-๑๗", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 46, title: "พระรัฏฐปาละ", desc: "ผู้เลิศทางบวชด้วยศรัทธาแรงกล้า", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระรัฏฐปาละ-๑๘", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 47, title: "พระปิณโฑลภารทวาชะ", desc: "ผู้เลิศทางบันลือสีหนาท", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระปิณโฑลภารทวาชะ-๑๙", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 48, title: "พระมหาปันถกะ", desc: "ผู้เลิศทางเจริญวิปัสสนา", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระมหาปันถกะ-๒๐", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 49, title: "พระจูฬปันถกะ", desc: "ผู้เลิศทางมโนมยิทธิ และชำนาญการเนรมิตกาย", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระจูฬปันถกะ-๒๑", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 50, title: "พระโสณกุฏิกัณณะ", desc: "ผู้เลิศทางแสดงธรรมด้วยถ้อยคำไพเราะ", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระโสณกุฏิกัณณะ-๒๒", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 51, title: "พระลกุณฏกภัททิยะ", desc: "ผู้มีรูปร่างเล็กแต่เสียงไพเราะ", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระลกุณฏกภัททิยะ-๒๓", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 52, title: "พระสุภูติ", desc: "ผู้เลิศทางทักขิเณยยบุคคลและอรณวิหาร", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระสุภูติ-๒๔", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 53, title: "พระกังขาเรวตะ", desc: "ผู้เลิศทางเพ่งฌาน", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระกังขาเรวตะ-๒๕", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 54, title: "พระวักกลิ", desc: "ผู้เลิศทางสัทธาวิมุตติ (หลุดพ้นด้วยศรัทธา)", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระวักกลิ-๒๖", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 55, title: "พระกุณฑธานะ", desc: "ผู้เลิศทางรับสลากเป็นรูปแรก", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระกุณฑธานะ-๒๗", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 56, title: "พระวังคีสะ", desc: "ผู้เลิศทางมีปฏิภาณรวดเร็ว", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระวังคีสะ-๒๘", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 57, title: "พระปิลินทวัจฉะ", desc: "ผู้เลิศทางเป็นที่รักของเทวดา", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระปิลินทวัจฉะ-๒๙", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 58, title: "พระกุมารกัสสปะ", desc: "พระเถระผู้มีวาทะอันวิจิตร", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระกุมารกัสสปะ-๓๐", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 59, title: "พระมหาโกฏฐิตะ", desc: "ผู้เลิศทางปฏิสัมภิทาแตกฉาน", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระมหาโกฏฐิตะ-๓๑", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 60, title: "พระโสภิตะ", desc: "ผู้เลิศทางระลึกชาติได้ (ปุพเพนิวาสานุสสติญาณ)", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระโสภิตะ-๓๒", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 61, title: "พระนันทกะ", desc: "ผู้เลิศทางให้โอวาทภิกษุณี", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระนันทกะ-๓๓", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 62, title: "พระมหากัปปินะ", desc: "ผู้เลิศทางให้โอวาทภิกษุ", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระมหากัปปินะ-๓๔", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 63, title: "พระสาคตะ", desc: "ผู้เลิศทางเข้าเตโชธาตุ", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระสาคตะ-๓๕", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 64, title: "พระอุปเสนะ", desc: "ผู้เลิศทางนำมาซึ่งความเลื่อมใส", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระอุปเสนะ-๓๖", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 65, title: "พระขทิรวนิยเรวตะ", desc: "ผู้เลิศทางผู้อยู่ป่า", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระขทิรวนิยเรวตะ-๓๗", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 66, title: "พระสีวลี", desc: "ผู้เลิศทางมีลาภมาก", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระสีวลี-๓๘", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 67, title: "พระพาหิยทารุจิริยะ", desc: "ผู้เลิศทางตรัสรู้เร็วพลัน (ขิปปาภิญญา)", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระพาหิยทารุจิริยะ-๓๙", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 68, title: "พระพากุละ", desc: "ผู้เลิศทางมีอาพาธน้อย (สุขภาพแข็งแรงที่สุด)", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระพากุละ-๔๐", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 69, title: "พระทัพพมัลลบุตร", desc: "ผู้เลิศทางจัดเสนาสนะ", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระทัพพมัลลบุตร-๔๑", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 70, title: "พระอุทายี", desc: "พระเถระผู้เป็นที่เคารพศรัทธา", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระอุทายี", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 71, title: "พระอุปวาณะ", desc: "อดีตพุทธอุปัฏฐากผู้ใกล้ชิด", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระอุปวาณะ", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 72, title: "พระเมฆิยะ", desc: "อดีตพุทธอุปัฏฐากผู้ถูกเตือนสติเรื่องการปลีกวิเวก", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระเมฆิยะ", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 73, title: "พระนาคิตะ", desc: "พุทธอุปัฏฐากในยุคต้น", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระนาคิตะ", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 74, title: "พระจุนทะ", desc: "น้องชายพระสารีบุตร ผู้มีธรรมกถาไพเราะ", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระจุนทะ", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 75, title: "พระยโสชะ", desc: "ประธานแห่งภิกษุ ๕๐๐ รูปที่พระพุทธองค์ทรงสรรเสริญ", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระยโสชะ", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 76, title: "พระสภิยะ", desc: "ปริพาชกผู้ถามปัญหาธรรมจนบรรลุอรหันต์", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระสภิยะ", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 77, title: "พระเสละ", desc: "พราหมณ์ผู้เลื่อมใสพุทธมหาปุริสลักขณะ", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระเสละ", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 78, title: "พระมหาปรันตปะ", desc: "ผู้มีอดทนเป็นเลิศในการเผยแผ่ธรรม", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระมหาปรันตปะ", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 79, title: "พระนาลกะ", desc: "ผู้ประพฤตินาลกปฏิปทาอันยอดเยี่ยม", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระนาลกะ", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } },
+            { id: 80, title: "พระองคุลิมาละ", desc: "มหาโจรผู้กลับใจสู่ร่มกาสาวพัสตร์ และบรรลุอรหันต์", image: DEFAULT_IMAGE_URL, urls: { book: "https://sites.google.com/view/anuphudhha/พระองคุลิมาละ", cartoon: "", video: "https://www.youtube.com/watch?v=jNQXAC9IVRw", podcast: "https://www.youtube.com/watch?v=jNQXAC9IVRw" } }
         ];
 
-        // ตัวแปรสำหรับระบบรายการโปรด
+        let myFavorites = JSON.parse(localStorage.getItem('anuphudhhaFavorites')) || [];
+        let isFavMode = false;
+        let toastTimeout;
         let currentChapterId = null;
-        let myFavorites = JSON.parse(localStorage.getItem('milinderFavorites')) || [];
 
-        // ฟังก์ชันแปลงตัวเลขเป็นเลขไทย
         const toThaiNum = (num) => {
             const thaiNumbers = ['๐', '๑', '๒', '๓', '๔', '๕', '๖', '๗', '๘', '๙'];
             return num.toString().split('').map(digit => thaiNumbers[digit]).join('');
         };
 
-        const grid = document.getElementById('chapterGrid');
+        const listContainer = document.getElementById('chapterList');
         const noResults = document.getElementById('noResults');
+        const itemCount = document.getElementById('itemCount');
+        const sectionTitle = document.getElementById('sectionTitle');
 
-        // Render chapters function
-        function renderChapters(data) {
-            grid.innerHTML = '';
-            
-            const visibleChapters = data.filter(chapter => chapter.image && chapter.image.trim() !== '');
-            
-            if (visibleChapters.length === 0) {
-                noResults.classList.remove('hidden');
-            } else {
-                noResults.classList.add('hidden');
-                
-                visibleChapters.forEach((chapter) => {
-                    const imgUrl = chapter.image;
-                    const card = document.createElement('div');
-                    card.className = "fade-up cursor-pointer group flex flex-col w-full rounded-[14px] sm:rounded-2xl overflow-hidden bg-white shadow-sm border-2 border-slate-100 hover:border-tween-primary hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 h-full";
-                    
-                    card.innerHTML = `
-                        <div onclick="openModal(${chapter.id})" class="flex flex-col h-full">
-                            <div class="relative w-full aspect-square bg-slate-100 overflow-hidden">
-                                <img src="${imgUrl}" alt="${chapter.title}" 
-                                     class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" loading="lazy">
-                                <div class="absolute top-1.5 left-1.5 sm:top-2 sm:left-2 bg-tween-accent text-white text-[9px] sm:text-xs font-bold font-heading px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-md shadow-sm">
-                                    ตอน ${toThaiNum(chapter.id)}
-                                </div>
-                            </div>
-                            <div class="p-2 sm:p-3 flex-grow flex flex-col justify-center">
-                                <h3 class="text-[10px] sm:text-sm font-heading font-bold text-slate-800 leading-snug line-clamp-2 group-hover:text-tween-primary transition-colors">
-                                    ${chapter.title}
-                                </h3>
-                                <p class="hidden sm:-webkit-box text-xs text-slate-500 leading-relaxed line-clamp-2 mt-1.5">
-                                    ${chapter.desc}
-                                </p>
-                            </div>
-                        </div>
-                    `;
-                    grid.appendChild(card);
-                });
-            }
-        }
-
-        // Initial Render
-        renderChapters(chapters);
-
-        // Search Functionality
-        const searchInput = document.getElementById('searchInput');
-        
-        searchInput.addEventListener('input', (e) => {
-            const searchTerm = e.target.value.toLowerCase().trim();
-            
-            const filteredChapters = chapters.filter(chapter => {
-                const chapterNumStr = chapter.id.toString();
-                const thaiChapterNumStr = toThaiNum(chapter.id);
-                
-                return chapter.title.toLowerCase().includes(searchTerm) || 
-                       chapter.desc.toLowerCase().includes(searchTerm) ||
-                       chapterNumStr.includes(searchTerm) ||
-                       thaiChapterNumStr.includes(searchTerm);
+        // ✅ ลงทะเบียน handler ครั้งเดียวตอน load — อ่าน data-url ตอน click
+        ['btn-book', 'btn-cartoon', 'btn-video', 'btn-podcast'].forEach(id => {
+            document.getElementById(id).addEventListener('click', function() {
+                const url = this.dataset.url;
+                const type = this.dataset.type;
+                if (!url) {
+                    window.showToast('กำลังจัดทำเนื้อหาส่วนนี้ครับ 🙏');
+                    return;
+                }
+                if (type === 'youtube') {
+                    window.openYoutube(url);
+                } else {
+                    // encode เฉพาะ non-ASCII เพื่อรองรับ URL ภาษาไทย
+                    const safeUrl = url.replace(/[^\x00-\x7F]/g, c => encodeURIComponent(c));
+                    window.open(safeUrl, '_blank', 'noopener,noreferrer');
+                }
             });
-            
-            renderChapters(filteredChapters);
         });
 
-        // --- Logic สำหรับ Modal เลือกสื่อ ---
-        function setupModalButton(btnId, url, activeColors, isYoutube = false) {
+        window.showToast = function(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMessage').textContent = message;
+            toast.classList.remove('opacity-0', '-translate-y-4', 'pointer-events-none');
+            toast.classList.add('opacity-100', 'translate-y-0');
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('opacity-100', 'translate-y-0');
+                toast.classList.add('opacity-0', '-translate-y-4', 'pointer-events-none');
+            }, 2500);
+        }
+
+        window.checkFavDot = function() {
+            const dot = document.getElementById('fav-dot');
+            myFavorites.length > 0 ? dot.classList.remove('hidden') : dot.classList.add('hidden');
+        }
+
+        window.renderList = function(data, stagger = true) {
+            listContainer.innerHTML = '';
+            itemCount.textContent = `${data.length} องค์`;
+            
+            if (data.length === 0) {
+                noResults.classList.remove('hidden');
+                noResults.classList.add('flex');
+            } else {
+                noResults.classList.add('hidden');
+                noResults.classList.remove('flex');
+                data.forEach((chapter, index) => {
+                    const delay = stagger ? `animation-delay: ${Math.min(index * 0.04, 0.6)}s` : '';
+                    const isFav = myFavorites.includes(chapter.id);
+                    const item = document.createElement('div');
+                    item.className = `fade-in card-group bg-white rounded-3xl overflow-hidden shadow-soft border border-stone-100 flex flex-col cursor-pointer transition-all duration-300 hover:shadow-lg hover:-translate-y-1 relative`;
+                    if (stagger) item.style = delay;
+                    item.innerHTML = `
+                        <div onclick="window.openSheet(${chapter.id})" class="flex flex-col h-full w-full">
+                            <div class="relative w-full aspect-[4/5] bg-stone-100 overflow-hidden">
+                                <img src="${chapter.image}" alt="${chapter.title}" class="card-img w-full h-full object-cover transition-transform duration-700 ease-out" loading="lazy">
+                                <div class="absolute inset-0 bg-gradient-to-t from-stone-900/80 via-stone-900/10 to-transparent"></div>
+                                <div class="absolute top-3 left-3 bg-white/95 backdrop-blur-md text-amber-600 text-[10px] font-bold font-heading px-2 py-1 rounded-md shadow-sm border border-white/50">ที่ ${toThaiNum(chapter.id)}</div>
+                                <div class="absolute bottom-3 left-3 right-3 text-white">
+                                    <h3 class="font-heading font-bold text-[15px] sm:text-[16px] line-clamp-1 drop-shadow-md leading-tight">${chapter.title}</h3>
+                                </div>
+                            </div>
+                            <div class="p-3.5 flex-grow flex flex-col bg-white">
+                                <p class="text-[11px] sm:text-xs text-stone-500 line-clamp-2 leading-relaxed">${chapter.desc}</p>
+                            </div>
+                        </div>
+                        <div class="absolute top-2.5 right-2.5 z-10">
+                            <button onclick="window.toggleFavoriteInline(${chapter.id}, event)" class="w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-md transition-all duration-300 focus:outline-none shadow-sm ${isFav ? 'text-red-500 bg-white' : 'text-white bg-white/30 border border-white/20 hover:bg-white hover:text-red-500'}">
+                                <svg class="w-4 h-4" fill="${isFav ? 'currentColor' : 'none'}" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                            </button>
+                        </div>`;
+                    listContainer.appendChild(item);
+                });
+            }
+            window.checkFavDot();
+        }
+
+        window.renderList(chapters);
+
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            if (isFavMode) window.switchTab('home');
+            const term = e.target.value.toLowerCase().trim();
+            const filtered = chapters.filter(ch =>
+                ch.title.toLowerCase().includes(term) ||
+                ch.desc.toLowerCase().includes(term) ||
+                ch.id.toString().includes(term) ||
+                toThaiNum(ch.id).includes(term)
+            );
+            window.renderList(filtered, false);
+        });
+
+        // ✅ แค่ set data-url ใหม่ — ไม่ต้อง clone หรือ add/remove listener
+        window.setupSheetButton = function(btnId, url, isYoutube) {
             const btn = document.getElementById(btnId);
-            const icon = btn.querySelector('svg');
-            const text = btn.querySelector('span');
-            
-            const baseBtnClass = "flex flex-col items-center justify-center p-3 sm:p-4 rounded-xl border-2 transition-all duration-200 group ";
-            
+            btn.dataset.url = url || '';
+            btn.dataset.type = isYoutube ? 'youtube' : 'link';
             if (url) {
-                if (isYoutube) {
-                    btn.onclick = () => openYoutubeModal(url);
-                } else {
-                    btn.onclick = () => window.open(url, '_blank');
-                }
-                btn.className = baseBtnClass + activeColors + " cursor-pointer hover:-translate-y-1 hover:shadow-md";
-                icon.className = "w-7 h-7 sm:w-8 sm:h-8 mb-2 transition-transform group-hover:scale-110";
+                btn.classList.remove('disabled');
             } else {
-                btn.onclick = null;
-                btn.className = baseBtnClass + "border-slate-200 bg-slate-50 cursor-not-allowed opacity-60";
-                icon.className = "w-7 h-7 sm:w-8 sm:h-8 mb-2 text-slate-400";
-                text.className = "font-heading font-bold text-xs sm:text-sm text-slate-400";
+                btn.classList.add('disabled');
             }
         }
 
-        function openModal(id) {
-            const chapter = chapters.find(ch => ch.id === id);
-            if (!chapter) return;
-            
-            currentChapterId = id; // กำหนดตอนที่กำลังเลือก
-            updateFavoriteButtonUI(); // อัปเดตสีปุ่มหัวใจ
-            
-            document.getElementById('modalChapterNum').textContent = `ตอนที่ ${toThaiNum(chapter.id)}`;
-            document.getElementById('modalTitle').textContent = chapter.title;
-            
-            // ส่งค่า true ให้ปุ่มพอดแคสต์ (และวิดีโอ) เพื่อให้แสดงผลแบบ YouTube Dialog
-            setupModalButton('btn-book', chapter.urls?.book, 'border-blue-200 bg-blue-50 text-blue-600 hover:border-blue-500 hover:bg-blue-100');
-            setupModalButton('btn-cartoon', chapter.urls?.cartoon, 'border-orange-200 bg-orange-50 text-orange-600 hover:border-orange-500 hover:bg-orange-100');
-            setupModalButton('btn-video', chapter.urls?.video, 'border-red-200 bg-red-50 text-red-600 hover:border-red-500 hover:bg-red-100', true);
-            setupModalButton('btn-podcast', chapter.urls?.podcast, 'border-purple-200 bg-purple-50 text-purple-600 hover:border-purple-500 hover:bg-purple-100', true);
-            
-            const modal = document.getElementById('mediaModal');
-            const content = document.getElementById('modalContent');
-            
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-            
-            setTimeout(() => {
-                content.classList.remove('scale-95', 'opacity-0');
-                content.classList.add('scale-100', 'opacity-100');
-            }, 10);
+        window.openSheet = function(id) {
+            const ch = chapters.find(c => c.id === id);
+            if (!ch) return;
+            currentChapterId = id;
+            document.getElementById('sheetOrder').textContent = `องค์ที่ ${toThaiNum(ch.id)}`;
+            document.getElementById('sheetTitle').textContent = ch.title;
+            document.getElementById('sheetDesc').textContent = ch.desc;
+            document.getElementById('ytModalTitle').textContent = ch.title;
+            window.updateSheetFavoriteIcon();
+            window.setupSheetButton('btn-book', ch.urls.book, false);
+            window.setupSheetButton('btn-cartoon', ch.urls.cartoon, false);
+            window.setupSheetButton('btn-video', ch.urls.video, true);
+            window.setupSheetButton('btn-podcast', ch.urls.podcast, true);
+            document.getElementById('backdrop').classList.add('open');
+            document.getElementById('bottomSheet').classList.add('open');
         }
 
-        function closeModal() {
-            const modal = document.getElementById('mediaModal');
-            const content = document.getElementById('modalContent');
-            
-            content.classList.remove('scale-100', 'opacity-100');
-            content.classList.add('scale-95', 'opacity-0');
-            
-            setTimeout(() => {
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
-            }, 300);
+        window.closeSheet = function() {
+            document.getElementById('backdrop').classList.remove('open');
+            document.getElementById('bottomSheet').classList.remove('open');
         }
 
-        // --- Logic สำหรับ YouTube Modal ---
-        function getYoutubeEmbedUrl(url) {
-            let videoId = '';
-            if (url.includes('youtu.be/')) {
-                videoId = url.split('youtu.be/')[1].split('?')[0];
-            } else if (url.includes('youtube.com/watch')) {
-                try {
-                    videoId = new URL(url).searchParams.get('v');
-                } catch(e) {}
-            }
-            return videoId ? `https://www.youtube.com/embed/${videoId}?autoplay=1` : '';
-        }
-
-        function openYoutubeModal(url) {
-            const embedUrl = getYoutubeEmbedUrl(url);
-            if (!embedUrl) {
-                // หาก URL ไม่ใช่รูปแบบ YouTube ปกติ ให้เปิดแท็บใหม่เพื่อป้องกันปัญหา
-                window.open(url, '_blank');
-                return;
-            }
-            
-            closeModal(); // ปิดหน้าต่างเลือกสื่อเดิมก่อน
-            
-            const iframe = document.getElementById('youtubeIframe');
-            iframe.src = embedUrl;
-            
-            const modal = document.getElementById('youtubeModal');
-            const content = document.getElementById('youtubeContent');
-            
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-            
-            setTimeout(() => {
-                content.classList.remove('scale-95', 'opacity-0');
-                content.classList.add('scale-100', 'opacity-100');
-            }, 10);
-        }
-
-        function closeYoutubeModal() {
-            const modal = document.getElementById('youtubeModal');
-            const content = document.getElementById('youtubeContent');
-            const iframe = document.getElementById('youtubeIframe');
-            
-            content.classList.remove('scale-100', 'opacity-100');
-            content.classList.add('scale-95', 'opacity-0');
-            
-            setTimeout(() => {
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
-                iframe.src = ''; // เคลียร์วิดีโอเมื่อปิด เพื่อให้เสียง YouTube หยุดเล่น
-            }, 300);
-        }
-
-        // --- Logic สำหรับรายการโปรด (Favorites) ---
-        function toggleFavorite() {
-            if (!currentChapterId) return;
-            
-            const index = myFavorites.indexOf(currentChapterId);
-            if (index === -1) {
-                myFavorites.push(currentChapterId); // เพิ่มเข้าโปรด
-            } else {
-                myFavorites.splice(index, 1); // เอาออกจากโปรด
-            }
-            
-            localStorage.setItem('milinderFavorites', JSON.stringify(myFavorites));
-            updateFavoriteButtonUI();
-        }
-
-        function updateFavoriteButtonUI() {
+        window.updateSheetFavoriteIcon = function() {
             const icon = document.getElementById('icon-favorite');
+            const btn = icon.parentElement;
             if (myFavorites.includes(currentChapterId)) {
                 icon.setAttribute('fill', 'currentColor');
                 icon.classList.add('text-red-500');
-                icon.classList.remove('text-slate-400');
+                btn.classList.add('bg-red-50', 'border-red-100');
+                btn.classList.remove('text-stone-400', 'bg-white', 'border-stone-100');
             } else {
                 icon.setAttribute('fill', 'none');
                 icon.classList.remove('text-red-500');
-                icon.classList.add('text-slate-400');
+                btn.classList.remove('bg-red-50', 'border-red-100');
+                btn.classList.add('text-stone-400', 'bg-white', 'border-stone-100');
             }
         }
 
-        function openFavoritesModal() {
-            closeModal(); // ปิดหน้าต่างเลือกอ่าน (ถ้าเปิดอยู่)
-            renderFavoritesList(); // อัปเดตรายการ
-            
-            const modal = document.getElementById('favoritesModal');
-            const content = document.getElementById('favoritesContent');
-            
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-            
-            setTimeout(() => {
-                content.classList.remove('scale-95', 'opacity-0');
-                content.classList.add('scale-100', 'opacity-100');
-            }, 10);
+        window.toggleFavorite = function() {
+            if (!currentChapterId) return;
+            const idx = myFavorites.indexOf(currentChapterId);
+            if (idx === -1) { myFavorites.push(currentChapterId); window.showToast('บันทึกเข้ารายการโปรดแล้ว ⭐️'); }
+            else { myFavorites.splice(idx, 1); window.showToast('นำออกจากรายการโปรดแล้ว'); }
+            localStorage.setItem('anuphudhhaFavorites', JSON.stringify(myFavorites));
+            window.updateSheetFavoriteIcon();
+            window.checkFavDot();
+            if (isFavMode) { window.renderFavs(); }
+            else {
+                const term = document.getElementById('searchInput').value.toLowerCase().trim();
+                const filtered = term ? chapters.filter(ch => ch.title.toLowerCase().includes(term) || ch.desc.toLowerCase().includes(term)) : chapters;
+                window.renderList(filtered, false);
+            }
         }
 
-        function closeFavoritesModal() {
-            const modal = document.getElementById('favoritesModal');
-            const content = document.getElementById('favoritesContent');
-            
-            content.classList.remove('scale-100', 'opacity-100');
-            content.classList.add('scale-95', 'opacity-0');
-            
+        window.toggleFavoriteInline = function(id, event) {
+            if (event) event.stopPropagation();
+            const idx = myFavorites.indexOf(id);
+            if (idx === -1) { myFavorites.push(id); window.showToast('บันทึกเข้ารายการโปรดแล้ว ⭐️'); }
+            else { myFavorites.splice(idx, 1); window.showToast('นำออกจากรายการโปรดแล้ว'); }
+            localStorage.setItem('anuphudhhaFavorites', JSON.stringify(myFavorites));
+            window.checkFavDot();
+            if (isFavMode) { window.renderFavs(); }
+            else {
+                const btn = event.currentTarget;
+                const svg = btn.querySelector('svg');
+                if (myFavorites.includes(id)) {
+                    svg.setAttribute('fill', 'currentColor');
+                    btn.classList.add('text-red-500', 'bg-white');
+                    btn.classList.remove('text-white', 'border', 'border-white/20', 'bg-white/30');
+                } else {
+                    svg.setAttribute('fill', 'none');
+                    btn.classList.remove('text-red-500', 'bg-white');
+                    btn.classList.add('text-white', 'border', 'border-white/20', 'bg-white/30');
+                }
+            }
+        }
+
+        window.switchTab = function(tab) {
+            window.closeSheet();
+            const btnFav = document.getElementById('btn-top-fav');
+            const navFav = document.getElementById('nav-fav');
+            const navHome = document.getElementById('nav-home');
+            if (tab === 'home') {
+                isFavMode = false;
+                sectionTitle.textContent = "รายนามทั้งหมด";
+                btnFav.classList.remove('text-red-500', 'bg-red-50');
+                btnFav.classList.add('text-stone-400');
+                navHome.classList.replace('text-stone-400', 'text-monk-primary');
+                navFav.classList.replace('text-monk-primary', 'text-stone-400');
+                navFav.classList.remove('text-red-500');
+                const term = document.getElementById('searchInput').value.toLowerCase().trim();
+                const filtered = term ? chapters.filter(ch => ch.title.toLowerCase().includes(term) || ch.desc.toLowerCase().includes(term)) : chapters;
+                window.renderList(filtered, false);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else {
+                if (isFavMode) return;
+                isFavMode = true;
+                sectionTitle.textContent = "บันทึกไว้ (รายการโปรด)";
+                btnFav.classList.add('text-red-500', 'bg-red-50');
+                btnFav.classList.remove('text-stone-400');
+                navFav.classList.replace('text-stone-400', 'text-monk-primary');
+                navHome.classList.replace('text-monk-primary', 'text-stone-400');
+                window.renderFavs();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        window.renderFavs = function() {
+            const favCh = myFavorites.map(id => chapters.find(c => c.id === id)).filter(Boolean);
+            if (favCh.length === 0) {
+                listContainer.innerHTML = '';
+                itemCount.textContent = `0 องค์`;
+                document.getElementById('noResultsText').textContent = "ยังไม่ได้บันทึกเรื่องราวไว้เลยครับ กดไอคอนหัวใจเพื่อบันทึก";
+                noResults.classList.remove('hidden');
+                noResults.classList.add('flex');
+            } else { window.renderList(favCh, false); }
+        }
+
+        window.openYoutube = function(url) {
+            let videoId = '';
+            if (url.includes('youtu.be/')) videoId = url.split('youtu.be/')[1].split('?')[0];
+            else if (url.includes('youtube.com/watch')) {
+                try { videoId = new URL(url).searchParams.get('v'); } catch(e) {}
+            }
+            if (!videoId) { window.open(url, '_blank'); return; }
+            window.closeSheet();
+            document.getElementById('youtubeIframe').src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+            document.getElementById('ytBackdrop').style.display = 'block';
+            const ytModal = document.getElementById('ytModal');
+            ytModal.classList.add('opacity-100');
+            ytModal.classList.remove('pointer-events-none');
+        }
+
+        window.closeYoutube = function() {
+            const ytModal = document.getElementById('ytModal');
+            ytModal.classList.remove('opacity-100');
+            ytModal.classList.add('pointer-events-none');
             setTimeout(() => {
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
+                document.getElementById('ytBackdrop').style.display = 'none';
+                document.getElementById('youtubeIframe').src = '';
             }, 300);
         }
-
-        function renderFavoritesList() {
-            const listContainer = document.getElementById('favoritesList');
-            
-            if (myFavorites.length === 0) {
-                listContainer.innerHTML = `
-                    <div class="text-center py-12">
-                        <svg class="mx-auto h-12 w-12 text-slate-300 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-                        </svg>
-                        <p class="text-slate-500 font-heading text-sm">ยังไม่มีรายการโปรดเลย ลองเพิ่มดูสิ!</p>
-                    </div>
-                `;
-                return;
-            }
-
-            // ดึงข้อมูลบทที่ตรงกับไอดีใน myFavorites
-            const favChapters = myFavorites.map(id => chapters.find(c => c.id === id)).filter(Boolean);
-            
-            listContainer.innerHTML = favChapters.map(chapter => `
-                <div onclick="openModalFromFavorites(${chapter.id})" class="flex items-center gap-3 p-3 mb-2 border border-slate-100 bg-slate-50 hover:bg-slate-100 cursor-pointer rounded-xl transition-colors">
-                    <img src="${chapter.image}" class="w-14 h-14 rounded-lg object-cover shadow-sm shrink-0">
-                    <div class="flex-grow overflow-hidden">
-                        <span class="text-[10px] sm:text-xs font-bold font-heading text-tween-accent mb-0.5 block">ตอนที่ ${toThaiNum(chapter.id)}</span>
-                        <h4 class="font-heading font-bold text-sm text-slate-800 line-clamp-1">${chapter.title}</h4>
-                    </div>
-                    <button onclick="event.stopPropagation(); removeFavorite(${chapter.id})" class="p-2 text-slate-300 hover:text-red-500 transition-colors shrink-0">
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path></svg>
-                    </button>
-                </div>
-            `).join('');
-        }
-
-        function removeFavorite(id) {
-            const index = myFavorites.indexOf(id);
-            if (index > -1) {
-                myFavorites.splice(index, 1);
-                localStorage.setItem('milinderFavorites', JSON.stringify(myFavorites));
-                renderFavoritesList(); // โหลดรายการใหม่
-            }
-        }
-
-        function openModalFromFavorites(id) {
-            closeFavoritesModal(); // ปิดหน้าโปรดก่อน
-            setTimeout(() => {
-                openModal(id); // แล้วเปิดหน้าต่างเลือกอ่าน
-            }, 300); 
-        }
-
-        // ฟังก์ชันสำหรับปุ่มหน้าแรก (Bottom Nav)
-        function goHome() {
-            closeModal();
-            closeFavoritesModal();
-            window.scrollTo({top: 0, behavior: 'smooth'});
-        }
-
     </script>
 </body>
 </html>
