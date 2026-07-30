@@ -1,28 +1,34 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="th" class="dark scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>มิลินทปัญหา - ๓๖ ตอน</title>
+    <title>มิลินทปัญหา - ๓๖ ตอน แห่งปัญญา (Dark Fantasy Edition)</title>
     
-    <!-- ประกาศค่า config ไว้ล่วงหน้าเพื่อป้องกัน ReferenceError (tailwind is not defined) -->
     <script>
         window.tailwind = {
-            config: {
-                theme: {
-                    extend: {
-                        fontFamily: {
-                            sans: ['Sarabun', 'sans-serif'],
-                            heading: ['Prompt', 'sans-serif'],
-                        },
-                        colors: {
-                            tween: {
-                                bg: '#f0f9ff',      // sky-50
-                                primary: '#0ea5e9', // sky-500
-                                dark: '#0369a1',    // sky-700
-                                accent: '#f97316',  // orange-500
-                            }
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Sarabun', 'sans-serif'],
+                        heading: ['Prompt', 'sans-serif'],
+                    },
+                    colors: {
+                        fantasy: {
+                            base: '#07090e',      // Deepest Void
+                            surface: '#0f1422',   // Grimoire Slate
+                            card: '#141a2e',      // Card Slate Background
+                            border: '#2a3654',    // Metallic Border
+                            gold: '#f59e0b',      // Ancient Mystic Gold
+                            crimson: '#ef4444',   // Rune Crimson
+                            purple: '#8b5cf6',    // Eldritch Arcane
                         }
+                    },
+                    boxShadow: {
+                        'rune-gold': '0 0 25px rgba(245, 158, 11, 0.3)',
+                        'rune-crimson': '0 0 25px rgba(239, 68, 68, 0.4)',
+                        'app-bar': '0 -6px 25px rgba(0, 0, 0, 0.9)'
                     }
                 }
             }
@@ -31,404 +37,935 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- ใช้ฟอนต์ Prompt ให้ดูวัยรุ่น ทันสมัย และ Sarabun สำหรับเนื้อหา -->
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700&family=Sarabun:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700;800;900&family=Sarabun:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
-        body {
-            background-color: #f0f9ff;
-            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='#0ea5e9' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #07090e; }
+        ::-webkit-scrollbar-thumb { background: #2a3654; border-radius: 99px; }
+        ::-webkit-scrollbar-thumb:hover { background: #f59e0b; }
+        
+        .glass-dark-nav {
+            background: rgba(9, 12, 21, 0.95);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
         }
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #e0f2fe; }
-        ::-webkit-scrollbar-thumb { background: #7dd3fc; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #38bdf8; }
-        .fade-up { animation: fadeUp 0.4s ease-out forwards; }
-        @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(15px); }
+
+        .glass-fantasy-card {
+            background: linear-gradient(145deg, rgba(20, 26, 46, 0.96) 0%, rgba(10, 14, 25, 0.98) 100%);
+        }
+
+        .fade-in { animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulseWarning {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+        .timer-warning { animation: pulseWarning 0.5s infinite; }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .pb-safe { padding-bottom: calc(1rem + env(safe-area-inset-bottom)); }
+
+        .text-gold-gradient {
+            background: linear-gradient(135deg, #fef08a 0%, #f59e0b 50%, #d97706 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .timer-bar {
+            transition: width 0.1s linear, background-color 0.3s ease;
         }
     </style>
 </head>
-<!-- เพิ่ม pb-20 เพื่อให้มีพื้นที่เหลือสำหรับ Bottom Navigation -->
-<body class="text-slate-800 antialiased min-h-screen flex flex-col selection:bg-tween-primary selection:text-white pb-20">
 
-    <!-- Header Section (Gaming/App Vibe) -->
-    <header class="bg-white border-b-4 border-tween-primary sticky top-0 z-40 shadow-sm">
-        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-3 sm:py-4">
-            <div class="flex flex-col md:flex-row justify-between items-center gap-3 sm:gap-4">
+<body class="bg-fantasy-base text-slate-100 antialiased min-h-screen flex flex-col pb-24 selection:bg-amber-500 selection:text-black">
+
+    <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+        <div class="absolute -top-32 left-1/4 w-[450px] h-[450px] bg-amber-500/10 rounded-full blur-[120px]"></div>
+        <div class="absolute top-1/2 -right-32 w-[400px] h-[400px] bg-purple-900/15 rounded-full blur-[120px]"></div>
+        <div class="absolute inset-0 bg-[radial-gradient(#26334d_1px,transparent_1px)] [background-size:24px_24px] opacity-25"></div>
+    </div>
+
+    <header class="glass-dark-nav sticky top-0 z-40 border-b border-fantasy-border/80 shadow-2xl">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-3">
                 
-                <!-- Logo & Title -->
-                <div class="flex items-center gap-3 w-full md:w-auto">
-                    <div class="bg-gradient-to-br from-tween-primary to-blue-600 text-white p-2.5 rounded-xl shadow-md transform -rotate-2">
-                        <svg class="w-6 h-6 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                        </svg>
-                    </div>
-                    <div>
-                        <h1 class="text-lg sm:text-2xl font-heading font-bold text-slate-900 tracking-tight">มิลินทปัญหา</h1>
-                        <p class="text-[10px] sm:text-sm text-tween-dark font-medium font-heading">เปิดโลกแห่งปัญญา ๓๖ ตอน</p>
+                <div class="flex items-center justify-between w-full md:w-auto">
+                    <div class="flex items-center gap-3 cursor-pointer group" onclick="goHome()">
+                        <div class="bg-gradient-to-br from-amber-400 via-amber-600 to-amber-800 text-slate-950 p-2.5 rounded-2xl shadow-rune-gold transform transition-transform group-hover:scale-105 border border-amber-300/50">
+                            <svg class="w-6 h-6 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h1 class="text-xl sm:text-2xl font-heading font-black tracking-tight text-gold-gradient drop-shadow-md">
+                                    มิลินทปัญหา
+                                </h1>
+                                <span class="text-[11px] font-heading font-bold px-2.5 py-0.5 bg-amber-950 text-amber-300 rounded-full border border-amber-500/50 shadow-sm">๓๖ ตอน</span>
+                            </div>
+                            <p class="text-xs text-amber-200 font-semibold font-heading tracking-wide">คัมภีร์ธรรมะแห่งปัญญา ไขข้อข้องใจปรัชญาชีวิต</p>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Search Bar -->
-                <div class="w-full md:w-auto md:min-w-[320px] relative group">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <svg class="h-4 w-4 sm:h-5 sm:w-5 text-slate-400 group-focus-within:text-tween-primary transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                <!-- Search Input Container -->
+                <div class="w-full md:w-80 relative group">
+                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                        <svg class="h-4 w-4 text-slate-300 group-focus-within:text-amber-400 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
                     </div>
-                    <input type="text" id="searchInput" placeholder="ค้นหาตอนที่อยากอ่าน..." 
-                        class="w-full pl-9 sm:pl-10 pr-4 py-2 sm:py-2.5 bg-slate-100 border-2 border-transparent rounded-xl focus:bg-white focus:outline-none focus:border-tween-primary text-sm font-heading transition-all duration-300">
+                    <input type="text" id="searchInput" placeholder="ค้นหาตามชื่อ หรือเนื้อหา..." 
+                        class="w-full pl-10 pr-9 py-2.5 bg-fantasy-surface border border-fantasy-border focus:border-amber-400 rounded-2xl focus:outline-none focus:ring-1 focus:ring-amber-400 text-xs sm:text-sm font-heading font-semibold transition-all duration-200 placeholder:text-slate-400 text-white shadow-inner">
+                    <button id="clearSearch" onclick="clearSearchInput()" class="hidden absolute inset-y-0 right-0 pr-3 flex items-center text-slate-300 hover:text-amber-400">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
                 </div>
             </div>
         </div>
     </header>
 
-    <!-- Main Content -->
-    <main class="flex-grow w-full max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 py-6 sm:py-10">
+    <main class="relative z-10 flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
         
-        <!-- No Results Message -->
-        <div id="noResults" class="hidden text-center py-16 fade-up">
-            <div class="text-5xl mb-3">🕵️‍♂️</div>
-            <p class="text-lg font-heading font-bold text-slate-700">อ๊ะ! หาไม่เจอ</p>
-            <p class="text-sm text-slate-500 mt-1">ลองพิมพ์คำอื่นดูอีกรอบนะ</p>
+        <!-- Quiz Banner Section -->
+        <div class="mb-6 bg-gradient-to-r from-fantasy-surface via-slate-900 to-fantasy-surface rounded-3xl p-5 sm:p-6 text-white shadow-2xl relative overflow-hidden border border-amber-500/30">
+            <div class="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-5">
+                <div class="space-y-2 max-w-2xl">
+                    <div class="inline-flex items-center gap-2 bg-amber-950 border border-amber-400/50 px-3 py-1 rounded-full text-xs font-heading font-bold text-amber-300 shadow-sm">
+                        <span>🎮 มิลินทปัญหา ควิซ (โหมดจับเวลาสุ่มคำถาม)</span>
+                    </div>
+                    <h2 class="text-xl sm:text-2xl font-heading font-extrabold leading-snug text-white">
+                        ประลองปัญญา ไขคำถามปริศนาธรรม ๓๖ ตอน
+                    </h2>
+                    <p class="text-xs sm:text-sm text-slate-200 font-sans leading-relaxed">
+                        ตอบคำถามประลองปัญญาแข่งกับเวลา ๑๕ วินาทีต่อข้อ ระบบจะสุ่มคำถามใหม่ทุกรอบ ไม่ซ้ำซาก!
+                    </p>
+                    <div class="pt-2">
+                        <button onclick="openQuizModal()" class="inline-flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-amber-400 via-amber-500 to-amber-700 hover:from-amber-300 hover:to-amber-600 text-slate-950 font-heading font-extrabold text-xs sm:text-sm rounded-xl shadow-rune-gold transition-transform hover:scale-105 active:scale-95 border border-amber-300">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.8" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path></svg>
+                            เริ่มประลองคำถามควิซ (สุ่มใหม่)
+                        </button>
+                    </div>
+                </div>
+
+                <div class="w-full md:w-auto bg-fantasy-card rounded-2xl p-4 border border-amber-500/30 flex flex-col justify-between items-center gap-3 min-w-[220px] shadow-lg">
+                    <div class="flex items-center justify-between w-full">
+                        <span class="text-xs font-heading font-bold text-slate-200">ความก้าวหน้าการศึกษา</span>
+                        <span id="progressPercent" class="text-base font-heading font-black text-amber-400">0%</span>
+                    </div>
+                    <div class="w-full bg-slate-950 rounded-full h-3 overflow-hidden p-0.5 border border-slate-700">
+                        <div id="progressBar" class="bg-gradient-to-r from-amber-500 to-amber-300 h-full rounded-full transition-all duration-300 w-0"></div>
+                    </div>
+                    <div class="flex items-center justify-between w-full text-xs text-slate-300 font-medium">
+                        <span>ศึกษาแล้ว <strong id="readCountText" class="text-amber-300 font-bold">0</strong> / 36 ตอน</span>
+                        <span class="text-amber-400 font-heading font-bold">คัมภีร์ธรรมะ</span>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <!-- Grid Container -->
-        <div id="chapterGrid" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-4 md:gap-5">
-            <!-- Cards will be injected here -->
+        <!-- Filter Categories Chips -->
+        <div class="mb-5 flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar">
+            <button onclick="filterCategory('all')" id="tag-all" class="category-chip active px-4 py-2 rounded-2xl text-xs sm:text-sm font-heading font-bold whitespace-nowrap bg-amber-400 text-slate-950 border border-amber-300 shadow-md">
+                ✨ ทั้งหมด (๓๖)
+            </button>
+            <button onclick="filterCategory('จิตและปัญญา')" id="tag-จิตและปัญญา" class="category-chip px-4 py-2 rounded-2xl text-xs sm:text-sm font-heading font-bold whitespace-nowrap bg-fantasy-surface text-slate-200 border border-fantasy-border hover:border-amber-400/60">
+                🧠 จิต & ปัญญา
+            </button>
+            <button onclick="filterCategory('กรรมและภพชาติ')" id="tag-กรรมและภพชาติ" class="category-chip px-4 py-2 rounded-2xl text-xs sm:text-sm font-heading font-bold whitespace-nowrap bg-fantasy-surface text-slate-200 border border-fantasy-border hover:border-amber-400/60">
+                🔄 กรรม & ภพชาติ
+            </button>
+            <button onclick="filterCategory('หลักธรรมปฏิทิน')" id="tag-หลักธรรมปฏิทิน" class="category-chip px-4 py-2 rounded-2xl text-xs sm:text-sm font-heading font-bold whitespace-nowrap bg-fantasy-surface text-slate-200 border border-fantasy-border hover:border-amber-400/60">
+                💎 ศีล สมาธิ ศรัทธา
+            </button>
+            <button onclick="filterCategory('ข้อสงสัยมิลินท์')" id="tag-ข้อสงสัยมิลินท์" class="category-chip px-4 py-2 rounded-2xl text-xs sm:text-sm font-heading font-bold whitespace-nowrap bg-fantasy-surface text-slate-200 border border-fantasy-border hover:border-amber-400/60">
+                ❓ ปริศนาแห่งนิพพาน
+            </button>
+        </div>
+
+        <!-- No Search Results -->
+        <div id="noResults" class="hidden text-center py-16 fade-in">
+            <div class="text-5xl mb-3">🕵️‍♂️</div>
+            <h3 class="text-xl font-heading font-bold text-slate-100">ไม่พบหัวข้อที่คุณกำลังค้นหา</h3>
+            <p class="text-sm text-slate-300 mt-1 font-sans">ลองค้นหาด้วยคำอื่น หรือกดปุ่มล้างการค้นหา</p>
+            <button onclick="clearSearchInput()" class="mt-4 px-6 py-2.5 bg-amber-400 text-slate-950 font-heading font-extrabold text-xs rounded-xl shadow-md hover:bg-amber-300">
+                ล้างการค้นหา
+            </button>
+        </div>
+
+        <div id="chapterGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4">
+            <!-- Cards injected dynamically via JS -->
         </div>
 
     </main>
 
-    <!-- Modal Dialog (Options) / หน้าเลือกอ่าน -->
-    <div id="mediaModal" class="fixed inset-0 z-50 hidden flex-col items-center justify-center px-4">
-        <!-- Backdrop -->
-        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" onclick="closeModal()"></div>
+    <div id="mediaModal" class="fixed inset-0 z-50 hidden flex-col items-center justify-center p-3 sm:p-4">
+        <div class="absolute inset-0 bg-slate-950/85 backdrop-blur-md" onclick="closeModal()"></div>
         
-        <!-- Modal Content -->
-        <div class="relative w-full max-w-sm sm:max-w-md bg-white rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden transform scale-95 opacity-0 transition-all duration-300" id="modalContent">
-            
-            <!-- Header -->
-            <div class="px-5 py-4 sm:px-6 sm:py-5 border-b-2 border-slate-100 flex justify-between items-start bg-slate-50">
-                <div>
-                    <span id="modalChapterNum" class="inline-block bg-tween-accent text-white text-[10px] sm:text-xs font-bold font-heading px-2 py-0.5 rounded-md mb-1.5 shadow-sm">ตอนที่ XX</span>
-                    <h3 id="modalTitle" class="text-slate-900 font-heading font-bold text-base sm:text-xl leading-tight">ชื่อตอน</h3>
-                </div>
-                <div class="flex items-center gap-2">
-                    <!-- ปุ่มรายการโปรด (หัวใจ) -->
-                    <button id="btn-favorite" onclick="toggleFavorite()" class="text-slate-400 hover:text-red-500 bg-white hover:bg-red-50 border border-slate-200 rounded-full p-1.5 sm:p-2 transition-colors shadow-sm focus:outline-none">
-                        <svg id="icon-favorite" class="w-4 h-4 sm:w-5 sm:h-5 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
-                    </button>
-                    <!-- ปุ่มปิด -->
-                    <button onclick="closeModal()" class="text-slate-400 hover:text-red-500 bg-white hover:bg-red-50 border border-slate-200 rounded-full p-1.5 sm:p-2 transition-colors shadow-sm focus:outline-none">
-                        <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
-                    </button>
+        <div class="relative w-full max-w-md glass-fantasy-card rounded-3xl shadow-2xl overflow-hidden border border-amber-500/40" id="modalContent">
+            <div class="p-5 bg-gradient-to-br from-amber-950 via-slate-900 to-fantasy-surface text-white border-b border-amber-500/30">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <span id="modalChapterNum" class="inline-block bg-amber-500/20 text-amber-300 text-xs font-bold font-heading px-3 py-0.5 rounded-full mb-1 border border-amber-500/40">
+                            ตอนที่ ๑
+                        </span>
+                        <h3 id="modalTitle" class="text-lg sm:text-xl font-heading font-extrabold text-amber-200 leading-tight">
+                            ชื่อตอน
+                        </h3>
+                        <p id="modalDesc" class="text-xs sm:text-sm text-slate-200 font-sans mt-1.5 leading-relaxed line-clamp-3">
+                            คำอธิบายสั้นๆ ของบทเรียนนี้
+                        </p>
+                    </div>
+                    
+                    <div class="flex items-center gap-2 shrink-0">
+                        <button id="btn-modal-complete" onclick="toggleModalCompleted()" title="บันทึกว่าศึกษาแล้ว" class="p-2 bg-slate-800 hover:bg-emerald-800 text-slate-200 rounded-full border border-slate-600 transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+                        </button>
+                        <button id="btn-favorite" onclick="toggleFavorite()" title="บันทึกในรายการโปรด" class="p-2 bg-slate-800 hover:bg-red-800 text-slate-200 rounded-full border border-slate-600 transition-colors">
+                            <svg id="icon-favorite" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                        </button>
+                        <button onclick="closeModal()" class="p-2 bg-slate-800 text-slate-200 rounded-full border border-slate-600 hover:bg-slate-700">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </button>
+                    </div>
                 </div>
             </div>
             
-            <!-- Options Body -->
-            <div class="p-5 sm:p-6">
-                <p class="text-slate-600 font-heading font-semibold text-xs sm:text-sm mb-4 text-center">เลือกรูปแบบที่อยากดูได้เลย! 👇</p>
-                <div class="grid grid-cols-2 gap-3 sm:gap-4">
-                    <!-- Book -->
-                    <button id="btn-book" class="flex flex-col items-center justify-center p-3 sm:p-4 rounded-xl border-2 transition-all duration-200 group">
-                        <svg class="w-7 h-7 sm:w-8 sm:h-8 mb-2 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-                        <span class="font-heading font-bold text-xs sm:text-sm">อ่านหนังสือ</span>
+            <div class="p-5 bg-fantasy-surface">
+                <p class="text-amber-300 font-heading font-bold text-xs sm:text-sm mb-3 text-center">
+                    เลือกรูปแบบคัมภีร์ที่ต้องการศึกษา 🎯
+                </p>
+                <div class="grid grid-cols-2 gap-3">
+                    <button id="btn-book" class="flex flex-col items-center justify-center p-3 rounded-2xl border group">
+                        <span class="font-heading font-bold text-xs sm:text-sm text-slate-100">หนังสืออ่าน</span>
+                        <span class="text-[11px] text-slate-300 font-medium mt-0.5">บทวิเคราะห์ธรรม</span>
                     </button>
-                    <!-- Cartoon -->
-                    <button id="btn-cartoon" class="flex flex-col items-center justify-center p-3 sm:p-4 rounded-xl border-2 transition-all duration-200 group">
-                        <svg class="w-7 h-7 sm:w-8 sm:h-8 mb-2 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                        <span class="font-heading font-bold text-xs sm:text-sm">หนังสือการ์ตูน</span>
+                    <button id="btn-cartoon" class="flex flex-col items-center justify-center p-3 rounded-2xl border group">
+                        <span class="font-heading font-bold text-xs sm:text-sm text-slate-100">หนังสือการ์ตูน</span>
+                        <span class="text-[11px] text-slate-300 font-medium mt-0.5">ภาพวาดเข้าใจง่าย</span>
                     </button>
-                    <!-- Video -->
-                    <button id="btn-video" class="flex flex-col items-center justify-center p-3 sm:p-4 rounded-xl border-2 transition-all duration-200 group">
-                        <svg class="w-7 h-7 sm:w-8 sm:h-8 mb-2 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        <span class="font-heading font-bold text-xs sm:text-sm">ดูวิดีโอ</span>
+                    <button id="btn-video" class="flex flex-col items-center justify-center p-3 rounded-2xl border group">
+                        <span class="font-heading font-bold text-xs sm:text-sm text-slate-100">อนิเมชัน</span>
+                        <span class="text-[11px] text-slate-300 font-medium mt-0.5">ภาพและเสียง</span>
                     </button>
-                    <!-- Podcast -->
-                    <button id="btn-podcast" class="flex flex-col items-center justify-center p-3 sm:p-4 rounded-xl border-2 transition-all duration-200 group">
-                        <svg class="w-7 h-7 sm:w-8 sm:h-8 mb-2 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
-                        <span class="font-heading font-bold text-xs sm:text-sm">ฟังพอดแคสต์</span>
+                    <button id="btn-podcast" class="flex flex-col items-center justify-center p-3 rounded-2xl border group">
+                        <span class="font-heading font-bold text-xs sm:text-sm text-slate-100">พอดแคสต์</span>
+                        <span class="text-[11px] text-slate-300 font-medium mt-0.5">เสียงอ่านธรรมะ</span>
                     </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Favorites Modal Dialog -->
-    <div id="favoritesModal" class="fixed inset-0 z-50 hidden flex-col items-center justify-center px-4">
-        <!-- Backdrop -->
-        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" onclick="closeFavoritesModal()"></div>
+    <div id="quizModal" class="fixed inset-0 z-50 hidden flex-col items-center justify-center p-3 sm:p-4">
+        <div class="absolute inset-0 bg-slate-950/90 backdrop-blur-md" onclick="closeQuizModal()"></div>
         
-        <!-- Favorites Content -->
-        <div class="relative w-full max-w-sm sm:max-w-md bg-white rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden transform scale-95 opacity-0 transition-all duration-300 flex flex-col max-h-[80vh]" id="favoritesContent">
+        <div class="relative w-full max-w-lg glass-fantasy-card rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh] border border-amber-500/50" id="quizContent">
             
-            <!-- Header -->
-            <div class="px-5 py-4 sm:px-6 sm:py-5 border-b-2 border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
-                <h3 class="text-slate-900 font-heading font-bold text-base sm:text-xl flex items-center gap-2">
-                    <svg class="w-6 h-6 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path></svg>
-                    รายการโปรดของฉัน
-                </h3>
-                <button onclick="closeFavoritesModal()" class="text-slate-400 hover:text-red-500 bg-white hover:bg-red-50 border border-slate-200 rounded-full p-1.5 sm:p-2 transition-colors shadow-sm focus:outline-none">
-                    <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+            <!-- Quiz Top Header -->
+            <div class="p-4 bg-gradient-to-r from-amber-500 via-amber-600 to-amber-800 text-slate-950 flex justify-between items-center shrink-0 border-b border-amber-400/40">
+                <div class="flex items-center gap-2.5">
+                    <span class="text-2xl">🎮</span>
+                    <div>
+                        <h3 class="font-heading font-extrabold text-base sm:text-lg text-slate-950 leading-tight">
+                            มิลินทปัญหา ควิซประลองปัญญา
+                        </h3>
+                        <p class="text-xs font-bold text-slate-900">โหมดจับเวลาสุ่มคำถาม ๑๕ วินาที</p>
+                    </div>
+                </div>
+                <button onclick="closeQuizModal()" class="text-slate-950 p-1.5 rounded-full hover:bg-black/20 transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.8" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
-            
-            <!-- Favorites List Body -->
-            <div id="favoritesList" class="p-3 sm:p-4 overflow-y-auto flex-grow bg-white">
-                <!-- รายการโปรดจะถูกเพิ่มที่นี่ผ่าน JavaScript -->
+
+            <!-- Quiz Timer Bar Container -->
+            <div id="quizTimerContainer" class="hidden bg-slate-950 p-3 border-b border-fantasy-border flex flex-col gap-1.5">
+                <div class="flex justify-between items-center text-xs sm:text-sm font-heading">
+                    <span id="quizTimerLabel" class="text-amber-300 font-bold flex items-center gap-1.5">
+                        ⏱️ เวลาเหลือ: <span id="quizTimerSec" class="text-red-400 text-base font-black">15</span> วินาที
+                    </span>
+                    <span id="quizScoreBadge" class="text-slate-100 font-bold bg-slate-800 px-3 py-0.5 rounded-full border border-slate-700">
+                        คะแนน: 0
+                    </span>
+                </div>
+                <div class="w-full bg-slate-900 rounded-full h-3 overflow-hidden border border-slate-700 p-0.5">
+                    <div id="quizTimerBar" class="timer-bar bg-gradient-to-r from-amber-400 via-orange-500 to-red-600 h-full w-full rounded-full"></div>
+                </div>
+            </div>
+
+            <div id="quizBody" class="p-5 overflow-y-auto flex-grow space-y-4">
+                <!-- Quiz content rendered dynamically via JS -->
             </div>
         </div>
     </div>
 
-    <!-- YouTube Modal Dialog -->
-    <div id="youtubeModal" class="fixed inset-0 z-[60] hidden flex-col items-center justify-center px-4">
-        <!-- Backdrop -->
-        <div class="absolute inset-0 bg-slate-900/90 backdrop-blur-sm transition-opacity" onclick="closeYoutubeModal()"></div>
-        
-        <!-- Modal Content -->
-        <div class="relative w-full max-w-3xl bg-black rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden transform scale-95 opacity-0 transition-all duration-300" id="youtubeContent">
-            <!-- Header -->
+    <div id="favoritesModal" class="fixed inset-0 z-50 hidden flex-col items-center justify-center p-3 sm:p-4">
+        <div class="absolute inset-0 bg-slate-950/85 backdrop-blur-md" onclick="closeFavoritesModal()"></div>
+        <div class="relative w-full max-w-md glass-fantasy-card rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[82vh] border border-amber-500/40">
+            <div class="p-4 border-b border-fantasy-border bg-slate-900 flex justify-between items-center shrink-0">
+                <div class="flex items-center gap-2 bg-slate-950 p-1 rounded-2xl border border-fantasy-border">
+                    <button onclick="switchFavTab('fav')" id="tab-btn-fav" class="px-3.5 py-1.5 rounded-xl font-heading font-bold text-xs bg-amber-400 text-slate-950">
+                        ❤️ รายการโปรด (<span id="favCountBadge">0</span>)
+                    </button>
+                    <button onclick="switchFavTab('read')" id="tab-btn-read" class="px-3.5 py-1.5 rounded-xl font-heading font-bold text-xs text-slate-300">
+                        ✅ อ่านแล้ว (<span id="readCountBadge">0</span>)
+                    </button>
+                </div>
+                <button onclick="closeFavoritesModal()" class="text-slate-300 p-1.5 hover:text-white">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <div id="favoritesList" class="p-4 overflow-y-auto flex-grow space-y-2 bg-fantasy-surface/50"></div>
+        </div>
+    </div>
+
+    <div id="youtubeModal" class="fixed inset-0 z-[60] hidden flex-col items-center justify-center p-3 sm:p-4">
+        <div class="absolute inset-0 bg-black/95 backdrop-blur-md" onclick="closeYoutubeModal()"></div>
+        <div class="relative w-full max-w-3xl bg-slate-950 rounded-3xl overflow-hidden border border-amber-500/40 shadow-2xl">
             <div class="px-4 py-3 border-b border-slate-800 flex justify-between items-center bg-slate-900 shrink-0">
-                <h3 class="text-white font-heading font-bold text-sm sm:text-base flex items-center gap-2">
-                    <svg class="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 24 24"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
-                    ฟังพอดแคสต์
-                </h3>
-                <button onclick="closeYoutubeModal()" class="text-slate-400 hover:text-red-500 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-full p-1.5 transition-colors shadow-sm focus:outline-none">
-                    <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+                <h3 class="text-amber-300 font-heading font-bold text-sm">รับชมอนิเมชัน / พอดแคสต์</h3>
+                <button onclick="closeYoutubeModal()" class="text-slate-300 hover:text-white p-1">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
-            
-            <!-- Video Container (16:9 Aspect Ratio) -->
             <div class="relative w-full pb-[56.25%] bg-black">
                 <iframe id="youtubeIframe" class="absolute top-0 left-0 w-full h-full" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
             </div>
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="bg-white border-t-2 border-slate-100 text-slate-500 py-6 sm:py-8 text-center mt-auto">
-        <div class="max-w-7xl mx-auto px-4">
-            <p class="mb-1 font-heading font-bold text-slate-700">มิลินทปัญหา</p>
-            <p class="text-[10px] sm:text-xs text-slate-400">© 2026 Designed for Teens & Modern Readers</p>
-        </div>
-    </footer>
-
-    <!-- Bottom Navigation (แบบแอพ) -->
-    <nav class="fixed bottom-0 left-0 w-full bg-white border-t border-slate-200 z-40 shadow-[0_-4px_10px_rgba(0,0,0,0.05)] pb-safe">
-        <div class="max-w-md mx-auto flex justify-around items-center h-16 sm:h-16 px-2">
-            <!-- ปุ่มหน้าแรก -->
-            <button onclick="goHome()" class="flex flex-col items-center justify-center w-full h-full text-tween-primary hover:text-blue-600 transition-colors focus:outline-none">
-                <svg class="w-6 h-6 sm:w-7 sm:h-7 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-                <span class="text-[10px] sm:text-xs font-heading font-bold">หน้าแรก</span>
+    <nav class="fixed bottom-0 left-0 w-full glass-dark-nav border-t border-fantasy-border/80 z-40 shadow-app-bar pb-safe">
+        <div class="max-w-md mx-auto flex justify-around items-center h-16 px-3">
+            <button onclick="goHome()" class="flex flex-col items-center justify-center w-full h-full text-amber-400 font-bold transition-colors">
+                <svg class="w-6 h-6 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                <span class="text-[11px] font-heading font-bold">หน้าแรก</span>
             </button>
-            <!-- ปุ่มรายการโปรด -->
-            <button onclick="openFavoritesModal()" class="flex flex-col items-center justify-center w-full h-full text-slate-400 hover:text-red-500 transition-colors focus:outline-none">
-                <svg class="w-6 h-6 sm:w-7 sm:h-7 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
-                <span class="text-[10px] sm:text-xs font-heading font-bold">รายการโปรด</span>
+            <button onclick="openQuizModal()" class="flex flex-col items-center justify-center w-full h-full text-slate-300 hover:text-amber-400 transition-colors">
+                <svg class="w-6 h-6 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <span class="text-[11px] font-heading font-bold">เกมคำถาม</span>
+            </button>
+            <button onclick="openFavoritesModal()" class="flex flex-col items-center justify-center w-full h-full text-slate-300 hover:text-red-400 transition-colors relative">
+                <svg class="w-6 h-6 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                <span class="text-[11px] font-heading font-bold">บันทึกของฉัน</span>
+                <span id="navFavDot" class="hidden absolute top-2 right-6 w-2.5 h-2.5 rounded-full bg-red-500 animate-ping"></span>
             </button>
         </div>
     </nav>
 
-    <!-- JavaScript Data and Logic -->
     <script>
-        // URL หลักสำหรับลิงก์ไปอ่านหนังสือ
         const BASE_URL = "https://sites.google.com/view/milinder";
-
-        // URL รูปภาพหลัก (แก้ไขตรงนี้ที่เดียว รูปจะเปลี่ยนทั้ง 36 ตอน)
         const DEFAULT_IMAGE_URL = 'https://lh3.googleusercontent.com/d/1fB6EeYFA53z9ZRG7NdVrYCnJMi2lhbxA=w800';
 
-        // ข้อมูล 36 ตอน พร้อม URL และรูปภาพ (image)
+        // Complete 36 Chapters Array
         const chapters = [
-            { id: 1, title: "ปัญหาเรื่องรถ (นามรูป)", desc: "เปรียบเทียบตัวเรากับชิ้นส่วนของรถยนต์", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-1`, cartoon: 'https://tontakankeawpang321-glitch.github.io/bookmiline/mi01/index.html', video: '', podcast: 'https://youtu.be/y9cLPnaCOBs' } },
-            { id: 2, title: "การเวียนว่ายตายเกิด", desc: "เกิดใหม่ได้ไงถ้าไม่มีวิญญาณลอยข้ามภพ", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-2`, cartoon: 'https://tontakankeawpang321-glitch.github.io/bookmiline/mi02/index.html', video: '', podcast: 'https://youtu.be/QIGWrKL2uvI' } },
-            { id: 3, title: "เรื่องของเวลา", desc: "อดีต อนาคต ปัจจุบัน สรุปมันมีจริงไหม", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-3`, cartoon: 'https://tontakankeawpang321-glitch.github.io/bookmiline/mi03/index.html', video: '', podcast: 'https://youtu.be/fzkHGZV-3_U' } },
-            { id: 4, title: "ที่ตั้งแห่งวิญญาณ", desc: "วิญญาณเกิดจากอะไร และซ่อนอยู่ที่ไหน", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-4`, cartoon: 'https://tontakankeawpang321-glitch.github.io/bookmiline/mi04/index.html', video: '', podcast: 'https://youtu.be/Ab4s65nqQZk' } },
-            { id: 5, title: "ลักษณะของมนสิการ", desc: "เคล็ดลับการตั้งใจและโฟกัสสิ่งต่างๆ", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-5`, cartoon: 'https://tontakankeawpang321-glitch.github.io/bookmiline/mi05/index.html', video: '', podcast: 'https://youtu.be/s8STOwsOlRg' } },
-            { id: 6, title: "ลักษณะของปัญญา", desc: "ปัญญาคือดาบวิเศษที่เอาไว้ตัดปัญหา", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-6`, cartoon: 'https://tontakankeawpang321-glitch.github.io/bookmiline/mi06/index.html', video: '', podcast: 'https://youtu.be/X-bd5ogTkds' } },
-            { id: 7, title: "ลักษณะของศีล", desc: "จุดเริ่มต้นความดีงาม เหมือนฐานรากตึก", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-7`, cartoon: 'https://tontakankeawpang321-glitch.github.io/bookmiline/mi07/index.html', video: '', podcast: 'https://youtu.be/uWDeb-DuKEc' } },
-            { id: 8, title: "ลักษณะของสมาธิ", desc: "ความนิ่งสงบที่เป็นหัวหน้าของความดีทั้งหมด", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-8`, cartoon: 'https://tontakankeawpang321-glitch.github.io/bookmiline/mi08/index.html', video: '', podcast: 'https://youtu.be/r_dH-4OjKus' } },
-            { id: 9, title: "ลักษณะของศรัทธา", desc: "ความเชื่อมั่นที่ทำให้ใจใสปิ๊ง", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-9`, cartoon: '', video: 'https://tontakankeawpang321-glitch.github.io/bookmiline/mi09/index.html', podcast: 'https://youtu.be/kfrefrd3h7s' } },
-            { id: 10, title: "ลักษณะของวิริยะ", desc: "ความขยันที่เป็นเสาเข็มค้ำจุนจิตใจ", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-10`, cartoon: 'https://tontakankeawpang321-glitch.github.io/bookmiline/mi10/index.html', video: '', podcast: 'https://youtu.be/_6Pu49cHYJM' } },
-            { id: 11, title: "ลักษณะของสติ", desc: "การรู้ตัวเท่าทันอารมณ์เหมือนยามเฝ้าประตู", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-11`, cartoon: 'https://tontakankeawpang321-glitch.github.io/bookmiline/mi11/index.html', video: '', podcast: 'https://youtu.be/6ZeI7dcxvFs' } },
-            { id: 12, title: "การเกิดและการดับ", desc: "ทุกสิ่งมีเกิดก็ต้องมีดับเป็นธรรมดา", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-12`, cartoon: '', video: '', podcast: 'https://youtu.be/0IbtAtXOZGE' } },
-            { id: 13, title: "ผู้เสวยผลกรรม", desc: "ทำดีได้ดี ทำชั่วได้ชั่ว ใครเป็นคนรับผล", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-13`, cartoon: '', video: '', podcast: 'https://youtu.be/v5ENzdYpYvY' } },
-            { id: 14, title: "การระลึกชาติ", desc: "กลไกความจำข้ามภพชาติทำงานยังไง", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-14`, cartoon: '', video: '', podcast: 'https://youtu.be/2z1GwD6qeHA' } },
-            { id: 15, title: "บุญและบาป", desc: "รู้ว่าผิดกับไม่รู้ว่าผิด ทำแบบไหนบาปกว่ากัน", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-15`, cartoon: '', video: '', podcast: 'https://youtu.be/w5VOdtsFctc' } },
-            { id: 16, title: "ความฝันคืออะไร", desc: "เราฝันได้ยังไง ฝันบอกเหตุมีจริงไหม", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-16`, cartoon: '', video: '', podcast: 'https://youtu.be/nh6H7gbEWKw' } },
-            { id: 17, title: "ลักษณะของนิพพาน", desc: "ดินแดนแห่งความสงบที่ไม่มีวันเป็นทุกข์", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-17`, cartoon: '', video: '', podcast: 'https://youtu.be/R5ZIJETzHEQ' } },
-            { id: 18, title: "พุทธานุสสติ", desc: "แค่คิดถึงพระพุทธเจ้าก็มีพลังบวกแล้ว", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-18`, cartoon: '', video: '', podcast: 'https://youtu.be/MLwvj1BUTTM' } },
-            { id: 19, title: "พระพุทธเจ้ามีจริงหรือ", desc: "หลักฐานยืนยันว่าพระพุทธองค์เคยมีชีวิตอยู่จริง", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-19`, cartoon: '', video: '', podcast: 'https://youtu.be/9rTNgCJGg3k' } },
-            { id: 20, title: "พระธาตุและเจดีย์", desc: "ทำไมเราถึงต้องไปไหว้เจดีย์ตามวัดต่างๆ", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-20`, cartoon: '', video: '', podcast: 'https://youtu.be/75yrDJhi8HQ' } },
-            { id: 21, title: "อำนาจแห่งกรรม", desc: "เหตุผลที่แต่ละคนเกิดมามีต้นทุนไม่เท่ากัน", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-21`, cartoon: '', video: '', podcast: 'https://youtu.be/OnYc59NqvxM' } },
-            { id: 22, title: "การอุทิศส่วนกุศล", desc: "การส่งต่อพลังบุญให้คนอื่นทำได้จริงหรือ", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-22`, cartoon: '', video: '', podcast: 'https://youtu.be/-JOP70HJ0GI' } },
-            { id: 23, title: "ทำไมคนเราจึงต่างกัน", desc: "หน้าตา ฐานะ ความฉลาด ถูกกำหนดจากอะไร", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-23`, cartoon: '', video: '', podcast: 'https://youtu.be/u3SPw0QRFC4' } },
-            { id: 24, title: "อายุขัยของมนุษย์", desc: "ทำไมบางคนอายุสั้น บางคนอายุยืนยาว", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-24`, cartoon: '', video: '', podcast: 'https://youtu.be/EUObCbCwj04' } },
-            { id: 25, title: "ภัยแห่งวัฏสงสาร", desc: "วงจรการเกิดแก่เจ็บตายที่หมุนวนไม่จบสิ้น", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-25`, cartoon: '', video: '', podcast: 'https://youtu.be/Ov4Rl9UHoyY' } },
-            { id: 26, title: "แผ่นดินไหว", desc: "แผ่นดินไหวเกิดจากอะไรตามคติความเชื่อ", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-26`, cartoon: '', video: '', podcast: 'https://youtu.be/58e4qLe72wo' } },
-            { id: 27, title: "อานิสงส์แห่งการบวช", desc: "ทำไมการบวชถึงเป็นทางลัดสู่ความสงบ", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-27`, cartoon: '', video: '', podcast: 'https://youtu.be/ZVsQ2YyD0Ok' } },
-            { id: 28, title: "ความบริสุทธิ์แห่งจิต", desc: "จิตที่ไร้กิเลส ใสปิ๊งเหมือนกระจก", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-28`, cartoon: '', video: '', podcast: 'https://youtu.be/v1LDUrg45Bo' } },
-            { id: 29, title: "พระอรหันต์มีความรู้สึกไหม", desc: "เมื่อท่านเจ็บตัว ท่านจะรู้สึกทุกข์ใจไหม", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-29`, cartoon: '', video: '', podcast: 'https://youtu.be/3brAOdeAPAE' } },
-            { id: 30, title: "การบำเพ็ญเพียร", desc: "การทรมานตัวเองใช่ทางดับทุกข์หรือเปล่า", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-30`, cartoon: '', video: '', podcast: 'https://youtu.be/oCUA7Y9_iPg' } },
-            { id: 31, title: "ความหมายของธรรมะ", desc: "ธรรมะคือความจริงของธรรมชาติรอบตัว", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-31`, cartoon: '', video: '', podcast: 'https://youtu.be/MV8_ncfleiY' } },
-            { id: 32, title: "ทางสายกลาง", desc: "บาลานซ์ชีวิตยังไงให้ไม่ตึงไม่หย่อนเกินไป", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-32`, cartoon: '', video: '', podcast: 'https://youtu.be/yMtlJw-LL_U' } },
-            { id: 33, title: "เทวดาและอมนุษย์", desc: "เรื่องราวของมิติคู่ขนาน เทพและวิญญาณ", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-33`, cartoon: '', video: '', podcast: 'https://youtu.be/MV8_ncfleiY' } },
-            { id: 34, title: "การหลุดพ้นจากกิเลส", desc: "สเต็ปการอัปเลเวลจิตใจเพื่อสู้กับกิเลส", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-34`, cartoon: '', video: '', podcast: 'https://youtu.be/C3wnDsnF7OA' } },
-            { id: 35, title: "บทสรุปแห่งปัญญา", desc: "ปัญญาคือขุมทรัพย์ที่ล้ำค่าที่สุดของมนุษย์", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-35`, cartoon: '', video: '', podcast: 'https://youtu.be/5-gCqYRngKs' } },
-            { id: 36, title: "ปัจฉิมกถา", desc: "บทสรุปแห่งคำถาม พระเจ้ามิลินท์เข้าใจแล้ว!", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-36`, cartoon: '', video: '', podcast: 'https://youtu.be/qGXHddzqjJY' } }
+            { id: 1, title: "ปัญหาเรื่องรถ (นามรูป)", desc: "เปรียบเทียบตัวเรากับชิ้นส่วนของรถยนต์ว่าไม่มี 'ตัวตน' ที่แท้จริง", category: "จิตและปัญญา", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-1`, cartoon: 'https://tontakankeawpang321-glitch.github.io/bookmiline/mi01/index.html', video: '', podcast: 'https://youtu.be/y9cLPnaCOBs' } },
+            { id: 2, title: "การเวียนว่ายตายเกิด", desc: "เกิดใหม่ได้อย่างไรหากไม่มีวิญญาณลอยข้ามภพชาติ", category: "กรรมและภพชาติ", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-2`, cartoon: 'https://tontakankeawpang321-glitch.github.io/bookmiline/mi02/index.html', video: '', podcast: 'https://youtu.be/QIGWrKL2uvI' } },
+            { id: 3, title: "เรื่องของเวลา", desc: "อดีต อนาคต ปัจจุบัน สรุปแล้วเวลามีอยู่จริงหรือไม่", category: "ข้อสงสัยมิลินท์", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-3`, cartoon: 'https://tontakankeawpang321-glitch.github.io/bookmiline/mi03/index.html', video: '', podcast: 'https://youtu.be/fzkHGZV-3_U' } },
+            { id: 4, title: "ที่ตั้งแห่งวิญญาณ", desc: "วิญญาณเกิดจากอะไร และซ่อนอยู่ที่ส่วนไหนของร่างกาย", category: "จิตและปัญญา", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-4`, cartoon: 'https://tontakankeawpang321-glitch.github.io/bookmiline/mi04/index.html', video: '', podcast: 'https://youtu.be/Ab4s65nqQZk' } },
+            { id: 5, title: "ลักษณะของมนสิการ", desc: "เคล็ดลับการตั้งใจใส่ใจและโฟกัสสิ่งต่างๆ อย่างถูกต้อง", category: "จิตและปัญญา", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-5`, cartoon: 'https://tontakankeawpang321-glitch.github.io/bookmiline/mi05/index.html', video: '', podcast: 'https://youtu.be/s8STOwsOlRg' } },
+            { id: 6, title: "ลักษณะของปัญญา", desc: "ปัญญาคือดาบวิเศษที่เอาไว้ตัดความสงสัยและปัญหาชีวิต", category: "จิตและปัญญา", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-6`, cartoon: 'https://tontakankeawpang321-glitch.github.io/bookmiline/mi06/index.html', video: '', podcast: 'https://youtu.be/X-bd5ogTkds' } },
+            { id: 7, title: "ลักษณะของศีล", desc: "จุดเริ่มต้นแห่งความดีงาม เปรียบเสมือนฐานรากอันมั่นคง", category: "หลักธรรมปฏิทิน", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-7`, cartoon: 'https://tontakankeawpang321-glitch.github.io/bookmiline/mi07/index.html', video: '', podcast: 'https://youtu.be/uWDeb-DuKEc' } },
+            { id: 8, title: "ลักษณะของสมาธิ", desc: "ความนิ่งสงบที่เป็นหัวหน้าคุมจิตใจและความสงบสุข", category: "หลักธรรมปฏิทิน", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-8`, cartoon: 'https://tontakankeawpang321-glitch.github.io/bookmiline/mi08/index.html', video: '', podcast: 'https://youtu.be/r_dH-4OjKus' } },
+            { id: 9, title: "ลักษณะของศรัทธา", desc: "ความเชื่อมั่นอย่างมีปัญญาที่ทำให้ใจผ่องใสไม่ขุ่นมัว", category: "หลักธรรมปฏิทิน", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-9`, cartoon: '', video: 'https://tontakankeawpang321-glitch.github.io/bookmiline/mi09/index.html', podcast: 'https://youtu.be/kfrefrd3h7s' } },
+            { id: 10, title: "ลักษณะของวิริยะ", desc: "ความเพียรพยายามที่เป็นเสาเข็มค้ำจุนไม่ให้กิเลสครอบงำ", category: "หลักธรรมปฏิทิน", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-10`, cartoon: 'https://tontakankeawpang321-glitch.github.io/bookmiline/mi10/index.html', video: '', podcast: 'https://youtu.be/_6Pu49cHYJM' } },
+            { id: 11, title: "ลักษณะของสติ", desc: "การรู้ตัวเท่าทันอารมณ์เหมือนยามเฝ้าประตูเมือง", category: "หลักธรรมปฏิทิน", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-11`, cartoon: 'https://tontakankeawpang321-glitch.github.io/bookmiline/mi11/index.html', video: '', podcast: 'https://youtu.be/6ZeI7dcxvFs' } },
+            { id: 12, title: "การเกิดและการดับ", desc: "สัจธรรมแห่งชีวิต ทุกสิ่งมีความเกิดและมีความดับเป็นธรรมดา", category: "ข้อสงสัยมิลินท์", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-12`, cartoon: '', video: '', podcast: 'https://youtu.be/0IbtAtXOZGE' } },
+            { id: 13, title: "ผู้เสวยผลกรรม", desc: "ทำดีได้ดี ทำชั่วได้ชั่ว ใครกันแน่คือผู้รับผลแห่งกรรมนั้น", category: "กรรมและภพชาติ", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-13`, cartoon: '', video: '', podcast: 'https://youtu.be/v5ENzdYpYvY' } },
+            { id: 14, title: "การระลึกชาติ", desc: "กลไกความจำข้ามภพชาติทำงานอย่างไรในทางพระพุทธศาสนา", category: "กรรมและภพชาติ", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-14`, cartoon: '', video: '', podcast: 'https://youtu.be/2z1GwD6qeHA' } },
+            { id: 15, title: "บุญและบาป", desc: "รู้ว่าผิดกับไม่รู้ว่าผิด ทำชั่วแบบไหนได้บาปหนักกว่ากัน", category: "กรรมและภพชาติ", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-15`, cartoon: '', video: '', podcast: 'https://youtu.be/w5VOdtsFctc' } },
+            { id: 16, title: "ความฝันคืออะไร", desc: "มนุษย์เราฝันได้อย่างไร และฝันบอกเหตุการณ์จริงได้หรือไม่", category: "จิตและปัญญา", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-16`, cartoon: '', video: '', podcast: 'https://youtu.be/nh6H7gbEWKw' } },
+            { id: 17, title: "ลักษณะของนิพพาน", desc: "ภาวะแห่งความสงบเย็นสูงสุด ที่ไร้ความทุกข์แอบแฝง", category: "ข้อสงสัยมิลินท์", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-17`, cartoon: '', video: '', podcast: 'https://youtu.be/R5ZIJETzHEQ' } },
+            { id: 18, title: "พุทธานุสสติ", desc: "การนึกถึงพระพุทธเจ้าเป็นอารมณ์ นำมาซึ่งพลังใจอันบริสุทธิ์", category: "หลักธรรมปฏิทิน", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-18`, cartoon: '', video: '', podcast: 'https://youtu.be/MLwvj1BUTTM' } },
+            { id: 19, title: "พระพุทธเจ้ามีจริงหรือ", desc: "หลักฐานและคำสอนที่ยืนยันการมีอยู่จริงขององค์สมเด็จพระสัมมาสัมพุทธเจ้า", category: "ข้อสงสัยมิลินท์", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-19`, cartoon: '', video: '', podcast: 'https://youtu.be/9rTNgCJGg3k' } },
+            { id: 20, title: "พระธาตุและเจดีย์", desc: "เหตุใดเราจึงเคารพบูชาพระธาตุและสร้างสถูปเจดีย์ไว้สักการะ", category: "ข้อสงสัยมิลินท์", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-20`, cartoon: '', video: '', podcast: 'https://youtu.be/75yrDJhi8HQ' } },
+            { id: 21, title: "อำนาจแห่งกรรม", desc: "เหตุผลที่มนุษย์เกิดมามีความแตกต่างกันทั้งฐานะ รูปร่าง และอายุ", category: "กรรมและภพชาติ", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-21`, cartoon: '', video: '', podcast: 'https://youtu.be/OnYc59NqvxM' } },
+            { id: 22, title: "การอุทิศส่วนกุศล", desc: "การอุทิศบุญกุศลให้ผู้ล่วงลับส่งถึงจริงหรือไม่อย่างไร", category: "กรรมและภพชาติ", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-22`, cartoon: '', video: '', podcast: 'https://youtu.be/-JOP70HJ0GI' } },
+            { id: 23, title: "ทำไมคนเราจึงต่างกัน", desc: "ความฉลาด สติปัญญา และโชคชะตา ถูกลิขิตจากสิ่งใด", category: "กรรมและภพชาติ", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-23`, cartoon: '', video: '', podcast: 'https://youtu.be/u3SPw0QRFC4' } },
+            { id: 24, title: "อายุขัยของมนุษย์", desc: "ทำไมบางคนอายุสั้นด้วยอุบัติเหตุ แต่บางคนยืนยาวราบรื่น", category: "กรรมและภพชาติ", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-24`, cartoon: '', video: '', podcast: 'https://youtu.be/EUObCbCwj04' } },
+            { id: 25, title: "ภัยแห่งวัฏสงสาร", desc: "การวนเวียนในสังสารวัฏเปรียบเหมือนการเดินทางอันยาวนาน", category: "กรรมและภพชาติ", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-25`, cartoon: '', video: '', podcast: 'https://youtu.be/Ov4Rl9UHoyY' } },
+            { id: 26, title: "แผ่นดินไหว", desc: "สาเหตุแห่งปรากฏการณ์ธรรมชาติและการสั่นสะเทือนตามคติธรรม", category: "ข้อสงสัยมิลินท์", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-26`, cartoon: '', video: '', podcast: 'https://youtu.be/58e4qLe72wo' } },
+            { id: 27, title: "อานิสงส์แห่งการบวช", desc: "คุณค่าของการเว้นจากกามารมณ์และออกบวชเพื่อสัจธรรม", category: "หลักธรรมปฏิทิน", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-27`, cartoon: '', video: '', podcast: 'https://youtu.be/ZVsQ2YyD0Ok' } },
+            { id: 28, title: "ความบริสุทธิ์แห่งจิต", desc: "จิตที่ขัดเกลากิเลสแล้ว ย่อมใสสว่างกระจ่างแจ้งเหมือนกระจกเงา", category: "จิตและปัญญา", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-28`, cartoon: '', video: '', podcast: 'https://youtu.be/v1LDUrg45Bo' } },
+            { id: 29, title: "พระอรหันต์มีความรู้สึกไหม", desc: "เมื่อร่างกายบาดเจ็บ พระอรหันต์ยังคงเสวยความเจ็บปวดทางใจหรือไม่", category: "ข้อสงสัยมิลินท์", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-29`, cartoon: '', video: '', podcast: 'https://youtu.be/3brAOdeAPAE' } },
+            { id: 30, title: "การบำเพ็ญเพียร", desc: "ทางสายกลางกับการไม่ทรมานตนเองจนเกินขอบเขต", category: "หลักธรรมปฏิทิน", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-30`, cartoon: '', video: '', podcast: 'https://youtu.be/oCUA7Y9_iPg' } },
+            { id: 31, title: "ความหมายของธรรมะ", desc: "ธรรมะคือความจริงของธรรมชาติที่เกื้อกูลผู้ปฏิบัติตาม", category: "ข้อสงสัยมิลินท์", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-31`, cartoon: '', video: '', podcast: 'https://youtu.be/MV8_ncfleiY' } },
+            { id: 32, title: "ทางสายกลาง", desc: "การปรับความตึงหย่อนในชีวิตให้เกิดความสมดุลอันตริยางค์", category: "หลักธรรมปฏิทิน", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-32`, cartoon: '', video: '', podcast: 'https://youtu.be/yMtlJw-LL_U' } },
+            { id: 33, title: "เทวดาและอมนุษย์", desc: "สภาวะของสิ่งมีชีวิตต่างมิติและการเกื้อกูลซึ่งกันและกัน", category: "ข้อสงสัยมิลินท์", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-33`, cartoon: '', video: '', podcast: 'https://youtu.be/MV8_ncfleiY' } },
+            { id: 34, title: "การหลุดพ้นจากกิเลส", desc: "ขั้นตอนการยกระดับจิตใจเพื่อถอนรากถอนโคนอาสวะกิเลส", category: "จิตและปัญญา", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-34`, cartoon: '', video: '', podcast: 'https://youtu.be/C3wnDsnF7OA' } },
+            { id: 35, title: "บทสรุปแห่งปัญญา", desc: "ปัญญาคือขุมทรัพย์ที่ล้ำค่าที่สุดของมนุษย์ในจักรวาล", category: "จิตและปัญญา", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-35`, cartoon: '', video: '', podcast: 'https://youtu.be/5-gCqYRngKs' } },
+            { id: 36, title: "ปัจฉิมกถา", desc: "บทสรุปแห่งคำถาม พระเจ้ามิลินท์ทรงบรรลุและเข้าถึงธรรมอย่างถ่องแท้", category: "ข้อสงสัยมิลินท์", image: DEFAULT_IMAGE_URL, urls: { book: `${BASE_URL}/ตอนท-36`, cartoon: '', video: '', podcast: 'https://youtu.be/qGXHddzqjJY' } }
         ];
 
-        // ตัวแปรสำหรับระบบรายการโปรด
-        let currentChapterId = null;
-        let myFavorites = JSON.parse(localStorage.getItem('milinderFavorites')) || [];
+        const masterQuizQuestions = [
+            {
+                chapterId: 1,
+                question: "ในตอนที่ ๑ (ปัญหาเรื่องรถ) พระนาคเสนเปรียบเทียบชิ้นส่วนของราชรถกับสิ่งใดของมนุษย์?",
+                options: [
+                    "ขันธ์ ๕ และ นามรูป (ไร้ตัวตนที่แท้จริง)",
+                    "ดวงวิญญาณอมตะที่สิงสถิตอยู่",
+                    "กุศลกรรมและอกุศลกรรม",
+                    "ธาตุ ๔ ดิน น้ำ ลม ไฟ"
+                ],
+                correctText: "ขันธ์ ๕ และ นามรูป (ไร้ตัวตนที่แท้จริง)",
+                explanation: "พระนาคเสนอธิบายว่า 'รถ' เกิดจากการประกอบกันของล้อ ตัวรถ และแกน ไม่มีชิ้นใดชิ้นหนึ่งที่เป็นตัวรถ เช่นเดียวกับมนุษย์ที่ประกอบด้วยขันธ์ ๕"
+            },
+            {
+                chapterId: 2,
+                question: "การเวียนว่ายตายเกิดในทางพุทธศาสนา พระนาคเสนอุปมาเทียบกับการสืบต่อสิ่งใด?",
+                options: [
+                    "การจุดดวงประทีปสืบไฟต่อกัน",
+                    "การโยนลูกบอลสลับมือ",
+                    "การลอยคอข้ามแม่น้ำกว้างใหญ่",
+                    "การหลับแล้วตื่นขึ้นในห้องใหม่"
+                ],
+                correctText: "การจุดดวงประทีปสืบไฟต่อกัน",
+                explanation: "ดวงไฟที่จุดสืบต่อกัน ดวงเดิมไม่ได้เคลื่อนย้ายไป แต่ไฟดวงใหม่ติดขึ้นได้เพราะอาศัยไฟดวงเดิม เช่นเดียวกับการเกิดใหม่ที่อาศัยกรรมดวงเก่า"
+            },
+            {
+                chapterId: 6,
+                question: "ในตอนที่ ๖ พระนาคเสนเปรียบเทียบ 'ลักษณะของปัญญา' เสมือนสิ่งใดในการฟันฝ่าความสงสัย?",
+                options: [
+                    "ดาบวิเศษสำหรับตัดกิเลสและความสงสัย",
+                    "โล่ป้องกันอันตราย",
+                    "เรือใหญ่พาข้ามฝั่ง",
+                    "น้ำบริสุทธิ์ชำระล้าง"
+                ],
+                correctText: "ดาบวิเศษสำหรับตัดกิเลสและความสงสัย",
+                explanation: "ปัญญาทำหน้าที่ตัดปมแห่งความสงสัย และถอนพิษแห่งกิเลสให้หมดสิ้น เปรียบเสมือนดาบอันคมกริบ"
+            },
+            {
+                chapterId: 7,
+                question: "ในตอนที่ ๗ เรื่อง 'ลักษณะของศีล' พระนาคเสนเปรียบเทียบศีลเหมือนกับสิ่งใด?",
+                options: [
+                    "แผ่นดินที่เป็นที่รองรับและสร้างสิ่งต่างๆ",
+                    "ต้นไม้ใหญ่ให้ร่มเงา",
+                    "ดวงอาทิตย์ส่องสว่าง",
+                    "เกราะทองคำประดับกาย"
+                ],
+                correctText: "แผ่นดินที่เป็นที่รองรับและสร้างสิ่งต่างๆ",
+                explanation: "ศีลคือฐานรากที่มั่นคง หากไม่มีศีลเป็นที่รองรับ กุศลธรรมอื่นๆ เช่น สมาธิและปัญญาก็ไม่สามารถเจริญขึ้นได้"
+            },
+            {
+                chapterId: 9,
+                question: "ในตอนที่ ๙ 'ลักษณะของศรัทธา' มีอานุภาพทำสิ่งใดให้แก่จิตใจ?",
+                options: [
+                    "ทำจิตใจให้ผ่องใสและแล่นไปในกุศลธรรม",
+                    "ทำจิตใจให้แข็งแกร่งดุจหินผา",
+                    "ทำจิตใจให้เงียบสงบไร้ความรู้สึก",
+                    "ทำให้มีความรอบรู้ในทุกสรรพสิ่ง"
+                ],
+                correctText: "ทำจิตใจให้ผ่องใสและแล่นไปในกุศลธรรม",
+                explanation: "ศรัทธาทำให้จิตขุ่นมัวกลับผ่องใส เปรียบเสมือนแก้วมณีของพระเจ้าจักรพรรดิที่ทำให้น้ำขุ่นกลายเป็นน้ำใสสะอาด"
+            },
+            {
+                chapterId: 11,
+                question: "ในตอนที่ ๑๑ 'สติ' ถูกเปรียบเทียบกับหน้าที่ใดเพื่อดูแลรักษาจิตใจ?",
+                options: [
+                    "ยามเฝ้าประตูเมือง คอยตรวจคัดกรองสิ่งเข้าออก",
+                    "แม่ทัพใหญ่บัญชาการรบ",
+                    "นายคลังพัสดุ คอยตรวจนับสมบัติ",
+                    "หมอหลวงรักษาโรคภัย"
+                ],
+                correctText: "ยามเฝ้าประตูเมือง คอยตรวจคัดกรองสิ่งเข้าออก",
+                explanation: "สติทำหน้าที่ระลึกรู้และเตือนจิต ไม่ต่างจากนายประตูเมืองที่คอยตรวจคัดกรองสิ่งดีและไม่ดีที่จะเข้ามา"
+            },
+            {
+                chapterId: 15,
+                question: "ผู้ที่ทำผิดโดย 'ไม่รู้ว่าผิด' กับ 'รู้ว่าผิด' ใครได้รับบาปหนักกว่ากันตามเปรียบเทียบ?",
+                options: [
+                    "ผู้ที่ไม่รู้ว่าผิด ได้รับบาปหนักกว่า",
+                    "ผู้ที่รู้ว่าผิด ได้รับบาปหนักกว่า",
+                    "ได้รับบาปเท่ากันทั้งสองฝ่าย",
+                    "ไม่มีใครได้รับบาปเลย"
+                ],
+                correctText: "ผู้ที่ไม่รู้ว่าผิด ได้รับบาปหนักกว่า",
+                explanation: "เปรียบเหมือนคนจับก้อนเหล็กร้อน คนที่ไม่รู้จะจับด้วยความเต็มแรงและไม่ระวัง จึงไหม้และเจ็บปวดมากกว่าคนที่รู้"
+            },
+            {
+                chapterId: 21,
+                question: "เหตุใดมนุษย์ที่เกิดมาจึงมีความแตกต่างกันทั้งอายุ ฐานะ และความงดงาม?",
+                options: [
+                    "เพราะอำนาจแห่งกรรมที่ทำไว้แตกต่างกัน",
+                    "เพราะโชคชะตาบังเอิญ",
+                    "เพราะการลิขิตของพรหม",
+                    "เพราะอาหารการกินในอดีต"
+                ],
+                correctText: "เพราะอำนาจแห่งกรรมที่ทำไว้แตกต่างกัน",
+                explanation: "พระพุทธองค์ตรัสว่า กรรมย่อมจำแนกสัตว์ให้เลวและประณีตต่างกัน ทำกรรมเช่นไรย่อมได้รับผลเช่นนั้น"
+            },
+            {
+                chapterId: 29,
+                question: "เมื่อร่างกายบาดเจ็บ พระอรหันต์เสวยความรู้สึกอย่างไร?",
+                options: [
+                    "เสวยความเจ็บปวดทางกาย แต่ไม่มีความเจ็บปวดทางใจ",
+                    "เสวยทั้งความเจ็บปวดทางกายและทางใจ",
+                    "ไม่รู้สึกเจ็บปวดใดๆ เลยทั้งกายและใจ",
+                    "มีความเสื่อมถอยแห่งสติ"
+                ],
+                correctText: "เสวยความเจ็บปวดทางกาย แต่ไม่มีความเจ็บปวดทางใจ",
+                explanation: "พระอรหันต์ยังมีประสาทรับความรู้สึกทางกายตามธรรมชาติ แต่จิตของท่านละกิเลสแล้ว จึงไม่เกิดความทุกข์ใจซ้ำสอง"
+            },
+            {
+                chapterId: 32,
+                question: "ในตอนที่ ๓๒ เรื่อง 'ทางสายกลาง' เปรียบเทียบกับการตั้งสิ่งใด?",
+                options: [
+                    "การตึงหย่อนของสายพิณ",
+                    "การขึ้นคันธนู",
+                    "การจุดประทีปไฟ",
+                    "การหมุนล้อเกวียน"
+                ],
+                correctText: "การตึงหย่อนของสายพิณ",
+                explanation: "ทางสายกลางเปรียบเหมือนการตั้งสายพิณ หากตึงไปสายก็ขาด หากหย่อนไปเสียงก็ไม่เพราะ ต้องตั้งให้พอดี"
+            },
+            {
+                chapterId: 36,
+                question: "ในปัจฉิมกถา (ตอนที่ ๓๖) ผลลัพธ์สุดท้ายของการปุจฉาวิสัชนาคือสิ่งใด?",
+                options: [
+                    "พระเจ้ามิลินท์บรรลุธรรมและเลื่อมใสในพระพุทธศาสนา",
+                    "พระนาคเสนเป็นฝ่ายยอมแพ้",
+                    "ทั้งสองฝ่ายแยกย้ายโดยหาข้อยอดไม่ได้",
+                    "พระเจ้ามิลินท์ทรงสร้างกองทัพปัญญา"
+                ],
+                correctText: "พระเจ้ามิลินท์บรรลุธรรมและเลื่อมใสในพระพุทธศาสนา",
+                explanation: "พระเจ้ามิลินท์ทรงหมดสิ้นความสงสัย สละราชสมบัติ ถวายตัวเป็นพุทธมามกะ และเข้าถึงธรรมในที่สุด"
+            }
+        ];
 
-        // ฟังก์ชันแปลงตัวเลขเป็นเลขไทย
+        let currentChapterId = null;
+        let activeCategory = 'all';
+        let activeFavTab = 'fav';
+        
+        // Quiz & High Speed Timer Logic States
+        let currentQuizQuestions = [];
+        let currentQuizIndex = 0;
+        let quizScore = 0;
+        let isAnswered = false;
+        let quizTimer = null;
+        const QUESTION_TIME_LIMIT = 15; // 15 Seconds per question
+        let timeRemaining = QUESTION_TIME_LIMIT;
+
+        // Local Storage persistent arrays
+        let myFavorites = JSON.parse(localStorage.getItem('milinderFavorites')) || [];
+        let myReadChapters = JSON.parse(localStorage.getItem('milinderReadChapters')) || [];
+
+        // Helper: Convert English numbers to Thai digits
         const toThaiNum = (num) => {
             const thaiNumbers = ['๐', '๑', '๒', '๓', '๔', '๕', '๖', '๗', '๘', '๙'];
-            return num.toString().split('').map(digit => thaiNumbers[digit]).join('');
+            return num.toString().split('').map(digit => thaiNumbers[digit] || digit).join('');
         };
 
-        const grid = document.getElementById('chapterGrid');
-        const noResults = document.getElementById('noResults');
+        // Helper: Fisher-Yates Array Shuffle Algorithm
+        function shuffleArray(array) {
+            const arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
 
-        // Render chapters function
+        document.addEventListener('DOMContentLoaded', () => {
+            renderChapters(chapters);
+            updateProgressTracker();
+        });
+
         function renderChapters(data) {
+            const grid = document.getElementById('chapterGrid');
+            const noResults = document.getElementById('noResults');
             grid.innerHTML = '';
-            
-            const visibleChapters = data.filter(chapter => chapter.image && chapter.image.trim() !== '');
-            
-            if (visibleChapters.length === 0) {
+
+            if (data.length === 0) {
                 noResults.classList.remove('hidden');
-            } else {
-                noResults.classList.add('hidden');
-                
-                visibleChapters.forEach((chapter) => {
-                    const imgUrl = chapter.image;
-                    const card = document.createElement('div');
-                    card.className = "fade-up cursor-pointer group flex flex-col w-full rounded-[14px] sm:rounded-2xl overflow-hidden bg-white shadow-sm border-2 border-slate-100 hover:border-tween-primary hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 h-full";
-                    
-                    card.innerHTML = `
-                        <div onclick="openModal(${chapter.id})" class="flex flex-col h-full">
-                            <div class="relative w-full aspect-square bg-slate-100 overflow-hidden">
-                                <img src="${imgUrl}" alt="${chapter.title}" 
-                                     class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" loading="lazy">
-                                <div class="absolute top-1.5 left-1.5 sm:top-2 sm:left-2 bg-tween-accent text-white text-[9px] sm:text-xs font-bold font-heading px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-md shadow-sm">
-                                    ตอน ${toThaiNum(chapter.id)}
-                                </div>
+                return;
+            }
+            noResults.classList.add('hidden');
+
+            data.forEach((chapter) => {
+                const isFav = myFavorites.includes(chapter.id);
+                const isRead = myReadChapters.includes(chapter.id);
+
+                const card = document.createElement('div');
+                card.className = "fade-in cursor-pointer group flex flex-col w-full rounded-2xl overflow-hidden glass-fantasy-card border border-fantasy-border hover:border-amber-400 hover:shadow-rune-gold transition-all duration-200 h-full relative";
+
+                card.innerHTML = `
+                    <div onclick="openModal(${chapter.id})" class="flex flex-col h-full">
+                        <div class="relative w-full aspect-square bg-slate-950 overflow-hidden">
+                            <img src="${chapter.image}" alt="${chapter.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 opacity-95" loading="lazy">
+                            <div class="absolute inset-0 bg-gradient-to-t from-fantasy-base via-transparent to-transparent opacity-95"></div>
+                            <div class="absolute top-2 left-2 bg-gradient-to-r from-amber-500 to-amber-700 text-slate-950 text-xs font-black font-heading px-2.5 py-0.5 rounded-full border border-amber-300 shadow-sm">
+                                ตอน ${toThaiNum(chapter.id)}
                             </div>
-                            <div class="p-2 sm:p-3 flex-grow flex flex-col justify-center">
-                                <h3 class="text-[10px] sm:text-sm font-heading font-bold text-slate-800 leading-snug line-clamp-2 group-hover:text-tween-primary transition-colors">
+                            ${isRead ? `
+                                <div class="absolute top-2 right-2 bg-emerald-500 text-slate-950 p-1 rounded-full border border-emerald-300 shadow-md" title="ศึกษาแล้ว">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3.5" d="M5 13l4 4L19 7"></path></svg>
+                                </div>
+                            ` : ''}
+                        </div>
+                        <div class="p-3 flex-grow flex flex-col justify-between">
+                            <div>
+                                <h3 class="text-xs sm:text-sm font-heading font-extrabold text-white leading-snug line-clamp-2 group-hover:text-amber-300 transition-colors">
                                     ${chapter.title}
                                 </h3>
-                                <p class="hidden sm:-webkit-box text-xs text-slate-500 leading-relaxed line-clamp-2 mt-1.5">
+                                <p class="text-xs text-slate-200 font-sans leading-relaxed line-clamp-2 mt-1.5 font-normal">
                                     ${chapter.desc}
                                 </p>
                             </div>
+                            <div class="mt-3 pt-2 border-t border-fantasy-border/80 flex items-center justify-between text-xs font-heading">
+                                <span class="text-amber-400 font-bold">ศึกษา ➔</span>
+                                <button onclick="event.stopPropagation(); quickToggleFav(${chapter.id})" class="p-1 text-slate-300 hover:text-red-400">
+                                    <svg class="w-4 h-4 ${isFav ? 'text-red-500 fill-current' : ''}" fill="${isFav ? 'currentColor' : 'none'}" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                                    </svg>
+                                </button>
+                            </div>
                         </div>
-                    `;
-                    grid.appendChild(card);
-                });
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Search Input Functionality
+        const searchInput = document.getElementById('searchInput');
+        const clearBtn = document.getElementById('clearSearch');
+
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+            if (query.length > 0) clearBtn.classList.remove('hidden');
+            else clearBtn.classList.add('hidden');
+            filterAndRender();
+        });
+
+        function clearSearchInput() {
+            searchInput.value = '';
+            clearBtn.classList.add('hidden');
+            filterAndRender();
+        }
+
+        function filterCategory(cat) {
+            activeCategory = cat;
+            document.querySelectorAll('.category-chip').forEach(btn => {
+                btn.className = "category-chip px-4 py-2 rounded-2xl text-xs sm:text-sm font-heading font-bold whitespace-nowrap bg-fantasy-surface text-slate-200 border border-fantasy-border hover:border-amber-400/60";
+            });
+
+            const activeBtn = document.getElementById(`tag-${cat}`);
+            if (activeBtn) {
+                activeBtn.className = "category-chip active px-4 py-2 rounded-2xl text-xs sm:text-sm font-heading font-bold whitespace-nowrap bg-amber-400 text-slate-950 border border-amber-300 shadow-md";
+            }
+            filterAndRender();
+        }
+
+        function filterAndRender() {
+            const query = searchInput.value.toLowerCase().trim();
+            const filtered = chapters.filter(ch => {
+                const matchCat = (activeCategory === 'all' || ch.category === activeCategory);
+                const matchQuery = ch.title.toLowerCase().includes(query) ||
+                                   ch.desc.toLowerCase().includes(query) ||
+                                   ch.id.toString().includes(query) ||
+                                   toThaiNum(ch.id).includes(query);
+                return matchCat && matchQuery;
+            });
+            renderChapters(filtered);
+        }
+
+        function openQuizModal() {
+            closeModal();
+            closeFavoritesModal();
+            
+            // Shuffle questions on every new game start (No repeat order!)
+            const preparedQuestions = masterQuizQuestions.map(q => {
+                const shuffledOpts = shuffleArray(q.options);
+                return {
+                    ...q,
+                    shuffledOptions: shuffledOpts,
+                    correctIndex: shuffledOpts.indexOf(q.correctText)
+                };
+            });
+            currentQuizQuestions = shuffleArray(preparedQuestions);
+            
+            currentQuizIndex = 0;
+            quizScore = 0;
+            isAnswered = false;
+
+            document.getElementById('quizTimerContainer').classList.remove('hidden');
+            renderQuizQuestion();
+
+            const modal = document.getElementById('quizModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeQuizModal() {
+            stopQuizTimer();
+            const modal = document.getElementById('quizModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function startQuizTimer() {
+            stopQuizTimer();
+            timeRemaining = QUESTION_TIME_LIMIT;
+            updateTimerDisplay();
+
+            quizTimer = setInterval(() => {
+                timeRemaining -= 0.1;
+                if (timeRemaining <= 0) {
+                    timeRemaining = 0;
+                    updateTimerDisplay();
+                    stopQuizTimer();
+                    triggerGameOver();
+                } else {
+                    updateTimerDisplay();
+                }
+            }, 100);
+        }
+
+        function stopQuizTimer() {
+            if (quizTimer) {
+                clearInterval(quizTimer);
+                quizTimer = null;
             }
         }
 
-        // Initial Render
-        renderChapters(chapters);
+        function updateTimerDisplay() {
+            const secSpan = document.getElementById('quizTimerSec');
+            const timerBar = document.getElementById('quizTimerBar');
+            const timerLabel = document.getElementById('quizTimerLabel');
 
-        // Search Functionality
-        const searchInput = document.getElementById('searchInput');
-        
-        searchInput.addEventListener('input', (e) => {
-            const searchTerm = e.target.value.toLowerCase().trim();
-            
-            const filteredChapters = chapters.filter(chapter => {
-                const chapterNumStr = chapter.id.toString();
-                const thaiChapterNumStr = toThaiNum(chapter.id);
-                
-                return chapter.title.toLowerCase().includes(searchTerm) || 
-                       chapter.desc.toLowerCase().includes(searchTerm) ||
-                       chapterNumStr.includes(searchTerm) ||
-                       thaiChapterNumStr.includes(searchTerm);
-            });
-            
-            renderChapters(filteredChapters);
-        });
+            const roundedSec = Math.ceil(timeRemaining);
+            if (secSpan) secSpan.textContent = roundedSec;
 
-        // --- Logic สำหรับ Modal เลือกสื่อ ---
-        function setupModalButton(btnId, url, activeColors, isYoutube = false) {
-            const btn = document.getElementById(btnId);
-            const icon = btn.querySelector('svg');
-            const text = btn.querySelector('span');
-            
-            const baseBtnClass = "flex flex-col items-center justify-center p-3 sm:p-4 rounded-xl border-2 transition-all duration-200 group ";
-            
-            if (url) {
-                if (isYoutube) {
-                    btn.onclick = () => openYoutubeModal(url);
+            if (timerBar) {
+                const pct = Math.max(0, (timeRemaining / QUESTION_TIME_LIMIT) * 100);
+                timerBar.style.width = `${pct}%`;
+
+                // Suspense warning when <= 5 seconds
+                if (timeRemaining <= 5) {
+                    timerBar.className = "timer-bar bg-gradient-to-r from-red-600 to-crimson h-full w-full rounded-full";
+                    if (timerLabel) timerLabel.classList.add('timer-warning');
                 } else {
-                    btn.onclick = () => window.open(url, '_blank');
+                    timerBar.className = "timer-bar bg-gradient-to-r from-amber-400 via-orange-500 to-red-600 h-full w-full rounded-full";
+                    if (timerLabel) timerLabel.classList.remove('timer-warning');
                 }
-                btn.className = baseBtnClass + activeColors + " cursor-pointer hover:-translate-y-1 hover:shadow-md";
-                icon.className = "w-7 h-7 sm:w-8 sm:h-8 mb-2 transition-transform group-hover:scale-110";
+            }
+        }
+
+        function triggerGameOver() {
+            isAnswered = true;
+            document.getElementById('quizTimerContainer').classList.add('hidden');
+            const quizBody = document.getElementById('quizBody');
+
+            quizBody.innerHTML = `
+                <div class="text-center py-6 space-y-4 fade-in">
+                    <div class="inline-block p-4 bg-red-950 text-red-500 rounded-full text-5xl border border-red-500/50 shadow-rune-crimson animate-bounce">
+                        ⌛
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-heading font-black text-red-400">
+                            เวลาหมดลงแล้ว! (TIME OUT)
+                        </h3>
+                        <p class="text-xs sm:text-sm text-slate-200 font-heading mt-1">
+                            ความไวและสติเป็นเรื่องสำคัญ! คุณต้องตอบให้ทัน ๑๕ วินาที
+                        </p>
+                    </div>
+
+                    <div class="bg-slate-950 p-4 rounded-2xl border border-fantasy-border max-w-sm mx-auto shadow-inner">
+                        <p class="text-xs text-slate-300 font-heading font-bold">คะแนนสะสมก่อนหมดเวลา</p>
+                        <p class="text-3xl font-heading font-black text-amber-400 my-1">${quizScore} / ${currentQuizQuestions.length}</p>
+                    </div>
+
+                    <div class="pt-2 flex flex-col sm:flex-row gap-2.5 justify-center">
+                        <button onclick="openQuizModal()" class="px-6 py-3 bg-gradient-to-r from-amber-400 to-amber-600 text-slate-950 font-heading font-black text-xs sm:text-sm rounded-xl shadow-rune-gold hover:scale-105 transition-transform">
+                            🔄 สุ่มเล่นใหม่อีกครั้ง
+                        </button>
+                        <button onclick="closeQuizModal()" class="px-5 py-3 bg-slate-800 text-slate-200 font-heading font-bold text-xs sm:text-sm rounded-xl border border-slate-600 hover:bg-slate-700">
+                            ✕ ปิดหน้าต่าง
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderQuizQuestion() {
+            const quizBody = document.getElementById('quizBody');
+            document.getElementById('quizScoreBadge').textContent = `คะแนน: ${quizScore}`;
+
+            if (currentQuizIndex >= currentQuizQuestions.length) {
+                stopQuizTimer();
+                document.getElementById('quizTimerContainer').classList.add('hidden');
+                const percentage = Math.round((quizScore / currentQuizQuestions.length) * 100);
+
+                quizBody.innerHTML = `
+                    <div class="text-center py-6 space-y-4 fade-in">
+                        <div class="inline-block p-4 bg-amber-950 rounded-full text-5xl text-amber-400 border border-amber-400 shadow-rune-gold">
+                            🏆
+                        </div>
+                        <h3 class="text-xl sm:text-2xl font-heading font-black text-amber-300">
+                            ตอบคำถามครบทุกข้อแล้ว!
+                        </h3>
+                        <div class="bg-slate-950 p-4 rounded-2xl border border-fantasy-border max-w-sm mx-auto">
+                            <p class="text-xs text-slate-300 font-heading font-bold">คะแนนรวมที่คุณทำได้</p>
+                            <p class="text-4xl font-heading font-black text-amber-400 my-1">${quizScore} / ${currentQuizQuestions.length}</p>
+                            <p class="text-xs font-extrabold text-slate-200">คิดเป็น ${percentage}%</p>
+                        </div>
+                        <div class="pt-2 flex flex-col sm:flex-row gap-2.5 justify-center">
+                            <button onclick="openQuizModal()" class="px-6 py-3 bg-amber-400 text-slate-950 font-heading font-black text-xs sm:text-sm rounded-xl shadow-md hover:bg-amber-300">
+                                🔄 สุ่มเล่นใหม่อีกครั้ง
+                            </button>
+                            <button onclick="closeQuizModal()" class="px-5 py-3 bg-slate-800 text-slate-200 font-heading font-bold text-xs sm:text-sm rounded-xl border border-slate-600">
+                                ✕ ปิดหน้าต่าง
+                            </button>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            const q = currentQuizQuestions[currentQuizIndex];
+            const chapter = chapters.find(c => c.id === q.chapterId);
+
+            quizBody.innerHTML = `
+                <div class="fade-in space-y-3">
+                    <div class="flex items-center justify-between text-xs font-heading">
+                        <span class="text-amber-300 font-bold bg-amber-950 px-2.5 py-1 rounded-md border border-amber-500/40">
+                            ข้อที่ ${toThaiNum(currentQuizIndex + 1)} จาก ${toThaiNum(currentQuizQuestions.length)}
+                        </span>
+                    </div>
+
+                    <div>
+                        <span class="inline-block bg-slate-900 text-amber-300 text-xs font-heading font-bold px-3 py-1 rounded-full border border-amber-500/40 mb-1">
+                            จากตอนที่ ${toThaiNum(q.chapterId)}: ${chapter ? chapter.title : ''}
+                        </span>
+                        <h4 class="text-sm sm:text-base font-heading font-extrabold text-white mt-2 leading-snug">
+                            ${q.question}
+                        </h4>
+                    </div>
+
+                    <div class="space-y-2.5 pt-1">
+                        ${q.shuffledOptions.map((opt, idx) => `
+                            <button onclick="selectQuizAnswer(${idx})" id="quiz-opt-${idx}" 
+                                class="w-full text-left p-3.5 rounded-2xl border transition-all duration-150 font-heading text-xs sm:text-sm flex items-start gap-3 bg-slate-900 border-fantasy-border hover:border-amber-400 text-slate-100 font-semibold shadow-sm">
+                                <span class="w-6 h-6 rounded-full bg-slate-800 text-amber-300 flex items-center justify-center text-xs font-black shrink-0 border border-slate-600">
+                                    ${String.fromCharCode(65 + idx)}
+                                </span>
+                                <span class="flex-grow pt-0.5">${opt}</span>
+                            </button>
+                        `).join('')}
+                    </div>
+
+                    <div id="quizExplanation" class="hidden p-3.5 rounded-2xl text-xs sm:text-sm leading-relaxed font-sans border fade-in"></div>
+
+                    <div class="pt-2 flex justify-end">
+                        <button id="btnNextQuiz" onclick="nextQuizQuestion()" disabled 
+                            class="px-5 py-2.5 bg-slate-800 text-slate-400 font-heading font-bold text-xs sm:text-sm rounded-xl transition-all cursor-not-allowed border border-slate-700">
+                            ข้อถัดไป ➔
+                        </button>
+                    </div>
+                </div>
+            `;
+            isAnswered = false;
+            startQuizTimer();
+        }
+
+        function selectQuizAnswer(optIdx) {
+            if (isAnswered) return;
+            isAnswered = true;
+            stopQuizTimer();
+
+            const q = currentQuizQuestions[currentQuizIndex];
+            const isCorrect = (optIdx === q.correctIndex);
+
+            if (isCorrect) {
+                quizScore++;
+                document.getElementById('quizScoreBadge').textContent = `คะแนน: ${quizScore}`;
+            }
+
+            q.shuffledOptions.forEach((_, idx) => {
+                const btn = document.getElementById(`quiz-opt-${idx}`);
+                btn.classList.remove('hover:border-amber-400');
+                
+                if (idx === q.correctIndex) {
+                    btn.className = "w-full text-left p-3.5 rounded-2xl border-2 font-heading text-xs sm:text-sm flex items-start gap-3 bg-emerald-950 border-emerald-400 text-emerald-200 font-bold shadow-md";
+                } else if (idx === optIdx && !isCorrect) {
+                    btn.className = "w-full text-left p-3.5 rounded-2xl border-2 font-heading text-xs sm:text-sm flex items-start gap-3 bg-red-950 border-red-500 text-red-200 font-bold shadow-md";
+                } else {
+                    btn.classList.add('opacity-50');
+                }
+            });
+
+            const expBox = document.getElementById('quizExplanation');
+            expBox.classList.remove('hidden');
+            if (isCorrect) {
+                expBox.className = "p-3.5 rounded-2xl text-xs sm:text-sm leading-relaxed font-sans bg-emerald-950 text-emerald-200 border border-emerald-500 fade-in font-medium";
+                expBox.innerHTML = `<strong>✅ ถูกต้องที่สุด!</strong> ${q.explanation}`;
+            } else {
+                expBox.className = "p-3.5 rounded-2xl text-xs sm:text-sm leading-relaxed font-sans bg-amber-950 text-amber-200 border border-amber-500 fade-in font-medium";
+                expBox.innerHTML = `<strong>💡 เฉลย:</strong> ${q.explanation}`;
+            }
+
+            const nextBtn = document.getElementById('btnNextQuiz');
+            nextBtn.disabled = false;
+            nextBtn.className = "px-5 py-2.5 bg-amber-400 hover:bg-amber-300 text-slate-950 font-heading font-black text-xs sm:text-sm rounded-xl shadow-rune-gold cursor-pointer";
+        }
+
+        function nextQuizQuestion() {
+            currentQuizIndex++;
+            renderQuizQuestion();
+        }
+
+        function setupModalButton(btnId, url, isYoutube = false) {
+            const btn = document.getElementById(btnId);
+            const baseClass = "flex flex-col items-center justify-center p-3 rounded-2xl border transition-all font-heading ";
+
+            if (url && url.trim() !== '') {
+                btn.onclick = isYoutube ? () => openYoutubeModal(url) : () => window.open(url, '_blank');
+                btn.className = baseClass + "border-amber-500/60 bg-amber-950/60 hover:border-amber-400 text-slate-100 cursor-pointer shadow-md";
             } else {
                 btn.onclick = null;
-                btn.className = baseBtnClass + "border-slate-200 bg-slate-50 cursor-not-allowed opacity-60";
-                icon.className = "w-7 h-7 sm:w-8 sm:h-8 mb-2 text-slate-400";
-                text.className = "font-heading font-bold text-xs sm:text-sm text-slate-400";
+                btn.className = baseClass + "border-fantasy-border bg-slate-950/60 cursor-not-allowed opacity-50 text-slate-400";
             }
         }
 
         function openModal(id) {
             const chapter = chapters.find(ch => ch.id === id);
             if (!chapter) return;
-            
-            currentChapterId = id; // กำหนดตอนที่กำลังเลือก
-            updateFavoriteButtonUI(); // อัปเดตสีปุ่มหัวใจ
-            
+
+            currentChapterId = id;
+            updateFavoriteButtonUI();
+            updateModalCompletedUI();
+
             document.getElementById('modalChapterNum').textContent = `ตอนที่ ${toThaiNum(chapter.id)}`;
             document.getElementById('modalTitle').textContent = chapter.title;
-            
-            // ส่งค่า true ให้ปุ่มพอดแคสต์ (และวิดีโอ) เพื่อให้แสดงผลแบบ YouTube Dialog
-            setupModalButton('btn-book', chapter.urls?.book, 'border-blue-200 bg-blue-50 text-blue-600 hover:border-blue-500 hover:bg-blue-100');
-            setupModalButton('btn-cartoon', chapter.urls?.cartoon, 'border-orange-200 bg-orange-50 text-orange-600 hover:border-orange-500 hover:bg-orange-100');
-            setupModalButton('btn-video', chapter.urls?.video, 'border-red-200 bg-red-50 text-red-600 hover:border-red-500 hover:bg-red-100', true);
-            setupModalButton('btn-podcast', chapter.urls?.podcast, 'border-purple-200 bg-purple-50 text-purple-600 hover:border-purple-500 hover:bg-purple-100', true);
-            
+            document.getElementById('modalDesc').textContent = chapter.desc;
+
+            setupModalButton('btn-book', chapter.urls?.book);
+            setupModalButton('btn-cartoon', chapter.urls?.cartoon);
+            setupModalButton('btn-video', chapter.urls?.video, true);
+            setupModalButton('btn-podcast', chapter.urls?.podcast, true);
+
             const modal = document.getElementById('mediaModal');
-            const content = document.getElementById('modalContent');
-            
             modal.classList.remove('hidden');
             modal.classList.add('flex');
-            
-            setTimeout(() => {
-                content.classList.remove('scale-95', 'opacity-0');
-                content.classList.add('scale-100', 'opacity-100');
-            }, 10);
         }
 
         function closeModal() {
             const modal = document.getElementById('mediaModal');
-            const content = document.getElementById('modalContent');
-            
-            content.classList.remove('scale-100', 'opacity-100');
-            content.classList.add('scale-95', 'opacity-0');
-            
-            setTimeout(() => {
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
-            }, 300);
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
         }
 
-        // --- Logic สำหรับ YouTube Modal ---
         function getYoutubeEmbedUrl(url) {
             let videoId = '';
             if (url.includes('youtu.be/')) {
                 videoId = url.split('youtu.be/')[1].split('?')[0];
             } else if (url.includes('youtube.com/watch')) {
-                try {
-                    videoId = new URL(url).searchParams.get('v');
-                } catch(e) {}
+                try { videoId = new URL(url).searchParams.get('v'); } catch(e){}
             }
             return videoId ? `https://www.youtube.com/embed/${videoId}?autoplay=1` : '';
         }
@@ -436,55 +973,36 @@
         function openYoutubeModal(url) {
             const embedUrl = getYoutubeEmbedUrl(url);
             if (!embedUrl) {
-                // หาก URL ไม่ใช่รูปแบบ YouTube ปกติ ให้เปิดแท็บใหม่เพื่อป้องกันปัญหา
                 window.open(url, '_blank');
                 return;
             }
-            
-            closeModal(); // ปิดหน้าต่างเลือกสื่อเดิมก่อน
-            
-            const iframe = document.getElementById('youtubeIframe');
-            iframe.src = embedUrl;
-            
+            closeModal();
+            document.getElementById('youtubeIframe').src = embedUrl;
             const modal = document.getElementById('youtubeModal');
-            const content = document.getElementById('youtubeContent');
-            
             modal.classList.remove('hidden');
             modal.classList.add('flex');
-            
-            setTimeout(() => {
-                content.classList.remove('scale-95', 'opacity-0');
-                content.classList.add('scale-100', 'opacity-100');
-            }, 10);
         }
 
         function closeYoutubeModal() {
             const modal = document.getElementById('youtubeModal');
-            const content = document.getElementById('youtubeContent');
-            const iframe = document.getElementById('youtubeIframe');
-            
-            content.classList.remove('scale-100', 'opacity-100');
-            content.classList.add('scale-95', 'opacity-0');
-            
-            setTimeout(() => {
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
-                iframe.src = ''; // เคลียร์วิดีโอเมื่อปิด เพื่อให้เสียง YouTube หยุดเล่น
-            }, 300);
+            document.getElementById('youtubeIframe').src = '';
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
         }
 
-        // --- Logic สำหรับรายการโปรด (Favorites) ---
+        function quickToggleFav(id) {
+            const index = myFavorites.indexOf(id);
+            if (index === -1) myFavorites.push(id);
+            else myFavorites.splice(index, 1);
+
+            localStorage.setItem('milinderFavorites', JSON.stringify(myFavorites));
+            filterAndRender();
+            updateFavDot();
+        }
+
         function toggleFavorite() {
             if (!currentChapterId) return;
-            
-            const index = myFavorites.indexOf(currentChapterId);
-            if (index === -1) {
-                myFavorites.push(currentChapterId); // เพิ่มเข้าโปรด
-            } else {
-                myFavorites.splice(index, 1); // เอาออกจากโปรด
-            }
-            
-            localStorage.setItem('milinderFavorites', JSON.stringify(myFavorites));
+            quickToggleFav(currentChapterId);
             updateFavoriteButtonUI();
         }
 
@@ -493,98 +1011,144 @@
             if (myFavorites.includes(currentChapterId)) {
                 icon.setAttribute('fill', 'currentColor');
                 icon.classList.add('text-red-500');
-                icon.classList.remove('text-slate-400');
             } else {
                 icon.setAttribute('fill', 'none');
                 icon.classList.remove('text-red-500');
-                icon.classList.add('text-slate-400');
             }
         }
 
+        function toggleModalCompleted() {
+            if (!currentChapterId) return;
+            const index = myReadChapters.indexOf(currentChapterId);
+            if (index === -1) myReadChapters.push(currentChapterId);
+            else myReadChapters.splice(index, 1);
+
+            localStorage.setItem('milinderReadChapters', JSON.stringify(myReadChapters));
+            updateModalCompletedUI();
+            updateProgressTracker();
+            filterAndRender();
+        }
+
+        function updateModalCompletedUI() {
+            const btn = document.getElementById('btn-modal-complete');
+            if (myReadChapters.includes(currentChapterId)) {
+                btn.classList.add('bg-emerald-600', 'text-white');
+            } else {
+                btn.classList.remove('bg-emerald-600', 'text-white');
+            }
+        }
+
+        function updateProgressTracker() {
+            const count = myReadChapters.length;
+            const truePercent = Math.round((count / 36) * 100);
+
+            document.getElementById('readCountText').textContent = count;
+            document.getElementById('progressPercent').textContent = `${truePercent}%`;
+            document.getElementById('progressBar').style.width = `${truePercent}%`;
+
+            document.getElementById('favCountBadge').textContent = myFavorites.length;
+            document.getElementById('readCountBadge').textContent = count;
+            updateFavDot();
+        }
+
+        function updateFavDot() {
+            const dot = document.getElementById('navFavDot');
+            if (myFavorites.length > 0) dot.classList.remove('hidden');
+            else dot.classList.add('hidden');
+        }
+
         function openFavoritesModal() {
-            closeModal(); // ปิดหน้าต่างเลือกอ่าน (ถ้าเปิดอยู่)
-            renderFavoritesList(); // อัปเดตรายการ
-            
+            closeModal();
+            closeQuizModal();
+            renderFavoritesList();
             const modal = document.getElementById('favoritesModal');
-            const content = document.getElementById('favoritesContent');
-            
             modal.classList.remove('hidden');
             modal.classList.add('flex');
-            
-            setTimeout(() => {
-                content.classList.remove('scale-95', 'opacity-0');
-                content.classList.add('scale-100', 'opacity-100');
-            }, 10);
         }
 
         function closeFavoritesModal() {
             const modal = document.getElementById('favoritesModal');
-            const content = document.getElementById('favoritesContent');
-            
-            content.classList.remove('scale-100', 'opacity-100');
-            content.classList.add('scale-95', 'opacity-0');
-            
-            setTimeout(() => {
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
-            }, 300);
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function switchFavTab(tab) {
+            activeFavTab = tab;
+            const btnFav = document.getElementById('tab-btn-fav');
+            const btnRead = document.getElementById('tab-btn-read');
+
+            if (tab === 'fav') {
+                btnFav.className = "px-3.5 py-1.5 rounded-xl font-heading font-bold text-xs bg-amber-400 text-slate-950";
+                btnRead.className = "px-3.5 py-1.5 rounded-xl font-heading font-bold text-xs text-slate-300";
+            } else {
+                btnRead.className = "px-3.5 py-1.5 rounded-xl font-heading font-bold text-xs bg-amber-400 text-slate-950";
+                btnFav.className = "px-3.5 py-1.5 rounded-xl font-heading font-bold text-xs text-slate-300";
+            }
+            renderFavoritesList();
         }
 
         function renderFavoritesList() {
-            const listContainer = document.getElementById('favoritesList');
-            
-            if (myFavorites.length === 0) {
-                listContainer.innerHTML = `
-                    <div class="text-center py-12">
-                        <svg class="mx-auto h-12 w-12 text-slate-300 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-                        </svg>
-                        <p class="text-slate-500 font-heading text-sm">ยังไม่มีรายการโปรดเลย ลองเพิ่มดูสิ!</p>
+            const list = document.getElementById('favoritesList');
+            const targetIds = activeFavTab === 'fav' ? myFavorites : myReadChapters;
+
+            if (targetIds.length === 0) {
+                list.innerHTML = `
+                    <div class="text-center py-8">
+                        <div class="text-3xl mb-1">🔖</div>
+                        <p class="text-slate-200 font-heading text-xs sm:text-sm font-bold">
+                            ${activeFavTab === 'fav' ? 'ยังไม่มีรายการโปรดที่บันทึกไว้' : 'ยังไม่มีประวัติการอ่านที่บันทึกไว้'}
+                        </p>
                     </div>
                 `;
                 return;
             }
 
-            // ดึงข้อมูลบทที่ตรงกับไอดีใน myFavorites
-            const favChapters = myFavorites.map(id => chapters.find(c => c.id === id)).filter(Boolean);
-            
-            listContainer.innerHTML = favChapters.map(chapter => `
-                <div onclick="openModalFromFavorites(${chapter.id})" class="flex items-center gap-3 p-3 mb-2 border border-slate-100 bg-slate-50 hover:bg-slate-100 cursor-pointer rounded-xl transition-colors">
-                    <img src="${chapter.image}" class="w-14 h-14 rounded-lg object-cover shadow-sm shrink-0">
-                    <div class="flex-grow overflow-hidden">
-                        <span class="text-[10px] sm:text-xs font-bold font-heading text-tween-accent mb-0.5 block">ตอนที่ ${toThaiNum(chapter.id)}</span>
-                        <h4 class="font-heading font-bold text-sm text-slate-800 line-clamp-1">${chapter.title}</h4>
+            const targetChapters = targetIds.map(id => chapters.find(c => c.id === id)).filter(Boolean);
+
+            list.innerHTML = targetChapters.map(ch => `
+                <div onclick="openModalFromFav(${ch.id})" class="flex items-center justify-between p-3 rounded-2xl border border-fantasy-border bg-slate-900 hover:bg-slate-800 cursor-pointer">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-xl bg-amber-950 border border-amber-400/50 text-amber-300 flex items-center justify-center font-heading font-black text-xs shrink-0">
+                            ${toThaiNum(ch.id)}
+                        </div>
+                        <div>
+                            <h4 class="font-heading font-extrabold text-xs sm:text-sm text-white line-clamp-1">
+                                ${ch.title}
+                            </h4>
+                            <p class="text-xs text-slate-300 font-medium">${ch.category}</p>
+                        </div>
                     </div>
-                    <button onclick="event.stopPropagation(); removeFavorite(${chapter.id})" class="p-2 text-slate-300 hover:text-red-500 transition-colors shrink-0">
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path></svg>
+                    <button onclick="event.stopPropagation(); removeFavItem(${ch.id})" class="p-1.5 text-slate-300 hover:text-red-400">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                     </button>
                 </div>
             `).join('');
         }
 
-        function removeFavorite(id) {
-            const index = myFavorites.indexOf(id);
-            if (index > -1) {
-                myFavorites.splice(index, 1);
-                localStorage.setItem('milinderFavorites', JSON.stringify(myFavorites));
-                renderFavoritesList(); // โหลดรายการใหม่
+        function removeFavItem(id) {
+            if (activeFavTab === 'fav') {
+                quickToggleFav(id);
+            } else {
+                const idx = myReadChapters.indexOf(id);
+                if (idx > -1) myReadChapters.splice(idx, 1);
+                localStorage.setItem('milinderReadChapters', JSON.stringify(myReadChapters));
+                updateProgressTracker();
+                filterAndRender();
             }
+            renderFavoritesList();
         }
 
-        function openModalFromFavorites(id) {
-            closeFavoritesModal(); // ปิดหน้าโปรดก่อน
-            setTimeout(() => {
-                openModal(id); // แล้วเปิดหน้าต่างเลือกอ่าน
-            }, 300); 
+        function openModalFromFav(id) {
+            closeFavoritesModal();
+            openModal(id);
         }
 
-        // ฟังก์ชันสำหรับปุ่มหน้าแรก (Bottom Nav)
         function goHome() {
             closeModal();
             closeFavoritesModal();
-            window.scrollTo({top: 0, behavior: 'smooth'});
+            closeQuizModal();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
-
     </script>
 </body>
 </html>
