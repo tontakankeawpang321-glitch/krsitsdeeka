@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
-    <title>หอวิชาการนาฏศิลป์ไทย – Neo Minimal Digital Archive</title>
+    <title>หอวิชาการนาฏศิลป์ไทย – Neo Minimal Digital Archive & Games</title>
 
     <!-- Google Fonts: Prompt & Sarabun -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -90,7 +90,7 @@
 
         /* Glassmorphism Navigation */
         .glass-nav {
-            background: rgba(255, 255, 255, 0.85);
+            background: rgba(255, 255, 255, 0.88);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
         }
@@ -112,10 +112,23 @@
             background-image: radial-gradient(#cbd5e1 0.75px, transparent 0.75px), radial-gradient(#cbd5e1 0.75px, #ffffff 0.75px);
             background-size: 30px 30px;
             background-position: 0 0, 15px 15px;
-            background-opacity: 0.3;
         }
 
-        /* Smooth pulse */
+        /* Card Flip 3D Effect for Games */
+        .perspective-1000 {
+            perspective: 1000px;
+        }
+        .transform-style-3d {
+            transform-style: preserve-3d;
+        }
+        .backface-hidden {
+            backface-visibility: hidden;
+        }
+        .rotate-y-180 {
+            transform: rotateY(180deg);
+        }
+
+        /* Pulse Animations */
         @keyframes subtlePulse {
             0%, 100% { opacity: 1; transform: scale(1); }
             50% { opacity: 0.85; transform: scale(0.98); }
@@ -137,19 +150,23 @@
                         หอวิชาการนาฏศิลป์
                     </h1>
                     <span class="text-[10px] tracking-wider text-brand-accent uppercase font-semibold block font-display">
-                        Digital Knowledge Hub
+                        Digital Knowledge & Games
                     </span>
                 </div>
             </div>
 
             <div class="flex items-center gap-2">
+                <button onclick="switchTab('games')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-50 hover:bg-amber-100 text-brand-accent border border-amber-200 text-xs font-semibold font-display transition-colors">
+                    <span>🎮</span>
+                    <span class="hidden sm:inline">เล่นเกมเรียนรู้</span>
+                </button>
                 <button onclick="switchTab('bookmarks')" class="relative p-2.5 rounded-full text-slate-600 hover:bg-slate-100 transition-colors" title="รายการที่บันทึกไว้">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
                     <span id="bookmark-count" class="absolute top-1 right-1 bg-brand-accent text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center hidden">0</span>
                 </button>
                 <button onclick="switchTab('chat')" class="hidden sm:flex items-center gap-2 bg-indigo-50 hover:bg-indigo-100 text-brand-dark px-3 py-1.5 rounded-full text-xs font-semibold font-display transition-colors">
                     <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                    ถาม AI ผู้ช่วย
+                    ถาม AI
                 </button>
             </div>
         </div>
@@ -159,20 +176,20 @@
     <div id="main-content-container" class="max-w-5xl mx-auto px-4 pt-4">
 
         <!-- VIEW 1: HOME PAGE -->
-        <section id="view-home" class="view-panel space-y-10">
+        <section id="view-home" class="view-panel space-y-8">
             
             <!-- Hero Banner Section -->
             <div class="relative overflow-hidden rounded-3xl bg-gradient-to-b from-white via-slate-50 to-indigo-50/30 p-6 md:p-10 border border-slate-200/80 shadow-sm text-center hero-pattern">
                 <div class="max-w-2xl mx-auto relative z-10">
                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-50 text-brand-accent border border-amber-200 mb-4 font-display">
                         <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
-                        คลังสารสนเทศดิจิทัลทางนาฏศิลป์ไทย
+                        คลังสารสนเทศและเกมดิจิทัลนาฏศิลป์ไทย
                     </span>
                     <h2 class="text-2xl md:text-4xl font-bold font-display text-brand-dark mb-3 tracking-tight leading-snug">
-                        สืบสานมรดกทางวัฒนธรรม <br class="hidden sm:inline"/>ด้วยองค์ความรู้ที่ทันสมัย
+                        สืบสานมรดกทางวัฒนธรรม <br class="hidden sm:inline"/>เรียนสนุกด้วยเกมอัจฉริยะ
                     </h2>
                     <p class="text-xs md:text-sm text-slate-600 leading-relaxed max-w-lg mx-auto font-body">
-                        ศูนย์รวมตำราวิชาการ งานวิจัย ภาษาท่า คลิปวิดีโอการฟ้อนรำ และระบบปัญญาประดิษฐ์สืบค้นความรู้
+                        ศูนย์รวมตำราวิชาการ งานวิจัย ภาษาท่า คลิปการแสดง มินิเกมทบทวนความรู้ และระบบ AI ตอบคำถาม
                     </p>
 
                     <!-- Search Input Box -->
@@ -197,6 +214,21 @@
                 </div>
             </div>
 
+            <!-- Mini Games Quick Banner -->
+            <div class="rounded-3xl bg-gradient-to-r from-amber-500 via-amber-600 to-orange-600 p-6 text-white shadow-lg relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-4">
+                <div class="relative z-10 text-center md:text-left space-y-1">
+                    <span class="bg-white/20 text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-md font-display">
+                        มินิเกมเรียนรู้ใหม่! 🎮
+                    </span>
+                    <h3 class="text-lg md:text-xl font-bold font-display">เกมจับคู่การ์ดนาฏยศัพท์ & ทายท่ารำ</h3>
+                    <p class="text-xs text-amber-100 font-light">ทดสอบความจำ ฝึกสมอง และเรียนรู้นาฏยศัพท์ไทยอย่างสนุกสนาน</p>
+                </div>
+                <button onclick="switchTab('games')" class="shrink-0 bg-white hover:bg-amber-50 text-amber-900 px-5 py-2.5 rounded-2xl font-bold font-display text-xs shadow-md transition-transform hover:scale-105 active:scale-95 flex items-center gap-2">
+                    <span>เล่นเกมตอนนี้</span>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                </button>
+            </div>
+
             <!-- Quick Stats Bar -->
             <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-center">
                 <div class="p-3 rounded-2xl bg-white border border-slate-200/70 shadow-xs">
@@ -204,8 +236,8 @@
                     <span class="text-[11px] text-slate-500">ตำราวิชาการมาตรฐาน</span>
                 </div>
                 <div class="p-3 rounded-2xl bg-white border border-slate-200/70 shadow-xs">
-                    <span class="block text-xl font-bold font-display text-brand-accent">10+ คลิป</span>
-                    <span class="text-[11px] text-slate-500">การสาธิตการฟ้อนรำ</span>
+                    <span class="block text-xl font-bold font-display text-brand-accent">2 มินิเกม</span>
+                    <span class="text-[11px] text-slate-500">เกมเรียนรู้แบบโต้ตอบ</span>
                 </div>
                 <div class="p-3 rounded-2xl bg-white border border-slate-200/70 shadow-xs">
                     <span class="block text-xl font-bold font-display text-indigo-600">500 ข้อ</span>
@@ -285,7 +317,87 @@
 
         </section>
 
-        <!-- VIEW 2: AI CHAT PAGE -->
+        <!-- VIEW 2: GAMES HUB PAGE -->
+        <section id="view-games" class="view-panel hidden space-y-6">
+            <div class="bg-white rounded-3xl border border-slate-200/80 p-6 shadow-sm space-y-6">
+                
+                <!-- Games Header -->
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
+                    <div>
+                        <span class="inline-block px-2.5 py-0.5 rounded-md bg-amber-100 text-amber-800 text-[10px] font-bold font-display uppercase tracking-wider mb-1">
+                            Interactive Learning
+                        </span>
+                        <h2 class="text-xl md:text-2xl font-bold font-display text-slate-900">ศูนย์เกมความรู้นาฏศิลป์ไทย 🎮</h2>
+                        <p class="text-xs text-slate-500">เลือกเกมที่ต้องการเล่นเพื่อทบทวนความรู้ท่ารำและนาฏยศัพท์</p>
+                    </div>
+
+                    <!-- Game Selection Tabs -->
+                    <div class="flex bg-slate-100 p-1 rounded-2xl border border-slate-200 text-xs font-display self-stretch sm:self-auto">
+                        <button id="game-tab-1" onclick="switchGameMode(1)" class="flex-1 sm:flex-none px-4 py-2 rounded-xl font-bold bg-white text-brand-dark shadow-xs transition-all">
+                            🃏 เกมจับคู่การ์ด
+                        </button>
+                        <button id="game-tab-2" onclick="switchGameMode(2)" class="flex-1 sm:flex-none px-4 py-2 rounded-xl font-bold text-slate-500 hover:text-slate-800 transition-all">
+                            ❓ เกมทายท่ารำ
+                        </button>
+                    </div>
+                </div>
+
+                <!-- GAME CONTAINER 1: MEMORY MATCHING GAME -->
+                <div id="game-mode-1" class="space-y-4">
+                    <!-- Game Score Bar -->
+                    <div class="flex flex-wrap items-center justify-between gap-3 bg-indigo-50/60 border border-indigo-100 p-3.5 rounded-2xl text-xs font-display">
+                        <div class="flex items-center gap-4">
+                            <div>
+                                <span class="text-slate-500 block text-[10px]">เวลาที่ใช้</span>
+                                <span id="memory-timer" class="font-bold text-slate-800 text-sm">00:00</span>
+                            </div>
+                            <div>
+                                <span class="text-slate-500 block text-[10px]">จำนวนเปิด</span>
+                                <span id="memory-moves" class="font-bold text-brand-dark text-sm">0 ครั้ง</span>
+                            </div>
+                            <div>
+                                <span class="text-slate-500 block text-[10px]">จับคู่ได้</span>
+                                <span id="memory-matched" class="font-bold text-emerald-600 text-sm">0 / 6 Pair</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-2">
+                            <span class="text-amber-600 font-semibold text-[11px] hidden sm:inline" id="memory-best">สถิติดีที่สุด: -</span>
+                            <button onclick="initMemoryGame()" class="px-3.5 py-1.5 rounded-xl bg-brand-dark hover:bg-indigo-900 text-white text-xs font-semibold shadow-xs transition-colors">
+                                🔄 เริ่มเกมใหม่
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Cards Grid Container -->
+                    <div id="memory-grid" class="grid grid-cols-3 sm:grid-cols-4 gap-3 md:gap-4 max-w-2xl mx-auto min-h-[320px]">
+                        <!-- Dynamic Game Cards populated by JS -->
+                    </div>
+                </div>
+
+                <!-- GAME CONTAINER 2: GESTURE TRIVIA QUIZ -->
+                <div id="game-mode-2" class="hidden space-y-4">
+                    <div class="flex items-center justify-between bg-amber-50 border border-amber-200/80 p-3.5 rounded-2xl text-xs font-display">
+                        <div>
+                            <span class="text-amber-800 font-bold block">คำถามทดสอบไหวพริบ</span>
+                            <span class="text-slate-500 text-[11px]">เลือกคำตอบที่ถูกต้องที่สุดภายในเวลา</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span id="trivia-streak" class="px-2.5 py-1 rounded-full bg-amber-200 text-amber-900 font-bold text-[11px]">Streak: 🔥 0</span>
+                            <span id="trivia-score" class="font-bold text-brand-dark text-sm">Score: 0</span>
+                        </div>
+                    </div>
+
+                    <!-- Quiz Question Card -->
+                    <div id="trivia-card" class="bg-slate-50 border border-slate-200 rounded-2xl p-5 text-center space-y-4 max-w-xl mx-auto">
+                        <!-- Dynamic Question populated by JS -->
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- VIEW 3: AI CHAT PAGE -->
         <section id="view-chat" class="view-panel hidden space-y-4">
             <div class="bg-white rounded-3xl border border-slate-200/80 shadow-sm overflow-hidden flex flex-col h-[calc(100vh-10rem)] max-h-[680px]">
                 
@@ -346,7 +458,7 @@
             </div>
         </section>
 
-        <!-- VIEW 3: VIDEOS GALLERY PAGE -->
+        <!-- VIEW 4: VIDEOS GALLERY PAGE -->
         <section id="view-videos" class="view-panel hidden space-y-6">
             <div>
                 <h3 class="text-lg font-bold font-display text-slate-900">คลังวิดีโอและการสาธิตนาฏศิลป์</h3>
@@ -358,7 +470,7 @@
             </div>
         </section>
 
-        <!-- VIEW 4: BOOKMARKS PAGE -->
+        <!-- VIEW 5: BOOKMARKS PAGE -->
         <section id="view-bookmarks" class="view-panel hidden space-y-6">
             <div class="flex items-center justify-between">
                 <div>
@@ -388,14 +500,14 @@
     <nav class="fixed bottom-0 left-0 right-0 z-50 glass-nav border-t border-slate-200/80 px-2 py-1.5 shadow-[0_-4px_20px_rgba(0,0,0,0.06)]">
         <div class="max-w-md mx-auto flex items-center justify-around">
             
-            <button onclick="switchTab('home')" id="nav-btn-home" class="nav-item flex flex-col items-center justify-center py-1 px-3 rounded-xl transition-all text-slate-400 nav-item-active">
+            <button onclick="switchTab('home')" id="nav-btn-home" class="nav-item flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-all text-slate-400 nav-item-active">
                 <svg class="nav-icon w-5 h-5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
                 <span class="text-[10px] font-display mt-0.5">หน้าหลัก</span>
             </button>
 
-            <button onclick="switchTab('videos')" id="nav-btn-videos" class="nav-item flex flex-col items-center justify-center py-1 px-3 rounded-xl transition-all text-slate-400">
-                <svg class="nav-icon w-5 h-5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                <span class="text-[10px] font-display mt-0.5">คลิปวิดีโอ</span>
+            <button onclick="switchTab('games')" id="nav-btn-games" class="nav-item flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-all text-slate-400">
+                <svg class="nav-icon w-5 h-5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <span class="text-[10px] font-display mt-0.5">เกมเรียนรู้</span>
             </button>
 
             <!-- Floating Center Button for Quick AI Chat -->
@@ -406,15 +518,15 @@
                 <span class="text-[10px] font-display font-semibold text-brand-dark mt-0.5">คุย AI</span>
             </button>
 
-            <button onclick="switchTab('bookmarks')" id="nav-btn-bookmarks" class="nav-item flex flex-col items-center justify-center py-1 px-3 rounded-xl transition-all text-slate-400 relative">
-                <svg class="nav-icon w-5 h-5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
-                <span class="text-[10px] font-display mt-0.5">บันทึกไว้</span>
-                <span id="nav-bookmark-badge" class="absolute top-1 right-3 bg-brand-accent text-white text-[9px] font-bold w-3.5 h-3.5 rounded-full flex items-center justify-center hidden">0</span>
+            <button onclick="switchTab('videos')" id="nav-btn-videos" class="nav-item flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-all text-slate-400">
+                <svg class="nav-icon w-5 h-5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                <span class="text-[10px] font-display mt-0.5">คลิปวิดีโอ</span>
             </button>
 
-            <button onclick="openMiniQuiz()" class="nav-item flex flex-col items-center justify-center py-1 px-3 rounded-xl transition-all text-slate-400">
-                <svg class="nav-icon w-5 h-5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                <span class="text-[10px] font-display mt-0.5">ทำแบบทดสอบ</span>
+            <button onclick="switchTab('bookmarks')" id="nav-btn-bookmarks" class="nav-item flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-all text-slate-400 relative">
+                <svg class="nav-icon w-5 h-5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
+                <span class="text-[10px] font-display mt-0.5">บันทึกไว้</span>
+                <span id="nav-bookmark-badge" class="absolute top-1 right-2 bg-brand-accent text-white text-[9px] font-bold w-3.5 h-3.5 rounded-full flex items-center justify-center hidden">0</span>
             </button>
 
         </div>
@@ -433,7 +545,7 @@
         </div>
     </div>
 
-    <!-- MODAL 2: QUICK LESSON READER & PODCAST MODAL -->
+    <!-- MODAL 2: QUICK LESSON READER MODAL -->
     <div id="reader-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300 flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-xl rounded-3xl p-6 shadow-2xl space-y-4 max-h-[85vh] flex flex-col relative overflow-hidden">
             <button onclick="closeReaderModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-1 rounded-full hover:bg-slate-100 transition-colors">
@@ -446,7 +558,6 @@
 
             <h3 id="reader-title" class="text-xl font-bold font-display text-slate-900"></h3>
             
-            <!-- Mini Podcast Player Simulation -->
             <div id="podcast-player-box" class="p-3.5 rounded-2xl bg-rose-50 border border-rose-100 flex items-center justify-between gap-3">
                 <div class="flex items-center gap-3">
                     <button id="podcast-play-btn" onclick="togglePodcastAudio()" class="w-10 h-10 rounded-full bg-rose-600 text-white flex items-center justify-center shadow-md hover:bg-rose-700 transition-colors shrink-0">
@@ -462,7 +573,6 @@
                 </button>
             </div>
 
-            <!-- Summary Content Scroll Box -->
             <div class="flex-1 overflow-y-auto no-scrollbar space-y-3 pt-2 text-xs md:text-sm text-slate-700 leading-relaxed font-body border-t border-slate-100">
                 <p id="reader-body"></p>
                 <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-600 text-xs">
@@ -562,6 +672,8 @@
             renderFullVideoGrid();
             renderBookmarks();
             updateBookmarkBadge();
+            initMemoryGame();
+            initTriviaGame();
             document.getElementById('btnQuiz').href = QUIZ_URL;
 
             // Search input listener
@@ -686,6 +798,280 @@
             input.value = '';
             document.getElementById('clear-search').classList.add('hidden');
             renderLessons('');
+        }
+
+        /* ==========================================
+           GAME 1: MEMORY CARD MATCHING GAME
+           ========================================== */
+        const DANCE_CARDS_DATA = [
+            { id: 1, name: "ตั้งวงบน", icon: "🙆‍♂️", desc: "ปลายนิ้วชี้ระดับแง่ศีรษะ" },
+            { id: 2, name: "จีบหงาย", icon: "👌", desc: "หงายมือขึ้น นิ้วหัวแม่มือแตะข้อแรกนิ้วชี้" },
+            { id: 3, name: "ประเท้า", icon: "🦶", desc: "ย่อเข่า ยีเท้าขึ้นลงกระแทกเบาๆ" },
+            { id: 4, name: "ตั้งวงล่าง", icon: "🙇‍♂️", desc: "มืออยู่ระดับชายพกหรือหัวเข็มขัด" },
+            { id: 5, name: "จีบคว่ำ", icon: "🤙", desc: "คว่ำมือลง นิ้วจีบเหยียดตึง" },
+            { id: 6, name: "ก้าวหน้า", icon: "👣", desc: "ก้าวเท้าไปข้างหน้า ปลายเท้าส้นเท้าขนาน" }
+        ];
+
+        let memoryDeck = [];
+        let flippedCards = [];
+        let matchedPairs = 0;
+        let memoryMoves = 0;
+        let memorySeconds = 0;
+        let memoryTimerInterval = null;
+        let isMemoryGameActive = false;
+
+        function switchGameMode(mode) {
+            document.getElementById('game-mode-1').classList.toggle('hidden', mode !== 1);
+            document.getElementById('game-mode-2').classList.toggle('hidden', mode !== 2);
+
+            const tab1 = document.getElementById('game-tab-1');
+            const tab2 = document.getElementById('game-tab-2');
+
+            if (mode === 1) {
+                tab1.className = "flex-1 sm:flex-none px-4 py-2 rounded-xl font-bold bg-white text-brand-dark shadow-xs transition-all";
+                tab2.className = "flex-1 sm:flex-none px-4 py-2 rounded-xl font-bold text-slate-500 hover:text-slate-800 transition-all";
+            } else {
+                tab2.className = "flex-1 sm:flex-none px-4 py-2 rounded-xl font-bold bg-white text-brand-dark shadow-xs transition-all";
+                tab1.className = "flex-1 sm:flex-none px-4 py-2 rounded-xl font-bold text-slate-500 hover:text-slate-800 transition-all";
+            }
+        }
+
+        function initMemoryGame() {
+            clearInterval(memoryTimerInterval);
+            memorySeconds = 0;
+            memoryMoves = 0;
+            matchedPairs = 0;
+            flippedCards = [];
+            isMemoryGameActive = true;
+
+            document.getElementById('memory-timer').textContent = "00:00";
+            document.getElementById('memory-moves').textContent = "0 ครั้ง";
+            document.getElementById('memory-matched').textContent = `0 / ${DANCE_CARDS_DATA.length} Pair`;
+
+            // Load best score from local storage
+            const bestMoves = localStorage.getItem('thai_dance_memory_best');
+            document.getElementById('memory-best').textContent = bestMoves ? `สถิติดีที่สุด: ${bestMoves} ครั้ง` : 'สถิติดีที่สุด: -';
+
+            // Duplicate items to form pairs (one with icon+name, one with description)
+            let cards = [];
+            DANCE_CARDS_DATA.forEach(item => {
+                cards.push({ cardId: item.id, type: 'name', title: item.name, subtitle: item.icon });
+                cards.push({ cardId: item.id, type: 'desc', title: item.name, subtitle: item.desc });
+            });
+
+            // Shuffle cards
+            memoryDeck = cards.sort(() => Math.random() - 0.5);
+
+            renderMemoryGrid();
+            startMemoryTimer();
+        }
+
+        function startMemoryTimer() {
+            memoryTimerInterval = setInterval(() => {
+                memorySeconds++;
+                const mins = Math.floor(memorySeconds / 60).toString().padStart(2, '0');
+                const secs = (memorySeconds % 60).toString().padStart(2, '0');
+                document.getElementById('memory-timer').textContent = `${mins}:${secs}`;
+            }, 1000);
+        }
+
+        function renderMemoryGrid() {
+            const grid = document.getElementById('memory-grid');
+            grid.innerHTML = memoryDeck.map((card, idx) => `
+                <div class="aspect-square perspective-1000 cursor-pointer" onclick="flipMemoryCard(${idx})">
+                    <div id="mem-card-${idx}" class="w-full h-full transform-style-3d transition-transform duration-500 rounded-2xl relative shadow-xs">
+                        <!-- Card Front (Hidden State) -->
+                        <div class="absolute inset-0 bg-gradient-to-br from-brand-dark to-brand-primary rounded-2xl flex flex-col items-center justify-center p-2 text-white border-2 border-indigo-900/30 backface-hidden">
+                            <span class="text-xl md:text-2xl opacity-80">𩤽</span>
+                            <span class="text-[9px] font-display text-amber-300 font-semibold mt-1">นาฏศิลป์</span>
+                        </div>
+                        <!-- Card Back (Revealed State) -->
+                        <div class="absolute inset-0 bg-white border-2 border-amber-400/80 rounded-2xl flex flex-col items-center justify-center p-2 text-center rotate-y-180 backface-hidden shadow-md">
+                            <span class="text-xl md:text-2xl">${card.type === 'name' ? card.subtitle : '💡'}</span>
+                            <h5 class="font-bold font-display text-xs text-brand-dark mt-1 line-clamp-1">${card.title}</h5>
+                            <p class="text-[10px] text-slate-500 font-body leading-tight line-clamp-2 mt-0.5">${card.type === 'desc' ? card.subtitle : 'ภาษาท่ามาตรฐาน'}</p>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function flipMemoryCard(idx) {
+            if (!isMemoryGameActive || flippedCards.length >= 2) return;
+            const cardEl = document.getElementById(`mem-card-${idx}`);
+            if (cardEl.classList.contains('rotate-y-180') || flippedCards.includes(idx)) return;
+
+            playBeepSound(440, 0.08); // Sound feedback
+            cardEl.classList.add('rotate-y-180');
+            flippedCards.push(idx);
+
+            if (flippedCards.length === 2) {
+                memoryMoves++;
+                document.getElementById('memory-moves').textContent = `${memoryMoves} ครั้ง`;
+                checkMemoryMatch();
+            }
+        }
+
+        function checkMemoryMatch() {
+            const [idx1, idx2] = flippedCards;
+            const card1 = memoryDeck[idx1];
+            const card2 = memoryDeck[idx2];
+
+            if (card1.cardId === card2.cardId) {
+                // Match Found!
+                matchedPairs++;
+                document.getElementById('memory-matched').textContent = `${matchedPairs} / ${DANCE_CARDS_DATA.length} Pair`;
+                playSuccessSound();
+                flippedCards = [];
+
+                if (matchedPairs === DANCE_CARDS_DATA.length) {
+                    clearInterval(memoryTimerInterval);
+                    isMemoryGameActive = false;
+                    
+                    // Save best score
+                    const prevBest = localStorage.getItem('thai_dance_memory_best');
+                    if (!prevBest || memoryMoves < parseInt(prevBest)) {
+                        localStorage.setItem('thai_dance_memory_best', memoryMoves);
+                    }
+
+                    setTimeout(() => {
+                        playWinChime();
+                        showToast(`🎉 ยินดีด้วย! คุณชนะด้วยการเปิด ${memoryMoves} ครั้ง ในเวลา ${document.getElementById('memory-timer').textContent}`);
+                    }, 500);
+                }
+            } else {
+                // No match -> flip back
+                setTimeout(() => {
+                    document.getElementById(`mem-card-${idx1}`).classList.remove('rotate-y-180');
+                    document.getElementById(`mem-card-${idx2}`).classList.remove('rotate-y-180');
+                    flippedCards = [];
+                }, 900);
+            }
+        }
+
+        /* ==========================================
+           GAME 2: GESTURE TRIVIA QUIZ
+           ========================================== */
+        const TRIVIA_QUESTIONS = [
+            { q: "ท่า 'ตั้งวงบน' ของตัวนาง (ผู้หญิง) ปลายมือจะอยู่ระดับใด?", options: ["ระดับแง่ศีรษะ", "ระดับหางตาหรือหู", "ระดับอก", "ระดับเอว"], ans: 1, exp: "ตัวนางจะตั้งวงต่ำกว่าตัวพระ ปลายมือจะอยู่ระดับหางตาหรือหู" },
+            { q: "การ 'จีบหงาย' หงายมือขึ้น นิ้วใดบ้างที่เหยียดตึงออกไป?", options: ["นิ้วชี้ นิ้วกลาง นิ้วนาง", "นิ้วกลาง นิ้วนาง นิ้วก้อย", "นิ้วชี้ และ นิ้วหัวแม่มือ", "ทุกนิ้วเหยียดตึงทั้งหมด"], ans: 1, exp: "จีบหงายใช้นิ้วหัวแม่มือจรดข้อแรกของนิ้วชี้ นิ้วกลาง นาง ก้อย เหยียดตึง" },
+            { q: "ตัวละครโขนฝ่ายใดที่มีเอกลักษณ์ต้องสวม 'หัวโขน' ยักษ์และลิง?", options: ["ผู้แสดงฝ่ายมนุษย์และเทวดา", "ผู้แสดงตัวยักษ์และตัวลิง", "ผู้แสดงตัวนางทุกตัว", "ผู้พากย์และผู้เจรจา"], ans: 1, exp: "ยักษ์และลิงจะสวมหัวโขนปิดหน้าทั้งหมดเพื่อแสดงเอกลักษณ์ของอมนุษย์" },
+            { q: "การประดับ 'ศิราภรณ์' หมายถึงเครื่องแต่งกายส่วนใด?", options: ["เครื่องประดับศีรษะ ชฎา มงกุฎ", "เครื่องแต่งกายท่อนล่าง", "กำไลข้อมือและข้อเท้า", "ผ้าสบงและเจียระบาด"], ans: 0, exp: "ศิราภรณ์ มาจาก ศิระ (ศีรษะ) หมายถึง เครื่องประดับศีรษะ เช่น ชฎา มงกุฎ รัดเกล้า" }
+        ];
+
+        let triviaIndex = 0;
+        let triviaScore = 0;
+        let triviaStreak = 0;
+
+        function initTriviaGame() {
+            triviaIndex = 0;
+            triviaScore = 0;
+            triviaStreak = 0;
+            updateTriviaHeader();
+            renderTriviaQuestion();
+        }
+
+        function updateTriviaHeader() {
+            document.getElementById('trivia-score').textContent = `Score: ${triviaScore}`;
+            document.getElementById('trivia-streak').textContent = `Streak: 🔥 ${triviaStreak}`;
+        }
+
+        function renderTriviaQuestion() {
+            const card = document.getElementById('trivia-card');
+            if (triviaIndex >= TRIVIA_QUESTIONS.length) {
+                card.innerHTML = `
+                    <div class="py-6 space-y-3">
+                        <span class="text-4xl">🏆</span>
+                        <h3 class="text-lg font-bold font-display text-brand-dark">จบการทดสอบความรู้!</h3>
+                        <p class="text-xs text-slate-600 font-body">คุณทำคะแนนได้รวม <strong class="text-amber-600 text-sm">${triviaScore} คะแนน</strong></p>
+                        <button onclick="initTriviaGame()" class="mt-2 px-5 py-2 rounded-xl bg-brand-dark text-white font-display text-xs font-semibold hover:bg-indigo-900 transition-colors">
+                            🔄 เล่นใหม่อีกครั้ง
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            const current = TRIVIA_QUESTIONS[triviaIndex];
+            card.innerHTML = `
+                <div class="text-left space-y-3">
+                    <span class="text-[10px] font-bold text-indigo-700 bg-indigo-100 px-2.5 py-1 rounded-md font-display">
+                        ข้อที่ ${triviaIndex + 1} / ${TRIVIA_QUESTIONS.length}
+                    </span>
+                    <h4 class="font-bold font-display text-sm md:text-base text-slate-800 leading-snug">${current.q}</h4>
+                    <div class="grid grid-cols-1 gap-2 pt-2">
+                        ${current.options.map((opt, i) => `
+                            <button onclick="answerTrivia(${i})" class="w-full text-left p-3 rounded-xl border border-slate-200 bg-white hover:border-brand-accent hover:bg-amber-50/50 text-xs font-display text-slate-700 transition-all flex items-center justify-between">
+                                <span>${i + 1}. ${opt}</span>
+                                <span class="w-5 h-5 rounded-full border border-slate-300 flex items-center justify-center text-[10px] text-slate-400">➔</span>
+                            </button>
+                        `).join('')}
+                    </div>
+                    <div id="trivia-explanation" class="hidden p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-900 font-body"></div>
+                </div>
+            `;
+        }
+
+        function answerTrivia(selectedIndex) {
+            const current = TRIVIA_QUESTIONS[triviaIndex];
+            const expBox = document.getElementById('trivia-explanation');
+
+            if (selectedIndex === current.ans) {
+                triviaScore += 10 + (triviaStreak * 2);
+                triviaStreak++;
+                playSuccessSound();
+                showToast("ถูกต้องครับ! +10 คะแนน");
+            } else {
+                triviaStreak = 0;
+                playBeepSound(220, 0.2);
+                showToast("ยังไม่ถูกต้อง ลองศึกษาเพิ่มเติมได้ครับ");
+            }
+
+            updateTriviaHeader();
+            expBox.innerHTML = `💡 <strong>คำอธิบาย:</strong> ${current.exp}`;
+            expBox.classList.remove('hidden');
+
+            setTimeout(() => {
+                triviaIndex++;
+                renderTriviaQuestion();
+            }, 1800);
+        }
+
+        /* Web Audio API Sound Effects Synthesizer */
+        let audioCtx = null;
+        function getAudioContext() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            return audioCtx;
+        }
+
+        function playBeepSound(freq, duration) {
+            try {
+                const ctx = getAudioContext();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(freq, ctx.currentTime);
+                gain.gain.setValueAtTime(0.1, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + duration);
+            } catch(e) {}
+        }
+
+        function playSuccessSound() {
+            playBeepSound(523.25, 0.1); // C5
+            setTimeout(() => playBeepSound(659.25, 0.15), 80); // E5
+        }
+
+        function playWinChime() {
+            playBeepSound(523.25, 0.1);
+            setTimeout(() => playBeepSound(659.25, 0.1), 100);
+            setTimeout(() => playBeepSound(783.99, 0.1), 200);
+            setTimeout(() => playBeepSound(1046.50, 0.25), 300);
         }
 
         function openVideo(id, title = '') {
