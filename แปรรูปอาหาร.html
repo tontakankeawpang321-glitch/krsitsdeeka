@@ -123,7 +123,7 @@
       </div>
     </div>
 
-    <!-- Quick Utility Buttons -->
+    <!-- Quick Utility Buttons (Header: Calendar, Shelf-Life, Calculator) -->
     <div class="flex items-center gap-1.5">
       <button onclick="openModal('calendar-modal')" class="w-9 h-9 rounded-xl bg-orange-50 hover:bg-orange-100 text-orange-600 border border-orange-200/60 flex items-center justify-center transition active:scale-95 shadow-2xs" title="ปฏิทินวัตถุดิบ">
         <i class="fa-regular fa-calendar-days text-sm"></i>
@@ -159,7 +159,7 @@
     </div>
   </section>
 
-  <!-- ================= TAB 2: COMMUNITY & GOOGLE SHEETS DISCUSSIONS ================= -->
+  <!-- ================= TAB 2: COMMUNITY DISCUSSIONS ================= -->
   <section id="tab-community" class="tab-content space-y-4">
     <!-- Community Banner -->
     <div class="bg-gradient-to-r from-teal-700 to-emerald-600 rounded-2xl p-5 text-white shadow-md flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
@@ -178,7 +178,7 @@
     <div class="bg-white rounded-2xl p-3 shadow-2xs border border-slate-200/80 flex flex-wrap items-center justify-between gap-2 text-xs">
       <div class="flex items-center gap-2 text-slate-600">
         <i class="fa-solid fa-database text-emerald-500 text-sm"></i>
-        <span>เชื่อมต่อข้อมูล <strong></strong></span>
+        <span>ดึงและบันทึกข้อมูลสดผ่าน <strong>Google Sheets / Apps Script</strong></span>
       </div>
       <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
         <button onclick="openModal('post-question-modal')" class="flex-1 sm:flex-initial text-xs text-teal-800 bg-amber-300 hover:bg-amber-400 border border-amber-400 px-3 py-1.5 rounded-xl font-bold transition flex items-center justify-center gap-1.5 shadow-2xs">
@@ -324,7 +324,7 @@
       <div class="flex items-start gap-2.5">
         <div class="w-7 h-7 rounded-full bg-orange-100 flex items-center justify-center text-sm border shrink-0">🤖</div>
         <div class="bg-white p-3 rounded-2xl rounded-tl-none border border-slate-200 text-slate-700 shadow-2xs max-w-[85%] leading-relaxed">
-          สวัสดีครับ! 🥗 ยินดีต้อนรับสู่ Food Tech Hub Pro สอบถามวิธีแปรรูป แก้ปัญหาอาหารเสีย หรือการยืดอายุอาหารได้เลยครับ!
+          สวัสดีครับ! 🥗 ผมคือ "น้องแปรรูป AI" ยินดีให้คำปรึกษาเรื่องการถนอมอาหาร แปรรูปอาหาร สูตรทำกินทำขาย หรือวิธีแก้ปัญหาอาหารเสียครับ <br><br><span class="text-[10px] text-orange-600 font-semibold">*ถามสูตรอาหารหรือวิธีถนอมอาหารมาได้เลยครับ!</span>
         </div>
       </div>
     </div>
@@ -614,14 +614,19 @@
 <div id="toast-container" class="fixed top-5 left-1/2 -translate-x-1/2 z-50 pointer-events-none w-full max-w-xs px-2"></div>
 
 <script>
-/* ================= GLOBAL STATE & GOOGLE APPS SCRIPT CONFIG ================= */
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzp1x3ZGQebNx-_Ul7OqLdskDJ2Q6oD7JFdJCN2ScWSPmenOGe0y1mOqrhLG0MuhFPN/exec'; 
+/* ================= GLOBAL STATE & BACKEND CONFIG ================= */
+const BACKEND_URL = 'https://parob.tontakankeawpang321.workers.dev/';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzp1x3ZGQebNx-_Ul7OqLdskDJ2Q6oD7JFdJCN2ScWSPmenOGe0y1mOqrhLG0MuhFPN/exec';
+
+let chatHistory = [
+  { role: "user", parts: [{ text: "System Instruction: คุณคือ 'น้องแปรรูป AI' ผู้ช่วยด้านการถนอมและแปรรูปอาหารระดับผู้เชี่ยวชาญ ร่าเริง สุภาพ ตอบกระชับ เน้นสูตรทำกินทำขาย ให้ความรู้เชิงวิทยาศาสตร์อาหารอย่างถูกต้อง **สำคัญมาก: หากผู้ใช้ถามคำถามที่ไม่เกี่ยวกับการถนอมอาหาร แปรรูปอาหาร เครื่องปรุง อาหารหมักดอง หรือวิทยาศาสตร์อาหาร ให้คุณปฏิเสธอย่างสุภาพและแจ้งว่าคุณตอบได้เฉพาะเรื่องแปรรูปอาหารเท่านั้น**" }] },
+  { role: "model", parts: [{ text: "รับทราบครับ! ผม 'น้องแปรรูป AI' จะตอบเฉพาะคำถามที่เกี่ยวกับการถนอมอาหารและแปรรูปอาหารเท่านั้นครับ" }] }
+];
 
 let batchLogs = JSON.parse(localStorage.getItem('foodtech_logs')) || [];
 let selectedCategory = 'ทั้งหมด';
 let autoTimerInterval = null;
 
-// Mock community posts fallback if Apps Script URL is empty or unavailable
 let mockCommunityPosts = [
   {
     id: 1,
@@ -754,7 +759,6 @@ async function fetchCommunityPosts() {
   if (!container) return;
 
   try {
-    // ใส่ timestamp กันแคชเบราว์เซอร์
     const res = await fetch(`${APPS_SCRIPT_URL}?t=${Date.now()}`);
     const data = await res.json();
     
@@ -770,51 +774,6 @@ async function fetchCommunityPosts() {
   } finally {
     if (icon) icon.classList.remove('fa-spin');
   }
-}
-
-function renderCommunityPosts(posts) {
-  const container = document.getElementById('community-posts-list');
-  if (!container) return;
-
-  if (!posts || posts.length === 0) {
-    container.innerHTML = `<div class="text-center py-8 text-slate-400 text-xs"><i class="fa-solid fa-comments text-2xl mb-1 opacity-50"></i><br>ยังไม่มีโพสต์ในชุมชน เป็นคนแรกที่ตั้งคำถามเลย!</div>`;
-    return;
-  }
-
-  container.innerHTML = posts.map(post => `
-    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs space-y-2 text-xs">
-      <div class="flex justify-between items-start">
-        <div class="flex items-center gap-2">
-          <div class="w-8 h-8 rounded-full bg-teal-100 text-teal-700 flex items-center justify-center font-bold text-xs">
-            ${post.author ? post.author.charAt(0) : '👤'}
-          </div>
-          <div>
-            <h4 class="font-bold text-slate-800 leading-tight">${post.author || 'สมาชิกชุมชน'}</h4>
-            <span class="text-[10px] text-slate-400">${post.date || 'เมื่อสักครู่'}</span>
-          </div>
-        </div>
-        <div class="flex items-center gap-1.5">
-          <span class="bg-teal-50 text-teal-800 text-[10px] font-bold px-2 py-0.5 rounded-md border border-teal-200">
-            ${post.category || 'พูดคุยทั่วไป'}
-          </span>
-          <button onclick="deleteCommunityPost(${post.id || 0})" class="w-6.5 h-6.5 rounded-lg bg-red-50 text-red-500 hover:bg-red-100 hover:text-red-600 border border-red-200 flex items-center justify-center transition active:scale-90" title="ลบคำถามนี้">
-            <i class="fa-regular fa-trash-can text-[11px]"></i>
-          </button>
-        </div>
-      </div>
-
-      <p class="text-slate-700 leading-relaxed pt-1">${post.content}</p>
-
-      <div class="pt-2 border-t flex justify-between items-center text-[11px] text-slate-500">
-        <button onclick="likePost(${post.id || 0})" class="hover:text-teal-600 transition flex items-center gap-1 font-semibold">
-          <i class="fa-regular fa-thumbs-up text-xs"></i> เป็นประโยชน์ (${post.likes || 0})
-        </button>
-        <button onclick="openModal('post-question-modal')" class="hover:text-teal-600 transition flex items-center gap-1 font-semibold">
-          <i class="fa-regular fa-comment text-xs"></i> ร่วมตอบคำถาม
-        </button>
-      </div>
-    </div>
-  `).join('');
 }
 
 // 2. โพสต์คำถามใหม่ลง Google Sheets
@@ -889,6 +848,109 @@ function deleteCommunityPost(id) {
   }).catch(err => console.error("Delete error:", err));
 }
 
+function renderCommunityPosts(posts) {
+  const container = document.getElementById('community-posts-list');
+  if (!container) return;
+
+  if (!posts || posts.length === 0) {
+    container.innerHTML = `<div class="text-center py-8 text-slate-400 text-xs"><i class="fa-solid fa-comments text-2xl mb-1 opacity-50"></i><br>ยังไม่มีโพสต์ในชุมชน เป็นคนแรกที่ตั้งคำถามเลย!</div>`;
+    return;
+  }
+
+  container.innerHTML = posts.map(post => `
+    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs space-y-2 text-xs">
+      <div class="flex justify-between items-start">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-full bg-teal-100 text-teal-700 flex items-center justify-center font-bold text-xs">
+            ${post.author ? post.author.charAt(0) : '👤'}
+          </div>
+          <div>
+            <h4 class="font-bold text-slate-800 leading-tight">${post.author || 'สมาชิกชุมชน'}</h4>
+            <span class="text-[10px] text-slate-400">${post.date || 'เมื่อสักครู่'}</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span class="bg-teal-50 text-teal-800 text-[10px] font-bold px-2 py-0.5 rounded-md border border-teal-200">
+            ${post.category || 'พูดคุยทั่วไป'}
+          </span>
+          <button onclick="deleteCommunityPost(${post.id || 0})" class="w-6.5 h-6.5 rounded-lg bg-red-50 text-red-500 hover:bg-red-100 hover:text-red-600 border border-red-200 flex items-center justify-center transition active:scale-90" title="ลบคำถามนี้">
+            <i class="fa-regular fa-trash-can text-[11px]"></i>
+          </button>
+        </div>
+      </div>
+
+      <p class="text-slate-700 leading-relaxed pt-1">${post.content}</p>
+
+      <div class="pt-2 border-t flex justify-between items-center text-[11px] text-slate-500">
+        <button onclick="likePost(${post.id || 0})" class="hover:text-teal-600 transition flex items-center gap-1 font-semibold">
+          <i class="fa-regular fa-thumbs-up text-xs"></i> เป็นประโยชน์ (${post.likes || 0})
+        </button>
+        <button onclick="openModal('post-question-modal')" class="hover:text-teal-600 transition flex items-center gap-1 font-semibold">
+          <i class="fa-regular fa-comment text-xs"></i> ร่วมตอบคำถาม
+        </button>
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ================= AI CHATBOT HANDLER ================= */
+async function sendChatMessage() {
+  const input = document.getElementById('user-input');
+  const text = input.value.trim();
+  if (!text) return;
+
+  const history = document.getElementById('chat-history');
+  
+  const userDiv = document.createElement('div');
+  userDiv.className = 'flex items-start justify-end gap-2 text-xs';
+  userDiv.innerHTML = `
+    <div class="bg-orange-500 text-white p-3 rounded-2xl rounded-tr-none shadow-2xs max-w-[85%] leading-relaxed">${text.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</div>
+  `;
+  history.appendChild(userDiv);
+  input.value = '';
+
+  chatHistory.push({ role: "user", parts: [{ text: text }] });
+
+  document.getElementById('thinking-indicator').classList.remove('hidden');
+  history.scrollTop = history.scrollHeight;
+
+  try {
+    const res = await fetch(BACKEND_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ history: chatHistory })
+    });
+    
+    const data = await res.json();
+    const reply = data.reply || data.text || "ขออภัยครับ ระบบประมวลผลคำตอบขัดข้องชั่วคราว";
+    chatHistory.push({ role: "model", parts: [{ text: reply }] });
+
+    const aiDiv = document.createElement('div');
+    aiDiv.className = 'flex items-start gap-2.5 text-xs';
+    aiDiv.innerHTML = `
+      <div class="w-7 h-7 rounded-full bg-orange-100 flex items-center justify-center text-sm border shrink-0">🤖</div>
+      <div class="bg-white p-3 rounded-2xl rounded-tl-none border border-slate-200 text-slate-700 shadow-2xs max-w-[85%] leading-relaxed">
+        ${reply.replace(/\n/g, '<br>')}
+      </div>
+    `;
+    history.appendChild(aiDiv);
+  } catch (err) {
+    console.error("AI Chatbot Error:", err);
+    const errDiv = document.createElement('div');
+    errDiv.className = 'flex items-start gap-2.5 text-xs';
+    errDiv.innerHTML = `
+      <div class="w-7 h-7 rounded-full bg-red-100 flex items-center justify-center text-sm border shrink-0">🤖</div>
+      <div class="bg-red-50 p-3 rounded-2xl rounded-tl-none border border-red-200 text-red-700 shadow-2xs max-w-[85%] leading-relaxed">
+        ขออภัยครับ ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ AI ได้ในขณะนี้ โปรดลองใหม่อีกครั้งครับ 😓
+      </div>
+    `;
+    history.appendChild(errDiv);
+  } finally {
+    document.getElementById('thinking-indicator').classList.add('hidden');
+    history.scrollTop = history.scrollHeight;
+  }
+}
+
 function switchSubCalc(subId) {
   document.querySelectorAll('.subcalc-content').forEach(el => el.classList.add('hidden'));
   document.querySelectorAll('.subcalc-btn').forEach(btn => {
@@ -924,7 +986,6 @@ function initApp() {
   initCalendar();
   fetchCommunityPosts();
 
-  // Auto Refresh countdown every 30 seconds
   if (autoTimerInterval) clearInterval(autoTimerInterval);
   autoTimerInterval = setInterval(() => {
     renderBatchLogs();
@@ -1331,49 +1392,6 @@ function updateMarketPricesAI() {
   }, 800);
 }
 
-async function sendChatMessage() {
-  const input = document.getElementById('user-input');
-  const text = input.value.trim();
-  if (!text) return;
-
-  const history = document.getElementById('chat-history');
-  
-  const userDiv = document.createElement('div');
-  userDiv.className = 'flex items-start justify-end gap-2 text-xs';
-  userDiv.innerHTML = `
-    <div class="bg-orange-500 text-white p-3 rounded-2xl rounded-tr-none shadow-2xs max-w-[85%] leading-relaxed">${text.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</div>
-  `;
-  history.appendChild(userDiv);
-  input.value = '';
-
-  document.getElementById('thinking-indicator').classList.remove('hidden');
-  history.scrollTop = history.scrollHeight;
-
-  setTimeout(() => {
-    let reply = "ยินดีให้คำแนะนำครับ! สำหรับการแปรรูปอาหาร ความสะอาด ฆ่าเชื้อภาชนะ และการควบคุมความชื้น/กรด-ด่าง ($pH$) เป็นหัวใจสำคัญที่สุดในการป้องกันอาหารเสียครับ";
-    
-    if (text.includes("แหนม")) {
-      reply = "💡 **เทคนิคทำแหนมหมู:** ต้องนวดหมูกับเกลือจนเกิดยางเหนียว บรรจุใส่ถุงให้แน่นและไล่อากาศออกให้หมด หมักไว้ 2-3 วันที่อุณหภูมิห้อง แบคทีเรียแลคติกจะสร้างกรดให้ความเปี้ยวกลมกล่อมครับ";
-    } else if (text.includes("กล้วย") || text.includes("ตาก")) {
-      reply = "🍌 **เทคนิคกล้วยตาก:** ควรใช้กล้วยน้ำว้าพันธุ์มลีอ่องสุกงอม ล้างน้ำเกลือ 1% ตากในตู้อบพาราโบลาโดม 3-4 วัน จะได้กล้วยตากเนื้อนุ่ม สีทองสวย ไม่ดำครับ";
-    } else if (text.includes("ดอง") || text.includes("เกลือ")) {
-      reply = "🧂 **อัตราส่วนน้ำเกลือดอง:**\n- ผักดอง/กิมจิ: น้ำเกลือ 3-5%\n- ผลไม้ดอง: น้ำเกลือ 8-10%\n- ไข่เค็ม/หมักปลา: น้ำเกลือ 12-15%";
-    }
-
-    const aiDiv = document.createElement('div');
-    aiDiv.className = 'flex items-start gap-2.5 text-xs';
-    aiDiv.innerHTML = `
-      <div class="w-7 h-7 rounded-full bg-orange-100 flex items-center justify-center text-sm border shrink-0">🤖</div>
-      <div class="bg-white p-3 rounded-2xl rounded-tl-none border border-slate-200 text-slate-700 shadow-2xs max-w-[85%] leading-relaxed">
-        ${reply.replace(/\n/g, '<br>')}
-      </div>
-    `;
-    history.appendChild(aiDiv);
-    document.getElementById('thinking-indicator').classList.add('hidden');
-    history.scrollTop = history.scrollHeight;
-  }, 700);
-}
-
 function initCalendar() {
   const grid = document.getElementById('seasonal-items-grid');
   if (!grid) return;
@@ -1394,7 +1412,7 @@ function showToast(msg, isSuccess = true) {
   setTimeout(() => toast.remove(), 3000);
 }
 
-/* Global Window Onload Initializer */
+// Global Window Onload Initializer
 window.onload = function() {
   initApp();
 };
