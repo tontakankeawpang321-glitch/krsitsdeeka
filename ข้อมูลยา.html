@@ -1,511 +1,827 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="th" class="h-full">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>รายชื่อยารักษาโรค (AI Pharmacist & Health Check)</title>
+<title>AI Pharmacist & Health Hub (ฐานข้อมูลยา & ระบบตรวจสิทธิสุขภาพประจำปี)</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&family=Kodchasan:wght@600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kodchasan:wght@500;600;700&family=Sarabun:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+<!-- Tailwind CSS -->
 <script src="https://cdn.tailwindcss.com"></script>
-<!-- Markdown Parser for AI response -->
+<!-- FontAwesome Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+<!-- Marked JS for Markdown Parsing -->
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
 <style>
-  :root{
-    --bg:#fffdf7; --paper:#ffffff; --ink:#0f172a; --muted:#475569; --line:#e5e7eb;
-    --brand:#50b5a5; --brand-2:#2f8f80; --chip:#e6fffb; --ring:#c7f5ef;
-    --ok:#16a34a; --danger:#dc2626; --radius:16px;
-    --shadow:0 10px 30px -18px rgba(2,8,23,.28);
-  }
-  *{box-sizing:border-box}
-  html,body{margin:0; background:var(--bg); color:var(--ink); font-family:"Sarabun", system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans Thai", sans-serif;}
-  a{color:#0ea5e9; text-decoration:none}
-  a:hover{text-decoration:underline}
-
-  /* ล็อกสกอร์เมื่อมี modal */
-  body.no-scroll{ overflow:hidden; }
-
-  .wrap{max-width:1100px; margin:auto; padding:24px 16px 80px}
-  header.app{
-    position:sticky; top:0; z-index:50; backdrop-filter:blur(10px);
-    background:linear-gradient(180deg, rgba(255,253,247,.85), rgba(255,253,247,.65) 60%, rgba(255,253,247,0));
-    padding:18px 16px 10px; margin:0 -16px; border-bottom:1px solid rgba(0,0,0,.04);
-  }
-  .title{
-    font-family:"Kodchasan","Sarabun",sans-serif; font-weight:700; letter-spacing:.2px;
-    display:flex; align-items:center; gap:8px; margin-bottom:10px; padding:0 16px; color:#0b3b34;
-    flex-wrap: wrap; 
-  }
-  .badge{
-    display:inline-flex; align-items:center; gap:6px;
-    background:linear-gradient(145deg,var(--brand),#9fe7dc);
-    color:#053c34; padding:6px 10px; border-radius:999px; font-weight:700; font-size:12px;
-    box-shadow:inset 0 1px 0 #fff, 0 2px 10px rgba(2,143,128,.25);
+  :root {
+    --bg-main: #f8fafc;
+    --paper: #ffffff;
+    --ink: #0f172a;
+    --brand-primary: #0d9488;
+    --brand-dark: #0f766e;
+    --brand-light: #ccfbf1;
+    --gold-card: #059669;
+    --sso-blue: #2563eb;
+    --csmbs-orange: #ea580c;
   }
 
-  /* Controls */
-  .controls{ display:flex; gap:10px; align-items:center; padding:8px 16px 0; flex-wrap:wrap;}
-  .controls .field{ position:relative; flex:1 1 240px; }
-  .controls input[type="search"], .controls select{
-    width:100%; height:42px; border-radius:12px; border:1px solid var(--line); background:var(--paper);
-    padding:0 12px; font-size:15px; outline:none;
+  body {
+    background-color: var(--bg-main);
+    color: var(--ink);
+    font-family: 'Sarabun', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    -webkit-tap-highlight-color: transparent;
   }
-  .controls button{
-    height:42px; border-radius:12px; border:1px solid #67dacb; cursor:pointer;
-    padding:0 14px; font-weight:800; letter-spacing:.2px;
-    background:linear-gradient(145deg,#ddfff8,#baf3ea); color:#064e43;
-    box-shadow:inset 0 1px 0 #fff, 0 10px 24px -14px rgba(2,143,128,.45);
-    transition:transform .06s, background .18s;
-  }
-  .controls button:hover{ background:linear-gradient(145deg,#c9fbf0,#9eeadf); }
-  .controls button:active{ transform:translateY(1px); }
 
-  /* Grid */
-  .grid{ display:grid; gap:14px; padding:14px 0; grid-template-columns: repeat(12,1fr); }
-  .card{
-    grid-column: span 4; background:var(--paper); border:1px solid var(--line); border-radius:var(--radius);
-    padding:14px; box-shadow:var(--shadow); display:flex; flex-direction:column; gap:10px;
-    transition:transform .18s ease, box-shadow .18s ease;
+  .font-heading {
+    font-family: 'Kodchasan', 'Sarabun', sans-serif;
   }
-  .card:hover{ transform:translateY(-2px); box-shadow:0 14px 40px -18px rgba(2,8,23,.36);}
-  @media (max-width:1000px){ .card{grid-column: span 6;} }    /* 2 คอลัมน์ */
-  @media (max-width:640px){ .card{grid-column: span 6;} }     /* มือถือยังคง 2 คอลัมน์ */
-  @media (max-width:400px){ .card{grid-column: span 12;} }    /* จอเล็กมาก เหลือ 1 คอลัมน์ */
 
-  .drug-name{ margin:0; font-size:18px; line-height:1.35; display:flex; gap:8px; align-items:center; font-weight:700;}
-  .generic{ font-size:14px; color:#0b3b34; font-weight:700; }
-
-  .meta{ display:flex; gap:8px; flex-wrap:wrap; font-size:12px;}
-  .pill{ background:#f8fafc; border:1px solid var(--line); border-radius:999px; padding:4px 8px; }
-  .tags{ display:flex; gap:6px; flex-wrap:wrap; }
-  .tag{ font-size:12px; background:#ecfeff; color:#064e43; padding:4px 8px; border-radius:999px; border:1px solid #a5f3fc; }
-  .excerpt{ color:#334155; font-size:14px; line-height:1.55; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
-
-  .btn{
-    align-self:flex-start; margin-top:auto; display:inline-flex; align-items:center; gap:8px; font-weight:800; letter-spacing:.2px;
-    padding:10px 14px; border-radius:12px; border:1px solid #67dacb;
-    background:linear-gradient(145deg,#ddfff8,#baf3ea); color:#064e43; cursor:pointer;
-    transition:transform .06s, box-shadow .18s, background .2s; box-shadow:inset 0 1px 0 #fff, 0 10px 24px -14px rgba(2,143,128,.45);
+  body.no-scroll {
+    overflow: hidden;
   }
-  .btn:hover{ background:linear-gradient(145deg,#c9fbf0,#9eeadf); }
-  .btn:active{ transform:translateY(1px); }
 
-  /* Pagination */
-  .pager{ display:flex; align-items:center; gap:8px; justify-content:center; padding:12px 0 34px;}
-  .pager button{ border:1px solid var(--line); background:var(--paper); border-radius:999px; padding:8px 12px; cursor:pointer; }
-  .pager .info{ font-size:13px; color:var(--muted); padding:0 8px; }
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #f1f5f9;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 99px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+  }
 
-  /* Modal (Drug Details) */
-  .modal-backdrop{
-    position:fixed; inset:0; background:rgba(0,0,0,.42); display:none; place-items:center; padding:16px; z-index:100;
-    touch-action:none; /* ป้องกันสกอร์หน้าใต้ modal บนอุปกรณ์สัมผัส */
+  /* Shimmer Skeleton */
+  .skeleton {
+    background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 37%, #f1f5f9 63%);
+    animation: shimmer 1.4s infinite;
+    background-size: 200% 100%;
   }
-  .modal{
-    max-width:920px; width:100%; max-height:88vh; overflow:auto;
-    background:var(--paper); border-radius:20px; border:1px solid var(--line); box-shadow:0 30px 80px rgba(0,0,0,.35);
+  @keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
   }
-  .modal header{
-    position:sticky; top:0; background:linear-gradient(180deg,#fff,rgba(255,255,255,.92));
-    padding:16px 18px; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; align-items:center; gap:10px; z-index: 10;
-  }
-  .modal .body{ padding:18px; }
-  .modal h2{ margin:0 0 8px; font-size:22px; }
-  .close{ border:none; background:#111; color:#fff; border-radius:12px; padding:8px 12px; cursor:pointer; }
-  .srcs{ margin-top:14px; font-size:14px; color:#475569; }
-  .srcs a{ word-break:break-all }
 
-  .modal-backdrop.show{ display:grid; }
-  .content-html img{ max-width:100%; height:auto; border-radius:12px; }
-  .content-html table{ border-collapse:collapse; width:100%; }
-  .content-html table, .content-html th, .content-html td{ border:1px solid #ddd; }
-  .content-html th, .content-html td{ padding:8px; }
+  /* Thinking Gradient Bar */
+  .thinking-bar {
+    position: relative;
+    width: 100%;
+    height: 4px;
+    background-color: #e2e8f0;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .thinking-bar::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; height: 100%; width: 100%;
+    background: linear-gradient(90deg, #0d9488, #0284c7, #0d9488);
+    background-size: 200% 100%;
+    animation: thinking-anim 1.8s linear infinite;
+  }
+  @keyframes thinking-anim {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
 
-  .skeleton{ background:linear-gradient(90deg, #f6f7f9 25%, #eceff3 37%, #f6f7f9 63%); animation:shimmer 1.2s infinite; background-size: 200% 100%; }
-  @keyframes shimmer{ 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+  /* Card Color Coding */
+  .cat-analgesic .drug-badge { background-color: #fef3c7; color: #b45309; border-color: #fde68a; }
+  .cat-antipyretic .drug-badge { background-color: #dbeafe; color: #1d4ed8; border-color: #bfdbfe; }
+  .cat-antibiotic .drug-badge { background-color: #fee2e2; color: #b91c1c; border-color: #fca5a5; }
+  .cat-antihistamine .drug-badge { background-color: #ccfbf1; color: #0f766e; border-color: #99f6e4; }
+  .cat-antacid .drug-badge { background-color: #f3e8ff; color: #7e22ce; border-color: #e9d5ff; }
+  .cat-cough .drug-badge { background-color: #e0f2fe; color: #0369a1; border-color: #bae6fd; }
+  .cat-vitamin .drug-badge { background-color: #dcfce7; color: #15803d; border-color: #bbf7d0; }
 
-  /* ====== สีข้อความตามหมวดหมู่ยา ====== */
-  .cat-analgesic .drug-name{ color:#b45309 }      
-  .cat-antipyretic .drug-name{ color:#2563eb }    
-  .cat-antibiotic .drug-name{ color:#dc2626 }     
-  .cat-antihistamine .drug-name{ color:#0f766e }  
-  .cat-antacid .drug-name{ color:#7c3aed }        
-  .cat-cough .drug-name{ color:#1e40af }          
-  .cat-vitamin .drug-name{ color:#166534 }        
+  /* Chips Options */
+  .chip-item.selected {
+    background-color: #0d9488;
+    color: #ffffff;
+    border-color: #0f766e;
+    font-weight: 600;
+  }
 
-  /* ===== CSS ของ Chatbot UI (Pharmacist Theme) ===== */
-  .chat-bubble::before { content: ''; position: absolute; width: 0; height: 0; border-style: solid; }
-  .chat-bubble-user::before {
-    border-width: 0 12px 12px 12px; border-color: transparent transparent #50b5a5 transparent; /* สีเขียวมิ้นต์ */
-    top: -10px; right: 12px;
-  }
-  .chat-bubble-model::before {
-    border-width: 0 12px 12px 12px; border-color: transparent transparent #f3f4f6 transparent;
-    top: -10px; left: 12px;
-  }
-  .gemini-thinking-bar {
-    position: relative; width: 100%; height: 4px; background-color: #e0e0e0;
-    border-radius: 2px; overflow: hidden;
-  }
-  .gemini-thinking-bar::before {
-    content: ''; position: absolute; top: 0; left: 0; height: 100%; width: 100%;
-    background: linear-gradient(90deg, #50b5a5, #2f8f80, #50b5a5);
-    background-size: 200% 100%; animation: thinking-gradient 2s linear infinite;
-  }
-  @keyframes thinking-gradient { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-  
-  #fab-chat-toggle {
-    position: fixed; bottom: 25px; right: 25px;
-    width: 60px; height: 60px;
-    background-color: #064e43; /* เขียวเข้ม */
-    color: white;
-    border: none; border-radius: 50%;
-    font-size: 28px; line-height: 60px; text-align: center;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-    cursor: pointer; z-index: 998;
-    transition: transform 0.2s, opacity 0.3s;
+  /* Markdown Formatting in Result Modals */
+  .markdown-content h1, .markdown-content h2, .markdown-content h3 {
     font-family: 'Kodchasan', sans-serif;
+    font-weight: 700;
+    color: #0f766e;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
   }
-  #fab-chat-toggle:hover { transform: scale(1.05); background-color: #50b5a5; }
-  
-  #chatbot-modal {
-    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-    z-index: 1000; transition: opacity 0.3s, transform 0.3s;
-    opacity: 1; transform: translateY(0); pointer-events: auto;
+  .markdown-content h3 { font-size: 1.15rem; }
+  .markdown-content p { margin-bottom: 0.75rem; line-height: 1.65; }
+  .markdown-content ul { list-style-type: disc; padding-left: 1.25rem; margin-bottom: 0.75rem; }
+  .markdown-content li { margin-bottom: 0.25rem; }
+  .markdown-content strong { color: #0f172a; }
+  .markdown-content blockquote {
+    border-left: 4px solid #0d9488;
+    background-color: #f0fdfa;
+    padding: 0.5rem 1rem;
+    margin: 0.75rem 0;
+    border-radius: 0 0.5rem 0.5rem 0;
   }
-  #chatbot-modal.chatbot-hidden {
-    opacity: 0; transform: translateY(100%); pointer-events: none;
-  }
-
-  /* Health Form Specifics */
-  .health-form-group { margin-bottom: 10px; }
-  .health-form-label { display: block; font-size: 13px; color: #4b5563; margin-bottom: 3px; font-weight: 700; }
-  .health-form-input {
-    width: 100%; padding: 8px; border: 1px solid #e5e7eb; border-radius: 8px; outline: none; transition: border-color 0.2s;
-    background-color: #f9fafb; font-size: 14px;
-  }
-  .health-form-input:focus { border-color: #50b5a5; background-color: white; }
-
-  /* Chips for diseases */
-  .chip-group { display: flex; flex-wrap: wrap; gap: 8px; }
-  .chip-option {
-    cursor: pointer; padding: 6px 12px; border-radius: 999px; border: 1px solid #cbd5e1;
-    background-color: #f1f5f9; color: #475569; font-size: 13px; transition: all 0.2s;
-    user-select: none;
-  }
-  .chip-option:hover { background-color: #e2e8f0; }
-  .chip-option.selected {
-    background-color: #ccfbf1; border-color: #50b5a5; color: #0f766e; font-weight: 700;
-  }
-
-  /* Result Markdown */
-  .result-markdown p { margin-bottom: 0.8em; line-height: 1.6; }
-  .result-markdown h3 { font-size: 1.25rem; font-weight: 700; color: #064e43; margin-top: 1em; margin-bottom: 0.5em; }
-  .result-markdown ul { list-style-type: disc; padding-left: 1.5em; margin-bottom: 0.8em; }
-  .result-markdown li { margin-bottom: 0.2em; }
-  .result-markdown strong { color: #0f172a; }
-
 </style>
 </head>
-<body>
-  <header class="app">
-    <div class="wrap" style="padding:0">
-      <div class="title">
-        <span class="badge">ฐานข้อมูล</span>
-        <div style="font-size:20px">ยารักษาโรค</div>
-        
-        <!-- ปุ่มประเมินสุขภาพ -->
-        <button id="health-check-btn" class="ml-1 bg-[#50b5a5] hover:bg-[#3d8f81] text-white font-bold py-1 px-3 rounded-full text-sm flex items-center gap-1 shadow-md transition-all border border-[#3d8f81]">
-             <span class="text-lg">🩺</span> <span>ประเมินสุขภาพ</span>
+<body class="min-h-full flex flex-col antialiased selection:bg-teal-100 selection:text-teal-900">
+
+<header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-sm transition-all">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+      
+      <!-- Brand Logo -->
+      <div class="flex items-center justify-between">
+        <a href="#" class="flex items-center gap-2.5 group">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-teal-600 to-emerald-400 flex items-center justify-center text-white shadow-md shadow-teal-500/20 group-hover:scale-105 transition-transform">
+            <i class="fa-solid fa-prescription-bottle-medical text-xl"></i>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="font-heading text-xl font-bold text-slate-800 tracking-tight">PharmAI Hub</span>
+              <span class="bg-emerald-100 text-emerald-800 text-[11px] font-bold px-2 py-0.5 rounded-full border border-emerald-200">2026 Edition</span>
+            </div>
+            <p class="text-xs text-slate-500 font-medium">คลังยามืออาชีพ & ระบบตรวจสอบสิทธิสุขภาพประจำปี</p>
+          </div>
+        </a>
+
+        <!-- Mobile Right Menu Trigger -->
+        <div class="flex items-center gap-2 md:hidden">
+          <button id="mobile-rights-btn" class="bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs px-3 py-2 rounded-xl flex items-center gap-1.5 shadow-sm">
+            <i class="fa-solid fa-id-card"></i> สิทธิปี 69
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Action Navigation Toolbar -->
+      <div class="flex flex-wrap items-center gap-2 pt-2 md:pt-0 border-t md:border-t-0 border-slate-100">
+        <!-- Health Rights Button -->
+        <button id="nav-rights-btn" class="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-bold text-sm px-3.5 py-2 rounded-xl flex items-center gap-2 shadow-md shadow-amber-500/15 transition-all hover:-translate-y-0.5 active:translate-y-0">
+          <i class="fa-solid fa-address-card text-base"></i>
+          <span>เช็กสิทธิสุขภาพประจำปี</span>
+          <span class="bg-white/20 text-white text-[10px] px-1.5 py-0.5 rounded-md font-normal">อัปเดต 2569</span>
         </button>
 
-        <!-- ปุ่มเช็กสิทธิรักษาฟรีรายปี -->
-        <button id="rights-check-btn" class="ml-1 bg-amber-500 hover:bg-amber-600 text-white font-bold py-1 px-3 rounded-full text-sm flex items-center gap-1 shadow-md transition-all border border-amber-600">
-             <span class="text-lg">💳</span> <span>สิทธิรักษาฟรีรายปี</span>
+        <!-- AI Drug Image Scanner Button -->
+        <button id="nav-scan-btn" class="bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white font-bold text-sm px-3.5 py-2 rounded-xl flex items-center gap-2 shadow-md shadow-teal-600/15 transition-all hover:-translate-y-0.5 active:translate-y-0">
+          <i class="fa-solid fa-camera text-base"></i>
+          <span>สแกนภาพยา / ฉลาก</span>
+          <span class="bg-white/20 text-white text-[10px] px-1.5 py-0.5 rounded-md font-normal">AI Vision</span>
+        </button>
+
+        <!-- Symptom Check Button -->
+        <button id="nav-health-btn" class="bg-teal-700 hover:bg-teal-800 text-white font-bold text-sm px-3.5 py-2 rounded-xl flex items-center gap-2 shadow-md shadow-teal-700/15 transition-all hover:-translate-y-0.5 active:translate-y-0">
+          <i class="fa-solid fa-stethoscope text-base"></i>
+          <span>วิเคราะห์อาการป่วย</span>
+        </button>
+
+        <!-- Calculators Modal Trigger -->
+        <button id="nav-calc-btn" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm px-3 py-2 rounded-xl flex items-center gap-1.5 border border-slate-200 transition-colors">
+          <i class="fa-solid fa-calculator text-teal-600"></i>
+          <span class="hidden sm:inline">เครื่องคำนวณสุขภาพ</span>
+        </button>
+
+        <!-- Saved Meds Filter -->
+        <button id="nav-fav-btn" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm px-3 py-2 rounded-xl flex items-center gap-1.5 border border-slate-200 transition-colors relative">
+          <i class="fa-solid fa-bookmark text-amber-500"></i>
+          <span class="hidden sm:inline">รายการที่บันทึก</span>
+          <span id="fav-count-badge" class="hidden bg-amber-500 text-white text-[10px] font-bold w-4 h-4 rounded-full items-center justify-center">0</span>
         </button>
       </div>
 
-      <div class="controls" aria-label="เครื่องมือค้นหาและตัวกรอง">
-        <div class="field"><input id="q" type="search" placeholder="ค้นหาชื่อยา / ชื่อสามัญ / อาการ ..."></div>
-        <div class="field">
-          <select id="cat" aria-label="เลือกหมวดยา">
-            <option value="">— ทุกหมวด —</option>
-            <option value="analgesic">ยาแก้ปวด</option>
-            <option value="antipyretic">ยาลดไข้</option>
-            <option value="antibiotic">ยาฆ่าเชื้อ</option>
-            <option value="antihistamine">ยาแก้แพ้</option>
-            <option value="antacid">ยาลดกรด/กระเพาะ</option>
-            <option value="cough">ยาแก้ไอ/ขับเสมหะ</option>
-            <option value="vitamin">วิตามิน/อาหารเสริม</option>
+    </div>
+  </div>
+</header>
+
+<main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+  <!-- Annual Rights Overview Banner Card -->
+  <section class="bg-gradient-to-r from-slate-900 via-teal-950 to-slate-900 rounded-3xl p-6 md:p-8 text-white shadow-xl relative overflow-hidden">
+    <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-teal-500/10 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute right-1/3 -top-10 w-48 h-48 bg-amber-500/10 rounded-full blur-2xl pointer-events-none"></div>
+
+    <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+      <div class="lg:col-span-8 space-y-3">
+        <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-3 py-1 rounded-full text-xs font-semibold text-teal-300 border border-white/10">
+          <i class="fa-solid fa-bullhorn text-amber-400"></i> สิทธิประโยชน์คนไทยประจำปี 2569 (2026)
+        </div>
+        <h1 class="font-heading text-2xl md:text-3xl lg:text-4xl font-bold leading-tight">
+          ตรวจเช็กสิทธิรักษาฟรี ประจำปี <span class="text-transparent bg-clip-text bg-gradient-to-r from-teal-300 via-amber-300 to-emerald-300">บัตรทอง • ประกันสังคม • ข้าราชการ</span>
+        </h1>
+        <p class="text-slate-300 text-sm md:text-base max-w-2xl font-light leading-relaxed">
+          รับทราบวงเงินทำฟันฟรี, การตรวจคัดกรองมะเร็งประจำปี, วัคซีนไข้หวัดใหญ่ฟรี, และสิทธิรับยาร้านยาใกล้บ้าน 16 กลุ่มอาการ โดยไม่เสียค่าใช้จ่าย
+        </p>
+
+        <!-- Category Pills Shortcuts -->
+        <div class="pt-2 flex flex-wrap gap-2 text-xs">
+          <button onclick="openRightsTab('ucs')" class="bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-all">
+            <i class="fa-solid fa-circle-check text-emerald-400"></i> สิทธิบัตรทอง (30 บาท)
+          </button>
+          <button onclick="openRightsTab('sso')" class="bg-blue-500/20 hover:bg-blue-500/30 text-blue-300 border border-blue-500/40 px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-all">
+            <i class="fa-solid fa-shield-halved text-blue-400"></i> ประกันสังคม (ม.33/39/40)
+          </button>
+          <button onclick="openRightsTab('csmbs')" class="bg-orange-500/20 hover:bg-orange-500/30 text-orange-300 border border-orange-500/40 px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-all">
+            <i class="fa-solid fa-building-columns text-orange-400"></i> สิทธิข้าราชการ/รัฐวิสาหกิจ
+          </button>
+        </div>
+      </div>
+
+      <div class="lg:col-span-4 flex flex-col sm:flex-row lg:flex-col gap-3 justify-center">
+        <button id="hero-scan-btn" class="w-full bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-600 hover:to-emerald-600 text-white font-bold py-3.5 px-5 rounded-2xl shadow-lg shadow-teal-500/20 flex items-center justify-center gap-2 text-base transition-all transform hover:-translate-y-0.5">
+          <i class="fa-solid fa-camera-retro text-lg"></i>
+          <span>📸 ถ่ายรูปสแกนซองยา / เม็ดยา</span>
+        </button>
+        <button id="hero-rights-check-btn" class="w-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-slate-950 font-bold py-3 px-5 rounded-2xl shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2 text-sm transition-all transform hover:-translate-y-0.5">
+          <i class="fa-solid fa-magnifying-glass-chart text-base"></i>
+          <span>คำนวณสิทธิประจำปีของฉัน</span>
+        </button>
+        <button id="hero-ask-ai-btn" class="w-full bg-white/10 hover:bg-white/20 text-white font-semibold py-2.5 px-5 rounded-2xl border border-white/15 flex items-center justify-center gap-2 text-xs transition-all">
+          <i class="fa-solid fa-robot text-teal-300"></i>
+          <span>ถาม AI เรื่องสิทธิสุขภาพ</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Search & Filter Controls Card -->
+  <section class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-sm space-y-4">
+    <div class="flex flex-col md:flex-row gap-3 items-stretch md:items-center">
+      
+      <!-- Search Field with Quick Camera Trigger -->
+      <div class="relative flex-1">
+        <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+        <input id="q" type="search" placeholder="ค้นหาชื่อยา, ชื่อสามัญ, กลุ่มอาการป่วย หรือข้อควรระวัง..." class="w-full pl-11 pr-16 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all">
+        <div class="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1.5">
+          <button id="quick-camera-btn" title="ถ่ายรูป / อัปโหลดภาพยา" class="text-teal-600 hover:text-teal-800 p-1 rounded-lg hover:bg-teal-50 transition-colors">
+            <i class="fa-solid fa-camera text-base"></i>
+          </button>
+          <button id="clearSearchX" class="hidden text-slate-400 hover:text-slate-600 text-xs">
+            <i class="fa-solid fa-circle-xmark text-base"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Category Select Filter -->
+      <div class="w-full md:w-56">
+        <select id="cat" class="w-full py-2.5 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all font-medium">
+          <option value="">— ทุกหมวดยา —</option>
+          <option value="analgesic">💊 ยาแก้ปวด / ลดอักเสบ</option>
+          <option value="antipyretic">🌡️ ยาลดไข้</option>
+          <option value="antibiotic">🦠 ยาฆ่าเชื้อ / ปฏิชีวนะ</option>
+          <option value="antihistamine">🌿 ยาแก้แพ้ / ลดน้ำมูก</option>
+          <option value="antacid">🧪 ยาลดกรด / โรคกระเพาะ</option>
+          <option value="cough">🫁 ยาแก้ไอ / ขับเสมหะ</option>
+          <option value="vitamin">🥗 วิตามิน / อาหารเสริม</option>
+        </select>
+      </div>
+
+      <!-- Search & Clear Action Buttons -->
+      <div class="flex items-center gap-2">
+        <button id="searchBtn" class="bg-teal-600 hover:bg-teal-700 text-white font-bold text-sm px-4 py-2.5 rounded-xl shadow-sm transition-colors flex items-center gap-1.5">
+          <i class="fa-solid fa-magnifying-glass"></i> ค้นหา
+        </button>
+        <button id="clearBtn" class="bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold text-sm px-3.5 py-2.5 rounded-xl border border-slate-200 transition-colors" title="ล้างตัวกรอง">
+          ล้าง
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Filter Status Info -->
+    <div class="flex items-center justify-between text-xs text-slate-500 pt-1 border-t border-slate-100">
+      <span id="filter-info-text">กำลังโหลดรายการยา...</span>
+      <span class="text-teal-700 font-medium"><i class="fa-solid fa-circle-check text-emerald-500"></i> อัปเดตข้อมูลเภสัชกรรมประจำปี 2569</span>
+    </div>
+  </section>
+
+  <section class="space-y-4">
+    <div id="grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+      <!-- Cards rendered dynamically -->
+    </div>
+
+    <!-- Pagination Navigation -->
+    <div class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3 text-xs font-semibold text-slate-700">
+      <div id="pageInfo" class="text-slate-500">หน้า 1 / 1</div>
+      <div class="flex items-center gap-2">
+        <button id="prevBtn" disabled class="px-4 py-2 bg-slate-100 hover:bg-slate-200 disabled:opacity-40 disabled:cursor-not-allowed rounded-xl transition-all flex items-center gap-1">
+          <i class="fa-solid fa-chevron-left"></i> ย้อนกลับ
+        </button>
+        <button id="nextBtn" disabled class="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white disabled:opacity-40 disabled:cursor-not-allowed rounded-xl shadow-sm transition-all flex items-center gap-1">
+          ถัดไป <i class="fa-solid fa-chevron-right"></i>
+        </button>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- Floating AI Chatbot Toggle Button -->
+<button id="fab-chat-toggle" class="fixed bottom-6 right-6 z-40 bg-gradient-to-tr from-teal-700 to-emerald-600 hover:from-teal-800 hover:to-emerald-700 text-white font-bold px-4 py-3.5 rounded-2xl shadow-xl shadow-teal-700/30 flex items-center gap-2 transition-all transform hover:scale-105 active:scale-95 border border-white/20">
+  <span class="text-xl">🤖</span>
+  <span class="font-heading text-sm hidden sm:inline">ปรึกษา AI เภสัชกร</span>
+</button>
+
+<div id="chatbot-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex justify-end">
+  <div class="bg-white w-full max-w-lg h-full shadow-2xl flex flex-col justify-between border-l border-slate-200">
+    
+    <header class="bg-gradient-to-r from-teal-700 via-emerald-700 to-teal-800 text-white p-4 flex justify-between items-center shadow-md shrink-0">
+      <div class="flex items-center gap-2.5">
+        <div class="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center text-lg">🤖</div>
+        <div>
+          <h3 class="font-heading font-bold text-base leading-tight">AI เภสัชกรประจำปี 2569</h3>
+          <p class="text-[11px] text-teal-100">ผู้ช่วยส่วนตัวตอบคำถามเรื่องยา & สิทธิการรักษา</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button id="new-chat-btn" class="bg-white/15 hover:bg-white/25 text-white text-xs font-bold px-3 py-1.5 rounded-xl transition-all flex items-center gap-1">
+          <i class="fa-solid fa-rotate-right"></i> ล้างแชท
+        </button>
+        <button id="chatbot-close-btn" class="w-8 h-8 rounded-xl bg-black/20 hover:bg-black/30 text-white flex items-center justify-center text-lg transition-all">
+          &times;
+        </button>
+      </div>
+    </header>
+
+    <!-- Quick Prompt Pills -->
+    <div class="bg-slate-50 border-b border-slate-200 p-2.5 flex items-center gap-2 overflow-x-auto text-xs shrink-0 no-scrollbar">
+      <span class="text-slate-400 font-bold shrink-0">คำถามยอดฮิต:</span>
+      <button onclick="sendQuickPrompt('กินพาราเซตามอลรวมกับยาแก้แพ้ได้ไหม?')" class="bg-white hover:bg-teal-50 text-slate-700 hover:text-teal-700 px-3 py-1.5 rounded-lg border border-slate-200 shrink-0 transition-colors">
+        💊 พารากับยาแก้แพ้?
+      </button>
+      <button onclick="sendQuickPrompt('สิทธิบัตรทองทำฟันฟรีได้อะไรบ้างปี 2569?')" class="bg-white hover:bg-teal-50 text-slate-700 hover:text-teal-700 px-3 py-1.5 rounded-lg border border-slate-200 shrink-0 transition-colors">
+        🦷 สิทธิบัตรทองทำฟันฟรี?
+      </button>
+      <button onclick="sendQuickPrompt('สิทธิประกันสังคม ทำฟันกี่บาทปีนี้?')" class="bg-white hover:bg-teal-50 text-slate-700 hover:text-teal-700 px-3 py-1.5 rounded-lg border border-slate-200 shrink-0 transition-colors">
+        💳 วงเงินประกันสังคมทำฟัน?
+      </button>
+      <button onclick="sendQuickPrompt('ลืมกินยาความดัน ต้องทำอย่างไร?')" class="bg-white hover:bg-teal-50 text-slate-700 hover:text-teal-700 px-3 py-1.5 rounded-lg border border-slate-200 shrink-0 transition-colors">
+        ⏰ ลืมกินยาความดัน?
+      </button>
+    </div>
+
+    <!-- Chat Message History -->
+    <div id="chat-history" class="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50/50">
+      <div class="flex items-start gap-2.5">
+        <div class="w-8 h-8 rounded-xl bg-teal-600 text-white flex items-center justify-center text-sm shrink-0 shadow-sm">🤖</div>
+        <div class="bg-white text-slate-800 p-4 rounded-2xl rounded-tl-none border border-slate-200/80 shadow-sm max-w-[85%] text-sm space-y-2">
+          <p class="font-bold text-teal-800">สวัสดีครับ! ผมคือ AI ผู้ช่วยเภสัชกรประจำปี 2569 🩺</p>
+          <p>คุณสามารถสอบถามข้อมูลยา ปริมาณการใช้ ข้อควรระวัง ปฏิกิริยาระหว่างยา หรือตรวจสอบสิทธิการรักษาพยาบาล (บัตรทอง/ประกันสังคม) ได้เลยครับ</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Thinking Indicator -->
+    <div id="thinking-indicator" class="hidden p-3 bg-slate-50 border-t border-slate-100 flex items-center gap-3">
+      <div class="w-8 h-8 rounded-xl bg-teal-600 text-white flex items-center justify-center text-sm shrink-0">🤖</div>
+      <div class="flex-1 space-y-1">
+        <div class="thinking-bar"></div>
+        <span class="text-[11px] text-slate-400 font-medium">AI กำลังประมวลผลคำตอบเภสัชกรรม...</span>
+      </div>
+    </div>
+
+    <!-- Chat Input Area -->
+    <footer class="p-3 bg-white border-t border-slate-200 shrink-0">
+      <div class="flex items-center gap-2">
+        <input id="user-input" type="text" placeholder="พิมพ์ชื่อยา หรือสอบถามอาการป่วย..." class="flex-1 px-4 py-3 bg-slate-100 border border-slate-200 rounded-2xl text-sm focus:outline-none focus:bg-white focus:ring-2 focus:ring-teal-500 transition-all">
+        <button id="send-btn" class="bg-teal-600 hover:bg-teal-700 text-white font-bold p-3 rounded-2xl shadow-md transition-all flex items-center justify-center w-12 h-12 shrink-0">
+          <i class="fa-solid fa-paper-plane text-base"></i>
+        </button>
+      </div>
+    </footer>
+
+  </div>
+</div>
+
+<div id="rights-modal-overlay" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-2 sm:p-4 overflow-y-auto">
+  <div class="bg-white rounded-3xl w-full max-w-3xl shadow-2xl flex flex-col my-auto max-h-[92vh] overflow-hidden border border-slate-200">
+    
+    <!-- Modal Header -->
+    <header class="bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-white p-4 sm:p-5 flex justify-between items-center shadow-md">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-2xl bg-white/20 flex items-center justify-center text-xl shrink-0">
+          💳
+        </div>
+        <div>
+          <h3 class="font-heading font-bold text-lg leading-tight">ตรวจสอบสิทธิรักษาฟรี & การตรวจสุขภาพประจำปี 2569</h3>
+          <p class="text-xs text-amber-100">รวมสิทธิบัตรทอง (UCS), ประกันสังคม (SSO) และข้าราชการ (CSMBS)</p>
+        </div>
+      </div>
+      <button id="close-rights-modal" class="w-9 h-9 rounded-xl bg-black/20 hover:bg-black/30 text-white flex items-center justify-center text-xl transition-all">
+        &times;
+      </button>
+    </header>
+
+    <!-- Scheme Selection Tabs -->
+    <div class="bg-slate-100 p-2 flex gap-1 border-b border-slate-200 overflow-x-auto text-xs font-bold shrink-0">
+      <button id="tab-btn-ucs" onclick="switchRightsTab('ucs')" class="flex-1 py-2.5 px-3 rounded-xl transition-all flex items-center justify-center gap-1.5 bg-white text-emerald-700 shadow-sm border border-slate-200">
+        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> สิทธิบัตรทอง (30 บาท)
+      </button>
+      <button id="tab-btn-sso" onclick="switchRightsTab('sso')" class="flex-1 py-2.5 px-3 rounded-xl transition-all flex items-center justify-center gap-1.5 text-slate-600 hover:text-blue-700">
+        <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span> สิทธิประกันสังคม
+      </button>
+      <button id="tab-btn-csmbs" onclick="switchRightsTab('csmbs')" class="flex-1 py-2.5 px-3 rounded-xl transition-all flex items-center justify-center gap-1.5 text-slate-600 hover:text-orange-700">
+        <span class="w-2.5 h-2.5 rounded-full bg-orange-500"></span> สิทธิข้าราชการ/รัฐวิสาหกิจ
+      </button>
+    </div>
+
+    <!-- Rights Content Body -->
+    <div id="rights-scroll-area" class="p-5 overflow-y-auto space-y-5 text-sm bg-slate-50/50">
+      
+      <!-- Interactive Personal Eligibility Calculator Widget -->
+      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+        <div class="flex items-center gap-2 text-slate-800 font-bold font-heading text-sm border-b border-slate-100 pb-2">
+          <i class="fa-solid fa-sliders text-amber-500"></i>
+          <span>ตัวเลือกคำนวณสิทธิตามช่วงอายุประจำปี</span>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+          <div>
+            <label class="block font-bold text-slate-600 mb-1">ช่วงอายุของคุณ</label>
+            <select id="calc-age-group" onchange="renderCalculatedRights()" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl font-medium">
+              <option value="child">เด็ก / เยาวชน (0-17 ปี)</option>
+              <option value="adult" selected>วัยทำงาน (18-54 ปี)</option>
+              <option value="senior">ผู้สูงอายุ (55 ปีขึ้นไป)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-bold text-slate-600 mb-1">เพศ</label>
+            <select id="calc-gender" onchange="renderCalculatedRights()" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl font-medium">
+              <option value="female" selected>หญิง</option>
+              <option value="male">ชาย</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-bold text-slate-600 mb-1">ประเภทสิทธิหลัก</label>
+            <select id="calc-scheme-select" onchange="syncRightsSelect()" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl font-medium">
+              <option value="ucs">สิทธิบัตรทอง (30 บาท)</option>
+              <option value="sso">สิทธิประกันสังคม (ม.33/39)</option>
+              <option value="csmbs">สิทธิข้าราชการ / CSMBS</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dynamic Calculated Benefits Breakdown Box -->
+      <div id="calculated-benefits-box" class="space-y-4">
+        <!-- Rendered dynamically via JS -->
+      </div>
+
+    </div>
+
+    <!-- Rights Footer Actions -->
+    <footer class="p-4 bg-white border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
+      <div class="text-xs text-slate-500 flex items-center gap-1.5">
+        <i class="fa-solid fa-circle-info text-amber-500"></i>
+        <span>อัปเดตสิทธิประโยชน์ตามประกาศ สปสช. และ สปส. ปี 2569</span>
+      </div>
+      <div class="flex gap-2 w-full sm:w-auto">
+        <button id="cancel-rights-btn" class="flex-1 sm:flex-none px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs transition-all">
+          ปิดหน้าต่าง
+        </button>
+        <button id="submit-rights-btn" class="flex-1 sm:flex-none px-5 py-2.5 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-bold rounded-xl text-xs shadow-md transition-all flex items-center justify-center gap-1.5">
+          <i class="fa-solid fa-robot"></i>
+          <span>วิเคราะห์สิทธิเฉพาะบุคคลด้วย AI</span>
+        </button>
+      </div>
+    </footer>
+
+  </div>
+</div>
+
+<div id="health-modal-overlay" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-2 sm:p-4 overflow-y-auto">
+  <div class="bg-white rounded-3xl w-full max-w-xl shadow-2xl flex flex-col my-auto max-h-[92vh] overflow-hidden border border-slate-200">
+    
+    <header class="bg-gradient-to-r from-teal-600 to-emerald-600 text-white p-4 sm:p-5 flex justify-between items-center shadow-md shrink-0">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-2xl bg-white/20 flex items-center justify-center text-xl shrink-0">
+          🩺
+        </div>
+        <div>
+          <h3 class="font-heading font-bold text-lg leading-tight">ประเมินสุขภาพ & วิเคราะห์อาการป่วยเบื้องต้น</h3>
+          <p class="text-xs text-teal-100">ป้อนข้อมูลร่างกายและอาการเพื่อรับคำแนะนำการดูแลตนเอง</p>
+        </div>
+      </div>
+      <button id="close-health-modal" class="w-9 h-9 rounded-xl bg-black/20 hover:bg-black/30 text-white flex items-center justify-center text-xl transition-all">
+        &times;
+      </button>
+    </header>
+
+    <div id="health-form-scroll-area" class="p-5 overflow-y-auto space-y-4 bg-slate-50/50 text-xs">
+      
+      <!-- Vital Stats Form Grid -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">เพศ</label>
+          <select id="hf-gender" class="w-full p-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 font-medium">
+            <option value="ชาย">ชาย</option>
+            <option value="หญิง">หญิง</option>
           </select>
         </div>
-        <button id="searchBtn">ค้นหา</button>
-        <button id="clearBtn" title="ล้างตัวกรอง">ล้าง</button>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">อายุ (ปี)</label>
+          <input type="number" id="hf-age" class="w-full p-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 font-medium" placeholder="เช่น 35">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">น้ำหนัก (kg)</label>
+          <input type="number" id="hf-weight" class="w-full p-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 font-medium" placeholder="เช่น 65">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">ส่วนสูง (cm)</label>
+          <input type="number" id="hf-height" class="w-full p-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 font-medium" placeholder="เช่น 170">
+        </div>
       </div>
-    </div>
-  </header>
 
-  <main class="wrap" id="mainContent">
-    <section id="grid" class="grid"></section>
-    <div class="pager" role="navigation" aria-label="เพจจิเนชัน">
-      <button id="prevBtn">ย้อนกลับ</button>
-      <span class="info" id="pageInfo"></span>
-      <button id="nextBtn">ถัดไป</button>
-    </div>
-  </main>
-
-  <!-- Modal แสดงรายละเอียดยา -->
-  <div id="modalBackdrop" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="mTitle">
-    <div class="modal">
-      <header>
-        <h2 id="mTitle">—</h2>
-        <button id="closeModal" class="close" aria-label="ปิดหน้าต่าง">ปิด</button>
-      </header>
-      <div class="body">
-        <div class="meta" id="mMeta"></div>
-        <div class="content-html" id="mContent"></div>
-        <div class="srcs" id="mSources"></div>
+      <!-- Pre-existing Conditions Chips -->
+      <div class="space-y-1.5">
+        <label class="block font-bold text-slate-700">โรคประจำตัว (เลือกได้หลายข้อ)</label>
+        <div id="disease-chips" class="flex flex-wrap gap-1.5">
+          <div class="chip-item chip-option px-3 py-1.5 rounded-full border border-slate-200 bg-white text-slate-600 cursor-pointer transition-all" data-val="ไม่มี">ไม่มี</div>
+          <div class="chip-item chip-option px-3 py-1.5 rounded-full border border-slate-200 bg-white text-slate-600 cursor-pointer transition-all" data-val="ความดันโลหิตสูง">ความดันสูง</div>
+          <div class="chip-item chip-option px-3 py-1.5 rounded-full border border-slate-200 bg-white text-slate-600 cursor-pointer transition-all" data-val="เบาหวาน">เบาหวาน</div>
+          <div class="chip-item chip-option px-3 py-1.5 rounded-full border border-slate-200 bg-white text-slate-600 cursor-pointer transition-all" data-val="ไขมันในเลือดสูง">ไขมันในเลือดสูง</div>
+          <div class="chip-item chip-option px-3 py-1.5 rounded-full border border-slate-200 bg-white text-slate-600 cursor-pointer transition-all" data-val="โรคหัวใจ">โรคหัวใจ</div>
+          <div class="chip-item chip-option px-3 py-1.5 rounded-full border border-slate-200 bg-white text-slate-600 cursor-pointer transition-all" data-val="หอบหืด">หอบหืด</div>
+          <div class="chip-item chip-option px-3 py-1.5 rounded-full border border-slate-200 bg-white text-slate-600 cursor-pointer transition-all" data-val="ไตเรื้อรัง">ไตเรื้อรัง</div>
+        </div>
+        <input type="text" id="hf-disease-other" class="w-full p-2 bg-white border border-slate-200 rounded-xl text-xs mt-1" placeholder="โรคประจำตัวอื่นๆ (ระบุ)...">
       </div>
+
+      <!-- Drug Allergies Input -->
+      <div class="space-y-1">
+        <label class="block font-bold text-rose-700 flex items-center gap-1">
+          <i class="fa-solid fa-triangle-exclamation"></i> ประวัติแพ้ยา / แพ้อาหาร (สำคัญ)
+        </label>
+        <input type="text" id="hf-allergy" class="w-full p-2.5 bg-rose-50/50 border border-rose-200 text-rose-900 rounded-xl focus:ring-2 focus:ring-rose-400 font-medium" placeholder="เช่น แพ้ยาเพนนิซิลลิน, แพ้อาหารทะเล หรือพิมพ์ 'ไม่มี'">
+      </div>
+
+      <!-- Symptoms Input -->
+      <div class="space-y-1">
+        <label class="block font-bold text-teal-800 text-xs">อาการป่วยที่ต้องการปรึกษา (ระบุอย่างละเอียด)</label>
+        <textarea id="hf-symptoms" rows="3" class="w-full p-3 bg-white border border-teal-300 rounded-xl text-sm focus:ring-2 focus:ring-teal-500 font-medium" placeholder="เช่น ปวดหัวข้างขวาจี๊ดๆ มา 2 วัน, มีไข้ต่ำๆ ช่วงเย็น, เจ็บคอเวลากลืนน้ำลาย..."></textarea>
+      </div>
+
     </div>
+
+    <footer class="p-4 bg-white border-t border-slate-200 flex justify-end gap-2 shrink-0">
+      <button id="cancel-health-btn" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs transition-all">
+        ยกเลิก
+      </button>
+      <button id="submit-health-btn" class="px-5 py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-bold rounded-xl text-xs shadow-md transition-all flex items-center gap-1.5">
+        <i class="fa-solid fa-bolt"></i>
+        <span>ส่งข้อมูลวิเคราะห์ด้วย AI</span>
+      </button>
+    </footer>
+
   </div>
+</div>
 
-  <footer>
-    <p class="footer-links" style="text-align: center; color: #475569; margin-top: 20px;">
-      © 2025 Crow Studio |
-      <a href="https://sites.google.com/view/privacy-policy-pdpa-crow-studi/%E0%B8%AB%E0%B8%99%E0%B8%B2%E0%B9%81%E0%B8%A3%E0%B8%81">นโยบายความเป็นส่วนตัว</a> |
-      <a href="#">ข้อตกลงการใช้งาน</a>
-    </p>
-  </footer>
-
-  <!-- FAB Button (สำหรับ Chatbot) -->
-  <button id="fab-chat-toggle" title="ถามเภสัชกร AI">Ai</button>
-
-  <!-- Chatbot Modal -->
-  <div id="chatbot-modal" class="chatbot-hidden">
-    <div class="flex flex-col h-screen bg-gray-100">
-      <header class="bg-[#50b5a5] text-white p-3 md:p-4 flex justify-between items-center shadow-md">
-        <div class="flex items-center gap-2">
-            <span class="text-xl md:text-2xl">💊</span>
-            <div>
-                <h1 class="text-base md:text-lg font-bold font-sans text-white m-0">AI เภสัชกร</h1>
-                <p class="text-xs text-green-100 hidden md:block">ผู้ช่วยอัจฉริยะ 24 ชม.</p>
-            </div>
+<div id="calc-modal-overlay" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-2 sm:p-4 overflow-y-auto">
+  <div class="bg-white rounded-3xl w-full max-w-xl shadow-2xl flex flex-col my-auto max-h-[92vh] overflow-hidden border border-slate-200">
+    
+    <header class="bg-slate-800 text-white p-4 sm:p-5 flex justify-between items-center shadow-md shrink-0">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-2xl bg-white/10 flex items-center justify-center text-xl shrink-0">
+          🧮
         </div>
-        <div class="flex items-center gap-2">
-          <button id="new-chat-btn" class="bg-[#ddfff8] hover:bg-[#baf3ea] text-[#064e43] font-bold py-1.5 px-3 rounded-lg text-sm transition-colors">
-            เริ่มใหม่
-          </button>
-          <button id="chatbot-close-btn" class="bg-gray-800 hover:bg-gray-900 text-white font-bold py-1.5 px-3 rounded-lg text-sm transition-colors">
-            ปิด
-          </button>
+        <div>
+          <h3 class="font-heading font-bold text-lg leading-tight">เครื่องคำนวณสุขภาพประจำวัน</h3>
+          <p class="text-xs text-slate-300">ดัชนีมวลกาย (BMI), ปริมาณน้ำดื่ม และขนาดยาพาราเด็ก</p>
         </div>
-      </header>
+      </div>
+      <button id="close-calc-modal" class="w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 text-white flex items-center justify-center text-xl transition-all">
+        &times;
+      </button>
+    </header>
 
-      <main id="chat-history" class="flex-1 overflow-y-auto p-4 space-y-4 bg-[#f0fdfa]">
-        <div class="flex items-start space-x-2">
-          <span class="text-2xl">🤖</span>
-          <div class="chat-bubble chat-bubble-model bg-white text-gray-800 p-3 rounded-lg max-w-lg relative border border-gray-200 shadow-sm">
-            <p>สวัสดีครับ ผมคือ AI ผู้ช่วยเภสัชกร สอบถามข้อมูลยาได้เลยครับ<br><br>
-            หากต้องการประเมินสุขภาพเบื้องต้น กดปุ่ม <strong>"🩺 ประเมินสุขภาพ"</strong> ที่ด้านบนสุดของหน้าเว็บได้เลยครับ
-            </p>
+    <div class="p-5 overflow-y-auto space-y-6 bg-slate-50/50 text-xs">
+      
+      <!-- BMI Calculator Widget -->
+      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+        <h4 class="font-heading font-bold text-sm text-teal-800 flex items-center gap-2">
+          <i class="fa-solid fa-weight-scale text-teal-600"></i> คำนวณ BMI & น้ำหนักที่เหมาะสม
+        </h4>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-600 mb-1">น้ำหนัก (kg)</label>
+            <input type="number" id="calc-bmi-weight" placeholder="60" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-600 mb-1">ส่วนสูง (cm)</label>
+            <input type="number" id="calc-bmi-height" placeholder="165" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl">
           </div>
         </div>
-      </main>
+        <button onclick="calculateBMI()" class="w-full py-2 bg-teal-600 hover:bg-teal-700 text-white font-bold rounded-xl transition-colors">
+          คำนวณดัชนีมวลกาย
+        </button>
+        <div id="bmi-result" class="hidden p-3 bg-teal-50 border border-teal-200 rounded-xl text-slate-800 text-xs"></div>
+      </div>
 
-      <div id="thinking-indicator" class="p-4 hidden bg-[#f0fdfa]">
-        <div class="flex items-center space-x-2">
-          <span class="text-2xl">🤖</span>
-          <div class="chat-bubble chat-bubble-model bg-white text-gray-800 p-3 rounded-lg max-w-lg relative border border-gray-200">
-            <div class="gemini-thinking-bar"></div>
-            <span class="text-xs text-gray-500 mt-1 block">กำลังพิมพ์...</span>
+      <!-- Water Intake Calculator Widget -->
+      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+        <h4 class="font-heading font-bold text-sm text-blue-800 flex items-center gap-2">
+          <i class="fa-solid fa-glass-water text-blue-500"></i> คำนวณปริมาณน้ำดื่มต่อวัน
+        </h4>
+        <div>
+          <label class="block font-bold text-slate-600 mb-1">น้ำหนักตัวของคุณ (kg)</label>
+          <input type="number" id="calc-water-weight" placeholder="60" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl">
+        </div>
+        <button onclick="calculateWaterIntake()" class="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-colors">
+          คำนวณปริมาณน้ำ
+        </button>
+        <div id="water-result" class="hidden p-3 bg-blue-50 border border-blue-200 rounded-xl text-slate-800 text-xs"></div>
+      </div>
+
+      <!-- Kids Paracetamol Dosage Calculator Widget -->
+      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+        <h4 class="font-heading font-bold text-sm text-amber-800 flex items-center gap-2">
+          <i class="fa-solid fa-pills text-amber-500"></i> คำนวณปริมาณยาพาราเซตามอลสำหรับเด็ก
+        </h4>
+        <p class="text-[11px] text-slate-500">คำนวณตามเกณฑ์มาตรฐาน 10-15 mg/kg ต่อมื้อ (ทุก 4-6 ชั่วโมง)</p>
+        <div>
+          <label class="block font-bold text-slate-600 mb-1">น้ำหนักตัวเด็ก (kg)</label>
+          <input type="number" id="calc-para-weight" placeholder="12" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl">
+        </div>
+        <button onclick="calculateParaDose()" class="w-full py-2 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl transition-colors">
+          คำนวณขนาดยาน้ำเด็ก
+        </button>
+        <div id="para-result" class="hidden p-3 bg-amber-50 border border-amber-200 rounded-xl text-slate-800 text-xs"></div>
+      </div>
+
+    </div>
+
+    <footer class="p-3 bg-white border-t border-slate-200 flex justify-end">
+      <button id="close-calc-modal-btn" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs">
+        ปิดหน้าต่าง
+      </button>
+    </footer>
+
+  </div>
+</div>
+
+<div id="modalBackdrop" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-2 sm:p-4 overflow-y-auto">
+  <div class="bg-white rounded-3xl w-full max-w-2xl shadow-2xl flex flex-col my-auto max-h-[90vh] overflow-hidden border border-slate-200">
+    <header class="bg-slate-900 text-white p-4 sm:p-5 flex justify-between items-center shadow-md shrink-0">
+      <div class="flex items-center gap-2.5">
+        <span class="text-2xl">💊</span>
+        <h3 id="mTitle" class="font-heading font-bold text-lg text-white">—</h3>
+      </div>
+      <button id="closeModal" class="w-8 h-8 rounded-xl bg-white/10 hover:bg-white/20 text-white flex items-center justify-center text-lg transition-all">
+        &times;
+      </button>
+    </header>
+    <div class="p-5 overflow-y-auto space-y-4 text-slate-800 text-sm">
+      <div id="mMeta" class="flex flex-wrap gap-2 text-xs"></div>
+      <div id="mContent" class="prose prose-sm max-w-none text-slate-700 leading-relaxed bg-slate-50 p-4 rounded-2xl border border-slate-200"></div>
+      <div id="mSources" class="text-xs text-slate-500 pt-2 border-t border-slate-100"></div>
+    </div>
+  </div>
+</div>
+
+<div id="result-modal-overlay" class="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-sm hidden flex items-center justify-center p-2 sm:p-4 overflow-y-auto">
+  <div class="bg-white rounded-3xl w-full max-w-2xl shadow-2xl flex flex-col my-auto max-h-[90vh] overflow-hidden border border-slate-200">
+    <header class="bg-slate-900 text-white p-4 sm:p-5 flex justify-between items-center shadow-md shrink-0">
+      <div class="flex items-center gap-2.5">
+        <span class="text-2xl">🤖</span>
+        <h3 class="font-heading font-bold text-lg text-white">ผลการวิเคราะห์ด้วย AI</h3>
+      </div>
+      <button id="close-result-modal" class="w-8 h-8 rounded-xl bg-white/10 hover:bg-white/20 text-white flex items-center justify-center text-lg transition-all">
+        &times;
+      </button>
+    </header>
+    <div id="result-content-area" class="p-6 overflow-y-auto bg-slate-50 text-slate-800 text-sm leading-relaxed markdown-content">
+      <div class="flex flex-col items-center justify-center py-12 space-y-4 text-slate-500">
+        <div class="w-10 h-10 border-4 border-slate-200 border-t-teal-600 rounded-full animate-spin"></div>
+        <p class="font-medium text-xs">กำลังประมวลผลข้อมูล...</p>
+      </div>
+    </div>
+    <footer class="p-3 bg-white border-t border-slate-200 text-center text-xs text-slate-500">
+      คำเตือน: ผลลัพธ์จาก AI เป็นเพียงคำแนะนำเบื้องต้น โปรดปรึกษาแพทย์หรือเภสัชกรก่อนใช้ยา
+    </footer>
+  </div>
+</div>
+
+<div id="scan-modal-overlay" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-2 sm:p-4 overflow-y-auto">
+  <div class="bg-white rounded-3xl w-full max-w-xl shadow-2xl flex flex-col my-auto max-h-[92vh] overflow-hidden border border-slate-200">
+    
+    <header class="bg-gradient-to-r from-teal-700 via-emerald-700 to-teal-800 text-white p-4 sm:p-5 flex justify-between items-center shadow-md shrink-0">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-2xl bg-white/20 flex items-center justify-center text-xl shrink-0">
+          📸
+        </div>
+        <div>
+          <h3 class="font-heading font-bold text-lg leading-tight">สแกนภาพยา & วิเคราะห์ฉลากด้วย AI</h3>
+          <p class="text-xs text-teal-100">ถ่ายรูปเม็ดยา ซองยา แผงยา หรือใบสั่งยาเพื่อค้นหาข้อมูล</p>
+        </div>
+      </div>
+      <button id="close-scan-modal" class="w-9 h-9 rounded-xl bg-black/20 hover:bg-black/30 text-white flex items-center justify-center text-xl transition-all">
+        &times;
+      </button>
+    </header>
+
+    <div class="p-5 overflow-y-auto space-y-4 bg-slate-50/50 text-xs">
+      
+      <!-- File Upload Box -->
+      <div id="drop-zone" class="border-2 border-dashed border-teal-300 hover:border-teal-500 bg-teal-50/40 hover:bg-teal-50 transition-all rounded-2xl p-6 text-center space-y-3 cursor-pointer relative">
+        <input type="file" id="scan-file-input" accept="image/*" class="hidden">
+        
+        <div id="upload-prompt" class="space-y-2">
+          <div class="w-16 h-16 rounded-full bg-teal-100 text-teal-700 flex items-center justify-center mx-auto text-2xl shadow-inner">
+            <i class="fa-solid fa-cloud-arrow-up"></i>
+          </div>
+          <div class="space-y-1">
+            <p class="font-bold text-slate-800 text-sm">คลิกเพื่อเลือกรูปภาพ หรือ ลากรูปมาวางที่นี่</p>
+            <p class="text-slate-500 text-[11px]">รองรับไฟล์ภาพ JPG, PNG, WEBP (ขนาดไม่เกิน 10MB)</p>
+          </div>
+          <div class="pt-2 flex justify-center gap-2">
+            <button type="button" onclick="document.getElementById('scan-file-input').click()" class="bg-teal-600 hover:bg-teal-700 text-white font-bold px-4 py-2 rounded-xl shadow-sm text-xs flex items-center gap-1.5 transition-all">
+              <i class="fa-solid fa-image"></i> เลือกไฟล์รูปภาพ
+            </button>
+            <button type="button" onclick="triggerCameraCapture()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-xl shadow-sm text-xs flex items-center gap-1.5 transition-all">
+              <i class="fa-solid fa-camera"></i> เปิดกล้องถ่ายภาพ
+            </button>
+          </div>
+        </div>
+
+        <!-- Image Preview Container -->
+        <div id="preview-container" class="hidden space-y-3">
+          <img id="image-preview" src="" alt="ภาพยาที่อัปโหลด" class="max-h-64 mx-auto rounded-2xl border-2 border-teal-500 shadow-md object-contain bg-black/5">
+          <div class="flex items-center justify-center gap-2">
+            <button type="button" id="reselect-img-btn" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1 transition-all">
+              <i class="fa-solid fa-rotate-left"></i> เปลี่ยนรูปภาพ
+            </button>
           </div>
         </div>
       </div>
 
-      <footer class="bg-white p-3 shadow-inner border-t border-gray-200 m-0 w-full max-w-full z-10">
-        <div class="flex space-x-2">
-          <input id="user-input" type="text" placeholder="พิมพ์ชื่อยา หรืออาการป่วย..." class="flex-1 p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#50b5a5] font-sans text-base">
-          <button id="send-btn" class="bg-[#50b5a5] hover:bg-[#2f8f80] text-white font-bold py-2 px-4 rounded-xl shadow-sm transition-colors">
-            ส่ง
-          </button>
+      <!-- Analysis Mode Chips -->
+      <div class="space-y-1.5">
+        <label class="block font-bold text-slate-700">วัตถุประสงค์ในการสแกน</label>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+          <label class="flex items-center gap-2 p-2.5 bg-white border border-slate-200 rounded-xl cursor-pointer hover:border-teal-400 transition-colors">
+            <input type="radio" name="scan-mode" value="label" checked class="text-teal-600 focus:ring-teal-500">
+            <span class="font-medium text-slate-700">🏷️ อ่านซอง/ฉลากยา</span>
+          </label>
+          <label class="flex items-center gap-2 p-2.5 bg-white border border-slate-200 rounded-xl cursor-pointer hover:border-teal-400 transition-colors">
+            <input type="radio" name="scan-mode" value="pill" class="text-teal-600 focus:ring-teal-500">
+            <span class="font-medium text-slate-700">💊 วิเคราะห์ลักษณะเม็ดยา</span>
+          </label>
+          <label class="flex items-center gap-2 p-2.5 bg-white border border-slate-200 rounded-xl cursor-pointer hover:border-teal-400 transition-colors">
+            <input type="radio" name="scan-mode" value="rx" class="text-teal-600 focus:ring-teal-500">
+            <span class="font-medium text-slate-700">📋 อ่านใบสั่งยา / เอกสาร</span>
+          </label>
         </div>
-      </footer>
+      </div>
+
+      <div class="bg-teal-50/80 p-3 rounded-2xl border border-teal-200/80 text-teal-900 text-[11px] leading-relaxed flex items-start gap-2">
+        <i class="fa-solid fa-shield-halved text-teal-600 text-sm mt-0.5 shrink-0"></i>
+        <span>ระบบ AI จะประมวลผลรูปภาพทันทีอย่างปลอดภัย ภาพของคุณจะไม่ถูกจัดเก็บสาธารณะ และจะใช้เพื่อการวิเคราะห์ตัวยาเบื้องต้นเท่านั้น</span>
+      </div>
+
     </div>
+
+    <footer class="p-4 bg-white border-t border-slate-200 flex justify-end gap-2 shrink-0">
+      <button id="cancel-scan-btn" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs transition-all">
+        ยกเลิก
+      </button>
+      <button id="submit-scan-btn" disabled class="px-5 py-2.5 bg-teal-600 hover:bg-teal-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white font-bold rounded-xl text-xs shadow-md transition-all flex items-center gap-1.5">
+        <i class="fa-solid fa-wand-magic-sparkles"></i>
+        <span>เริ่มวิเคราะห์ด้วย AI Vision</span>
+      </button>
+    </footer>
+
   </div>
-
-  <!-- Health Assessment Dialog (Form) -->
-  <div id="health-modal-overlay" class="fixed inset-0 w-full h-full bg-black/60 z-[2000] hidden flex items-center justify-center p-4 backdrop-blur-sm">
-        <div class="bg-white rounded-2xl w-full max-w-lg shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
-            <header class="p-3 border-b border-gray-100 flex justify-between items-center bg-[#50b5a5]">
-                <div class="flex items-center gap-2 text-white font-bold text-lg">
-                    <span>🩺</span> ประเมินสุขภาพเบื้องต้น
-                </div>
-                <button id="close-health-modal" class="text-white/80 hover:text-white text-2xl leading-none">&times;</button>
-            </header>
-            
-            <div id="health-form-scroll-area" class="p-4 overflow-y-auto space-y-3 bg-slate-50">
-                <div class="grid grid-cols-4 gap-2">
-                    <div class="col-span-2 sm:col-span-1">
-                         <label class="health-form-label">เพศ</label>
-                         <select id="hf-gender" class="health-form-input">
-                            <option value="ชาย">ชาย</option>
-                            <option value="หญิง">หญิง</option>
-                        </select>
-                    </div>
-                    <div class="col-span-2 sm:col-span-1">
-                        <label class="health-form-label">อายุ (ปี)</label>
-                        <input type="number" id="hf-age" class="health-form-input" placeholder="0">
-                    </div>
-                    <div class="col-span-2 sm:col-span-1">
-                        <label class="health-form-label">น้ำหนัก (kg)</label>
-                        <input type="number" id="hf-weight" class="health-form-input" placeholder="0">
-                    </div>
-                    <div class="col-span-2 sm:col-span-1">
-                        <label class="health-form-label">ส่วนสูง (cm)</label>
-                        <input type="number" id="hf-height" class="health-form-input" placeholder="0">
-                    </div>
-                </div>
-
-                <div class="health-form-group">
-                    <label class="health-form-label">โรคประจำตัว (เลือกได้มากกว่า 1)</label>
-                    <div class="chip-group" id="disease-chips">
-                        <div class="chip-option" data-val="ไม่มี">ไม่มี</div>
-                        <div class="chip-option" data-val="ความดันโลหิตสูง">ความดันโลหิตสูง</div>
-                        <div class="chip-option" data-val="เบาหวาน">เบาหวาน</div>
-                        <div class="chip-option" data-val="ไขมันในเลือด">ไขมันในเลือด</div>
-                        <div class="chip-option" data-val="โรคหัวใจ">โรคหัวใจ</div>
-                        <div class="chip-option" data-val="หอบหืด">หอบหืด</div>
-                        <div class="chip-option" data-val="ไตเรื้อรัง">ไตเรื้อรัง</div>
-                    </div>
-                    <input type="text" id="hf-disease-other" class="health-form-input mt-2" placeholder="อื่นๆ ระบุ...">
-                </div>
-
-                <div class="health-form-group">
-                    <label class="health-form-label text-red-600">ประวัติแพ้ยา / อาหาร (สำคัญ)</label>
-                    <input type="text" id="hf-allergy" class="health-form-input border-red-200 bg-red-50 focus:bg-white" placeholder="ระบุชื่อยาที่แพ้ หรือ 'ไม่มี'">
-                </div>
-
-                <div class="health-form-group">
-                    <label class="health-form-label text-[#064e43] text-base">อาการที่ต้องการปรึกษา (ระบุละเอียด)</label>
-                    <textarea id="hf-symptoms" rows="4" class="health-form-input border-[#50b5a5] shadow-sm text-base" placeholder="เช่น ปวดหัวตุบๆ ขมับขวา มา 2 วัน, มีไข้ต่ำๆ, เจ็บคอเวลากลืน..."></textarea>
-                </div>
-            </div>
-
-            <footer class="p-3 border-t border-gray-100 flex justify-end gap-3 bg-white">
-                <button id="cancel-health-btn" class="px-4 py-2 text-gray-500 hover:bg-gray-100 rounded-lg text-sm font-bold">ยกเลิก</button>
-                <button id="submit-health-btn" class="px-6 py-2 bg-[#50b5a5] hover:bg-[#2f8f80] text-white rounded-lg text-sm font-bold shadow-lg transition-all flex items-center gap-2">
-                    <span>⚡</span> วิเคราะห์อาการ
-                </button>
-            </footer>
-        </div>
-    </div>
-
-    <!-- Rights Check Dialog (Static Content & Update Button) -->
-    <div id="rights-modal-overlay" class="fixed inset-0 w-full h-full bg-black/60 z-[2000] hidden flex items-center justify-center p-4 backdrop-blur-sm">
-        <div class="bg-white rounded-2xl w-full max-w-lg shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
-            <header class="p-3 border-b border-gray-100 flex justify-between items-center bg-amber-500">
-                <div class="flex items-center gap-2 text-white font-bold text-lg">
-                    <span>💳</span> สิทธิรักษาฟรีบัตรทอง (ประจำปี)
-                </div>
-                <button id="close-rights-modal" class="text-white/80 hover:text-white text-2xl leading-none">&times;</button>
-            </header>
-            
-            <div id="rights-form-scroll-area" class="p-0 overflow-y-auto bg-white" style="max-height: 60vh;">
-                <!-- Static Content Header -->
-                <div class="p-5 border-b border-gray-100 bg-amber-50">
-                    <h3 class="text-lg font-bold text-gray-800">สิทธิประโยชน์บัตรทอง (ครบวงจร)</h3>
-                    <p class="text-sm text-gray-600 mt-1">รวบรวมทุกสิทธิรักษาฟรีอัปเดต AI ประจำปี 2569</p>
-                    <div class="flex items-center gap-3 mt-2">
-                        <span class="text-[10px] font-bold bg-green-100 text-green-700 px-2 py-0.5 rounded border border-green-200">AI Verified</span>
-                        <span class="text-[10px] text-gray-500" id="rights-update-date">ล่าสุด: --/--/--</span>
-                    </div>
-                </div>
-                
-                <!-- List Content (Static Template) -->
-                <div class="p-5 space-y-5 text-sm">
-                    <div class="group">
-                        <h4 class="font-bold text-[#064e43] mb-1">UCEP: ฉุกเฉินวิกฤต มีสิทธิทุกที่</h4>
-                        <p class="text-gray-600 leading-relaxed">รักษาฟรี 72 ชม. แรกใน รพ. ที่ใกล้ที่สุด (รัฐและเอกชน) หากเจ็บป่วยฉุกเฉินวิกฤตถึงแก่ชีวิต</p>
-                    </div>
-                    <div class="group">
-                        <h4 class="font-bold text-[#064e43] mb-1">ตรวจและรักษาโรคทั่วไปฟรี</h4>
-                        <p class="text-gray-600 leading-relaxed">ครอบคลุมค่ารักษาพยาบาล ค่ายา ค่าเวชภัณฑ์ และค่าห้องสามัญในโรงพยาบาลตามสิทธิ</p>
-                    </div>
-                    <div class="group">
-                        <h4 class="font-bold text-[#064e43] mb-1">รับยาที่ร้านยาใกล้บ้านฟรี</h4>
-                        <p class="text-gray-600 leading-relaxed">ครอบคลุม 16 อาการเจ็บป่วยเล็กน้อย ปรึกษาเภสัชกรและรับยาได้ทันทีไม่ต้องไป รพ.</p>
-                    </div>
-                    <div class="group">
-                        <h4 class="font-bold text-[#064e43] mb-1">ล้างไต / ฟอกไตฟรี</h4>
-                        <p class="text-gray-600 leading-relaxed">ฟรีค่าล้างไตผ่านทางหน้าท้อง (แบบธรรมดาและอัตโนมัติ) และการฟอกเลือดด้วยเครื่องไตเทียม</p>
-                    </div>
-                    <div class="group">
-                        <h4 class="font-bold text-[#064e43] mb-1">ทันตกรรมครบวงจรฟรี</h4>
-                        <p class="text-gray-600 leading-relaxed">ถอนฟัน, อุดฟัน, ขูดหินปูน, ผ่าฟันคุด, เคลือบฟลูออไรด์ และทำฟันเทียม (ตามรอบที่กำหนด)</p>
-                    </div>
-                    <div class="group">
-                        <h4 class="font-bold text-[#064e43] mb-1">บริการแม่และเด็กฟรี</h4>
-                        <p class="text-gray-600 leading-relaxed">ฝากครรภ์คุณภาพ, คลอดบุตรฟรี, ตรวจคัดกรองโรคพันธุกรรมในเด็กแรกเกิด และวัคซีนพื้นฐาน</p>
-                    </div>
-                    <div class="group">
-                        <h4 class="font-bold text-[#064e43] mb-1">คัดกรองมะเร็งฟรี</h4>
-                        <p class="text-gray-600 leading-relaxed">มะเร็งปากมดลูก (HPV DNA), มะเร็งลำไส้ใหญ่ (FIT Test), มะเร็งเต้านม และมะเร็งช่องปาก</p>
-                    </div>
-                    <div class="group">
-                        <h4 class="font-bold text-[#064e43] mb-1">พบแพทย์ทางไกล (Telemedicine)</h4>
-                        <p class="text-gray-600 leading-relaxed">ปรึกษาแพทย์ผ่านแอปฯ สำหรับโรคทั่วไป พร้อมบริการส่งยาถึงบ้านฟรี (ผ่านแอปฯ ที่ร่วมโครงการ)</p>
-                    </div>
-                    <div class="group">
-                        <h4 class="font-bold text-[#064e43] mb-1">ตรวจสุขภาพและป้องกันโรค</h4>
-                        <p class="text-gray-600 leading-relaxed">ตรวจความดัน เบาหวาน ไขมันในเลือด และรับยาคุมกำเนิด ถุงยางอนามัย ฟรี</p>
-                    </div>
-                    <div class="group">
-                        <h4 class="font-bold text-[#064e43] mb-1">การฟื้นฟูสมรรถภาพ</h4>
-                        <p class="text-gray-600 leading-relaxed">บริการกายภาพบำบัด กิจกรรมบำบัด และอุปกรณ์สำหรับผู้พิการหรือผู้ป่วยติดเตียง</p>
-                    </div>
-                </div>
-            </div>
-
-            <footer class="p-3 border-t border-gray-100 flex justify-end gap-3 bg-white">
-                <button id="cancel-rights-btn" class="px-4 py-2 text-gray-500 hover:bg-gray-100 rounded-lg text-sm font-bold">ปิด</button>
-                <button id="submit-rights-btn" class="px-6 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-sm font-bold shadow-lg transition-all flex items-center gap-2">
-                    <span>🔄</span> อัปเดตสิทธิรักษาฟรีวันนี้
-                </button>
-            </footer>
-        </div>
-    </div>
-
-    <!-- Result Dialog (Popup) - Shared -->
-    <div id="result-modal-overlay" class="fixed inset-0 w-full h-full bg-black/70 z-[2050] hidden flex items-center justify-center p-4 backdrop-blur-sm">
-        <div class="bg-white rounded-2xl w-full max-w-2xl shadow-2xl flex flex-col max-h-[85vh] overflow-hidden">
-            <header class="p-4 border-b border-gray-100 flex justify-between items-center bg-white sticky top-0">
-                <div class="flex items-center gap-2 text-[#0f172a] font-bold text-xl">
-                    <span>🤖</span> ผลการวิเคราะห์ (AI)
-                </div>
-                <button id="close-result-modal" class="text-gray-400 hover:text-gray-600 text-3xl leading-none">&times;</button>
-            </header>
-            
-            <div id="result-content-area" class="p-6 overflow-y-auto bg-[#fffdf7] text-gray-800 text-base leading-relaxed result-markdown">
-                <div class="flex flex-col items-center justify-center py-10 space-y-4 text-gray-500">
-                     <div class="w-10 h-10 border-4 border-gray-200 border-t-[#50b5a5] rounded-full animate-spin"></div>
-                     <p>กำลังประมวลผลข้อมูล...</p>
-                </div>
-            </div>
-
-            <footer class="p-4 border-t border-gray-100 bg-gray-50 text-xs text-center text-gray-500">
-                คำเตือน: ผลลัพธ์จาก AI เป็นเพียงคำแนะนำเบื้องต้น โปรดตรวจสอบกับหน่วยงานที่เกี่ยวข้องอีกครั้ง
-            </footer>
-        </div>
-    </div>
+</div>
 
 <script>
-/** ================== CONFIG ================== **/
+/** ================= CONFIG & GLOBALS ================= **/
 const API_JSON_URL = 'https://raw.githubusercontent.com/tontakankeawpang321-glitch/krsitsdeeka/main/drugs.json';
+const API_URL = 'https://mute-unit-1629.tontakankeawpang.workers.dev/'; // AI Proxy Endpoint
 const PAGE_SIZE = 12;
 
-/** =============== Utilities =============== **/
-const $$ = (sel, el=document)=>el.querySelector(sel);
-const escapeHtml = (s='') => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const stripHtml = (html='') => { const t=document.createElement('div'); t.innerHTML=html; return t.textContent||t.innerText||''; };
+let rawData = [];
+let viewData = [];
+let currentPage = 1;
+let savedFavs = JSON.parse(localStorage.getItem('pharmAiFavs') || '[]');
+let scrollYPos = 0;
+
+/** Defensive Event Listener Helper **/
+function safeAddListener(id, event, handler) {
+  const el = document.getElementById(id);
+  if (el) {
+    el.addEventListener(event, handler);
+  }
+}
+
+/** =============== Helper Functions =============== **/
+const escapeHtml = (str='') => String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const stripHtml = (html='') => { const div = document.createElement('div'); div.innerHTML = html; return div.textContent || div.innerText || ''; };
 
 const CAT_TH_TO_KEY = {
   'ยาแก้ปวด': 'analgesic', 'ยาลดไข้': 'antipyretic', 'ยาฆ่าเชื้อ': 'antibiotic',
@@ -513,507 +829,1083 @@ const CAT_TH_TO_KEY = {
   'ยาแก้ไอ/ขับเสมหะ': 'cough', 'วิตามิน/อาหารเสริม': 'vitamin'
 };
 
-function normalizeDrug(x={}){
-  if (x.name || x.generic || x.category || x.contentHtml) {
+const CAT_KEY_TO_TH = {
+  'analgesic': 'ยาแก้ปวด/ลดอักเสบ', 'antipyretic': 'ยาลดไข้', 'antibiotic': 'ยาฆ่าเชื้อ/ปฏิชีวนะ',
+  'antihistamine': 'ยาแก้แพ้', 'antacid': 'ยาลดกรด/กระเพาะ',
+  'cough': 'ยาแก้ไอ/ขับเสมหะ', 'vitamin': 'วิตามิน/อาหารเสริม'
+};
+
+function normalizeDrug(item = {}) {
+  if (item.name || item.generic || item.category || item.contentHtml) {
     return {
-      id: String(x.id || ''), name: String(x.name || ''), generic: String(x.generic || ''),
-      category: String(x.category || ''), descHtml: String(x.contentHtml || ''),
-      caution: String(x.caution || ''), sources: Array.isArray(x.sources) ? x.sources : String(x.sources||'').split(/[|,;]+/).map(s=>s.trim()).filter(Boolean),
-      updatedAt: String(x.updatedAt || '')
+      id: String(item.id || item.name || Math.random()),
+      name: String(item.name || ''),
+      generic: String(item.generic || ''),
+      category: String(item.category || ''),
+      descHtml: String(item.contentHtml || item.descHtml || ''),
+      caution: String(item.caution || ''),
+      sources: Array.isArray(item.sources) ? item.sources : String(item.sources || '').split(/[|,;]+/).map(s => s.trim()).filter(Boolean),
+      updatedAt: String(item.updatedAt || '')
     };
   }
-  const thaiName = x['ชื่อยา']; const thaiCat = x['หมวด'];
-  const thaiDesc = x['รายละเอียดยาแบบพอเข้าใจ']; const thaiCaution = x['คำเตือนคำแนะนำ'];
-  const thaiSrc = x['อ้างอิง url'];
-  const key = CAT_TH_TO_KEY[thaiCat] || (String(thaiCat||'').toLowerCase()) || '';
+  const tName = item['ชื่อยา'];
+  const tCat = item['หมวด'];
+  const tDesc = item['รายละเอียดยาแบบพอเข้าใจ'];
+  const tCaution = item['คำเตือนคำแนะนำ'];
+  const tSrc = item['อ้างอิง url'];
+  const catKey = CAT_TH_TO_KEY[tCat] || String(tCat || '').toLowerCase() || '';
+
   return {
-    id: String(x.id || ''), name: String(thaiName || ''), generic: '',
-    category: key, descHtml: escapeHtml(String(thaiDesc || '')).replace(/\n/g, '<br>'),
-    caution: String(thaiCaution || ''), sources: String(thaiSrc||'').split(/[|,;]+/).map(s=>s.trim()).filter(Boolean),
+    id: String(item.id || tName || Math.random()),
+    name: String(tName || ''),
+    generic: '',
+    category: catKey,
+    descHtml: escapeHtml(String(tDesc || '')).replace(/\n/g, '<br>'),
+    caution: String(tCaution || ''),
+    sources: String(tSrc || '').split(/[|,;]+/).map(s => s.trim()).filter(Boolean),
     updatedAt: ''
   };
 }
 
-/** =============== Fetch & Render =============== **/
-async function fetchData(){
-  const res = await fetch(API_JSON_URL, {cache:'no-store'});
-  if(!res.ok) throw new Error(`โหลดข้อมูลไม่ได้ (status: ${res.status})`);
-  const json = await res.json();
-  const arr = Array.isArray(json) ? json : (Array.isArray(json.data) ? json.data : []);
-  return arr.map(normalizeDrug).filter(drug => drug.name && drug.name.trim() !== '');
+/** =============== Data Fetching & Rendering =============== **/
+async function loadDrugData() {
+  const gridEl = document.getElementById('grid');
+  if (!gridEl) return;
+
+  gridEl.innerHTML = Array.from({ length: 8 }).map(() => `
+    <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm space-y-3">
+      <div class="skeleton h-5 w-3/4 rounded-lg"></div>
+      <div class="skeleton h-3 w-1/2 rounded-lg"></div>
+      <div class="skeleton h-16 w-full rounded-xl"></div>
+      <div class="skeleton h-8 w-24 rounded-xl"></div>
+    </div>
+  `).join('');
+
+  try {
+    const res = await fetch(API_JSON_URL, { cache: 'no-store' });
+    if (!res.ok) throw new Error(`Status HTTP: ${res.status}`);
+    const json = await res.json();
+    const arr = Array.isArray(json) ? json : (Array.isArray(json.data) ? json.data : []);
+    rawData = arr.map(normalizeDrug).filter(d => d.name && d.name.trim() !== '');
+    viewData = [...rawData];
+    renderPage();
+    updateFavBadge();
+  } catch (err) {
+    console.error('Fetch Error:', err);
+    if (gridEl) {
+      gridEl.innerHTML = `
+        <div class="col-span-full bg-rose-50 border border-rose-200 text-rose-800 p-6 rounded-2xl text-center space-y-2">
+          <i class="fa-solid fa-triangle-exclamation text-2xl text-rose-500"></i>
+          <p class="font-bold">เกิดข้อผิดพลาดในการดึงข้อมูลยา</p>
+          <p class="text-xs text-rose-600">${escapeHtml(err.message)}</p>
+        </div>
+      `;
+    }
+  }
 }
 
-let raw = []; let view = []; let page = 1;
+function renderPage() {
+  const total = viewData.length;
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  currentPage = Math.min(Math.max(1, currentPage), totalPages);
+  
+  const start = (currentPage - 1) * PAGE_SIZE;
+  const pageItems = viewData.slice(start, start + PAGE_SIZE);
+  const gridEl = document.getElementById('grid');
 
-function renderPage(){
-  const total = view.length; const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
-  page = Math.min(Math.max(1, page), totalPages);
-  const start = (page-1)*PAGE_SIZE; const cur = view.slice(start, start+PAGE_SIZE);
-  const g = document.getElementById('grid');
-  if(!cur.length){
-    g.innerHTML = `<div style="grid-column:1/-1; text-align:center; color:#475569; padding:24px">ไม่พบรายการยา</div>`;
-  }else{
-    g.innerHTML = cur.map(it=>{
-      const catClass = it.category ? ` cat-${escapeHtml(it.category)}` : '';
-      const excerpt = stripHtml(it.descHtml || '').slice(0,180);
-      const srcs = (it.sources||[]).length ? `<div class="tag">${escapeHtml(it.sources[0])}${it.sources.length>1?'…':''}</div>` : '';
+  if (!gridEl) return;
+
+  if (!pageItems.length) {
+    gridEl.innerHTML = `
+      <div class="col-span-full bg-white border border-slate-200 p-8 rounded-2xl text-center text-slate-500 space-y-2">
+        <i class="fa-solid fa-capsules text-3xl text-slate-300"></i>
+        <p class="font-bold text-slate-700">ไม่พบรายการยาที่ค้นหา</p>
+        <p class="text-xs">ลองค้นหาด้วยคำอื่น หรือกดปุ่ม "ล้าง" เพื่อดูยาทั้งหมด</p>
+      </div>
+    `;
+  } else {
+    gridEl.innerHTML = pageItems.map(item => {
+      const catClass = item.category ? ` cat-${escapeHtml(item.category)}` : '';
+      const catLabel = CAT_KEY_TO_TH[item.category] || item.category || 'ยาทั่วไป';
+      const excerpt = stripHtml(item.descHtml || '').slice(0, 140);
+      const isFav = savedFavs.some(f => f.id === item.id);
+
       return `
-        <article class="card${catClass}" data-id="${escapeHtml(it.id)}" data-name="${escapeHtml(it.name)}">
-          <h3 class="drug-name">💊 ${escapeHtml(it.name || '(ไม่มีชื่อ)')}</h3>
-          ${it.generic ? `<div class="generic">(${escapeHtml(it.generic)})</div>`:''}
-          <div class="meta">
-            ${it.category ? `<span class="pill">หมวด: ${escapeHtml(it.category)}</span>`:''}
-            ${it.updatedAt ? `<span class="pill">อัปเดต: ${escapeHtml(it.updatedAt)}</span>`:''}
+        <article class="card ${catClass} bg-white rounded-2xl border border-slate-200/80 p-4 shadow-sm hover:shadow-md transition-all flex flex-col justify-between space-y-3 group">
+          <div class="space-y-2">
+            <div class="flex items-start justify-between gap-2">
+              <span class="drug-badge text-[11px] font-bold px-2.5 py-0.5 rounded-full border border-slate-200">
+                ${escapeHtml(catLabel)}
+              </span>
+              <button onclick="toggleFav('${escapeHtml(item.id)}')" class="text-slate-300 hover:text-amber-500 transition-colors p-1" title="บันทึกไว้">
+                <i class="${isFav ? 'fa-solid text-amber-500' : 'fa-regular'} fa-bookmark text-base"></i>
+              </button>
+            </div>
+
+            <h3 class="font-heading font-bold text-base text-slate-800 leading-snug group-hover:text-teal-700 transition-colors">
+              💊 ${escapeHtml(item.name)}
+            </h3>
+            ${item.generic ? `<div class="text-xs font-semibold text-teal-800">(${escapeHtml(item.generic)})</div>` : ''}
+
+            <p class="text-xs text-slate-600 line-clamp-3 leading-relaxed">
+              ${escapeHtml(excerpt)}${excerpt.length >= 140 ? '…' : ''}
+            </p>
           </div>
-          <div class="excerpt">${escapeHtml(excerpt)}${excerpt.length>=180?'…':''}</div>
-          <div class="tags">${srcs}</div>
-          <button class="btn" onclick="openDrugModal('${encodeURIComponent(it.id)}','${encodeURIComponent(it.name)}')">ดูรายละเอียด</button>
+
+          <div class="pt-2 border-t border-slate-100 flex items-center justify-between gap-2">
+            <button onclick="openDrugModal('${encodeURIComponent(item.id)}')" class="w-full py-2 bg-teal-50 hover:bg-teal-100 text-teal-800 font-bold text-xs rounded-xl border border-teal-200 transition-all flex items-center justify-center gap-1.5">
+              <span>ดูรายละเอียดยา</span>
+              <i class="fa-solid fa-arrow-right text-[10px]"></i>
+            </button>
+          </div>
         </article>
       `;
     }).join('');
   }
-  document.getElementById('pageInfo').textContent = `หน้า ${page} / ${totalPages}`;
-  document.getElementById('prevBtn').disabled = page<=1;
-  document.getElementById('nextBtn').disabled = page>=totalPages;
+
+  const pageInfo = document.getElementById('pageInfo');
+  if (pageInfo) pageInfo.textContent = `หน้า ${currentPage} / ${totalPages} (รวม ${total} รายการ)`;
+
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  if (prevBtn) prevBtn.disabled = currentPage <= 1;
+  if (nextBtn) nextBtn.disabled = currentPage >= totalPages;
+
+  const filterInfo = document.getElementById('filter-info-text');
+  if (filterInfo) filterInfo.textContent = `ผลการค้นหายา: ${total} รายการ`;
 }
 
-/** =============== Modal Logic (Drug Info & Lock Scroll) =============== **/
-let scrollY = 0;
-function lockBody(){
-  if(document.body.classList.contains('no-scroll')) return;
-  scrollY = window.scrollY || document.documentElement.scrollTop;
-  document.body.classList.add('no-scroll'); 
-  document.body.style.position = 'fixed';
-  document.body.style.top = `-${scrollY}px`; 
-  document.body.style.left = '0'; 
-  document.body.style.right = '0';
-  const main = document.getElementById('mainContent');
-  if(main) main.setAttribute('inert','');
-}
-
-function unlockBody(){
-  document.body.classList.remove('no-scroll'); 
-  document.body.style.position = '';
-  document.body.style.top = ''; 
-  document.body.style.left = ''; 
-  document.body.style.right = '';
-  window.scrollTo(0, scrollY); 
-  const main = document.getElementById('mainContent');
-  if(main) main.removeAttribute('inert');
-}
-
-function attemptUnlockBody(){
-    const isDrugOpen = document.getElementById('modalBackdrop').classList.contains('show');
-    const isHealthOpen = !document.getElementById('health-modal-overlay').classList.contains('hidden');
-    const isRightsOpen = !document.getElementById('rights-modal-overlay').classList.contains('hidden');
-    const isResultOpen = !document.getElementById('result-modal-overlay').classList.contains('hidden');
-    
-    if(!isDrugOpen && !isHealthOpen && !isRightsOpen && !isResultOpen){
-        unlockBody();
-    }
-}
-
-function openDrugModal(encodedId, encodedName){
+function openDrugModal(encodedId) {
   const id = decodeURIComponent(encodedId || '');
-  const name = decodeURIComponent(encodedName || '');
-  const it = raw.find(x=> (x.id && x.id===id) || (x.name===name)) || {};
-  document.getElementById('mTitle').textContent = it.name || '(ไม่มีชื่อ)';
-  document.getElementById('mMeta').innerHTML = `
-    ${it.category ? `<span class="pill">หมวด: ${escapeHtml(it.category)}</span>`:''}
-    ${it.caution ? `<span class="pill" style="border-color:#fca5a5; background:#fff1f2; color:#991b1b;">คำเตือน: ${escapeHtml(it.caution)}</span>`:''}
-  `;
-  document.getElementById('mContent').innerHTML = it.descHtml || '';
-  const srcs = (it.sources||[]).map(s=>`<a href="${escapeHtml(s)}" target="_blank" rel="noopener nofollow">${escapeHtml(s)}</a>`).join('<br>');
-  document.getElementById('mSources').innerHTML = srcs ? `<strong>แหล่งอ้างอิง:</strong><br>${srcs}` : '';
-  document.getElementById('modalBackdrop').classList.add('show');
+  const item = rawData.find(x => x.id === id) || {};
+  
+  const mTitle = document.getElementById('mTitle');
+  const mMeta = document.getElementById('mMeta');
+  const mContent = document.getElementById('mContent');
+  const mSources = document.getElementById('mSources');
+  const backdrop = document.getElementById('modalBackdrop');
+
+  if (mTitle) mTitle.textContent = item.name || '(ไม่มีชื่อ)';
+  if (mMeta) {
+    const catLabel = CAT_KEY_TO_TH[item.category] || item.category || '';
+    mMeta.innerHTML = `
+      ${catLabel ? `<span class="pill bg-slate-100 text-slate-700 px-2.5 py-1 rounded-full border border-slate-200">หมวด: ${escapeHtml(catLabel)}</span>` : ''}
+      ${item.caution ? `<span class="pill bg-rose-50 text-rose-800 px-2.5 py-1 rounded-full border border-rose-200 font-medium">คำเตือน: ${escapeHtml(item.caution)}</span>` : ''}
+    `;
+  }
+  if (mContent) mContent.innerHTML = item.descHtml || '<p class="text-slate-400">ไม่มีข้อมูลเพิ่มเติม</p>';
+  if (mSources) {
+    const srcs = (item.sources || []).map(s => `<a href="${escapeHtml(s)}" target="_blank" rel="noopener nofollow" class="text-teal-600 hover:underline break-all">${escapeHtml(s)}</a>`).join('<br>');
+    mSources.innerHTML = srcs ? `<strong>แหล่งอ้างอิง:</strong><br>${srcs}` : '';
+  }
+  if (backdrop) backdrop.classList.remove('hidden');
   lockBody();
 }
-function closeModal(){
-  document.getElementById('modalBackdrop').classList.remove('show');
-  attemptUnlockBody(); 
-}
-document.getElementById('closeModal').addEventListener('click', closeModal);
-document.getElementById('modalBackdrop').addEventListener('click', (e)=>{ if(e.target.id==='modalBackdrop') closeModal(); });
 
-/** =============== Search & Pager =============== **/
-document.getElementById('prevBtn').addEventListener('click', ()=>{ page=Math.max(1,page-1); renderPage(); });
-document.getElementById('nextBtn').addEventListener('click', ()=>{ page=page+1; renderPage(); });
-function applySearch(){
-  const q = document.getElementById('q').value.trim().toLowerCase();
-  const category = document.getElementById('cat').value.trim().toLowerCase();
-  view = raw.filter(it=>{
-    const hitQ = !q || [it.name, it.generic, stripHtml(it.descHtml||''), it.caution, (it.sources||[]).join(' ')].join(' | ').toLowerCase().includes(q);
-    const hitCat = !category || (String(it.category||'').toLowerCase() === category);
-    return hitQ && hitCat;
-  });
-  page = 1; renderPage();
+function closeDrugModal() {
+  const backdrop = document.getElementById('modalBackdrop');
+  if (backdrop) backdrop.classList.add('hidden');
+  checkAndUnlockBody();
 }
-document.getElementById('searchBtn').addEventListener('click', applySearch);
-document.getElementById('clearBtn').addEventListener('click', ()=>{
-  document.getElementById('q').value=''; document.getElementById('cat').value='';
-  view=raw.slice(0); page=1; renderPage();
+
+safeAddListener('closeModal', 'click', closeDrugModal);
+safeAddListener('modalBackdrop', 'click', (e) => { if (e.target.id === 'modalBackdrop') closeDrugModal(); });
+
+/** =============== Lock / Unlock Body Scroll =============== **/
+function lockBody() {
+  if (document.body.classList.contains('no-scroll')) return;
+  scrollYPos = window.scrollY || document.documentElement.scrollTop;
+  document.body.classList.add('no-scroll');
+  document.body.style.position = 'fixed';
+  document.body.style.top = `-${scrollYPos}px`;
+  document.body.style.left = '0';
+  document.body.style.right = '0';
+}
+
+function unlockBody() {
+  document.body.classList.remove('no-scroll');
+  document.body.style.position = '';
+  document.body.style.top = '';
+  document.body.style.left = '';
+  document.body.style.right = '';
+  window.scrollTo(0, scrollYPos);
+}
+
+function checkAndUnlockBody() {
+  const isDrugOpen = !document.getElementById('modalBackdrop')?.classList.contains('hidden');
+  const isHealthOpen = !document.getElementById('health-modal-overlay')?.classList.contains('hidden');
+  const isRightsOpen = !document.getElementById('rights-modal-overlay')?.classList.contains('hidden');
+  const isResultOpen = !document.getElementById('result-modal-overlay')?.classList.contains('hidden');
+  const isCalcOpen = !document.getElementById('calc-modal-overlay')?.classList.contains('hidden');
+  const isScanOpen = !document.getElementById('scan-modal-overlay')?.classList.contains('hidden');
+
+  if (!isDrugOpen && !isHealthOpen && !isRightsOpen && !isResultOpen && !isCalcOpen && !isScanOpen) {
+    unlockBody();
+  }
+}
+
+/** ================= AI DRUG IMAGE SCANNER ENGINE ================= **/
+let selectedImageBase64 = null;
+let selectedImageMimeType = 'image/jpeg';
+
+function openScanModal() {
+  const scanModal = document.getElementById('scan-modal-overlay');
+  if (scanModal) scanModal.classList.remove('hidden');
+  lockBody();
+}
+
+function closeScanModal() {
+  const scanModal = document.getElementById('scan-modal-overlay');
+  if (scanModal) scanModal.classList.add('hidden');
+  checkAndUnlockBody();
+}
+
+safeAddListener('nav-scan-btn', 'click', openScanModal);
+safeAddListener('hero-scan-btn', 'click', openScanModal);
+safeAddListener('quick-camera-btn', 'click', openScanModal);
+safeAddListener('close-scan-modal', 'click', closeScanModal);
+safeAddListener('cancel-scan-btn', 'click', closeScanModal);
+
+function triggerCameraCapture() {
+  const camInput = document.createElement('input');
+  camInput.type = 'file';
+  camInput.accept = 'image/*';
+  camInput.capture = 'environment';
+  camInput.onchange = (e) => handleImageSelect(e.target.files[0]);
+  camInput.click();
+}
+
+function handleImageSelect(file) {
+  if (!file) return;
+  if (!file.type.startsWith('image/')) {
+    alert('กรุณาเลือกไฟล์รูปภาพเท่านั้น');
+    return;
+  }
+
+  selectedImageMimeType = file.type || 'image/jpeg';
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const dataUrl = e.target.result;
+    const imgPreview = document.getElementById('image-preview');
+    if (imgPreview) imgPreview.src = dataUrl;
+    selectedImageBase64 = dataUrl.split(',')[1];
+
+    const uploadPrompt = document.getElementById('upload-prompt');
+    const previewContainer = document.getElementById('preview-container');
+    const submitBtn = document.getElementById('submit-scan-btn');
+
+    if (uploadPrompt) uploadPrompt.classList.add('hidden');
+    if (previewContainer) previewContainer.classList.remove('hidden');
+    if (submitBtn) submitBtn.disabled = false;
+  };
+  reader.readAsDataURL(file);
+}
+
+const scanFileInput = document.getElementById('scan-file-input');
+if (scanFileInput) {
+  scanFileInput.addEventListener('change', (e) => handleImageSelect(e.target.files[0]));
+}
+
+safeAddListener('reselect-img-btn', 'click', (e) => {
+  e.stopPropagation();
+  selectedImageBase64 = null;
+  const fileInput = document.getElementById('scan-file-input');
+  if (fileInput) fileInput.value = '';
+
+  const previewContainer = document.getElementById('preview-container');
+  const uploadPrompt = document.getElementById('upload-prompt');
+  const submitBtn = document.getElementById('submit-scan-btn');
+
+  if (previewContainer) previewContainer.classList.add('hidden');
+  if (uploadPrompt) uploadPrompt.classList.remove('hidden');
+  if (submitBtn) submitBtn.disabled = true;
 });
-document.getElementById('q').addEventListener('keydown', e=>{ if(e.key==='Enter') applySearch(); });
-document.getElementById('cat').addEventListener('change', applySearch);
 
-(async function init(){
-  document.getElementById('grid').innerHTML = Array.from({length:6}).map(()=>`
-    <div class="card">
-      <div class="skeleton" style="height:18px; width:70%; border-radius:8px; margin-bottom:8px"></div>
-      <div class="skeleton" style="height:10px; width:50%; border-radius:8px; margin-bottom:12px"></div>
-      <div class="skeleton" style="height:60px; border-radius:12px; margin-bottom:12px"></div>
-      <div class="skeleton" style="height:36px; width:120px; border-radius:10px"></div>
-    </div>
-  `).join('');
+const dropZone = document.getElementById('drop-zone');
+if (dropZone) {
+  dropZone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dropZone.classList.add('border-teal-500', 'bg-teal-100/50');
+  });
 
-  // Set Current Date in Rights Header
-  const dateEl = document.getElementById('rights-update-date');
-  if(dateEl) {
-      const now = new Date();
-      const thYear = (now.getFullYear() + 543).toString().slice(-2);
-      const months = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
-      dateEl.textContent = `ล่าสุด: ${now.getDate()} ${months[now.getMonth()]} ${thYear}`;
-  }
+  dropZone.addEventListener('dragleave', (e) => {
+    e.preventDefault();
+    dropZone.classList.remove('border-teal-500', 'bg-teal-100/50');
+  });
 
-  try{
-    raw = await fetchData();
-    view = raw.slice(0);
-    renderPage();
-  }catch(e){
-    document.getElementById('grid').innerHTML =
-      `<div style="grid-column:1/-1; text-align:center; padding:24px; color:#b91c1c">
-        เกิดข้อผิดพลาดในการโหลดข้อมูล: ${escapeHtml(e.message||String(e))}
-      </div>`;
-  }
-})();
-
-
-/** =========================================
-    3. ส่วน Chatbot AI + Health Assessment Logic
-    ========================================= */
-const API_URL = 'https://mute-unit-1629.tontakankeawpang.workers.dev/';
-
-const SYSTEM_PROMPT = {
-    role: "user",
-    parts: [{ text: "คุณคือ AI เภสัชกร ให้ข้อมูลยาเชิงความรู้ ไม่วินิจฉัยโรค" }]
-};
-const SYSTEM_ACK = {
-    role: "model",
-    parts: [{ text: "รับทราบครับ ผมพร้อมให้ข้อมูลยาและสุขภาพครับ" }]
-};
-
-let chatHistory = [SYSTEM_PROMPT, SYSTEM_ACK];
-
-// DOM Elements
-const chatHistoryEl = document.getElementById('chat-history');
-const userInput = document.getElementById('user-input');
-const sendBtn = document.getElementById('send-btn');
-const newChatBtn = document.getElementById('new-chat-btn');
-const thinkingIndicator = document.getElementById('thinking-indicator');
-const chatModal = document.getElementById('chatbot-modal');
-
-// Health Modal Elements
-const healthCheckBtn = document.getElementById('health-check-btn');
-const healthModalOverlay = document.getElementById('health-modal-overlay');
-const closeHealthModalBtn = document.getElementById('close-health-modal');
-const cancelHealthBtn = document.getElementById('cancel-health-btn');
-const submitHealthBtn = document.getElementById('submit-health-btn');
-
-// NEW: Rights Check Elements
-const rightsCheckBtn = document.getElementById('rights-check-btn');
-const rightsModalOverlay = document.getElementById('rights-modal-overlay');
-const closeRightsModalBtn = document.getElementById('close-rights-modal');
-const cancelRightsBtn = document.getElementById('cancel-rights-btn');
-const submitRightsBtn = document.getElementById('submit-rights-btn');
-
-// Result Modal Elements
-const resultModalOverlay = document.getElementById('result-modal-overlay');
-const closeResultModalBtn = document.getElementById('close-result-modal');
-const resultContentArea = document.getElementById('result-content-area');
-
-// --- Helper Functions ---
-function addChatBubble(message, isUser = true) {
-    const bubbleType = isUser ? 'user' : 'model';
-    const icon = isUser ? '👤' : '🤖';
-    const bgClass = isUser ? 'bg-[#50b5a5] text-white' : 'bg-white text-gray-800 border border-gray-200';
-    
-    const wrap = document.createElement('div');
-    wrap.className = `flex items-start space-x-2 ${isUser ? 'flex-row-reverse space-x-reverse' : ''}`;
-    
-    const bubble = document.createElement('div');
-    bubble.className = `chat-bubble chat-bubble-${bubbleType} ${bgClass} p-3 rounded-lg max-w-lg relative shadow-sm`;
-    bubble.innerHTML = `<p>${message.replace(/\n/g, '<br>')}</p>`;
-    
-    wrap.innerHTML = `<span class="text-2xl">${icon}</span>`;
-    wrap.appendChild(bubble);
-    
-    chatHistoryEl.appendChild(wrap);
-    chatHistoryEl.scrollTop = chatHistoryEl.scrollHeight;
+  dropZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropZone.classList.remove('border-teal-500', 'bg-teal-100/50');
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      handleImageSelect(e.dataTransfer.files[0]);
+    }
+  });
 }
 
-function setThinking(on) {
-    thinkingIndicator.classList.toggle('hidden', !on);
-    if (on) chatHistoryEl.scrollTop = chatHistoryEl.scrollHeight;
+/** Direct Gemini Vision API Call **/
+async function analyzeImageWithGeminiVision(base64Data, mimeType, mode) {
+  const apiKey = ""; // API Key injected automatically by environment
+  const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+  let promptText = `
+  คุณคือ AI เภสัชกรผู้เชี่ยวชาญภาษาไทย โปรดวิเคราะห์ภาพยานี้อย่างเป็นระบบและระมัดระวัง:
+  
+  1. 💊 **ชื่อยาที่ระบุในภาพ**: ระบุชื่อการค้า (Brand Name) และชื่อสามัญทางยา (Generic Name) ภาษาไทยและอังกฤษ
+  2. 🧪 **ส่วนประกอบสำคัญและขนาดความแรง**: (เช่น Paracetamol 500 mg)
+  3. 🩺 **สรรพคุณและข้อบ่งใช้**: ใช้สำหรับรักษาอะไร
+  4. ⏰ **ขนาดและวิธีรับประทานทั่วไป**:
+  5. ⚠️ **ข้อควรระวัง / ผลข้างเคียงสำคัญ / ยาห้ามใช้ร่วม**:
+  6. 🔍 **ค้นหาต่อในคลังยา**: บรรทัดสุดท้ายให้ระบุคำค้นหาชื่อยาสั้นๆ ภาษาอังกฤษหรือไทย เช่น 'SEARCH_KEYWORD: Paracetamol'
+  `;
+
+  if (mode === 'pill') {
+    promptText = `
+    คุณคือ AI เภสัชกร โปรดวิเคราะห์ภาพลักษณะเม็ดยา/แผงยานี้:
+    1. 🔍 **ลักษณะเม็ดยาที่พบ**: สี, รูปร่าง, สัญลักษณ์/ข้อความปั๊มบนเม็ดยา
+    2. 💊 **คาดการณ์ตัวยาที่เป็นไปได้**: ระบุชื่อยาและกลุ่มยา
+    3. 🩺 **คำแนะนำความปลอดภัย**: เตือนว่าต้องยืนยันกับเภสัชกรก่อนรับประทานเสมอ
+    4. 🔍 **SEARCH_KEYWORD: [ชื่อยาภาษาอังกฤษหรือไทย]**
+    `;
+  } else if (mode === 'rx') {
+    promptText = `
+    คุณคือ AI เภสัชกร โปรดอ่านฉลากหรือใบสั่งยานี้:
+    1. 📋 **รายการยาที่อ่านได้**: ชื่อยา, ปริมาณ, วิธีรับประทาน
+    2. 💡 **คำอธิบายการใช้ยาภาษาไทยเข้าใจง่าย**:
+    3. ⚠️ **ข้อควรระวังพิเศษ**:
+    4. 🔍 **SEARCH_KEYWORD: [ชื่อยาสูตรหลัก]**
+    `;
+  }
+
+  const payload = {
+    contents: [
+      {
+        role: "user",
+        parts: [
+          { text: promptText },
+          {
+            inlineData: {
+              mimeType: mimeType,
+              data: base64Data
+            }
+          }
+        ]
+      }
+    ]
+  };
+
+  const response = await fetch(apiUrl, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+
+  if (!response.ok) {
+    throw new Error(`Vision API error status: ${response.status}`);
+  }
+
+  const result = await response.json();
+  const text = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+  if (!text) throw new Error("ไม่สามารถอ่านข้อมูลภาพได้");
+  return text;
 }
 
-// AI Call Function
+safeAddListener('submit-scan-btn', 'click', async () => {
+  if (!selectedImageBase64) return;
+
+  const modeEl = document.querySelector('input[name="scan-mode"]:checked');
+  const mode = modeEl ? modeEl.value : 'label';
+
+  closeScanModal();
+
+  const resultModal = document.getElementById('result-modal-overlay');
+  const contentArea = document.getElementById('result-content-area');
+  if (resultModal) resultModal.classList.remove('hidden');
+  lockBody();
+
+  if (contentArea) {
+    contentArea.innerHTML = `
+      <div class="flex flex-col items-center justify-center py-12 space-y-4 text-slate-500">
+        <div class="w-12 h-12 border-4 border-slate-200 border-t-teal-600 rounded-full animate-spin"></div>
+        <p class="font-bold text-sm text-teal-800">AI Vision กำลังวิเคราะห์ฉลากและตัวยาจากภาพ...</p>
+        <p class="text-xs text-slate-400">กระบวนการนี้ใช้เวลาประมาณ 3-5 วินาที</p>
+      </div>
+    `;
+  }
+
+  try {
+    const aiText = await analyzeImageWithGeminiVision(selectedImageBase64, selectedImageMimeType, mode);
+    
+    if (contentArea) {
+      contentArea.innerHTML = marked.parse(aiText);
+    }
+
+    const match = aiText.match(/SEARCH_KEYWORD:\s*([^\n\r]+)/i);
+    if (match && match[1]) {
+      const keyword = match[1].trim();
+      const qInput = document.getElementById('q');
+      if (qInput) {
+        qInput.value = keyword;
+        applySearch();
+      }
+    }
+  } catch (err) {
+    console.error("Scan Vision Error:", err);
+    if (contentArea) {
+      contentArea.innerHTML = `
+        <div class="text-center text-rose-600 py-10 space-y-3">
+          <i class="fa-solid fa-triangle-exclamation text-3xl"></i>
+          <p class="font-bold text-base">ขออภัย เกิดข้อผิดพลาดในการวิเคราะห์ภาพ</p>
+          <p class="text-xs text-slate-500">${escapeHtml(err.message)}</p>
+          <button onclick="openScanModal()" class="mt-2 bg-teal-600 text-white font-bold px-4 py-2 rounded-xl text-xs">ลองใหม่อีกครั้ง</button>
+        </div>
+      `;
+    }
+  }
+});
+
+/** =============== Favorites System =============== **/
+function toggleFav(id) {
+  const index = savedFavs.findIndex(f => f.id === id);
+  if (index >= 0) {
+    savedFavs.splice(index, 1);
+  } else {
+    const item = rawData.find(d => d.id === id);
+    if (item) savedFavs.push(item);
+  }
+  localStorage.setItem('pharmAiFavs', JSON.stringify(savedFavs));
+  updateFavBadge();
+  renderPage();
+}
+
+function updateFavBadge() {
+  const count = savedFavs.length;
+  const badge = document.getElementById('fav-count-badge');
+  if (!badge) return;
+  if (count > 0) {
+    badge.textContent = count;
+    badge.classList.remove('hidden');
+    badge.classList.add('flex');
+  } else {
+    badge.classList.add('hidden');
+  }
+}
+
+safeAddListener('nav-fav-btn', 'click', () => {
+  const favBtn = document.getElementById('nav-fav-btn');
+  if (!favBtn) return;
+  const isShowingFavs = favBtn.classList.contains('bg-amber-100');
+  
+  if (isShowingFavs) {
+    favBtn.classList.remove('bg-amber-100', 'border-amber-300');
+    viewData = [...rawData];
+  } else {
+    favBtn.classList.add('bg-amber-100', 'border-amber-300');
+    viewData = [...savedFavs];
+  }
+  currentPage = 1;
+  renderPage();
+});
+
+/** =============== Search & Filter Listeners =============== **/
+function applySearch() {
+  const qEl = document.getElementById('q');
+  const catEl = document.getElementById('cat');
+  const clearX = document.getElementById('clearSearchX');
+  
+  const q = qEl ? qEl.value.trim().toLowerCase() : '';
+  const cat = catEl ? catEl.value.trim().toLowerCase() : '';
+
+  if (clearX) {
+    if (q) clearX.classList.remove('hidden');
+    else clearX.classList.add('hidden');
+  }
+
+  viewData = rawData.filter(item => {
+    const textSearch = [item.name, item.generic, stripHtml(item.descHtml || ''), item.caution].join(' ').toLowerCase();
+    const matchesQ = !q || textSearch.includes(q);
+    const matchesCat = !cat || String(item.category || '').toLowerCase() === cat;
+    return matchesQ && matchesCat;
+  });
+
+  currentPage = 1;
+  renderPage();
+}
+
+safeAddListener('searchBtn', 'click', applySearch);
+safeAddListener('cat', 'change', applySearch);
+safeAddListener('q', 'input', applySearch);
+safeAddListener('q', 'keydown', e => { if (e.key === 'Enter') applySearch(); });
+safeAddListener('clearSearchX', 'click', () => {
+  const qEl = document.getElementById('q');
+  if (qEl) qEl.value = '';
+  applySearch();
+});
+safeAddListener('clearBtn', 'click', () => {
+  const qEl = document.getElementById('q');
+  const catEl = document.getElementById('cat');
+  const favBtn = document.getElementById('nav-fav-btn');
+  if (qEl) qEl.value = '';
+  if (catEl) catEl.value = '';
+  if (favBtn) favBtn.classList.remove('bg-amber-100', 'border-amber-300');
+  viewData = [...rawData];
+  currentPage = 1;
+  renderPage();
+});
+
+safeAddListener('prevBtn', 'click', () => { currentPage--; renderPage(); });
+safeAddListener('nextBtn', 'click', () => { currentPage++; renderPage(); });
+
+/** ================= AI CALL & PROMPT ENGINE ================= **/
 async function callAI(message, history = []) {
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 60000); 
+  const timeout = setTimeout(() => controller.abort(), 50000);
 
   try {
     const res = await fetch(API_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        message,
-        history
-      }),
+      body: JSON.stringify({ message, history }),
       signal: controller.signal
     });
 
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-
     const json = await res.json();
-    return json.reply || "";
-
-  } catch (e) {
-    console.error("AI Call Error:", e);
-    return "ระบบขัดข้องชั่วคราว กรุณาลองใหม่ (" + e.message + ")";
+    return json.reply || "ไม่ได้รับตอบกลับจาก AI";
+  } catch (err) {
+    console.error("AI Error:", err);
+    return `ขออภัย เกิดข้อผิดพลาดในการเชื่อมต่อระบบ AI เภสัชกร (${err.message})`;
   } finally {
     clearTimeout(timeout);
   }
 }
 
-// --- Chat Logic ---
-async function handleSend() {
-    const message = (userInput.value || '').trim();
-    if (!message) return;
+/** =============== Chatbot Controller =============== **/
+let chatHistory = [
+  { role: "user", parts: [{ text: "คุณคือ AI เภสัชกรผู้เชี่ยวชาญ คอยให้ข้อมูลยาและสิทธิสุขภาพประจำปีอย่างถูกต้อง สุภาพ ชัดเจน" }] },
+  { role: "model", parts: [{ text: "สวัสดีครับ ผมคือ AI เภสัชกรส่วนตัว ยินดีให้ข้อมูลยาและสิทธิสุขภาพประจำปีครับ" }] }
+];
 
-    addChatBubble(message, true);
-    userInput.value = '';
-    setThinking(true);
-    
-    chatHistory.push({ role: "user", parts: [{ text: message }] });
+function addChatBubble(text, isUser = true) {
+  const chatHistoryEl = document.getElementById('chat-history');
+  if (!chatHistoryEl) return;
 
-    let historyToSend = chatHistory;
-    if (chatHistory.length > 8) { 
-         historyToSend = [chatHistory[0], chatHistory[1], ...chatHistory.slice(2).slice(-6)];
-    }
+  const wrap = document.createElement('div');
+  wrap.className = `flex items-start gap-2.5 ${isUser ? 'flex-row-reverse' : ''}`;
 
-    const aiReply = await callAI(message, historyToSend);
+  const icon = isUser ? '👤' : '🤖';
+  const bgClass = isUser ? 'bg-teal-600 text-white rounded-tr-none' : 'bg-white text-slate-800 rounded-tl-none border border-slate-200/80 shadow-sm';
 
-    chatHistory.push({ role: "model", parts: [{ text: aiReply }] });
-    setThinking(false);
-    if (aiReply) addChatBubble(aiReply, false);
+  wrap.innerHTML = `
+    <div class="w-8 h-8 rounded-xl ${isUser ? 'bg-slate-700' : 'bg-teal-600'} text-white flex items-center justify-center text-sm shrink-0 shadow-sm">${icon}</div>
+    <div class="${bgClass} p-3.5 rounded-2xl max-w-[85%] text-sm space-y-1 leading-relaxed">
+      ${marked.parse(text)}
+    </div>
+  `;
+
+  chatHistoryEl.appendChild(wrap);
+  chatHistoryEl.scrollTop = chatHistoryEl.scrollHeight;
 }
 
-sendBtn.addEventListener('click', handleSend);
-userInput.addEventListener('keydown', e => { if (e.key === 'Enter') handleSend(); });
-newChatBtn.addEventListener('click', () => {
-    chatHistory = [SYSTEM_PROMPT, SYSTEM_ACK]; 
-    chatHistoryEl.innerHTML = `<div class="flex items-start space-x-2"><span class="text-2xl">🤖</span><div class="chat-bubble chat-bubble-model bg-white text-gray-800 p-3 rounded-lg max-w-lg relative border border-gray-200 shadow-sm"><p>สวัสดีครับ ผมคือ AI ผู้ช่วยเภสัชกร สอบถามเรื่องยาได้เลยครับ</p></div></div>`;
-    userInput.value = '';
-    setThinking(false);
+async function handleChatSend() {
+  const userInputEl = document.getElementById('user-input');
+  const chatHistoryEl = document.getElementById('chat-history');
+  const thinkingEl = document.getElementById('thinking-indicator');
+
+  if (!userInputEl) return;
+  const msg = userInputEl.value.trim();
+  if (!msg) return;
+
+  addChatBubble(msg, true);
+  userInputEl.value = '';
+  if (thinkingEl) thinkingEl.classList.remove('hidden');
+  if (chatHistoryEl) chatHistoryEl.scrollTop = chatHistoryEl.scrollHeight;
+
+  chatHistory.push({ role: "user", parts: [{ text: msg }] });
+  
+  let sendHist = chatHistory;
+  if (chatHistory.length > 10) {
+    sendHist = [chatHistory[0], chatHistory[1], ...chatHistory.slice(-8)];
+  }
+
+  const reply = await callAI(msg, sendHist);
+  if (thinkingEl) thinkingEl.classList.add('hidden');
+
+  chatHistory.push({ role: "model", parts: [{ text: reply }] });
+  addChatBubble(reply, false);
+}
+
+safeAddListener('send-btn', 'click', handleChatSend);
+safeAddListener('user-input', 'keydown', e => { if (e.key === 'Enter') handleChatSend(); });
+
+function sendQuickPrompt(promptText) {
+  const userInputEl = document.getElementById('user-input');
+  if (userInputEl) {
+    userInputEl.value = promptText;
+    handleChatSend();
+  }
+}
+
+safeAddListener('fab-chat-toggle', 'click', () => {
+  const chatModal = document.getElementById('chatbot-modal');
+  if (chatModal) chatModal.classList.remove('hidden');
+  lockBody();
 });
 
-const fabToggle = document.getElementById('fab-chat-toggle');
-fabToggle.addEventListener('click', () => { chatModal.classList.remove('chatbot-hidden'); fabToggle.style.opacity = '0'; });
-document.getElementById('chatbot-close-btn').addEventListener('click', () => { chatModal.classList.add('chatbot-hidden'); fabToggle.style.opacity = '1'; });
+safeAddListener('chatbot-close-btn', 'click', () => {
+  const chatModal = document.getElementById('chatbot-modal');
+  if (chatModal) chatModal.classList.add('hidden');
+  checkAndUnlockBody();
+});
 
-/** ==========================================
- * MODALS LOGIC
- * ========================================== */
+safeAddListener('new-chat-btn', 'click', () => {
+  chatHistory = [chatHistory[0], chatHistory[1]];
+  const chatHistoryEl = document.getElementById('chat-history');
+  if (chatHistoryEl) {
+    chatHistoryEl.innerHTML = `
+      <div class="flex items-start gap-2.5">
+        <div class="w-8 h-8 rounded-xl bg-teal-600 text-white flex items-center justify-center text-sm shrink-0 shadow-sm">🤖</div>
+        <div class="bg-white text-slate-800 p-4 rounded-2xl rounded-tl-none border border-slate-200/80 shadow-sm max-w-[85%] text-sm space-y-2">
+          <p class="font-bold text-teal-800">เริ่มการสนทนาใหม่เรียบร้อยครับ!</p>
+          <p>คุณสามารถสอบถามข้อมูลยาหรือสิทธิสุขภาพเพิ่มเติมได้เลยครับ</p>
+        </div>
+      </div>
+    `;
+  }
+});
 
-// 1. Chips Logic
+/** ================= ANNUAL HEALTH RIGHTS ENGINE ================= **/
+let activeRightsTab = 'ucs';
+
+const RIGHTS_DATA = {
+  ucs: {
+    title: 'สิทธิบัตรทอง (30 บาทรักษาทุกโรค / UCS)',
+    color: 'emerald',
+    benefits: [
+      {
+        title: '🦷 ทำฟันฟรี (ไม่จำกัดจำนวนครั้ง ณ รพ. ตามสิทธิ)',
+        desc: 'ถอนฟัน, อุดฟัน, ขูดหินปูน, ผ่าฟันคุด, เคลือบฟลูออไรด์ และทำฟันเทียมฐานพลาสติกฟรีตลอดปี'
+      },
+      {
+        title: '💊 รับยาฟรีร้านยาใกล้บ้าน 16 กลุ่มอาการเล็กน้อย',
+        desc: 'ปรึกษาเภสัชกรและรับยารักษาอาการ ปวดศีรษะ, มีไข้, ไอ, เจ็บคอ, ปวดท้อง, ผื่นคัน, ท้องเสีย ฯลฯ ฟรีที่ร้านยา "ยาพร้อม"'
+      },
+      {
+        title: '🩸 ตรวจคัดกรองสุขภาพฟรีประจำปี',
+        desc: 'ตรวจเบาหวาน (น้ำตาลในเลือด), ความดันโลหิต, คัดกรองมะเร็งปากมดลูก (HPV DNA Test), มะเร็งลำไส้ใหญ่ (FIT Test) และตรวจเลือดคัดกรองภาวะโลหิตจาง'
+      },
+      {
+        title: '💉 วัคซีนป้องกันโรคประจำปี',
+        desc: 'ฉีดวัคซีนไข้หวัดใหญ่ฟรี (กลุ่มเสี่ยงและผู้สูงอายุ 65 ปีขึ้นไป), วัคซีนมะเร็งปากมดลูก (HPV) เด็กหญิง และวัคซีนพื้นฐานเด็ก'
+      },
+      {
+        title: '🚑 ฉุกเฉินวิกฤต มีสิทธิทุกที่ (UCEP)',
+        desc: 'เข้ารับการรักษาในโรงพยาบาลที่ใกล้ที่สุดทั้งรัฐและเอกชนฟรี 72 ชั่วโมงแรก เมื่อมีภาวะฉุกเฉินวิกฤตถึงแก่ชีวิต'
+      }
+    ]
+  },
+  sso: {
+    title: 'สิทธิประกันสังคม (SSO - ม.33, ม.39, ม.40)',
+    color: 'blue',
+    benefits: [
+      {
+        title: '🦷 ถอนฟัน อุดฟัน ขูดหินปูน ผ่าฟันคุด 900 บาท/ปี',
+        desc: 'รับวงเงินทันตกรรม 900 บาทต่อปี โดยไม่ต้องสำรองจ่าย ณ สถานพยาบาลคู่สัญญา (หรือยื่นเบิกผ่านระบบ e-Self Service)'
+      },
+      {
+        title: '🩺 ตรวจสุขภาพฟรีประจำปี 14 รายการ ณ รพ. ตามสิทธิ',
+        desc: 'ตรวจความสมบูรณ์ของเลือด (CBC), ไขมันในเลือด (Cholesterol/Triglyceride), การทำงานของไต (Cr), น้ำตาลในเลือด (FBS) และ X-ray ปอด ฟรีปีละ 1 ครั้ง'
+      },
+      {
+        title: '🎗️ ตรวจคัดกรองมะเร็งฟรีประจำปี',
+        desc: 'ตรวจมะเร็งเต้านมโดยแพทย์/เจ้าหน้าที่ (อายุ 30-39 ปีขึ้นไป), ตรวจมะเร็งปากมดลูก (Pap Smear/VIA) และตรวจเลือดในอุจจาระคัดกรองมะเร็งลำไส้ใหญ่'
+      },
+      {
+        title: '💉 วัคซีนไข้หวัดใหญ่ฟรี (ผู้ประกันตน 50 ปีขึ้นไป)',
+        desc: 'รับการฉีดวัคซีนป้องกันโรคไข้หวัดใหญ่ฟรีปีละ 1 เข็ม ณ โรงพยาบาลตามสิทธิการรักษา'
+      },
+      {
+        title: '📱 หาหมอออนไลน์ Telemedicine + ส่งยาถึงบ้าน',
+        desc: 'ปรึกษาแพทย์ผ่านแอปฯ Partner (เช่น Mordee, Clicknic, Totale Telemed) พร้อมจัดส่งยาถึงบ้านฟรี'
+      }
+    ]
+  },
+  csmbs: {
+    title: 'สิทธิข้าราชการ / รัฐวิสาหกิจ (CSMBS)',
+    color: 'orange',
+    benefits: [
+      {
+        title: '🏥 เบิกจ่ายตรง รพ. รัฐบาล ครอบคลุมผู้ป่วยนอก/ผู้ป่วยใน',
+        desc: 'ใช้สิทธิเบิกจ่ายตรงยานอกบัญชียาหลักแห่งชาติ (ตามข้อบ่งชี้แพทย์) และค่าห้อง/ค่าอาหารพิเศษตามอัตรากรมบัญชีกลาง'
+      },
+      {
+        title: '🦷 ทันตกรรมเบิกจ่ายตรงตามอัตรากรมบัญชีกลาง',
+        desc: 'เบิกจ่ายตรงค่าอุดฟัน ถอนฟัน ขูดหินปูน และทำใส่ฟันเทียม ณ สถานพยาบาลของรัฐ'
+      },
+      {
+        title: '🩺 ตรวจสุขภาพประจำปีประจำปีงบประมาณ',
+        desc: 'เบิกค่าตรวจสุขภาพประจำปีตามแพ็กเกจช่วงอายุของกรมบัญชีกลาง เช่น ตรวจคลื่นไฟฟ้าหัวใจ (EKG), อัลตราซาวด์, แมมโมแกรม'
+      },
+      {
+        title: '👨‍👩‍👧‍👦 ครอบคลุมบุคคลในครอบครัว',
+        desc: 'สิทธิคุ้มครองครอบคลุม บิดา มารดา คู่สมรส และบุตร (สูงสุด 3 คน ไม่เกิน 20 ปี)'
+      }
+    ]
+  }
+};
+
+function switchRightsTab(tabKey) {
+  activeRightsTab = tabKey;
+  ['ucs', 'sso', 'csmbs'].forEach(k => {
+    const btn = document.getElementById(`tab-btn-${k}`);
+    if (btn) {
+      if (k === tabKey) {
+        btn.className = `flex-1 py-2.5 px-3 rounded-xl transition-all flex items-center justify-center gap-1.5 bg-white text-${RIGHTS_DATA[k].color}-700 shadow-sm border border-slate-200 font-bold`;
+      } else {
+        btn.className = `flex-1 py-2.5 px-3 rounded-xl transition-all flex items-center justify-center gap-1.5 text-slate-600 hover:text-slate-900 font-medium`;
+      }
+    }
+  });
+
+  const calcSelect = document.getElementById('calc-scheme-select');
+  if (calcSelect) calcSelect.value = tabKey;
+  renderCalculatedRights();
+}
+
+function syncRightsSelect() {
+  const calcSelect = document.getElementById('calc-scheme-select');
+  if (calcSelect) switchRightsTab(calcSelect.value);
+}
+
+function openRightsTab(schemeKey) {
+  switchRightsTab(schemeKey);
+  const rightsModal = document.getElementById('rights-modal-overlay');
+  if (rightsModal) rightsModal.classList.remove('hidden');
+  lockBody();
+}
+
+function renderCalculatedRights() {
+  const schemeKey = activeRightsTab;
+  const ageGroupEl = document.getElementById('calc-age-group');
+  const genderEl = document.getElementById('calc-gender');
+  
+  const ageGroup = ageGroupEl ? ageGroupEl.value : 'adult';
+  const gender = genderEl ? genderEl.value : 'female';
+  const scheme = RIGHTS_DATA[schemeKey];
+
+  const box = document.getElementById('calculated-benefits-box');
+  if (!box) return;
+
+  let ageDesc = 'ผู้ใหญ่ (18-54 ปี)';
+  if (ageGroup === 'child') ageDesc = 'เด็กและเยาวชน (0-17 ปี)';
+  if (ageGroup === 'senior') ageDesc = 'ผู้สูงอายุ (55 ปีขึ้นไป)';
+
+  box.innerHTML = `
+    <div class="bg-gradient-to-r from-${scheme.color}-500 to-${scheme.color}-600 text-white p-4 rounded-2xl shadow-sm space-y-1">
+      <div class="text-xs uppercase font-bold tracking-wider opacity-90">รายการสิทธิการรักษาของคุณ (${ageDesc} • เพศ${gender === 'female' ? 'หญิง' : 'ชาย'})</div>
+      <h4 class="font-heading font-bold text-base">${scheme.title}</h4>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+      ${scheme.benefits.map(b => `
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-1 hover:border-${scheme.color}-300 transition-colors">
+          <h5 class="font-bold text-slate-800 text-xs flex items-center gap-1.5">
+            <span class="text-${scheme.color}-600 text-sm">✔</span> ${escapeHtml(b.title)}
+          </h5>
+          <p class="text-xs text-slate-600 leading-relaxed">${escapeHtml(b.desc)}</p>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+// Button Modal Triggers
+safeAddListener('nav-rights-btn', 'click', () => openRightsTab('ucs'));
+safeAddListener('mobile-rights-btn', 'click', () => openRightsTab('ucs'));
+safeAddListener('hero-rights-check-btn', 'click', () => openRightsTab('ucs'));
+safeAddListener('close-rights-modal', 'click', () => {
+  const rightsModal = document.getElementById('rights-modal-overlay');
+  if (rightsModal) rightsModal.classList.add('hidden');
+  checkAndUnlockBody();
+});
+safeAddListener('cancel-rights-btn', 'click', () => {
+  const rightsModal = document.getElementById('rights-modal-overlay');
+  if (rightsModal) rightsModal.classList.add('hidden');
+  checkAndUnlockBody();
+});
+
+// AI Analyze Rights Button
+safeAddListener('submit-rights-btn', 'click', async () => {
+  const schemeKey = activeRightsTab;
+  const ageGroupEl = document.getElementById('calc-age-group');
+  const genderEl = document.getElementById('calc-gender');
+  const ageGroup = ageGroupEl ? ageGroupEl.value : 'adult';
+  const gender = genderEl ? genderEl.value : 'female';
+
+  const rightsModal = document.getElementById('rights-modal-overlay');
+  const resultModal = document.getElementById('result-modal-overlay');
+  const contentArea = document.getElementById('result-content-area');
+
+  if (rightsModal) rightsModal.classList.add('hidden');
+  if (resultModal) resultModal.classList.remove('hidden');
+
+  if (contentArea) {
+    contentArea.innerHTML = `
+      <div class="flex flex-col items-center justify-center py-12 space-y-4 text-slate-500">
+        <div class="w-10 h-10 border-4 border-slate-200 border-t-amber-500 rounded-full animate-spin"></div>
+        <p class="font-medium text-xs">AI กำลังรวบรวมสิทธิการรักษาพยาบาลฉบับอัปเดตปี 2569...</p>
+      </div>
+    `;
+  }
+
+  const prompt = `
+  ช่วยสรุป **"สิทธิการรักษาฟรีและสิทธิคัดกรองสุขภาพประจำปี 2569"** สำหรับประชาชนกลุ่มนี้อย่างครบถ้วน:
+  - สิทธิหลัก: ${RIGHTS_DATA[schemeKey].title}
+  - ช่วงอายุ: ${ageGroup}
+  - เพศ: ${gender}
+
+  กรุณาจัดรูปแบบคำตอบให้อ่านง่าย มีหัวข้อดังนี้:
+  1. 🦷 **สิทธิทันตกรรมประจำปี**: วงเงิน และรายการทำฟรี
+  2. 🩺 **การตรวจคัดกรองโรคประจำปี**: รายการตรวจเลือด มะเร็ง ความดัน เบาหวาน
+  3. 💉 **วัคซีนฟรีประจำปี**
+  4. 💊 **สิทธิการรับยาและพบแพทย์ออนไลน์ (Telemedicine)**
+  5. 📌 **ขั้นตอนการใช้สิทธิ**: ใช้บัตรประชาชนอย่างไร
+  `;
+
+  const reply = await callAI(prompt);
+  if (contentArea) contentArea.innerHTML = marked.parse(reply);
+});
+
+/** ================= HEALTH & SYMPTOM ASSESSMENT ENGINE ================= **/
 const diseaseChips = document.querySelectorAll('.chip-option');
 diseaseChips.forEach(chip => {
-    chip.addEventListener('click', () => {
-        const val = chip.getAttribute('data-val');
-        if (val === 'ไม่มี') {
-            diseaseChips.forEach(c => c.classList.remove('selected'));
-            chip.classList.add('selected');
-        } else {
-            document.querySelector('.chip-option[data-val="ไม่มี"]').classList.remove('selected');
-            chip.classList.toggle('selected');
-        }
-    });
+  chip.addEventListener('click', () => {
+    const val = chip.getAttribute('data-val');
+    if (val === 'ไม่มี') {
+      diseaseChips.forEach(c => c.classList.remove('selected'));
+      chip.classList.add('selected');
+    } else {
+      const noChip = document.querySelector('.chip-option[data-val="ไม่มี"]');
+      if (noChip) noChip.classList.remove('selected');
+      chip.classList.toggle('selected');
+    }
+  });
 });
-document.querySelector('.chip-option[data-val="ไม่มี"]').classList.add('selected');
 
-// 2. Modals Control
-function toggleHealthModal(show) { 
-    const el = document.getElementById('health-modal-overlay');
-    if(show) {
-        el.classList.remove('hidden');
-        const scrollArea = document.getElementById('health-form-scroll-area');
-        if(scrollArea) scrollArea.scrollTop = 0;
-        lockBody();
-    } else {
-        el.classList.add('hidden');
-        attemptUnlockBody();
-    }
-}
+safeAddListener('nav-health-btn', 'click', () => {
+  const healthModal = document.getElementById('health-modal-overlay');
+  if (healthModal) healthModal.classList.remove('hidden');
+  lockBody();
+});
+safeAddListener('close-health-modal', 'click', () => {
+  const healthModal = document.getElementById('health-modal-overlay');
+  if (healthModal) healthModal.classList.add('hidden');
+  checkAndUnlockBody();
+});
+safeAddListener('cancel-health-btn', 'click', () => {
+  const healthModal = document.getElementById('health-modal-overlay');
+  if (healthModal) healthModal.classList.add('hidden');
+  checkAndUnlockBody();
+});
 
-// NEW: Rights Modal Toggle with Cache Logic
-function toggleRightsModal(show) {
-    const el = document.getElementById('rights-modal-overlay');
-    if(show) {
-        el.classList.remove('hidden');
-        const scrollArea = document.getElementById('rights-form-scroll-area');
-        if(scrollArea) scrollArea.scrollTop = 0;
-        lockBody();
-    } else {
-        el.classList.add('hidden');
-        attemptUnlockBody();
-    }
-}
+safeAddListener('submit-health-btn', 'click', async () => {
+  const gender = document.getElementById('hf-gender')?.value || 'ชาย';
+  const age = document.getElementById('hf-age')?.value.trim() || '-';
+  const weight = document.getElementById('hf-weight')?.value.trim() || '-';
+  const height = document.getElementById('hf-height')?.value.trim() || '-';
+  const allergy = document.getElementById('hf-allergy')?.value.trim() || 'ไม่มี';
+  const symptoms = document.getElementById('hf-symptoms')?.value.trim() || '';
 
-function toggleResultModal(show) { 
-    const el = document.getElementById('result-modal-overlay');
-    if(show) {
-        el.classList.remove('hidden');
-        lockBody();
-    } else {
-        el.classList.add('hidden');
-        attemptUnlockBody();
-    }
-}
+  let selectedDiseases = Array.from(document.querySelectorAll('.chip-option.selected')).map(c => c.getAttribute('data-val'));
+  const otherDisease = document.getElementById('hf-disease-other')?.value.trim();
+  if (otherDisease) selectedDiseases.push(otherDisease);
+  if (!selectedDiseases.length) selectedDiseases = ['ไม่มี'];
 
-healthCheckBtn.addEventListener('click', () => toggleHealthModal(true));
-closeHealthModalBtn.addEventListener('click', () => toggleHealthModal(false));
-cancelHealthBtn.addEventListener('click', () => toggleHealthModal(false));
+  if (!symptoms) {
+    alert("กรุณาระบุอาการป่วยที่ต้องการปรึกษา");
+    return;
+  }
 
-// RIGHTS CHECK LOGIC: Open Static List First
-rightsCheckBtn.addEventListener('click', () => toggleRightsModal(true));
+  const healthModal = document.getElementById('health-modal-overlay');
+  const resultModal = document.getElementById('result-modal-overlay');
+  const contentArea = document.getElementById('result-content-area');
 
-closeRightsModalBtn.addEventListener('click', () => toggleRightsModal(false));
-cancelRightsBtn.addEventListener('click', () => toggleRightsModal(false));
+  if (healthModal) healthModal.classList.add('hidden');
+  if (resultModal) resultModal.classList.remove('hidden');
 
-closeResultModalBtn.addEventListener('click', () => toggleResultModal(false));
-
-// 3. Submit Health
-submitHealthBtn.addEventListener('click', async () => {
-    const age = document.getElementById('hf-age').value.trim() || '-';
-    const gender = document.getElementById('hf-gender').value;
-    const weight = document.getElementById('hf-weight').value.trim() || '-';
-    const height = document.getElementById('hf-height').value.trim() || '-';
-    const allergy = document.getElementById('hf-allergy').value.trim() || 'ไม่มี';
-    const symptoms = document.getElementById('hf-symptoms').value.trim();
-    
-    let selectedDiseases = Array.from(document.querySelectorAll('.chip-option.selected')).map(c => c.getAttribute('data-val'));
-    const otherDisease = document.getElementById('hf-disease-other').value.trim();
-    if(otherDisease) selectedDiseases.push(otherDisease);
-    if(selectedDiseases.length === 0) selectedDiseases = ['ไม่มี'];
-    const diseaseStr = selectedDiseases.join(', ');
-
-    if(!symptoms) {
-        alert("กรุณาระบุอาการที่ต้องการปรึกษา");
-        return;
-    }
-
-    toggleResultModal(true);
-    toggleHealthModal(false);
-    
-    resultContentArea.innerHTML = `
-        <div class="flex flex-col items-center justify-center py-10 space-y-4 text-gray-500">
-             <div class="w-10 h-10 border-4 border-gray-200 border-t-[#50b5a5] rounded-full animate-spin"></div>
-             <p>AI กำลังวิเคราะห์ข้อมูล...</p>
-        </div>`;
-
-    const prompt = `
-    ข้อมูลสุขภาพเบื้องต้น (ไม่ใช่การวินิจฉัย):
-    - เพศ: ${gender} อายุ ${age}
-    - โรคประจำตัว: ${diseaseStr}
-    - แพ้ยา: ${allergy}
-    - อาการที่เล่า: "${symptoms}"
-
-    กรุณาอธิบาย:
-    1. ข้อมูลเบื้องต้นเกี่ยวกับอาการ
-    2. แนวทางดูแลตนเองทั่วไป
-    3. ยาสามัญประจำบ้านที่ "อาจ" ใช้ได้
-    4. สัญญาณที่ควรไปพบแพทย์
+  if (contentArea) {
+    contentArea.innerHTML = `
+      <div class="flex flex-col items-center justify-center py-12 space-y-4 text-slate-500">
+        <div class="w-10 h-10 border-4 border-slate-200 border-t-teal-600 rounded-full animate-spin"></div>
+        <p class="font-medium text-xs">AI เภสัชกรกำลังวิเคราะห์อาการเบื้องต้น...</p>
+      </div>
     `;
+  }
 
-    try {
-        const aiText = await callAI(prompt);
-        resultContentArea.innerHTML = marked.parse(aiText);
-    } catch (err) {
-        resultContentArea.innerHTML = `
-            <div class="text-center text-red-600 py-10">
-                <p class="text-xl font-bold">เกิดข้อผิดพลาด</p>
-                <p>${err.message}</p>
-                <button onclick="toggleResultModal(false)" class="mt-4 text-sm underline text-gray-500">ปิด</button>
-            </div>`;
+  let bmiInfo = '';
+  if (weight !== '-' && height !== '-') {
+    const w = parseFloat(weight);
+    const h = parseFloat(height) / 100;
+    if (w > 0 && h > 0) {
+      const bmi = (w / (h * h)).toFixed(1);
+      bmiInfo = `(BMI: ${bmi})`;
     }
+  }
+
+  const prompt = `
+  ข้อมูลสุขภาพผู้ป่วยเบื้องต้น:
+  - เพศ: ${gender}, อายุ: ${age} ปี, น้ำหนัก: ${weight} kg, ส่วนสูง: ${height} cm ${bmiInfo}
+  - โรคประจำตัว: ${selectedDiseases.join(', ')}
+  - ประวัติแพ้ยา/อาหาร: ${allergy}
+  - อาการป่วยที่แจ้ง: "${symptoms}"
+
+  ในฐานะ AI เภสัชกร โปรดวิเคราะห์และให้คำแนะนำอย่างเป็นระบบดังนี้:
+  1. 🩺 **วิเคราะห์อาการเบื้องต้น**: สาเหตุที่เป็นไปได้
+  2. 🏠 **แนวทางการดูแลตนเองเบื้องต้นที่บ้าน**
+  3. 💊 **กลุ่มยาสามัญประจำบ้านที่อาจช่วยบรรเทาอาการ** (ระบุข้อควรระวังหรือยาที่ต้องหลีกเลี่ยงจากประวัติแพ้ยา)
+  4. 🚨 **สัญญาณเตือนอันตราย (Red Flags) ที่ต้องไปพบแพทย์ทันที**
+  `;
+
+  const reply = await callAI(prompt);
+  if (contentArea) contentArea.innerHTML = marked.parse(reply);
 });
 
-// 4. NEW: Update Rights Logic (Check Cache -> Call AI)
-submitRightsBtn.addEventListener('click', async () => {
-    const lastUpdate = localStorage.getItem('rightsLastUpdate');
-    const cachedResult = localStorage.getItem('rightsResult');
-    const ONE_DAY = 24 * 60 * 60 * 1000; // 24 Hours in ms
-
-    // Check Cache Validity
-    if (lastUpdate && cachedResult && (Date.now() - parseInt(lastUpdate) < ONE_DAY)) {
-        const dateObj = new Date(parseInt(lastUpdate));
-        const dateStr = dateObj.toLocaleString('th-TH');
-        
-        // Show cached result
-        toggleResultModal(true);
-        toggleRightsModal(false); // Close the list modal
-        
-        resultContentArea.innerHTML = `
-            <div class="p-3 mb-4 bg-green-50 text-green-800 text-sm rounded-lg border border-green-200">
-                ✅ <strong>ข้อมูลล่าสุดของวันนี้ (อัปเดตเมื่อ: ${dateStr})</strong><br>
-                ระบบจำกัดการอัปเดต 1 ครั้ง/วัน เพื่อความรวดเร็วครับ
-            </div>
-            ${marked.parse(cachedResult)}
-        `;
-        return;
-    }
-
-    // Process New Update
-    toggleResultModal(true);
-    toggleRightsModal(false);
-
-    resultContentArea.innerHTML = `
-        <div class="flex flex-col items-center justify-center py-10 space-y-4 text-gray-500">
-             <div class="w-10 h-10 border-4 border-gray-200 border-t-amber-500 rounded-full animate-spin"></div>
-             <p>AI กำลังค้นหาข้อมูลสิทธิบัตรทองล่าสุด...</p>
-        </div>`;
-
-    const prompt = `
-    ทำหน้าที่เป็นผู้เชี่ยวชาญสิทธิหลักประกันสุขภาพแห่งชาติ (บัตรทอง/30 บาท)
-    ช่วยสรุป **"สิทธิประโยชน์ฟรีทั้งหมดที่ประชาชนได้รับประจำปีนี้"** (อัปเดตล่าสุด)
-    ให้ครอบคลุมประชาชนทุกกลุ่มวัย โดยไม่ต้องระบุตัวบุคคล
-
-    กรุณาแสดงผลเป็นหัวข้อชัดเจน ดังนี้:
-    1. **สิทธิการรักษาพยาบาลทั่วไป (IPD/OPD/อุบัติเหตุ)**: ครอบคลุมอะไรบ้าง
-    2. **สิทธิสร้างเสริมสุขภาพและป้องกันโรค (P&P)**: แยกตามกลุ่มวัย (เด็กเล็ก/วัยเรียน/วัยทำงาน/ผู้สูงอายุ) เน้นการตรวจคัดกรองและวัคซีน
-    3. **สิทธิทันตกรรม**: ขูดหินปูน, อุดฟัน, ถอนฟัน
-    4. **สิทธิประโยชน์ใหม่ประจำปีนี้**: มีอะไรเพิ่มเติมบ้าง
-    5. **วิธีเข้ารับบริการ**: การใช้บัตรประชาชนใบเดียว, แอปเป๋าตัง
-    `;
-
-    try {
-        const aiText = await callAI(prompt);
-        
-        // Save result & timestamp to localStorage
-        localStorage.setItem('rightsResult', aiText);
-        localStorage.setItem('rightsLastUpdate', Date.now().toString());
-
-        resultContentArea.innerHTML = marked.parse(aiText);
-    } catch (err) {
-        resultContentArea.innerHTML = `
-            <div class="text-center text-red-600 py-10">
-                <p class="text-xl font-bold">เกิดข้อผิดพลาด</p>
-                <p>${err.message}</p>
-                <button onclick="toggleResultModal(false)" class="mt-4 text-sm underline text-gray-500">ปิด</button>
-            </div>`;
-    }
+/** ================= HEALTH CALCULATORS ENGINE ================= **/
+safeAddListener('nav-calc-btn', 'click', () => {
+  const calcModal = document.getElementById('calc-modal-overlay');
+  if (calcModal) calcModal.classList.remove('hidden');
+  lockBody();
+});
+safeAddListener('close-calc-modal', 'click', () => {
+  const calcModal = document.getElementById('calc-modal-overlay');
+  if (calcModal) calcModal.classList.add('hidden');
+  checkAndUnlockBody();
+});
+safeAddListener('close-calc-modal-btn', 'click', () => {
+  const calcModal = document.getElementById('calc-modal-overlay');
+  if (calcModal) calcModal.classList.add('hidden');
+  checkAndUnlockBody();
 });
 
+function calculateBMI() {
+  const wEl = document.getElementById('calc-bmi-weight');
+  const hEl = document.getElementById('calc-bmi-height');
+  const resEl = document.getElementById('bmi-result');
+  if (!resEl) return;
+
+  const w = parseFloat(wEl?.value || 0);
+  const h = parseFloat(hEl?.value || 0) / 100;
+
+  if (!w || !h || w <= 0 || h <= 0) {
+    resEl.classList.remove('hidden');
+    resEl.innerHTML = `<span class="text-rose-600 font-bold">กรุณากรอกน้ำหนักและส่วนสูงให้ถูกต้อง</span>`;
+    return;
+  }
+
+  const bmi = (w / (h * h)).toFixed(1);
+  let status = '';
+  let color = 'text-teal-700';
+
+  if (bmi < 18.5) { status = 'น้ำหนักน้อยกว่าเกณฑ์ (ผอม)'; color = 'text-amber-600'; }
+  else if (bmi < 23.0) { status = 'น้ำหนักปกติ สมส่วน'; color = 'text-emerald-600'; }
+  else if (bmi < 25.0) { status = 'น้ำหนักเกิน (ท้วม)'; color = 'text-amber-600'; }
+  else if (bmi < 30.0) { status = 'อ้วนระดับ 1'; color = 'text-rose-600'; }
+  else { status = 'อ้วนระดับ 2 (อ้วนมาก)'; color = 'text-rose-700'; }
+
+  const idealWLow = (18.5 * h * h).toFixed(1);
+  const idealWHigh = (22.9 * h * h).toFixed(1);
+
+  resEl.classList.remove('hidden');
+  resEl.innerHTML = `
+    <div class="space-y-1">
+      <div class="font-bold text-sm">ค่า BMI ของคุณคือ: <span class="${color} font-heading font-extrabold text-base">${bmi}</span></div>
+      <div>ภาวะร่างกาย: <strong class="${color}">${status}</strong></div>
+      <div class="text-[11px] text-slate-500 pt-1 border-t border-teal-100">น้ำหนักที่เหมาะสมสำหรับส่วนสูงนี้คือ: <strong>${idealWLow} - ${idealWHigh} kg</strong></div>
+    </div>
+  `;
+}
+
+function calculateWaterIntake() {
+  const wEl = document.getElementById('calc-water-weight');
+  const resEl = document.getElementById('water-result');
+  if (!resEl) return;
+
+  const w = parseFloat(wEl?.value || 0);
+
+  if (!w || w <= 0) {
+    resEl.classList.remove('hidden');
+    resEl.innerHTML = `<span class="text-rose-600 font-bold">กรุณากรอกน้ำหนักตัว</span>`;
+    return;
+  }
+
+  const ml = Math.round(w * 2.2 * 30 / 2);
+  const glasses = Math.round(ml / 250);
+
+  resEl.classList.remove('hidden');
+  resEl.innerHTML = `
+    <div class="space-y-1">
+      <div class="font-bold text-sm text-blue-800">ปริมาณน้ำที่ควรดื่ม: <span class="text-base font-extrabold">${ml.toLocaleString()} ml/วัน</span></div>
+      <div class="text-xs">ประมาณ <strong class="text-blue-700">${glasses} แก้ว</strong> (แก้วมาตรฐาน 250 ml)</div>
+    </div>
+  `;
+}
+
+function calculateParaDose() {
+  const wEl = document.getElementById('calc-para-weight');
+  const resEl = document.getElementById('para-result');
+  if (!resEl) return;
+
+  const w = parseFloat(wEl?.value || 0);
+
+  if (!w || w <= 0) {
+    resEl.classList.remove('hidden');
+    resEl.innerHTML = `<span class="text-rose-600 font-bold">กรุณากรอกน้ำหนักตัวเด็ก</span>`;
+    return;
+  }
+
+  const doseLowMg = Math.round(w * 10);
+  const doseHighMg = Math.round(w * 15);
+
+  const mlLow120 = ((doseLowMg / 120) * 5).toFixed(1);
+  const mlHigh120 = ((doseHighMg / 120) * 5).toFixed(1);
+
+  const mlLow250 = ((doseLowMg / 250) * 5).toFixed(1);
+  const mlHigh250 = ((doseHighMg / 250) * 5).toFixed(1);
+
+  resEl.classList.remove('hidden');
+  resEl.innerHTML = `
+    <div class="space-y-2">
+      <div class="font-bold text-amber-900">ขนาดยาพาราเซตามอลต่อน้ำหนัก ${w} kg:</div>
+      <div class="bg-white p-2 rounded-lg border border-amber-200 space-y-1">
+        <div class="font-semibold text-amber-800">1. ยาน้ำสูตรธรรมดา (120 mg / 5 ml):</div>
+        <div class="text-slate-700 font-bold">${mlLow120} - ${mlHigh120} ml (ซีซี) ต่อมื้อ</div>
+      </div>
+      <div class="bg-white p-2 rounded-lg border border-amber-200 space-y-1">
+        <div class="font-semibold text-amber-800">2. ยาน้ำสูตรเข้มข้น Forte (250 mg / 5 ml):</div>
+        <div class="text-slate-700 font-bold">${mlLow250} - ${mlHigh250} ml (ซีซี) ต่อมื้อ</div>
+      </div>
+      <div class="text-[10px] text-slate-500">คำเตือน: รับประทานเมื่อมีไข้ ทานห่างกันอย่างน้อย 4-6 ชั่วโมง ไม่เกินวันละ 5 ครั้ง</div>
+    </div>
+  `;
+}
+
+safeAddListener('hero-ask-ai-btn', 'click', () => {
+  const chatModal = document.getElementById('chatbot-modal');
+  if (chatModal) chatModal.classList.remove('hidden');
+  lockBody();
+  sendQuickPrompt('สรุปสิทธิการรักษาพยาบาลและการตรวจสุขภาพประจำปี 2569 ให้หน่อยครับ');
+});
+
+safeAddListener('close-result-modal', 'click', () => {
+  const resultModal = document.getElementById('result-modal-overlay');
+  if (resultModal) resultModal.classList.add('hidden');
+  checkAndUnlockBody();
+});
+
+/** ================= APP INITIALIZATION ================= **/
+window.addEventListener('DOMContentLoaded', () => {
+  loadDrugData();
+  renderCalculatedRights();
+});
 </script>
 </body>
 </html>
