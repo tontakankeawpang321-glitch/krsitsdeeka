@@ -663,6 +663,11 @@
 
 <script>
 /* ================= GLOBAL STATE & COMPLETE 100+ FOOD DATABASE ================= */
+const BACKEND_URL = 'https://polished-sunset-f33e.tontakankeawpang321.workers.dev';
+let chatHistory = [
+  { role: "user", parts: [{ text: "System Instruction: คุณคือ 'น้องแปรรูป AI' ผู้ช่วยด้านการถนอมและแปรรูปอาหารระดับผู้เชี่ยวชาญ ร่าเริง สุภาพ ตอบกระชับ เน้นสูตรทำกินทำขาย ให้ความรู้เชิงวิทยาศาสตร์อาหารอย่างถูกต้อง" }] }
+];
+
 let favorites = JSON.parse(localStorage.getItem('foodtech_favs')) || [];
 let batchLogs = JSON.parse(localStorage.getItem('foodtech_logs')) || [];
 let selectedCategory = 'ทั้งหมด';
@@ -1260,7 +1265,7 @@ function updateMarketPricesAI() {
   }, 800);
 }
 
-function sendChatMessage() {
+async function sendChatMessage() {
   const input = document.getElementById('user-input');
   const text = input.value.trim();
   if (!text) return;
@@ -1270,27 +1275,51 @@ function sendChatMessage() {
   const userDiv = document.createElement('div');
   userDiv.className = 'flex items-start justify-end gap-2 text-xs';
   userDiv.innerHTML = `
-    <div class="bg-orange-500 text-white p-3 rounded-2xl rounded-tr-none shadow-2xs max-w-[85%] leading-relaxed">${text}</div>
+    <div class="bg-orange-500 text-white p-3 rounded-2xl rounded-tr-none shadow-2xs max-w-[85%] leading-relaxed">${text.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</div>
   `;
   history.appendChild(userDiv);
   input.value = '';
 
+  chatHistory.push({ role: "user", parts: [{ text: text }] });
+
   document.getElementById('thinking-indicator').classList.remove('hidden');
   history.scrollTop = history.scrollHeight;
 
-  setTimeout(() => {
-    document.getElementById('thinking-indicator').classList.add('hidden');
+  try {
+    const res = await fetch(BACKEND_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ history: chatHistory })
+    });
+    
+    const data = await res.json();
+    const reply = data.reply || data.text || "ขออภัยครับ ระบบประมวลผลคำตอบขัดข้องชั่วคราว";
+    chatHistory.push({ role: "model", parts: [{ text: reply }] });
+
     const aiDiv = document.createElement('div');
     aiDiv.className = 'flex items-start gap-2.5 text-xs';
     aiDiv.innerHTML = `
       <div class="w-7 h-7 rounded-full bg-orange-100 flex items-center justify-center text-sm border shrink-0">🤖</div>
       <div class="bg-white p-3 rounded-2xl rounded-tl-none border border-slate-200 text-slate-700 shadow-2xs max-w-[85%] leading-relaxed">
-        สำหรับคำถามเรื่อง <strong>"${text}"</strong> แนะนำให้รักษาความสะอาดและควบคุมค่า pH หรือปริมาณเกลือให้ได้มาตรฐาน เพื่อยืดอายุการเก็บรักษาและป้องกันจุลินทรีย์ครับ!
+        ${reply.replace(/\n/g, '<br>')}
       </div>
     `;
     history.appendChild(aiDiv);
+  } catch (err) {
+    console.error("AI Chatbot Error:", err);
+    const errDiv = document.createElement('div');
+    errDiv.className = 'flex items-start gap-2.5 text-xs';
+    errDiv.innerHTML = `
+      <div class="w-7 h-7 rounded-full bg-red-100 flex items-center justify-center text-sm border shrink-0">🤖</div>
+      <div class="bg-red-50 p-3 rounded-2xl rounded-tl-none border border-red-200 text-red-700 shadow-2xs max-w-[85%] leading-relaxed">
+        ขออภัยครับ ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ AI ได้ในขณะนี้ โปรดลองใหม่อีกครั้งครับ 😓
+      </div>
+    `;
+    history.appendChild(errDiv);
+  } finally {
+    document.getElementById('thinking-indicator').classList.add('hidden');
     history.scrollTop = history.scrollHeight;
-  }, 1000);
+  }
 }
 
 function initCalendar() {
