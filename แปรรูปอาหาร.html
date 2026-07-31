@@ -14,7 +14,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Kodchasan:wght@400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<!-- Canvas Confetti for rewards -->
+<!-- Canvas Confetti -->
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
 <script>
@@ -54,7 +54,7 @@
   }
   h1, h2, h3, h4, .font-brand { font-family: 'Kodchasan', sans-serif; }
 
-  /* Custom pattern background */
+  /* Background pattern */
   .bg-dot-pattern {
     background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
     background-size: 20px 20px;
@@ -107,6 +107,7 @@
 
 <body class="h-full bg-dot-pattern pb-28 text-slate-800 antialiased selection:bg-orange-200">
 
+<!-- Header Section -->
 <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-xs">
   <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
     <!-- Brand Info -->
@@ -118,7 +119,7 @@
         <h1 class="text-lg md:text-xl font-bold font-brand leading-none text-slate-900 flex items-center gap-1.5">
           Food Tech <span class="text-orange-600">Hub Pro</span>
         </h1>
-        <p class="text-[11px] text-slate-500 mt-0.5">คลังความรู้ & เครื่องมือแปรรูประดับมืออาชีพ</p>
+        <p class="text-[11px] text-slate-500 mt-0.5">คลังความรู้ & เครื่องมือแปรรูปอาหาร</p>
       </div>
     </div>
 
@@ -127,7 +128,7 @@
       <button onclick="openModal('calendar-modal')" class="w-10 h-10 rounded-xl bg-orange-50 hover:bg-orange-100 text-orange-600 border border-orange-200/60 flex items-center justify-center transition active:scale-95 shadow-2xs" title="ปฏิทินวัตถุดิบ">
         <i class="fa-regular fa-calendar-days text-base"></i>
       </button>
-      <button onclick="openModal('quiz-modal')" class="w-10 h-10 rounded-xl bg-teal-50 hover:bg-teal-100 text-teal-600 border border-teal-200/60 flex items-center justify-center transition active:scale-95 shadow-2xs relative" title="มินิเกมแฟนพันธุ์แท้">
+      <button onclick="openModal('quiz-modal')" class="w-10 h-10 rounded-xl bg-teal-50 hover:bg-teal-100 text-teal-600 border border-teal-200/60 flex items-center justify-center transition active:scale-95 shadow-2xs relative" title="มินิเกมตอบคำถาม">
         <i class="fa-solid fa-gamepad text-base"></i>
         <span class="absolute -top-1 -right-1 flex h-3 w-3">
           <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75"></span>
@@ -140,13 +141,12 @@
 
 <main class="max-w-4xl mx-auto px-4 pt-4">
 
-  <!-- ================= TAB 1: RECIPES & DATABASE ================= -->
+  <!-- ================= TAB 1: 100+ RECIPES DATABASE ================= -->
   <section id="tab-recipes" class="tab-content active space-y-4">
-    <!-- Search & Filter Controls -->
     <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 space-y-3">
       <div class="relative">
         <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-        <input type="search" id="searchInput" placeholder="ค้นหาเมนู (เช่น แหนม, กล้วยตาก, ทุเรียน, ปลาร้า)..." 
+        <input type="search" id="searchInput" placeholder="ค้นหาเมนูแปรรูป (เช่น แหนม, กล้วยตาก, ทุเรียน, ปลาร้า, ไวน์)..." 
                class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 pl-11 pr-4 focus:ring-2 focus:ring-orange-400 focus:bg-white focus:outline-none transition text-sm">
       </div>
       <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-1 text-xs font-medium" id="category-chips">
@@ -161,111 +161,160 @@
   </section>
 
   <!-- ================= TAB 2: CALCULATORS HUB ================= -->
-  <section id="tab-calcs" class="tab-content space-y-4">
-    <div class="bg-gradient-to-r from-orange-500 to-amber-500 rounded-2xl p-5 text-white shadow-md shadow-orange-500/10">
-      <h2 class="text-xl font-bold font-brand flex items-center gap-2">
-        <i class="fa-solid fa-calculator"></i> เครื่องมือคำนวณแปรรูปอาหาร
-      </h2>
-      <p class="text-xs text-orange-100 mt-1">คำนวณสัดส่วนวัตถุดิบ ความเปรี้ยว ความหวาน และต้นทุนเชิงพาณิชย์</p>
+  <section id="tab-calcs" class="tab-content space-y-3">
+    <!-- Compact Header Banner -->
+    <div class="bg-gradient-to-r from-orange-500 to-amber-500 rounded-2xl p-3.5 text-white shadow-xs flex items-center justify-between">
+      <div>
+        <h2 class="text-base font-bold font-brand flex items-center gap-2">
+          <i class="fa-solid fa-calculator"></i> เครื่องมือคำนวณแปรรูป
+        </h2>
+        <p class="text-[11px] text-orange-100 mt-0.5">เลือกโหมดคำนวณสูตรเกลือ น้ำตาล และต้นทุนสินค้าได้ในหน้าเดียว</p>
+      </div>
     </div>
 
-    <!-- Calc 1: Salt Brine % Calc -->
-    <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200">
-      <h3 class="font-bold font-brand text-slate-800 text-base mb-3 flex items-center gap-2">
-        <i class="fa-solid fa-bottle-droplet text-blue-500"></i> 1. คำนวณความเข้มข้นน้ำเกลือดอง (Brine % Calc)
-      </h3>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+    <!-- Segmented Sub-tab Control -->
+    <div class="bg-slate-200/80 p-1 rounded-xl flex text-xs font-semibold text-slate-600 gap-1">
+      <button onclick="switchSubCalc('subcalc-brine')" id="btn-subcalc-brine" class="subcalc-btn active flex-1 py-2 px-1.5 rounded-lg text-center transition bg-white text-orange-600 shadow-2xs font-bold truncate">💧 น้ำเกลือดอง</button>
+      <button onclick="switchSubCalc('subcalc-syrup')" id="btn-subcalc-syrup" class="subcalc-btn flex-1 py-2 px-1.5 rounded-lg text-center transition hover:text-slate-900 truncate">🍯 น้ำเชื่อม Brix</button>
+      <button onclick="switchSubCalc('subcalc-cost')" id="btn-subcalc-cost" class="subcalc-btn flex-1 py-2 px-1.5 rounded-lg text-center transition hover:text-slate-900 truncate">💰 ต้นทุน & ราคา</button>
+    </div>
+
+    <!-- Sub Calc 1: Salt Brine % Calc -->
+    <div id="subcalc-brine" class="subcalc-content bg-white rounded-2xl p-4 shadow-2xs border border-slate-200/80 space-y-3">
+      <div class="flex items-center justify-between">
+        <h3 class="font-bold font-brand text-slate-800 text-sm flex items-center gap-1.5">
+          <i class="fa-solid fa-bottle-droplet text-blue-500"></i> 1. คำนวณน้ำเกลือดอง (Salt Brine)
+        </h3>
+      </div>
+      
+      <div>
+        <p class="text-[10px] font-semibold text-slate-500 mb-1"><i class="fa-solid fa-wand-magic-sparkles text-amber-500"></i> สูตรแนะนำ (Preset):</p>
+        <div class="flex flex-wrap gap-1 text-[11px]">
+          <button onclick="setBrinePreset(5, 'ผักดอง/กิมจิ')" class="px-2 py-0.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 font-medium border border-blue-200 transition">🥬 ผักดอง/กิมจิ (5%)</button>
+          <button onclick="setBrinePreset(8, 'ผลไม้ดอง')" class="px-2 py-0.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 font-medium border border-blue-200 transition">🥭 ผลไม้ดอง (8%)</button>
+          <button onclick="setBrinePreset(12, 'ไข่เค็ม/หมักปลา')" class="px-2 py-0.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 font-medium border border-blue-200 transition">🥚 ไข่เค็ม/ปลาเค็ม (12%)</button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-2 text-xs">
         <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1">ปริมาณน้ำซุป/น้ำดอง (ลิตร)</label>
-          <input type="number" id="brine-water" value="5" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 font-bold text-slate-700 outline-none focus:ring-2 focus:ring-blue-400" oninput="calcSaltBrine()">
+          <label class="block text-[11px] font-semibold text-slate-600 mb-1">น้ำสะอาด (ลิตร)</label>
+          <div class="flex items-center gap-1.5">
+            <button onclick="adjustInput('brine-water', -1, 1); calcSaltBrine();" class="w-8 h-8 bg-slate-100 hover:bg-slate-200 rounded-lg font-bold text-slate-700 shrink-0">-</button>
+            <input type="number" id="brine-water" value="5" min="1" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 text-center font-bold text-slate-800 outline-none focus:ring-1 focus:ring-blue-400" oninput="calcSaltBrine()">
+            <button onclick="adjustInput('brine-water', 1, 1); calcSaltBrine();" class="w-8 h-8 bg-slate-100 hover:bg-slate-200 rounded-lg font-bold text-slate-700 shrink-0">+</button>
+          </div>
         </div>
         <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1">เปอร์เซ็นต์ความเค็มที่ต้องการ (%)</label>
-          <select id="brine-percent" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 font-bold text-slate-700 outline-none focus:ring-2 focus:ring-blue-400" onchange="calcSaltBrine()">
-            <option value="3">3% (ดองผักสดเปรี้ยวสไลด์บาง)</option>
-            <option value="5">5% (ผักดองทั่วไป / กิมจิ)</option>
-            <option value="8" selected>8% (มะม่วงดอง / ผลไม้ดอง)</option>
-            <option value="12">12% (ไข่เค็ม / หมักปลาเค็ม)</option>
-            <option value="15">15% (ดองเค็มรักษาสภาพระยะยาว)</option>
+          <label class="block text-[11px] font-semibold text-slate-600 mb-1">ความเค็ม (%)</label>
+          <select id="brine-percent" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 font-bold text-slate-800 outline-none focus:ring-1 focus:ring-blue-400 text-xs" onchange="calcSaltBrine()">
+            <option value="3">3% (เค็มน้อย)</option>
+            <option value="5">5% (ผักดอง/กิมจิ)</option>
+            <option value="8" selected>8% (ผลไม้ดอง)</option>
+            <option value="12">12% (ไข่เค็ม/ปลาเค็ม)</option>
+            <option value="15">15% (ดองระยะยาว)</option>
           </select>
         </div>
       </div>
-      <div class="mt-4 bg-blue-50 border border-blue-100 rounded-xl p-3 flex justify-between items-center text-sm">
-        <span class="text-blue-700 font-medium">ต้องใช้เกลือแกงทั้งหมด:</span>
+
+      <div class="bg-blue-50 border border-blue-200 rounded-xl p-3 flex justify-between items-center text-xs shadow-2xs">
+        <div>
+          <span class="text-blue-800 font-bold block">ปริมาณเกลือแกงที่ต้องใช้:</span>
+          <span class="text-[10px] text-blue-600" id="brine-summary-desc">น้ำ 5 ลิตร + เกลือ 400 กรัม</span>
+        </div>
         <span class="text-xl font-bold font-brand text-blue-700" id="brine-result">400 กรัม</span>
       </div>
     </div>
 
-    <!-- Calc 2: Syrup Brix Calc -->
-    <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200">
-      <h3 class="font-bold font-brand text-slate-800 text-base mb-3 flex items-center gap-2">
-        <i class="fa-solid fa-cubes-stacked text-amber-500"></i> 2. คำนวณความหวานน้ำเชื่อมแช่อิ่ม (°Brix)
-      </h3>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-        <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1">ปริมาณน้ำแช่อิ่ม (ลิตร)</label>
-          <input type="number" id="syrup-water" value="2" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 font-bold text-slate-700 outline-none focus:ring-2 focus:ring-amber-400" oninput="calcSyrupBrix()">
-        </div>
-        <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1">ระดับความหวานเป้าหมาย (°Brix)</label>
-          <input type="number" id="target-brix" value="50" min="10" max="80" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 font-bold text-slate-700 outline-none focus:ring-2 focus:ring-amber-400" oninput="calcSyrupBrix()">
+    <!-- Sub Calc 2: Syrup Brix Calc -->
+    <div id="subcalc-syrup" class="subcalc-content hidden bg-white rounded-2xl p-4 shadow-2xs border border-slate-200/80 space-y-3">
+      <div class="flex items-center justify-between">
+        <h3 class="font-bold font-brand text-slate-800 text-sm flex items-center gap-1.5">
+          <i class="fa-solid fa-cubes-stacked text-amber-500"></i> 2. คำนวณน้ำเชื่อมแช่อิ่ม (°Brix)
+        </h3>
+      </div>
+
+      <div>
+        <p class="text-[10px] font-semibold text-slate-500 mb-1"><i class="fa-solid fa-wand-magic-sparkles text-amber-500"></i> ความหวานแนะนำ (Preset):</p>
+        <div class="flex flex-wrap gap-1 text-[11px]">
+          <button onclick="setSyrupPreset(30)" class="px-2 py-0.5 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 font-medium border border-amber-200 transition">30°Brix (เริ่มต้น)</button>
+          <button onclick="setSyrupPreset(50)" class="px-2 py-0.5 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 font-medium border border-amber-200 transition">50°Brix (ทั่วไป)</button>
+          <button onclick="setSyrupPreset(65)" class="px-2 py-0.5 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 font-medium border border-amber-200 transition">65°Brix (เข้มข้น)</button>
         </div>
       </div>
-      <div class="mt-4 bg-amber-50 border border-amber-100 rounded-xl p-3 flex justify-between items-center text-sm">
-        <span class="text-amber-800 font-medium">ต้องใส่น้ำตาลทราย:</span>
-        <span class="text-xl font-bold font-brand text-amber-700" id="syrup-result">2.00 กิโลกรัม</span>
+
+      <div class="grid grid-cols-2 gap-2 text-xs">
+        <div>
+          <label class="block text-[11px] font-semibold text-slate-600 mb-1">น้ำเปล่า (ลิตร)</label>
+          <div class="flex items-center gap-1.5">
+            <button onclick="adjustInput('syrup-water', -1, 1); calcSyrupBrix();" class="w-8 h-8 bg-slate-100 hover:bg-slate-200 rounded-lg font-bold text-slate-700 shrink-0">-</button>
+            <input type="number" id="syrup-water" value="2" min="1" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 text-center font-bold text-slate-800 outline-none focus:ring-1 focus:ring-amber-400" oninput="calcSyrupBrix()">
+            <button onclick="adjustInput('syrup-water', 1, 1); calcSyrupBrix();" class="w-8 h-8 bg-slate-100 hover:bg-slate-200 rounded-lg font-bold text-slate-700 shrink-0">+</button>
+          </div>
+        </div>
+        <div>
+          <label class="block text-[11px] font-semibold text-slate-600 mb-1">ความหวาน (°Brix)</label>
+          <input type="number" id="target-brix" value="50" min="10" max="80" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 font-bold text-slate-800 outline-none focus:ring-1 focus:ring-amber-400 text-xs" oninput="calcSyrupBrix()">
+        </div>
+      </div>
+
+      <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 flex justify-between items-center text-xs shadow-2xs">
+        <div>
+          <span class="text-amber-900 font-bold block">น้ำตาลทรายที่ต้องใช้:</span>
+          <span class="text-[10px] text-amber-700">ละลายน้ำและต้มให้เดือดก่อนแช่อิ่ม</span>
+        </div>
+        <span class="text-xl font-bold font-brand text-amber-700" id="syrup-result">2.00 กก.</span>
       </div>
     </div>
 
-    <!-- Calc 3: Commercial Cost & Profit Calculator -->
-    <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 space-y-3">
-      <h3 class="font-bold font-brand text-slate-800 text-base flex items-center gap-2">
-        <i class="fa-solid fa-chart-line text-emerald-500"></i> 3. คำนวณต้นทุนพาณิชย์ & ราคาขายแนะนำ (SRP)
+    <!-- Sub Calc 3: Commercial Cost & Profit Calculator -->
+    <div id="subcalc-cost" class="subcalc-content hidden bg-white rounded-2xl p-4 shadow-2xs border border-slate-200/80 space-y-2.5">
+      <h3 class="font-bold font-brand text-slate-800 text-sm flex items-center gap-1.5">
+        <i class="fa-solid fa-chart-line text-emerald-500"></i> 3. คำนวณต้นทุน & ราคาขายต่อถุง
       </h3>
       
-      <div class="grid grid-cols-2 gap-3 text-xs">
+      <div class="grid grid-cols-2 gap-2 text-[11px]">
         <div>
-          <label class="block font-medium text-slate-600 mb-1">ค่าวัตถุดิบรวม (บาท)</label>
-          <input type="number" id="pro-raw-cost" value="500" class="w-full bg-slate-50 border rounded-xl px-3 py-2 font-bold text-slate-700" oninput="calcCommercialPrice()">
+          <label class="block font-semibold text-slate-600 mb-0.5">วัตถุดิบรวม (บาท)</label>
+          <input type="number" id="pro-raw-cost" value="500" class="w-full bg-slate-50 border rounded-lg px-2.5 py-1.5 font-bold text-slate-700 outline-none focus:ring-1 focus:ring-emerald-400" oninput="calcCommercialPrice()">
         </div>
         <div>
-          <label class="block font-medium text-slate-600 mb-1">ค่าบรรจุภัณฑ์/ถุง (บาท)</label>
-          <input type="number" id="pro-pack-cost" value="50" class="w-full bg-slate-50 border rounded-xl px-3 py-2 font-bold text-slate-700" oninput="calcCommercialPrice()">
+          <label class="block font-semibold text-slate-600 mb-0.5">บรรจุภัณฑ์/ถุง (บาท)</label>
+          <input type="number" id="pro-pack-cost" value="50" class="w-full bg-slate-50 border rounded-lg px-2.5 py-1.5 font-bold text-slate-700 outline-none focus:ring-1 focus:ring-emerald-400" oninput="calcCommercialPrice()">
         </div>
         <div>
-          <label class="block font-medium text-slate-600 mb-1">ค่าแรง + ค่าแก๊ส/ไฟ (บาท)</label>
-          <input type="number" id="pro-utility-cost" value="100" class="w-full bg-slate-50 border rounded-xl px-3 py-2 font-bold text-slate-700" oninput="calcCommercialPrice()">
+          <label class="block font-semibold text-slate-600 mb-0.5">ค่าแรง + แก๊ส/ไฟ (บาท)</label>
+          <input type="number" id="pro-utility-cost" value="100" class="w-full bg-slate-50 border rounded-lg px-2.5 py-1.5 font-bold text-slate-700 outline-none focus:ring-1 focus:ring-emerald-400" oninput="calcCommercialPrice()">
         </div>
         <div>
-          <label class="block font-medium text-slate-600 mb-1">สัดส่วนสูญเสีย Waste (%)</label>
-          <input type="number" id="pro-waste-pct" value="10" class="w-full bg-slate-50 border rounded-xl px-3 py-2 font-bold text-slate-700" oninput="calcCommercialPrice()">
+          <label class="block font-semibold text-slate-600 mb-0.5">จำนวนบรรจุได้ (ถุง)</label>
+          <input type="number" id="pro-total-units" value="20" min="1" class="w-full bg-slate-50 border rounded-lg px-2.5 py-1.5 font-bold text-slate-700 outline-none focus:ring-1 focus:ring-emerald-400" oninput="calcCommercialPrice()">
         </div>
       </div>
 
-      <div class="pt-2">
-        <div class="flex justify-between items-center text-xs font-semibold text-slate-700 mb-1">
-          <span>อัตรากำไรที่ต้องการ (Profit Margin %):</span>
+      <div class="pt-1">
+        <div class="flex justify-between items-center text-[11px] font-semibold text-slate-700 mb-0.5">
+          <span>อัตรากำไร (Margin):</span>
           <span class="text-orange-600 font-bold" id="margin-value-display">40%</span>
         </div>
-        <input type="range" id="pro-margin-slider" min="10" max="80" value="40" class="w-full accent-orange-500 cursor-pointer" oninput="calcCommercialPrice()">
+        <input type="range" id="pro-margin-slider" min="10" max="80" value="40" class="w-full accent-orange-500 cursor-pointer h-1.5 bg-slate-200 rounded-lg" oninput="calcCommercialPrice()">
       </div>
 
-      <div class="grid grid-cols-2 gap-3 pt-2">
-        <div class="bg-slate-50 p-3 rounded-xl border text-center">
-          <p class="text-[11px] text-slate-500">ต้นทุนแท้จริงต่อล็อต</p>
-          <p class="text-lg font-bold text-slate-800" id="pro-total-net-cost">715.00 ฿</p>
+      <div class="grid grid-cols-2 gap-2 pt-1 text-center">
+        <div class="bg-slate-50 p-2 rounded-xl border">
+          <p class="text-[10px] text-slate-500">ต้นทุนต่อถุง</p>
+          <p class="text-base font-bold text-slate-800" id="pro-cost-per-unit">32.50 ฿</p>
         </div>
-        <div class="bg-emerald-50 p-3 rounded-xl border border-emerald-200 text-center">
-          <p class="text-[11px] text-emerald-700 font-semibold">ราคาขายแนะนำยกล็อต</p>
-          <p class="text-xl font-extrabold text-emerald-600" id="pro-recommended-price">1,191.67 ฿</p>
+        <div class="bg-emerald-50 p-2 rounded-xl border border-emerald-200">
+          <p class="text-[10px] text-emerald-700 font-semibold">ราคาขายแนะนำ/ถุง</p>
+          <p class="text-lg font-extrabold text-emerald-600" id="pro-recommended-price">54.17 ฿</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ================= TAB 3: SHELF-LIFE & GMP CHECKLIST ================= -->
+  <!-- ================= TAB 3: SHELF-LIFE VISUALIZER ================= -->
   <section id="tab-shelflife" class="tab-content space-y-4">
-    <!-- Visualizer -->
     <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 space-y-4">
       <div class="flex justify-between items-start">
         <div>
@@ -287,155 +336,146 @@
         <!-- JS Injected Bars -->
       </div>
     </div>
-
-    <!-- GMP Checklist -->
-    <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 space-y-3">
-      <div class="flex justify-between items-center">
-        <h3 class="font-bold font-brand text-slate-800 text-base flex items-center gap-2">
-          <i class="fa-solid fa-clipboard-check text-green-600"></i> ประเมินมาตรฐานสถานที่ผลิต (อย. / GMP)
-        </h3>
-        <span class="text-xs bg-green-100 text-green-700 px-2.5 py-1 rounded-full font-bold" id="gmp-score-badge">0 / 5 ข้อ</span>
-      </div>
-
-      <div class="space-y-2 text-xs text-slate-700" id="gmp-checklist">
-        <label class="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border cursor-pointer hover:bg-slate-100 transition">
-          <input type="checkbox" class="w-4 h-4 rounded text-orange-500 focus:ring-orange-400" onchange="checkGmpScore()">
-          <span>1. มีการแยกบริเวณเตรียมวัตถุดิบและบริเวณบรรจุออกจากกันเป็นสัดส่วน</span>
-        </label>
-        <label class="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border cursor-pointer hover:bg-slate-100 transition">
-          <input type="checkbox" class="w-4 h-4 rounded text-orange-500 focus:ring-orange-400" onchange="checkGmpScore()">
-          <span>2. อุปกรณ์ หน้าโต๊ะสัมผัสอาหาร ทำจากสแตนเลสหรือวัสดุฟู้ดเกรดทำความสะอาดง่าย</span>
-        </label>
-        <label class="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border cursor-pointer hover:bg-slate-100 transition">
-          <input type="checkbox" class="w-4 h-4 rounded text-orange-500 focus:ring-orange-400" onchange="checkGmpScore()">
-          <span>3. ผู้ปฏิบัติงานสวมหมวกเก็บผม หน้ากากอนามัย และผ้ากันเปื้อนขณะแปรรูป</span>
-        </label>
-        <label class="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border cursor-pointer hover:bg-slate-100 transition">
-          <input type="checkbox" class="w-4 h-4 rounded text-orange-500 focus:ring-orange-400" onchange="checkGmpScore()">
-          <span>4. มีระบบป้องกันแมลงและสัตว์นำโรค (มุ้งลวด / พาราโบลาโดม / ถังขยะมีฝาปิด)</span>
-        </label>
-        <label class="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border cursor-pointer hover:bg-slate-100 transition">
-          <input type="checkbox" class="w-4 h-4 rounded text-orange-500 focus:ring-orange-400" onchange="checkGmpScore()">
-          <span>5. ติดฉลากแสดงวันผลิต วันหมดอายุ และส่วนประกอบสำคัญชัดเจน</span>
-        </label>
-      </div>
-    </div>
   </section>
 
-  <!-- ================= TAB 4: LIVE NEWS & TRENDS (FREE WEB INTEGRATION) ================= -->
+  <!-- ================= TAB 4: อย. & NFI ONLY (2 WEBSITES EXACTLY) ================= -->
   <section id="tab-news" class="tab-content space-y-4">
-    <div class="bg-gradient-to-r from-slate-900 to-slate-800 rounded-2xl p-5 text-white shadow-md flex justify-between items-center">
+    <!-- Header Banner -->
+    <div class="bg-gradient-to-r from-emerald-800 to-teal-700 rounded-2xl p-5 text-white shadow-md flex justify-between items-center">
       <div>
         <h2 class="text-xl font-bold font-brand flex items-center gap-2">
-          <i class="fa-solid fa-newspaper text-orange-400"></i> ข่าวสาร & เทรนด์แปรรูปสด
+          <i class="fa-solid fa-stamp text-amber-400"></i> ตรวจเลข อย. & สถาบันอาหาร (NFI)
         </h2>
-        <p class="text-xs text-slate-300 mt-1">อัปเดตฟรีจาก Google News, สถาบันอาหาร, เทคโนโลยีชาวบ้าน & เว็บเกษตรแปรรูป</p>
+        <p class="text-xs text-emerald-100 mt-1">เข้าถึงระบบตรวจสถานะผลิตภัณฑ์ และคู่มือมาตรฐานสถานที่ผลิตอาหารสดตรงจากเว็บหลัก</p>
       </div>
-      <button onclick="fetchLiveNews(true)" class="w-10 h-10 rounded-xl bg-orange-500 hover:bg-orange-600 text-white flex items-center justify-center transition active:scale-90 shrink-0 shadow-sm" title="รีเฟรชข่าวสาร">
-        <i class="fa-solid fa-arrows-rotate text-sm" id="news-refresh-icon"></i>
-      </button>
+      <a id="fda-direct-btn" href="https://oryor.com/%E0%B8%AD%E0%B8%A2/check-product" target="_blank" rel="noopener noreferrer" class="px-3.5 py-2 rounded-xl bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold text-xs transition shrink-0 flex items-center gap-1.5 shadow-sm">
+        เปิดเว็บหลัก <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+      </a>
     </div>
 
-    <!-- Featured Free Web Portals Bar -->
+    <!-- Official Portal Selector Bar (EXACTLY 2 BUTTONS) -->
     <div class="bg-white rounded-2xl p-3 shadow-xs border border-slate-200/80 space-y-2">
       <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
-        <i class="fa-solid fa-globe text-blue-500"></i> เว็บข่าวฟรีแนะนำ (คลิกเปิดอ่านหรือแชร์ได้ทันที)
+        <i class="fa-solid fa-globe text-teal-600"></i> เลือกระบบตรวจสอบ (Official Live Web Portals)
       </p>
-      <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
-        <button onclick="openLiveWebModal('https://www.technologychaoban.com/agricultural-technology', 'เทคโนโลยีชาวบ้าน (เกษตร & แปรรูป)')" class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 hover:bg-emerald-50 hover:border-emerald-300 font-semibold text-slate-700 flex items-center gap-2 transition text-left">
-          <i class="fa-solid fa-seedling text-emerald-500 text-base"></i>
+      
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+        <!-- 1. ตรวจเลข อย. -->
+        <button onclick="loadOfficialPortal('https://oryor.com/%E0%B8%AD%E0%B8%A2/check-product', 'ระบบตรวจสอบเลขสารบบ อย. (อย. Check)')" class="fda-portal-btn active p-3 rounded-2xl bg-teal-50 border border-teal-200 font-semibold text-teal-900 flex items-center gap-3 transition text-left shadow-2xs">
+          <div class="w-10 h-10 rounded-xl bg-blue-500 text-white flex items-center justify-center shrink-0 shadow-sm">
+            <i class="fa-solid fa-magnifying-glass-chart text-lg"></i>
+          </div>
           <div>
-            <p class="text-[11px] font-bold leading-tight">เทคโนโลยีชาวบ้าน</p>
-            <p class="text-[9px] text-slate-400">เกษตร & นวัตกรรมแปรรูป</p>
+            <p class="text-xs font-bold leading-tight">ตรวจเลข อย.</p>
+            <p class="text-[10px] text-teal-600 mt-0.5">เช็คสถานะผลิตภัณฑ์</p>
           </div>
         </button>
-        <button onclick="openLiveWebModal('https://news.google.com/search?q=%E0%B9%80%E0%B8%81%E0%B8%A9%E0%B8%95%E0%B8%A3%E0%B9%81%E0%B8%9B%E0%B8%A3%E0%B8%A3%E0%B8%B9%E0%B8%9B%20%E0%B8%AD%E0%B8%B2%E0%B8%AB%E0%B8%B2%E0%B8%A3&hl=th&gl=TH&ceid=TH%3Ath', 'Google News อาหารและเกษตรแปรรูป')" class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 hover:bg-blue-50 hover:border-blue-300 font-semibold text-slate-700 flex items-center gap-2 transition text-left">
-          <i class="fa-brands fa-google text-blue-500 text-base"></i>
-          <div>
-            <p class="text-[11px] font-bold leading-tight">Google News</p>
-            <p class="text-[9px] text-slate-400">เกษตร & แปรรูปสด</p>
+
+        <!-- 2. สถาบันอาหาร (NFI) -->
+        <button onclick="loadOfficialPortal('https://www.nfi.or.th/', 'สถาบันอาหาร (National Food Institute - NFI)')" class="fda-portal-btn p-3 rounded-2xl bg-slate-50 border border-slate-200 hover:bg-orange-50 font-semibold text-slate-700 flex items-center gap-3 transition text-left shadow-2xs">
+          <div class="w-10 h-10 rounded-xl bg-orange-500 text-white flex items-center justify-center shrink-0 shadow-sm">
+            <i class="fa-solid fa-building-columns text-lg"></i>
           </div>
-        </button>
-        <button onclick="openLiveWebModal('https://www.nfi.or.th/', 'สถาบันอาหาร National Food Institute (NFI)')" class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 hover:bg-orange-50 hover:border-orange-300 font-semibold text-slate-700 flex items-center gap-2 transition text-left col-span-2 sm:col-span-1">
-          <i class="fa-solid fa-wheat-awn text-orange-500 text-base"></i>
           <div>
-            <p class="text-[11px] font-bold leading-tight">สถาบันอาหาร (NFI)</p>
-            <p class="text-[9px] text-slate-400">ข่าวมาตรฐาน/ส่งออก</p>
+            <p class="text-xs font-bold leading-tight">สถาบันอาหาร (NFI)</p>
+            <p class="text-[10px] text-slate-500 mt-0.5">ปรึกษา GMP / ส่งแล็บ</p>
           </div>
         </button>
       </div>
     </div>
 
-    <!-- News Categories -->
-    <div class="flex gap-2 overflow-x-auto no-scrollbar py-1 text-xs">
-      <button onclick="filterNews('all')" class="news-cat-btn active bg-orange-500 text-white px-3.5 py-1.5 rounded-xl font-semibold whitespace-nowrap shadow-2xs">ทั้งหมด</button>
-      <button onclick="filterNews('pack')" class="news-cat-btn bg-white border text-slate-600 px-3.5 py-1.5 rounded-xl font-semibold whitespace-nowrap hover:bg-slate-50">📦 บรรจุภัณฑ์</button>
-      <button onclick="filterNews('market')" class="news-cat-btn bg-white border text-slate-600 px-3.5 py-1.5 rounded-xl font-semibold whitespace-nowrap hover:bg-slate-50">📈 ตลาด & ส่งออก</button>
-      <button onclick="filterNews('tech')" class="news-cat-btn bg-white border text-slate-600 px-3.5 py-1.5 rounded-xl font-semibold whitespace-nowrap hover:bg-slate-50">🔬 นวัตกรรม & AI</button>
-    </div>
-
-    <!-- Live News Feed Container -->
-    <div id="news-feed-container" class="space-y-3">
-      <!-- Dynamic News Cards Injected -->
+    <!-- Live Official Web Frame Viewport -->
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col h-[600px]">
+      <div class="bg-slate-900 px-4 py-2.5 text-white flex justify-between items-center text-xs">
+        <span id="portal-frame-title" class="font-bold flex items-center gap-2 truncate">
+          <i class="fa-solid fa-circle text-emerald-400 text-[10px]"></i> ระบบตรวจสอบเลขสารบบ อย. (อย. Check)
+        </span>
+        <div class="flex items-center gap-2 shrink-0">
+          <button onclick="refreshPortalFrame()" class="hover:text-amber-300 text-slate-300 transition" title="รีเฟรชหน้าเว็บ"><i class="fa-solid fa-arrows-rotate"></i></button>
+          <a id="portal-frame-external" href="https://oryor.com/%E0%B8%AD%E0%B8%A2/check-product" target="_blank" rel="noopener noreferrer" class="bg-emerald-600 hover:bg-emerald-500 text-white px-2.5 py-1 rounded-lg font-bold text-[10px] transition flex items-center gap-1">
+            เปิดเต็มหน้าต่าง <i class="fa-solid fa-up-right-from-square text-[8px]"></i>
+          </a>
+        </div>
+      </div>
+      <div class="flex-1 bg-slate-100 relative">
+        <iframe id="fda-live-iframe" class="w-full h-full border-0" src="https://oryor.com/%E0%B8%AD%E0%B8%A2/check-product" title="Official Web Portal"></iframe>
+      </div>
     </div>
   </section>
 
-  <!-- ================= TAB 5: BATCH LOGBOOK & NOTIFICATIONS ================= -->
+  <!-- ================= TAB 5: BATCH LOGBOOK & AUTOMATIC COUNTDOWN TRACKER ================= -->
   <section id="tab-logbook" class="tab-content space-y-4">
-    <!-- Push Notification Permission Banner -->
-    <div class="bg-gradient-to-r from-teal-600 to-emerald-600 rounded-2xl p-4 text-white flex justify-between items-center shadow-sm">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center text-lg shrink-0">
-          <i class="fa-solid fa-bell"></i>
-        </div>
-        <div>
-          <h4 class="font-bold text-sm font-brand">ระบบแจ้งเตือนข้อความวันครบกำหนด</h4>
-          <p class="text-[11px] text-teal-100">รับการแจ้งเตือน Web Push / ข้อความเมื่อล็อตถนอมอาหารพร้อมใช้</p>
-        </div>
-      </div>
-      <button onclick="requestNotificationPermission()" class="bg-white text-teal-700 hover:bg-teal-50 px-3 py-1.5 rounded-xl text-xs font-bold transition active:scale-95 shrink-0">
-        เปิดการแจ้งเตือน
-      </button>
+    <div class="bg-gradient-to-r from-orange-600 to-amber-500 rounded-2xl p-5 text-white shadow-md">
+      <h2 class="text-xl font-bold font-brand flex items-center gap-2">
+        <i class="fa-solid fa-calendar-check text-amber-200"></i> สมุดบันทึก "ลงทะเบียนกี่วันได้กิน" (Processing Tracker)
+      </h2>
+      <p class="text-xs text-orange-100 mt-1">เลือกลิสต์เมนูอาหาร ระบบจะคำนวณจำนวนวันและวันพร้อมกินให้อัตโนมัติ เพื่อนับถอยหลังจริง!</p>
     </div>
 
     <!-- Add New Batch Log Form -->
     <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 space-y-3">
       <h3 class="font-bold font-brand text-slate-800 text-base flex items-center gap-2">
-        <i class="fa-solid fa-square-plus text-orange-500"></i> บันทึกล็อตการผลิตใหม่ (New Batch Log)
+        <i class="fa-solid fa-square-plus text-orange-500"></i> ลงทะเบียนล็อตแปรรูปใหม่ (เลือกเมนู)
       </h3>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
         <div>
-          <label class="block font-semibold text-slate-600 mb-1">ชื่อผลิตภัณฑ์ / ล็อต</label>
-          <input type="text" id="log-name" placeholder="เช่น แหนมหมู ล็อต #04" class="w-full bg-slate-50 border rounded-xl px-3 py-2.5 font-medium outline-none focus:ring-2 focus:ring-orange-400">
+          <label class="block font-semibold text-slate-600 mb-1">เลือกเมนูอาหารแปรรูป</label>
+          <select id="log-menu-select" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 font-bold text-slate-800 outline-none focus:ring-2 focus:ring-orange-400" onchange="autoFillDurationFromMenu()">
+            <option value="">-- กรุณาเลือกเมนู --</option>
+            <option value="แหนมหมู" data-days="3">🥓 แหนมหมู (3 วันได้กิน)</option>
+            <option value="มะม่วงดองเกลือ" data-days="7">🥭 มะม่วงดองเกลือ (7 วันได้กิน)</option>
+            <option value="กล้วยตากพาราโบลาโดม" data-days="4">🍌 กล้วยตาก (4 วันได้กิน)</option>
+            <option value="ไข่เค็มไชยา" data-days="14">🥚 ไข่เค็มไชยา (14 วันได้กิน)</option>
+            <option value="ผักกาดดองเปรี้ยว" data-days="5">🥬 ผักกาดดองเปรี้ยว (5 วันได้กิน)</option>
+            <option value="มะม่วงแช่อิ่ม" data-days="5">🥭 มะม่วงแช่อิ่ม (5 วันได้กิน)</option>
+            <option value="ปลาร้าชะโด" data-days="30">🐟 ปลาร้า (30 วันได้กิน)</option>
+            <option value="ไวน์สับปะรด" data-days="15">🍷 ไวน์สับปะรด (15 วันได้กิน)</option>
+            <option value="หมูแดดเดียว" data-days="1">🥩 หมูแดดเดียว (1 วันได้กิน)</option>
+            <option value="กิมจิผักกาดขาว" data-days="2">🥬 กิมจิผักกาดขาว (2 วันได้กิน)</option>
+            <option value="custom" data-days="1">⚙️ กำหนดชื่อและจำนวนวันเอง...</option>
+          </select>
         </div>
+
+        <div id="custom-name-container" class="hidden">
+          <label class="block font-semibold text-slate-600 mb-1">ชื่อเมนู (กำหนดเอง)</label>
+          <input type="text" id="log-custom-name" placeholder="ระบุชื่อเมนู..." class="w-full bg-slate-50 border rounded-xl px-3 py-2.5 font-medium outline-none focus:ring-2 focus:ring-orange-400">
+        </div>
+
         <div>
-          <label class="block font-semibold text-slate-600 mb-1">จำนวนที่ผลิต (ถุง/กระปุก)</label>
-          <input type="number" id="log-qty" placeholder="เช่น 50" class="w-full bg-slate-50 border rounded-xl px-3 py-2.5 font-medium outline-none focus:ring-2 focus:ring-orange-400">
+          <label class="block font-semibold text-slate-600 mb-1">จำนวนที่แปรรูป (ถุง/กระปุก/ชิ้น)</label>
+          <input type="number" id="log-qty" value="10" min="1" class="w-full bg-slate-50 border rounded-xl px-3 py-2.5 font-medium outline-none focus:ring-2 focus:ring-orange-400">
         </div>
+
         <div>
-          <label class="block font-semibold text-slate-600 mb-1">วันที่เริ่มแปรรูป</label>
-          <input type="date" id="log-start-date" class="w-full bg-slate-50 border rounded-xl px-3 py-2.5 font-medium outline-none focus:ring-2 focus:ring-orange-400">
+          <label class="block font-semibold text-slate-600 mb-1">วันที่เริ่มทำ / แปรรูป</label>
+          <input type="date" id="log-start-date" class="w-full bg-slate-50 border rounded-xl px-3 py-2.5 font-medium outline-none focus:ring-2 focus:ring-orange-400" onchange="calcTargetFromDays()">
         </div>
+
         <div>
-          <label class="block font-semibold text-slate-600 mb-1">วันครบกำหนด / หมดอายุ</label>
-          <input type="date" id="log-target-date" class="w-full bg-slate-50 border rounded-xl px-3 py-2.5 font-medium outline-none focus:ring-2 focus:ring-orange-400">
+          <label class="block font-semibold text-slate-600 mb-1">จำนวนวันแปรรูป (ระบบเติมให้อัตโนมัติ)</label>
+          <div class="flex items-center gap-2">
+            <button onclick="adjustInput('log-duration-days', -1, 1); calcTargetFromDays();" class="w-9 h-9 bg-slate-100 hover:bg-slate-200 rounded-xl font-bold text-slate-700 shrink-0">-</button>
+            <input type="number" id="log-duration-days" value="3" min="1" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-center font-bold text-slate-800 outline-none focus:ring-2 focus:ring-orange-400" oninput="calcTargetFromDays()">
+            <button onclick="adjustInput('log-duration-days', 1, 1); calcTargetFromDays();" class="w-9 h-9 bg-slate-100 hover:bg-slate-200 rounded-xl font-bold text-slate-700 shrink-0">+</button>
+          </div>
         </div>
-        <div class="md:col-span-2">
-          <label class="block font-semibold text-slate-600 mb-1">เบอร์โทรศัพท์สำหรับรับ SMS แจ้งเตือน (Optional)</label>
-          <input type="tel" id="log-phone" placeholder="เช่น 0812345678" class="w-full bg-slate-50 border rounded-xl px-3 py-2.5 font-medium outline-none focus:ring-2 focus:ring-orange-400">
+
+        <div>
+          <label class="block font-semibold text-slate-600 mb-1">วันพร้อมรับประทาน (ระบบคำนวณให้อัตโนมัติ)</label>
+          <input type="date" id="log-target-date" class="w-full bg-amber-50 border border-amber-200 rounded-xl px-3 py-2.5 font-bold text-amber-900 outline-none" readonly>
         </div>
       </div>
 
-      <button onclick="saveBatchLog()" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 rounded-xl transition active:scale-98 shadow-md shadow-orange-500/20 text-sm">
-        <i class="fa-solid fa-floppy-disk mr-1"></i> บันทึกข้อมูลลงสมุดการผลิต
+      <button onclick="saveBatchLog()" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 rounded-xl transition active:scale-98 shadow-md shadow-orange-500/20 text-sm flex items-center justify-center gap-2">
+        <i class="fa-solid fa-floppy-disk"></i> บันทึกลงทะเบียนนับถอยหลัง
       </button>
     </div>
 
     <!-- Active Batch Logs List -->
     <div class="space-y-3">
       <div class="flex justify-between items-center">
-        <h3 class="font-bold font-brand text-slate-800 text-base">ประวัติและสถานะล็อตการผลิตทั้งหมด</h3>
+        <h3 class="font-bold font-brand text-slate-800 text-base">รายการถนอมอาหารที่กำลังนับถอยหลัง</h3>
         <button onclick="exportBatchLogs()" class="text-xs text-orange-600 bg-orange-50 border border-orange-200 px-3 py-1.5 rounded-xl font-bold hover:bg-orange-100 transition">
           <i class="fa-solid fa-download mr-1"></i> ส่งออก JSON
         </button>
@@ -449,6 +489,7 @@
 
 </main>
 
+<!-- Sticky Bottom Dock Navigation -->
 <nav class="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200/80 shadow-lg px-2 py-2">
   <div class="max-w-md mx-auto flex justify-around items-center">
     <button onclick="switchTab('tab-recipes')" id="dock-tab-recipes" class="dock-item active flex flex-col items-center gap-1 text-slate-400 hover:text-orange-500 transition py-1 px-3">
@@ -461,11 +502,11 @@
     </button>
     <button onclick="switchTab('tab-shelflife')" id="dock-tab-shelflife" class="dock-item flex flex-col items-center gap-1 text-slate-400 hover:text-orange-500 transition py-1 px-3">
       <i class="fa-solid fa-shield-halved text-lg transition-transform"></i>
-      <span class="text-[10px] font-semibold">ยืดอายุ/อย.</span>
+      <span class="text-[10px] font-semibold">ยืดอายุ</span>
     </button>
     <button onclick="switchTab('tab-news')" id="dock-tab-news" class="dock-item flex flex-col items-center gap-1 text-slate-400 hover:text-orange-500 transition py-1 px-3">
-      <i class="fa-solid fa-newspaper text-lg transition-transform"></i>
-      <span class="text-[10px] font-semibold">ข่าวสาร</span>
+      <i class="fa-solid fa-stamp text-lg transition-transform"></i>
+      <span class="text-[10px] font-semibold">ตรวจ อย. & NFI</span>
     </button>
     <button onclick="switchTab('tab-logbook')" id="dock-tab-logbook" class="dock-item flex flex-col items-center gap-1 text-slate-400 hover:text-orange-500 transition py-1 px-3">
       <i class="fa-solid fa-clipboard-list text-lg transition-transform"></i>
@@ -474,7 +515,8 @@
   </div>
 </nav>
 
-<button id="fab-chat-toggle" class="fixed bottom-20 right-5 z-40 w-14 h-14 rounded-full bg-gradient-to-tr from-orange-500 to-amber-500 text-white flex items-center justify-center shadow-lg shadow-orange-500/30 border-2 border-white transition active:scale-90">
+<!-- Floating Chat Trigger -->
+<button id="fab-chat-toggle" onclick="toggleChatbot(true)" class="fixed bottom-20 right-5 z-40 w-14 h-14 rounded-full bg-gradient-to-tr from-orange-500 to-amber-500 text-white flex items-center justify-center shadow-lg shadow-orange-500/30 border-2 border-white transition active:scale-90">
   <i class="fa-solid fa-robot text-xl"></i>
 </button>
 
@@ -482,12 +524,9 @@
 <div id="chatbot-modal" class="fixed inset-0 z-50 hidden flex items-end sm:items-center justify-center">
   <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-xs" onclick="toggleChatbot(false)"></div>
   <div class="relative w-full sm:w-[450px] h-[85vh] sm:h-[620px] bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl flex flex-col overflow-hidden z-10">
-    <!-- Header -->
     <div class="bg-gradient-to-r from-orange-500 to-amber-500 p-4 text-white flex justify-between items-center shrink-0">
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-2xl bg-white/20 flex items-center justify-center border border-white/30 text-lg">
-          🤖
-        </div>
+        <div class="w-10 h-10 rounded-2xl bg-white/20 flex items-center justify-center border border-white/30 text-lg">🤖</div>
         <div>
           <h3 class="font-bold font-brand text-base leading-tight">น้องแปรรูป AI</h3>
           <p class="text-[10px] text-orange-100">ผู้ช่วยถนอมอาหารระดับผู้เชี่ยวชาญ</p>
@@ -496,7 +535,6 @@
       <button onclick="toggleChatbot(false)" class="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center text-white"><i class="fa-solid fa-xmark"></i></button>
     </div>
 
-    <!-- Messages List -->
     <div id="chat-history" class="flex-1 overflow-y-auto overscroll-contain p-4 space-y-3 bg-slate-50 text-xs">
       <div class="flex items-start gap-2.5">
         <div class="w-7 h-7 rounded-full bg-orange-100 flex items-center justify-center text-sm border shrink-0">🤖</div>
@@ -506,12 +544,10 @@
       </div>
     </div>
 
-    <!-- Thinking Indicator -->
     <div id="thinking-indicator" class="hidden px-4 py-1.5 bg-slate-50 text-[11px] text-slate-400 flex items-center gap-2 border-t">
       <i class="fa-solid fa-circle-notch fa-spin text-orange-500"></i> กำลังประมวลผลคำตอบ...
     </div>
 
-    <!-- Input Footer -->
     <div class="p-3 bg-white border-t border-slate-200 flex items-center gap-2">
       <input type="text" id="user-input" placeholder="พิมพ์คำถามที่นี่..." class="flex-1 bg-slate-100 text-slate-800 border-0 rounded-xl px-4 py-2.5 text-xs focus:ring-2 focus:ring-orange-400 outline-none" onkeypress="if(event.key==='Enter') sendChatMessage()">
       <button onclick="sendChatMessage()" class="w-10 h-10 rounded-xl bg-orange-500 hover:bg-orange-600 text-white flex items-center justify-center transition active:scale-90 shrink-0 shadow-sm">
@@ -521,8 +557,9 @@
   </div>
 </div>
 
+<!-- Modals -->
 <!-- 1. Recipe Detail Modal -->
-<div id="recipe-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+<div id="recipe-modal" class="modal-overlay fixed inset-0 z-50 hidden flex items-center justify-center p-4">
   <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-xs" onclick="closeModal('recipe-modal')"></div>
   <div class="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] z-10">
     <div class="bg-orange-500 p-4 text-white flex justify-between items-center shrink-0">
@@ -534,7 +571,6 @@
     </div>
 
     <div class="overflow-y-auto overscroll-contain p-5 space-y-4 text-xs bg-slate-50">
-      <!-- Scientific Specs -->
       <div class="grid grid-cols-4 gap-2 text-center">
         <div class="bg-white p-2 rounded-xl border">
           <p class="text-[10px] text-slate-400">pH</p>
@@ -554,19 +590,16 @@
         </div>
       </div>
 
-      <!-- Preservation Principle -->
       <div class="bg-amber-50 border border-amber-200 p-3 rounded-2xl text-amber-900">
         <h4 class="font-bold font-brand mb-1 flex items-center gap-1.5"><i class="fa-solid fa-lightbulb"></i> หลักวิทยาศาสตร์ถนอมอาหาร</h4>
         <p id="recipe-preservation" class="leading-relaxed"></p>
       </div>
 
-      <!-- Steps -->
       <div class="bg-white p-4 rounded-2xl border space-y-2">
         <h4 class="font-bold font-brand text-slate-800 text-sm flex items-center gap-1.5"><i class="fa-solid fa-list-check text-orange-500"></i> ขั้นตอนการทำอย่างละเอียด</h4>
         <ol id="recipe-steps" class="list-decimal list-inside space-y-2 text-slate-700 leading-relaxed"></ol>
       </div>
 
-      <!-- Ingredients & Market Prices -->
       <div class="bg-white p-4 rounded-2xl border space-y-2">
         <div class="flex justify-between items-center">
           <h4 class="font-bold font-brand text-slate-800 text-sm"><i class="fa-solid fa-basket-shopping text-blue-500 mr-1"></i> ราคากลางวัตถุดิบ</h4>
@@ -588,28 +621,8 @@
   </div>
 </div>
 
-<!-- 2. SMS Simulated Alert Modal -->
-<div id="sms-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
-  <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-xs" onclick="closeModal('sms-modal')"></div>
-  <div class="relative w-full max-w-sm bg-white rounded-3xl shadow-2xl p-6 text-center z-10 space-y-4">
-    <div class="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-3xl mx-auto shadow-inner">
-      <i class="fa-solid fa-comment-sms"></i>
-    </div>
-    <div>
-      <h3 class="font-bold font-brand text-slate-900 text-lg">ข้อความแจ้งเตือน SMS</h3>
-      <p class="text-xs text-slate-500 mt-1" id="sms-phone-display">เบอร์ผู้รับ: 081-XXX-XXXX</p>
-    </div>
-    <div class="bg-slate-100 p-4 rounded-2xl text-left border text-xs text-slate-700 leading-relaxed font-mono" id="sms-body-display">
-      <!-- Injected -->
-    </div>
-    <button onclick="closeModal('sms-modal')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl text-xs transition">
-      รับทราบข้อความ
-    </button>
-  </div>
-</div>
-
-<!-- 3. Quiz Mini-Game Modal -->
-<div id="quiz-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+<!-- 2. Quiz Mini-Game Modal -->
+<div id="quiz-modal" class="modal-overlay fixed inset-0 z-50 hidden flex items-center justify-center p-4">
   <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-xs" onclick="closeModal('quiz-modal')"></div>
   <div class="relative w-full max-w-md bg-white rounded-3xl shadow-2xl p-5 z-10 space-y-4">
     <div class="flex justify-between items-center border-b pb-3">
@@ -622,8 +635,8 @@
   </div>
 </div>
 
-<!-- 4. Calendar Modal -->
-<div id="calendar-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+<!-- 3. Calendar Modal -->
+<div id="calendar-modal" class="modal-overlay fixed inset-0 z-50 hidden flex items-center justify-center p-4">
   <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-xs" onclick="closeModal('calendar-modal')"></div>
   <div class="relative w-full max-w-md bg-white rounded-3xl shadow-2xl p-5 z-10 space-y-4">
     <div class="flex justify-between items-center border-b pb-3">
@@ -645,193 +658,179 @@
   </div>
 </div>
 
-<!-- 5. Live Web Embedded Viewer Modal -->
-<div id="web-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-2 sm:p-4">
-  <div class="absolute inset-0 bg-slate-900/70 backdrop-blur-xs" onclick="closeModal('web-modal')"></div>
-  <div class="relative w-full max-w-3xl h-[85vh] bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col z-10">
-    <!-- Header -->
-    <div class="bg-slate-900 p-3.5 text-white flex justify-between items-center shrink-0">
-      <div class="flex items-center gap-2 overflow-hidden">
-        <i class="fa-solid fa-globe text-orange-400 text-sm shrink-0"></i>
-        <h3 class="font-bold font-brand text-xs sm:text-sm truncate" id="web-modal-title">เว็บข่าวฟรี</h3>
-      </div>
-      <div class="flex items-center gap-2 shrink-0">
-        <a id="web-external-link" href="#" target="_blank" rel="noopener noreferrer" class="bg-orange-500 hover:bg-orange-600 text-white text-[11px] px-2.5 py-1 rounded-xl font-bold flex items-center gap-1 transition">
-          เปิดหน้าต่างใหม่ <i class="fa-solid fa-arrow-up-right-from-square text-[9px]"></i>
-        </a>
-        <button onclick="closeModal('web-modal')" class="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white"><i class="fa-solid fa-xmark text-xs"></i></button>
-      </div>
-    </div>
-    <!-- Web Frame / Content Container -->
-    <div class="flex-1 bg-slate-100 relative">
-      <iframe id="web-modal-frame" class="w-full h-full border-0" src="about:blank"></iframe>
-    </div>
-  </div>
-</div>
-
-<!-- Toast Alert Container -->
+<!-- Toast Container -->
 <div id="toast-container" class="fixed top-5 left-1/2 -translate-x-1/2 z-50 pointer-events-none w-full max-w-xs px-2"></div>
 
 <script>
-/* ================= 1. STATE & EXTENDED PROFESSIONAL DATABASES ================= */
+/* ================= GLOBAL STATE & COMPLETE 100+ FOOD DATABASE ================= */
+let favorites = JSON.parse(localStorage.getItem('foodtech_favs')) || [];
+let batchLogs = JSON.parse(localStorage.getItem('foodtech_logs')) || [];
+let selectedCategory = 'ทั้งหมด';
+let currentQuizIndex = 0;
+let autoTimerInterval = null;
+
 const foodCategories = {
-  "🍌 ผลไม้แปรรูป & ของหวาน": [
-    "กล้วยตากพลังงานแสงอาทิตย์", "กล้วยฉาบทอดกรอบ", "ทุเรียนทอดกรอบ", "ทุเรียนกวน",
-    "มะม่วงกวนแผ่น", "มะม่วงดองแช่อิ่ม", "สับปะรดกวน", "มะขามแก้ว",
-    "ลำไยอบแห้งสีทอง", "ขนุนทอดกรอบ", "ฝรั่งแช่อิ่มบ๊วย", "กระท้อนแช่อิ่ม"
-  ],
   "🥩 แปรรูปเนื้อสัตว์ & สัตว์ปีก": [
-    "แหนมหมู", "กุนเชียงหมู", "หมูหยอง", "หมูแดดเดียว", "เนื้อสวรรค์",
-    "ไส้กรอกอีสาน", "หมูยอ", "ไก่หยอง"
+    "แหนมหมู", "ไส้กรอกอีสาน", "กุนเชียงหมู", "หมูแดดเดียว", "หมูแผ่น", "หมูหยอง", "หมูกระจก", "แคปหมู",
+    "เนื้อแดดเดียว", "เนื้อสวรรค์", "เนื้อเค็ม", "ไก่หยอง", "เป็ดพะโล้สุญญากาศ", "หมูส้ม", "หม่ำหมู", "ไส้อั่วหมู"
   ],
-  "🐟 อาหารทะเล & หมักดองพื้นบ้าน": [
-    "ปลาร้าหอม", "ปลาเค็มแดดเดียว", "กะปิแท้", "ปลาหมึกบดสามรส",
-    "ปลาแห้งแตงโม", "กุ้งแห้งอบกรอบ"
+  "🐟 แปรรูปสัตว์น้ำ & อาหารทะเล": [
+    "ปลาร้าชะโด", "ปลาส้มปลานวลจันทร์", "ปลาเค็มตากแห้ง", "ปลากรอบสามรส", "ปลาหวานทรงเครื่อง", "ปลาหมึกบด",
+    "ปลาหมึกแห้ง", "กุ้งแห้ง", "กุ้งส้ม", "กะปิแท้", "ปลาเจ่า", "ปลาสลิดแดดเดียว", "น้ำพริกมันกุ้ง", "หอยแมลงภู่อบแห้ง", "เคยเค็ม", "น้ำปลาแท้หมักธรรมชาติ"
   ],
-  "🌶️ น้ำพริก ซอส & เครื่องปรุงรส": [
-    "น้ำพริกผัดหมูกรอบ", "น้ำพริกนรกกุ้ง", "น้ำพริกเผากุ้งแห้ง", "ซอสพริกศรีราชา",
-    "ซอสมะเขือเทศ", "น้ำจิ้มไก่สูตรโบราณ"
+  "🌶️ เครื่องปรุง, น้ำพริก & ซอส": [
+    "น้ำพริกนรกปลาช่อน", "น้ำพริกเผากุ้ง", "น้ำพริกกากหมู", "น้ำพริกตาแดง", "ซอสพริกศรีราชา", "ซอสมะเขือเทศ",
+    "ซีอิ๊วหมักธรรมชาติ", "น้ำส้มสายชูหมักมะพร้าว", "น้ำจิ้มไก่", "น้ำพริกแมงดา", "น้ำปลาร้าต้มสุก", "เต้าเจี้ยว",
+    "ซอสมะขามเปียกเข้มข้น", "ผงปรุงรสสมุนไพร", "ซอสหอยนางรม", "ผงมะนาวสำเร็จรูป"
   ],
-  "🥬 ผักดอง & ผลิตภัณฑ์เพื่อสุขภาพ": [
-    "ผักกาดเขียวดอง", "ขิงดองสามรส", "กระเทียมดองน้ำผึ้ง", "กิมจิผักกาดขาว",
-    "เห็ดสามรสอบกรอบ"
+  "🥬 ผักดอง, ผลไม้ดอง & แช่อิ่ม": [
+    "มะม่วงดองเกลือ", "มะม่วงแช่อิ่ม", "ขิงดองสามรส", "ผักกาดดองเปรี้ยว", "กระเทียมโทนดองน้ำผึ้ง", "มะนาวดองเค็ม",
+    "มะยมดอง", "มะดันดอง", "มะกอกดอง", "มะขามป้อมดอง", "มะขามแช่อิ่ม", "เห็ดฟางดองสามรส", "หน่อไม้อัดขวด",
+    "หน่อไม้ดอง", "ผักเสี้ยนดอง", "ตั้งฉ่าย", "มะเขือเทศแช่อิ่ม", "กระท้อนแช่อิ่ม", "ลูกชิดแช่อิ่ม", "สับปะรดแช่อิ่ม"
   ],
-  "🥤 เครื่องดื่มแปรรูป & น้ำผลไม้": [
-    "น้ำมะขามเปียกเข้มข้น", "ไวน์สับปะรด", "น้ำกระเจี๊ยบพาสเจอร์ไรส์", "น้ำนมถั่วเหลือง"
+  "🍌 ผลไม้ตาก, กวน, อบแห้ง & ทอด": [
+    "กล้วยตากพาราโบลาโดม", "กล้วยฉาบเนยสด", "กล้วยอบเนย", "ทุเรียนทอดกรอบ", "ทุเรียนกวน", "มะม่วงกวน (ส้มแผ่น)",
+    "สับปะรดกวน", "สับปะรดอบแห้ง", "มะขามแก้ว", "มะขามกวน", "ขนุนทอดกรอบ", "ขนุนอบแห้ง", "ลำไยอบแห้งสีทอง",
+    "ฝรั่งอบแห้ง", "มะละกออบแห้ง", "เผือกฉาบ", "มันเทศฉาบ", "ส้มโอแก้ว", "เปลือกส้มโอเชื่อม", "มะเฟืองอบแห้ง"
+  ],
+  "🥤 เครื่องดื่ม, แป้ง & อาหารหมักพื้นบ้าน": [
+    "ไวน์สับปะรด", "ไวน์กระเจี๊ยบ", "น้ำเม่าหมัก", "แป้งเชื้อข้าวหมาก", "ข้าวหมาก", "น้ำเต้าหู้พาสเจอร์ไรส์",
+    "เต้าหู้ยี้", "เต้าฮวยฟรุตสลัด", "น้ำมะขามเปียกพร้อมดื่ม", "วุ้นมะพร้าวในน้ำเชื่อม", "วุ้นกะทิสดบรรจุกระปุก", "ไข่เค็มไชยา",
+    "ไข่เยี่ยวม้า", "ถั่วเน่าซา", "ถั่วเน่าแผ่น"
   ]
 };
 
 const recipeDB = {
-  "กล้วยตากพลังงานแสงอาทิตย์": {
-    ph: "5.0 - 5.5", brix: "55 - 65°Brix", aw: "< 0.60", shelf: "6 เดือน",
-    preservation: "ลดปริมาณน้ำอิสระผ่านการตากในตู้พาราโบลาโดมเพื่อควบคุมฝุ่นและแมลง",
+  "กล้วยตากพาราโบลาโดม": {
+    ph: "4.8 - 5.2", brix: "55 - 65°Brix", aw: "0.60 - 0.65", shelf: "3 - 6 เดือน",
+    preservation: "การลดค่า Aw (Water Activity) โดยใช้อบในตู้อบพาราโบลาโดม ป้องกันเชื้อราและแมลง",
     steps: [
-      "คัดเลือกกล้วยน้ำว้าสุกงอม (เปลือกมีจุดกระดำเล็กน้อย ค่าความหวานสะสมสูงสุด)",
-      "ปอกเปลือก ล้างด้วยน้ำเกลือเจือจาง 1% เพื่อลดความเหนียวและป้องกันกล้วยดำ",
-      "เรียงลงบนตะแกรงตากในตู้พาราโบลาโดม ตากแดด 3-5 วัน หมั่นพลิกกลับด้านทุกวัน",
-      "ทับกล้วยให้แบนเล็กน้อย แล้วอบ/ตากต่อจนเนื้อหนึบ นำมาซีลสุญญากาศบรรจุถุง"
+      "คัดเลือกกล้วยน้ำว้าสุกงอม ปอกเปลือกและดึงเส้นใยออก",
+      "ล้างด้วยน้ำเกลือเจือจาง (1%) เพื่อป้องกันสีคล้ำ",
+      "ตากในโดมพาราโบลา 3-5 วัน หรืออบด้วยอุณหภูมิ 60°C",
+      "กดแบนหรือบรรจุถุงซีลสุญญากาศ"
     ],
     ingredients: [
-      { name: "กล้วยน้ำว้าสุกงอม (5 หวี)", price: "120 บาท" },
-      { name: "เกลือแกง (สำหรับล้าง)", price: "10 บาท" },
-      { name: "ถุงซีลสุญญากาศ ฟู้ดเกรด", price: "25 บาท" }
-    ]
-  },
-  "กล้วยฉาบทอดกรอบ": {
-    ph: "5.5 - 6.0", brix: "30 - 40°Brix", aw: "< 0.30", shelf: "3 - 6 เดือน",
-    preservation: "การทอดไล่ความชื้นและใช้น้ำตาลเคลือบป้องกันออกซิเดชัน",
-    steps: [
-      "ปอกเปลือกกล้วยน้ำว้าดิบ แช่ในน้ำผสมน้ำมะนาวหรือเกลือ ป้องกันกล้วยดำ",
-      "ฝานกล้วยเป็นแผ่นบางตามยาวด้วยมีดสองใบ",
-      "ทอดในน้ำมันร้อนปานกลางจนเริ่มเหลืองกรอบ ตักพักซับน้ำมัน",
-      "คลุกเคี่ยวกับน้ำเชื่อมเนยสด แล้วนำลงทอดซ้ำสั้นๆ เพื่อให้ความหวานเกาะตัว พักให้เย็นก่อนบรรจุ"
-    ],
-    ingredients: [
-      { name: "กล้วยน้ำว้าดิบ (5 หวี)", price: "100 บาท" },
-      { name: "น้ำตาลทราย", price: "25 บาท" },
-      { name: "น้ำมันพืชสำหรับทอด", price: "50 บาท" },
-      { name: "เนยสดรสเค็ม", price: "30 บาท" }
+      { name: "กล้วยน้ำว้าสุกงอม (2 หวี)", price: "40 บาท" },
+      { name: "เกลือแกง (ล้างสี)", price: "5 บาท" },
+      { name: "ถุงบรรจุสุญญากาศ", price: "15 บาท" }
     ]
   },
   "แหนมหมู": {
-    ph: "4.2 - 4.5", brix: "N/A", aw: "0.92 - 0.95", shelf: "1 - 2 สัปดาห์ (ตู้เย็น)",
-    preservation: "การกรดชีวภาพ (Lactic Acid Fermentation) โดยจุลินทรีย์สายพันธุ์ดี",
+    ph: "4.2 - 4.5", brix: "N/A", aw: "0.92 - 0.95", shelf: "2 - 3 สัปดาห์",
+    preservation: "การหมักให้เกิดกรดแลคติก (Lactic Acid Fermentation) โดยแบคทีเรีย ยับยั้งเชื้อก่อโรค",
     steps: [
-      "บดเนื้อหมูสะโพกไร้มันให้ละเอียด และล้างหนังหมูต้มสุกหั่นเส้นให้แห้งสนิท",
-      "โขลกกระเทียม เกลือ เกลือไนไตรต์ (ถ้าใช้) และข้าวเหนียวสุกนวดผสมกับหมูบดจนเหนียวเซตตัว",
-      "ใส่หนังหมูเส้นลงไปนวดให้กระจายตัวสม่ำเสมอ",
-      "บรรจุใส่ถุงพลาสติก มัดยางแน่นไร้อากาศ หมักไว้ที่อุณหภูมิห้อง 2-3 วัน จนเปรี้ยวได้ที่"
+      "บดเนื้อหมูสร้างความเหนียว ผสมหนังหมูสไลซ์",
+      "คลุกกระเทียมบด เกลือ ข้าวเหนียวสุก นวดจนงวดเหนียว",
+      "บรรจุถุงพลาสติก มัดยางแน่นไร้อากาศหมัก 2-3 วัน",
+      "เก็บในตู้เย็นเมื่อได้รสเปรี้ยวที่ต้องการ"
     ],
     ingredients: [
-      { name: "เนื้อหมูสะโพกบด (1 กก.)", price: "150 บาท" },
-      { name: "หนังหมูเส้นต้มสุก (300 กรัม)", price: "40 บาท" },
-      { name: "กระเทียมไทยทรงเครื่อง", price: "25 บาท" },
-      { name: "เกลือ + ข้าวเหนียวสุก", price: "15 บาท" }
+      { name: "เนื้อหมูสะโพก (1 กก.)", price: "150 บาท" },
+      { name: "หนังหมูต้มสไลซ์ (300 กรัม)", price: "35 บาท" },
+      { name: "กระเทียม + ข้าวเหนียว + เกลือ", price: "25 บาท" }
     ]
   },
-  "มะม่วงกวนแผ่น": {
-    ph: "3.8 - 4.2", brix: "60 - 70°Brix", aw: "< 0.60", shelf: "6 - 9 เดือน",
-    preservation: "ระเหยน้ำด้วยความร้อนร่วมกับกรดและน้ำตาลธรรมชาติในผลไม้",
+  "มะม่วงแช่อิ่ม": {
+    ph: "3.5 - 4.0", brix: "50 - 60°Brix", aw: "< 0.85", shelf: "6 - 12 เดือน",
+    preservation: "การออสโมซิสด้วยน้ำเชื่อมความเข้มข้นสูง ดึงน้ำออกจากเนื้อผลไม้ยับยั้งจุลินทรีย์",
     steps: [
-      "ปอกเปลือกมะม่วงสุก หั่นเอาเฉพาะเนื้อ นำไปปั่นให้เนียนละเอียด",
-      "ตั้งไฟเคี่ยวเนื้อมะม่วง เติมเกลือเล็กน้อย (หากสุกเปรี้ยวเติมน้ำตาลเพิ่ม)",
-      "ละเลียดแผ่เนื้อมะม่วงเป็นแผ่นบางบนแผ่นพลาสติกหรือตะแกรงตากแดด",
-      "ตากแดดจัด 1-2 วันจนแห้งลอกแผ่นได้ ม้วนเป็นม้วนบรรจุใส่กล่อง"
+      "ดองมะม่วงดิบในน้ำเกลือ 8-10% เป็นเวลา 5-7 วัน",
+      "ล้างน้ำสะอาด แช่น้ำปูนใสเพื่อให้เนื้อกรอบ",
+      "แช่ในน้ำเชื่อมเริ่มต้น 30°Brix เพิ่มความหวานวันละ 10°Brix จนถึง 50-60°Brix",
+      "บรรจุในโหลหรือซีลถุงปิดสนิท"
     ],
     ingredients: [
-      { name: "มะม่วงสุก (5 กก.)", price: "100 บาท" },
-      { name: "น้ำตาลทราย / เกลือ", price: "20 บาท" },
-      { name: "แผ่นพลาสติก / กล่องบรรจุ", price: "20 บาท" }
+      { name: "มะม่วงแก้วดิบ (2 กก.)", price: "40 บาท" },
+      { name: "น้ำตาลทราย", price: "30 บาท" },
+      { name: "เกลือ + น้ำปูนใส", price: "10 บาท" }
     ]
   }
 };
 
 const shelfLifeData = {
   banana: [
-    { method: "สดอุณหภูมิห้อง", days: "3-5 วัน", pct: 10, color: "bg-red-400" },
-    { method: "ตากแดดพาราโบลาโดม", days: "3 เดือน", pct: 60, color: "bg-amber-500" },
-    { method: "อบแห้งสุญญากาศ", days: "12 เดือน", pct: 100, color: "bg-emerald-500" }
+    { method: "กล้วยสด (ไม่แปรรูป)", days: "3 - 5 วัน", pct: 15, color: "bg-red-500" },
+    { method: "ตากแดดธรรมดา", days: "1 - 2 สัปดาห์", pct: 35, color: "bg-amber-500" },
+    { method: "ตากพาราโบลาโดม + ซีล", days: "3 - 6 เดือน", pct: 80, color: "bg-emerald-500" },
+    { method: "อบแห้ง Freeze Dry + Vacuum", days: "1 - 2 ปี", pct: 100, color: "bg-teal-500" }
   ],
   pork: [
-    { method: "สดแช่เย็น", days: "2-3 วัน", pct: 5, color: "bg-red-400" },
-    { method: "หมักแหนม/ไส้กรอก", days: "14 วัน", pct: 35, color: "bg-amber-500" },
-    { method: "หมูแดดเดียวอบแห้ง", days: "3 เดือน", pct: 85, color: "bg-emerald-500" }
+    { method: "เนื้อหมูสด (อุณหภูมิห้อง)", days: "1 วัน", pct: 10, color: "bg-red-500" },
+    { method: "หมักแหนม (ตู้เย็น)", days: "2 - 3 สัปดาห์", pct: 40, color: "bg-amber-500" },
+    { method: "หมูแดดเดียว / หมูแผ่น", days: "1 - 2 เดือน", pct: 70, color: "bg-emerald-500" },
+    { method: "หมูหยอง / กุนเชียงซีล vacuum", days: "6 - 12 เดือน", pct: 95, color: "bg-teal-500" }
   ],
   mango: [
-    { method: "สด", days: "5-7 วัน", pct: 15, color: "bg-red-400" },
-    { method: "ดองสามรส", days: "3 เดือน", pct: 60, color: "bg-amber-500" },
-    { method: "กวนแผ่นอบแห้ง", days: "9 เดือน", pct: 95, color: "bg-emerald-500" }
+    { method: "มะม่วงสด", days: "5 - 7 วัน", pct: 20, color: "bg-red-500" },
+    { method: "มะม่วงกวน / มะม่วงแผ่น", days: "3 - 6 เดือน", pct: 75, color: "bg-emerald-500" },
+    { method: "มะม่วงดองแช่อิ่มซีลปิดสนิท", days: "6 - 12 เดือน", pct: 95, color: "bg-teal-500" }
   ],
   durian: [
-    { method: "สด", days: "3-4 วัน", pct: 10, color: "bg-red-400" },
-    { method: "กวน", days: "6 เดือน", pct: 75, color: "bg-amber-500" },
-    { method: "ทอดกรอบสุญญากาศ", days: "12 เดือน", pct: 100, color: "bg-emerald-500" }
+    { method: "ทุเรียนแกะเนื้อสด", days: "2 - 4 วัน", pct: 15, color: "bg-red-500" },
+    { method: "ทุเรียนกวน", days: "3 - 6 เดือน", pct: 70, color: "bg-emerald-500" },
+    { method: "ทุเรียนทอดกรอบซีล vacuum", days: "6 - 12 เดือน", pct: 95, color: "bg-teal-500" }
   ]
 };
 
 const quizDB = [
   {
-    q: "ข้อใดคือค่า Water Activity (Aw) ที่ปลอดภัยจากการเจริญเติบโตของแบคทีเรียก่อโรคส่วนใหญ่?",
-    options: ["Aw > 0.95", "Aw < 0.85", "Aw > 0.90", "Aw < 0.60"],
-    ans: 3,
-    explain: "ค่า Aw < 0.60 จะยับยั้งจุลินทรีย์ แบคทีเรีย ยีสต์ และราได้เกือบทุกชนิด ทำให้อาหารอบแห้งเก็บได้ยาวนาน"
+    q: "การทำน้ำเกลือดองผักหรือกิมจิควรมีความเค็มประมาณกี่เปอร์เซ็นต์?",
+    options: ["1 - 2%", "3 - 5%", "15 - 20%", "50%"],
+    ans: 1
   },
   {
-    q: "การหมักแหนมให้เปรี้ยวเกิดจากจุลินทรีย์กลุ่มใดเป็นหลัก?",
-    options: ["Lactic Acid Bacteria", "Yeast", "Mold", "E. Coli"],
-    ans: 0,
-    explain: "แบคทีเรียสร้างกรดแลกติก (Lactic Acid Bacteria) จะย่อยแป้งและน้ำตาล เปลี่ยนเป็นกรดแลกติกทำให้อาหารเปรี้ยวและยับยั้งเชื้อก่อโรค"
+    q: "การถนอมอาหารด้วยการตากแห้งหรืออบพาราโบลาใช้หลักการใด?",
+    options: ["การเพิ่มความดัน", "การลดค่า Water Activity (Aw)", "การเพิ่มความเปรี้ยว pH", "การเติมสีสังเคราะห์"],
+    ans: 1
+  },
+  {
+    q: "แหนมหมูเกิดรสเปรี้ยวตามธรรมชาติจากกระบวนการใด?",
+    options: ["การเติมน้ำส้มสายชู", "การหมักให้เกิดกรดแลคติกโดยแบคทีเรีย", "การตากแดดนวดข้าว", "การใช้ยีสต์หมักเหล้า"],
+    ans: 1
   }
 ];
 
-let selectedNewsCategory = 'all';
-let currentQuizIndex = 0;
-let favorites = JSON.parse(localStorage.getItem('foodtech_favs') || '[]');
-let batchLogs = JSON.parse(localStorage.getItem('foodtech_logs') || '[]');
+function switchSubCalc(subId) {
+  document.querySelectorAll('.subcalc-content').forEach(el => el.classList.add('hidden'));
+  document.querySelectorAll('.subcalc-btn').forEach(btn => {
+    btn.classList.remove('bg-white', 'text-orange-600', 'shadow-2xs');
+    btn.classList.add('hover:text-slate-900');
+  });
+
+  const activeContent = document.getElementById(subId);
+  const activeBtn = document.getElementById(`btn-${subId}`);
+
+  if (activeContent) activeContent.classList.remove('hidden');
+  if (activeBtn) {
+    activeBtn.classList.add('bg-white', 'text-orange-600', 'shadow-2xs');
+    activeBtn.classList.remove('hover:text-slate-900');
+  }
+}
 
 function initApp() {
   renderCategoryChips();
-  renderCategories(); // Render with accordions collapsed by default
+  renderCategories();
   calcSaltBrine();
   calcSyrupBrix();
   calcCommercialPrice();
   updateShelfLifeVisualizer();
+  
+  const todayStr = new Date().toISOString().split('T')[0];
+  const startDateEl = document.getElementById('log-start-date');
+  if (startDateEl) {
+    startDateEl.value = todayStr;
+  }
+  
   renderBatchLogs();
-  fetchLiveNews();
   initCalendar();
-}
+  initQuiz();
 
-function switchTab(tabId) {
-  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-  document.querySelectorAll('.dock-item').forEach(el => el.classList.remove('active'));
-  
-  const targetTab = document.getElementById(tabId);
-  const targetDock = document.getElementById('dock-' + tabId);
-  
-  if(targetTab) targetTab.classList.add('active');
-  if(targetDock) targetDock.classList.add('active');
-
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  // Auto Refresh countdown every 30 seconds
+  if (autoTimerInterval) clearInterval(autoTimerInterval);
+  autoTimerInterval = setInterval(() => {
+    renderBatchLogs();
+  }, 30000);
 }
 
 function lockBodyScroll() {
@@ -839,461 +838,26 @@ function lockBodyScroll() {
 }
 
 function unlockBodyScroll() {
-  const modalIds = ['recipe-modal', 'sms-modal', 'quiz-modal', 'calendar-modal', 'web-modal', 'chatbot-modal'];
-  const isAnyOpen = modalIds.some(id => {
-    const el = document.getElementById(id);
-    return el && !el.classList.contains('hidden');
-  });
-  if (!isAnyOpen) {
+  const openModals = document.querySelectorAll('.modal-overlay:not(.hidden), #chatbot-modal:not(.hidden)');
+  if (openModals.length === 0) {
     document.body.style.overflow = '';
   }
 }
 
 function openModal(modalId) {
-  const el = document.getElementById(modalId);
-  if(el) el.classList.remove('hidden');
-  if(modalId === 'quiz-modal') loadQuizQuestion();
-  lockBodyScroll();
+  const modal = document.getElementById(modalId);
+  if (modal) {
+    modal.classList.remove('hidden');
+    lockBodyScroll();
+  }
 }
 
 function closeModal(modalId) {
-  const el = document.getElementById(modalId);
-  if(el) el.classList.add('hidden');
-  unlockBodyScroll();
-}
-
-function showToast(msg, isSuccess = true) {
-  const container = document.getElementById('toast-container');
-  const toast = document.createElement('div');
-  toast.className = `toast-enter p-3 rounded-2xl shadow-lg border text-xs font-bold text-white flex items-center justify-between gap-2 mb-2 ${isSuccess ? 'bg-slate-900 border-slate-700' : 'bg-red-600 border-red-500'}`;
-  toast.innerHTML = `<span>${msg}</span><i class="fa-solid fa-xmark cursor-pointer opacity-70" onclick="this.parentElement.remove()"></i>`;
-  container.appendChild(toast);
-  setTimeout(() => toast.remove(), 3500);
-}
-
-function renderCategoryChips() {
-  const container = document.getElementById('category-chips');
-  let html = `<button onclick="renderCategories('')" class="bg-orange-500 text-white px-3 py-1.5 rounded-xl font-semibold whitespace-nowrap">ทั้งหมด</button>`;
-  Object.keys(foodCategories).forEach(cat => {
-    const cleanName = cat.split(' ')[1] || cat;
-    html += `<button onclick="renderCategories('${cleanName}')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-xl font-semibold whitespace-nowrap transition">${cat}</button>`;
-  });
-  container.innerHTML = html;
-}
-
-/* Render categories with accordions COLLAPSED by default unless searching */
-function renderCategories(filterText = "") {
-  const container = document.getElementById('category-container');
-  container.innerHTML = "";
-  let html = "";
-  let count = 0;
-
-  for (const [category, items] of Object.entries(foodCategories)) {
-    const filteredItems = items.filter(item => item.toLowerCase().includes(filterText.toLowerCase()) || category.toLowerCase().includes(filterText.toLowerCase()));
-    if (filteredItems.length > 0) {
-      count++;
-      const itemsHtml = filteredItems.map(item => {
-        const isFav = favorites.includes(item);
-        return `
-          <div class="bg-white p-3 rounded-2xl border border-slate-200/80 hover:border-orange-300 transition shadow-2xs flex flex-col justify-between items-center text-center cursor-pointer group relative" onclick="openRecipeModal('${item}')">
-            <button onclick="event.stopPropagation(); toggleFavorite('${item}')" class="absolute top-2 right-2 text-slate-300 hover:text-red-500 transition">
-              <i class="fa-${isFav ? 'solid text-red-500' : 'regular'} fa-heart"></i>
-            </button>
-            <div class="w-10 h-10 rounded-2xl bg-orange-50 text-orange-500 flex items-center justify-center group-hover:scale-110 transition my-1">
-              <i class="fa-solid fa-utensils text-sm"></i>
-            </div>
-            <span class="text-xs font-semibold text-slate-800 line-clamp-2 leading-tight">${item}</span>
-          </div>
-        `;
-      }).join('');
-
-      // Accordion is kept COLLAPSED by default unless filter text is actively entered
-      const isOpen = filterText.trim().length > 0 ? "open" : "";
-
-      html += `
-        <details class="group bg-white rounded-2xl shadow-xs border border-slate-200/80 overflow-hidden" ${isOpen}>
-          <summary class="px-4 py-3 flex justify-between items-center font-bold text-slate-800 bg-slate-50/60 hover:bg-slate-100 transition cursor-pointer select-none">
-            <span class="text-sm flex items-center gap-2">${category} <span class="bg-orange-100 text-orange-700 text-[10px] px-2 py-0.5 rounded-full font-bold">${filteredItems.length}</span></span>
-            <i class="fa-solid fa-chevron-down text-xs text-slate-400 chevron-icon"></i>
-          </summary>
-          <div class="p-3 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5 bg-white border-t border-slate-100">${itemsHtml}</div>
-        </details>
-      `;
-    }
+  const modal = document.getElementById(modalId);
+  if (modal) {
+    modal.classList.add('hidden');
+    unlockBodyScroll();
   }
-
-  if (count === 0) {
-    html = `<div class="text-center py-12 text-slate-400"><i class="fa-solid fa-box-open text-4xl mb-2 opacity-50"></i><br>ไม่พบเมนูที่ค้นหา</div>`;
-  }
-  container.innerHTML = html;
-}
-
-document.getElementById('searchInput').addEventListener('input', (e) => renderCategories(e.target.value.trim()));
-
-function toggleFavorite(name) {
-  if (favorites.includes(name)) {
-    favorites = favorites.filter(f => f !== name);
-    showToast(`ลบ ${name} ออกจากรายการโปรด`);
-  } else {
-    favorites.push(name);
-    showToast(`เพิ่ม ${name} ในรายการโปรดแล้ว ❤️`);
-  }
-  localStorage.setItem('foodtech_favs', JSON.stringify(favorites));
-  renderCategories(document.getElementById('searchInput').value);
-}
-
-function openRecipeModal(name) {
-  let catName = "ทั่วไป";
-  for (const [c, items] of Object.entries(foodCategories)) {
-    if (items.includes(name)) { catName = c; break; }
-  }
-
-  const data = recipeDB[name] || {
-    ph: "4.5 - 5.5", brix: "20 - 40°Brix", aw: "< 0.85", shelf: "1 - 3 เดือน",
-    preservation: "การลดความชื้น ร่วมกับการใช้ความร้อนบรรจุหรือปรุงรสเพื่อควบคุมจุลินทรีย์",
-    steps: [
-      "คัดเลือกวัตถุดิบสดคุณภาพดี ล้างทำความสะอาด ตัดแต่งส่วนที่ไม่ต้องการออก",
-      "หมัก ปรุงรส หรือแช่อิ่มตามสัดส่วนมาตรฐานของเมนู",
-      "ผ่านกระบวนการถนอมอาหารหลัก (ตากแดด / อบแห้ง / หมักเปรี้ยว / ทอดไล่น้ำมัน)",
-      "พักให้เย็น แล้วบรรจุในภาชนะที่สะอาด ซีลปิดสนิท"
-    ],
-    ingredients: [
-      { name: "วัตถุดิบหลัก", price: "100 บาท" },
-      { name: "เครื่องปรุงรส / ส่วนผสม", price: "30 บาท" },
-      { name: "บรรจุภัณฑ์ฟู้ดเกรด", price: "15 บาท" }
-    ]
-  };
-
-  document.getElementById('recipe-title').innerText = name;
-  document.getElementById('recipe-category').innerText = catName;
-  document.getElementById('spec-ph').innerText = data.ph;
-  document.getElementById('spec-brix').innerText = data.brix;
-  document.getElementById('spec-aw').innerText = data.aw;
-  document.getElementById('spec-shelf').innerText = data.shelf;
-  document.getElementById('recipe-preservation').innerText = data.preservation;
-
-  document.getElementById('recipe-steps').innerHTML = data.steps.map(s => `<li class="pl-1">${s}</li>`).join('');
-  
-  const ingHtml = data.ingredients.map(i => `
-    <tr>
-      <td class="p-2 font-medium">${i.name}</td>
-      <td class="p-2 text-right font-bold text-orange-600">${i.price}</td>
-    </tr>
-  `).join('');
-  document.getElementById('recipe-ingredients').innerHTML = ingHtml;
-
-  openModal('recipe-modal');
-}
-
-function updateMarketPricesAI() {
-  const icon = document.getElementById('ai-spin-icon');
-  icon.classList.add('fa-spin');
-  setTimeout(() => {
-    icon.classList.remove('fa-spin');
-    showToast("อัปเดตราคาสำรวจตลาดกลางล่าสุดสำเร็จ!");
-  }, 700);
-}
-
-function calcSaltBrine() {
-  const water = parseFloat(document.getElementById('brine-water').value) || 0;
-  const pct = parseFloat(document.getElementById('brine-percent').value) || 0;
-  const saltGrams = Math.round((water * 1000) * (pct / 100));
-  document.getElementById('brine-result').innerText = `${saltGrams.toLocaleString()} กรัม`;
-}
-
-function calcSyrupBrix() {
-  const waterLiters = parseFloat(document.getElementById('syrup-water').value) || 0;
-  const targetBrix = parseFloat(document.getElementById('target-brix').value) || 0;
-  if (targetBrix >= 100) return;
-  const sugarKg = (waterLiters * targetBrix) / (100 - targetBrix);
-  document.getElementById('syrup-result').innerText = `${sugarKg.toFixed(2)} กิโลกรัม`;
-}
-
-function calcCommercialPrice() {
-  const raw = parseFloat(document.getElementById('pro-raw-cost').value) || 0;
-  const pack = parseFloat(document.getElementById('pro-pack-cost').value) || 0;
-  const utility = parseFloat(document.getElementById('pro-utility-cost').value) || 0;
-  const wastePct = parseFloat(document.getElementById('pro-waste-pct').value) || 0;
-  const marginPct = parseFloat(document.getElementById('pro-margin-slider').value) || 30;
-
-  document.getElementById('margin-value-display').innerText = `${marginPct}%`;
-
-  const subtotal = raw + pack + utility;
-  const totalCost = subtotal * (1 + (wastePct / 100));
-  const recommendedPrice = totalCost / (1 - (marginPct / 100));
-
-  document.getElementById('pro-total-net-cost').innerText = `${totalCost.toFixed(2)} ฿`;
-  document.getElementById('pro-recommended-price').innerText = `${recommendedPrice.toFixed(2)} ฿`;
-}
-
-function updateShelfLifeVisualizer() {
-  const key = document.getElementById('shelf-food-select').value;
-  const items = shelfLifeData[key] || shelfLifeData.banana;
-  const container = document.getElementById('shelf-life-results');
-
-  container.innerHTML = items.map(item => `
-    <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 text-xs">
-      <div class="flex justify-between items-center mb-1 font-semibold text-slate-700">
-        <span>${item.method}</span>
-        <span class="font-bold text-slate-900">${item.days}</span>
-      </div>
-      <div class="w-full bg-slate-200 rounded-full h-2.5 overflow-hidden">
-        <div class="${item.color} h-2.5 rounded-full transition-all duration-500" style="width: ${item.pct}%"></div>
-      </div>
-    </div>
-  `).join('');
-}
-
-function checkGmpScore() {
-  const checked = document.querySelectorAll('#gmp-checklist input:checked').length;
-  const badge = document.getElementById('gmp-score-badge');
-  badge.innerText = `${checked} / 5 ข้อ`;
-
-  if (checked === 5) {
-    confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } });
-    showToast("🎉 ยินดีด้วย! สถานที่ผลิตของคุณพร้อมตามมาตรฐาน GMP / อย.");
-  }
-}
-
-/* Free Web Integration & News Feeds */
-async function fetchLiveNews(force = false) {
-  const container = document.getElementById('news-feed-container');
-  const icon = document.getElementById('news-refresh-icon');
-  if (icon) icon.classList.add('fa-spin');
-
-  const freeNewsWebsites = [
-    {
-      title: "เทรนด์นวัตกรรมบรรจุภัณฑ์ยืดอายุอาหาร & ฟิล์มย่อยสลายได้",
-      source: "เทคโนโลยีชาวบ้าน (เกษตรแปรรูป)",
-      time: "15 นาทีที่แล้ว",
-      cat: "pack",
-      url: "https://www.technologychaoban.com/agricultural-technology",
-      snippet: "อัปเดตเทรนด์การใช้ฟิล์มสมุนไพรยืดอายุและการซีลสุญญากาศสำหรับผลิตภัณฑ์แปรรูปชุมชน"
-    },
-    {
-      title: "รายงานการส่งออกสินค้าเกษตรแปรรูปไทยเติบโตในตลาดอาเซียน",
-      source: "Google News เกษตรแปรรูป",
-      time: "1 ชั่วโมงที่แล้ว",
-      cat: "market",
-      url: "https://news.google.com/search?q=%E0%B9%80%E0%B8%81%E0%B8%A9%E0%B8%95%E0%B8%A3%E0%B9%81%E0%B8%9B%E0%B8%A3%E0%B8%A3%E0%B8%B9%E0%B8%9B&hl=th&gl=TH&ceid=TH%3Ath",
-      snippet: "สินค้าผลไม้อบแห้งและน้ำพริกแปรรูปบรรจุกระป๋องมียอดสั่งซื้อเติบโตต่อเนื่อง"
-    },
-    {
-      title: "คู่มือยื่นขอ อย. และมาตรฐานสถานที่ผลิตอาหารชุมชน (GMP)",
-      source: "สถาบันอาหาร (NFI)",
-      time: "2 ชั่วโมงที่แล้ว",
-      cat: "tech",
-      url: "https://www.nfi.or.th/",
-      snippet: "ข้อกำหนดใหม่ในการจัดโซนห้องแปรรูปเพื่อสุขอนามัยและควบคุมเชื้อจุลินทรีย์"
-    },
-    {
-      title: "เทคโนโลยีตากพาราโบลาโดมยกระดับคุณภาพกล้วยตากสดใหม่",
-      source: "กระทรวงเกษตรและสหกรณ์",
-      time: "4 ชั่วโมงที่แล้ว",
-      cat: "tech",
-      url: "https://www.opsmoac.go.th/",
-      snippet: "เพิ่มประสิทธิภาพการถนอมอาหาร สะอาด ไร้ฝุ่นควันและแมลงรบกวน"
-    }
-  ];
-
-  setTimeout(() => {
-    if (icon) icon.classList.remove('fa-spin');
-    renderNewsCards(freeNewsWebsites);
-  }, 400);
-}
-
-function renderNewsCards(newsList) {
-  const container = document.getElementById('news-feed-container');
-  const filtered = selectedNewsCategory === 'all' ? newsList : newsList.filter(n => n.cat === selectedNewsCategory);
-
-  container.innerHTML = filtered.map(item => `
-    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs space-y-2 hover:border-orange-300 transition">
-      <div class="flex justify-between items-center text-[10px] text-slate-400">
-        <span class="font-bold text-orange-600 uppercase flex items-center gap-1">
-          <i class="fa-solid fa-circle-check text-emerald-500"></i> ${item.source}
-        </span>
-        <span>${item.time}</span>
-      </div>
-      <h4 class="font-bold font-brand text-slate-800 text-sm leading-snug">${item.title}</h4>
-      <p class="text-xs text-slate-500 leading-relaxed">${item.snippet}</p>
-
-      <div class="pt-2 flex flex-wrap justify-between items-center border-t border-slate-100 gap-2">
-        <div class="flex items-center gap-1.5">
-          <button onclick="shareArticle('line', '${item.title}', '${item.url}')" class="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-100 flex items-center justify-center transition" title="แชร์ลง Line">
-            <i class="fa-brands fa-line text-xs"></i>
-          </button>
-          <button onclick="shareArticle('facebook', '${item.title}', '${item.url}')" class="w-7 h-7 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 flex items-center justify-center transition" title="แชร์ลง Facebook">
-            <i class="fa-brands fa-facebook-f text-xs"></i>
-          </button>
-          <button onclick="shareArticle('copy', '${item.title}', '${item.url}')" class="w-7 h-7 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 flex items-center justify-center transition" title="คัดลอกลิงก์">
-            <i class="fa-solid fa-link text-xs"></i>
-          </button>
-        </div>
-
-        <button onclick="openLiveWebModal('${item.url}', '${item.title}')" class="text-xs text-orange-600 font-bold bg-orange-50 hover:bg-orange-100 px-3 py-1.5 rounded-xl border border-orange-200 transition flex items-center gap-1">
-          อ่านหน้าเว็บฟรี <i class="fa-solid fa-arrow-right text-[10px]"></i>
-        </button>
-      </div>
-    </div>
-  `).join('');
-}
-
-function shareArticle(platform, title, url) {
-  const shareText = `${title} - อ่านต่อได้ที่: ${url}`;
-  if (platform === 'line') {
-    window.open(`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(url)}`, '_blank');
-  } else if (platform === 'facebook') {
-    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
-  } else {
-    navigator.clipboard.writeText(url).then(() => {
-      showToast("คัดลอกลิงก์ข่าวเรียบร้อยแล้ว! 🔗");
-    }).catch(() => {
-      showToast("คัดลอกลิงก์: " + url);
-    });
-  }
-}
-
-function openLiveWebModal(url, title) {
-  document.getElementById('web-modal-title').innerText = title;
-  document.getElementById('web-external-link').href = url;
-  document.getElementById('web-modal-frame').src = url;
-  openModal('web-modal');
-}
-
-function filterNews(cat) {
-  selectedNewsCategory = cat;
-  document.querySelectorAll('.news-cat-btn').forEach(b => b.classList.remove('active', 'bg-orange-500', 'text-white'));
-  if (event && event.target) {
-    event.target.classList.add('active', 'bg-orange-500', 'text-white');
-  }
-  fetchLiveNews();
-}
-
-function saveBatchLog() {
-  const name = document.getElementById('log-name').value.trim();
-  const qty = document.getElementById('log-qty').value;
-  const startDate = document.getElementById('log-start-date').value;
-  const targetDate = document.getElementById('log-target-date').value;
-  const phone = document.getElementById('log-phone').value;
-
-  if (!name || !targetDate) {
-    showToast("กรุณากรอกชื่อผลิตภัณฑ์และวันครบกำหนด", false);
-    return;
-  }
-
-  const newLog = { id: Date.now(), name, qty, startDate, targetDate, phone };
-  batchLogs.unshift(newLog);
-  localStorage.setItem('foodtech_logs', JSON.stringify(batchLogs));
-  
-  renderBatchLogs();
-  showToast("บันทึกล็อตการผลิตเรียบร้อย!");
-
-  document.getElementById('log-name').value = '';
-  document.getElementById('log-qty').value = '';
-}
-
-function renderBatchLogs() {
-  const container = document.getElementById('batch-logs-list');
-  if (batchLogs.length === 0) {
-    container.innerHTML = `<div class="text-center py-8 text-slate-400 text-xs">ยังไม่มีข้อมูลล็อตการผลิต</div>`;
-    return;
-  }
-
-  container.innerHTML = batchLogs.map(log => `
-    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs flex justify-between items-center text-xs">
-      <div class="space-y-1">
-        <h4 class="font-bold font-brand text-slate-800 text-sm">${log.name}</h4>
-        <p class="text-slate-500">จำนวน: <span class="font-bold text-slate-700">${log.qty || 1}</span> ถุง/กระปุก</p>
-        <p class="text-slate-400 text-[11px]">ครบกำหนด: <span class="text-orange-600 font-bold">${log.targetDate}</span></p>
-      </div>
-      <div class="flex items-center gap-2">
-        ${log.phone ? `<button onclick="triggerSMSAlert('${log.name}', '${log.phone}')" class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-200 flex items-center justify-center hover:bg-emerald-100 transition" title="ส่ง SMS แจ้งเตือน"><i class="fa-solid fa-paper-plane text-xs"></i></button>` : ''}
-        <button onclick="deleteBatchLog(${log.id})" class="w-8 h-8 rounded-xl bg-red-50 text-red-500 border border-red-200 flex items-center justify-center hover:bg-red-100 transition" title="ลบ"><i class="fa-solid fa-trash text-xs"></i></button>
-      </div>
-    </div>
-  `).join('');
-}
-
-function deleteBatchLog(id) {
-  batchLogs = batchLogs.filter(l => l.id !== id);
-  localStorage.setItem('foodtech_logs', JSON.stringify(batchLogs));
-  renderBatchLogs();
-  showToast("ลบบันทึกเรียบร้อย");
-}
-
-function exportBatchLogs() {
-  const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(batchLogs, null, 2));
-  const dlAnchorElem = document.createElement('a');
-  dlAnchorElem.setAttribute("href", dataStr);
-  dlAnchorElem.setAttribute("download", "foodtech_batch_logs.json");
-  dlAnchorElem.click();
-}
-
-function triggerSMSAlert(name, phone) {
-  document.getElementById('sms-phone-display').innerText = `เบอร์ผู้รับ: ${phone}`;
-  document.getElementById('sms-body-display').innerText = `[FoodTech Alert] เรียนผู้ประกอบการ ล็อตการผลิต '${name}' ของคุณครบกำหนดเวลาหมัก/ตากแล้ว กรุณาตรวจสอบและดำเนินการบรรจุ`;
-  openModal('sms-modal');
-}
-
-function requestNotificationPermission() {
-  if ('Notification' in window) {
-    Notification.requestPermission().then(permission => {
-      if (permission === 'granted') {
-        showToast("เปิดใช้งาน Web Push Notification แล้ว 🔔");
-        new Notification("Food Tech Hub Pro", { body: "ระบบแจ้งเตือนพร้อมใช้งานสำหรับล็อตการผลิตของคุณ" });
-      } else {
-        showToast("ไม่ได้รับอนุญาตให้ส่ง Notification", false);
-      }
-    });
-  } else {
-    showToast("เบราว์เซอร์นี้ไม่รองรับ Notification", false);
-  }
-}
-
-function loadQuizQuestion() {
-  const q = quizDB[currentQuizIndex % quizDB.length];
-  const container = document.getElementById('quiz-container');
-
-  container.innerHTML = `
-    <p class="text-xs font-bold text-slate-700">${q.q}</p>
-    <div class="space-y-2 pt-2 text-xs">
-      ${q.options.map((opt, idx) => `
-        <button onclick="checkQuizAnswer(${idx})" class="w-full text-left p-3 rounded-xl border border-slate-200 hover:bg-orange-50 hover:border-orange-300 font-medium transition">
-          ${opt}
-        </button>
-      `).join('')}
-    </div>
-  `;
-}
-
-function checkQuizAnswer(idx) {
-  const q = quizDB[currentQuizIndex % quizDB.length];
-  if (idx === q.ans) {
-    confetti({ particleCount: 40 });
-    showToast("ถูกต้อง! 🎉 " + q.explain);
-    currentQuizIndex++;
-    setTimeout(loadQuizQuestion, 1200);
-  } else {
-    showToast("ยังไม่ถูกต้อง ลองตอบใหม่อีกครั้งครับ 😅", false);
-  }
-}
-
-function initCalendar() {
-  const months = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
-  const now = new Date();
-  document.getElementById('current-month-title').innerText = months[now.getMonth()];
-
-  const items = ["กล้วยน้ำว้า", "มะม่วงดิบ/สุก", "ทุเรียน", "สับปะรด", "ลำไย", "พริกสด"];
-  document.getElementById('seasonal-items-grid').innerHTML = items.map(i => `
-    <div class="bg-orange-50 border border-orange-200 p-2.5 rounded-xl text-center text-orange-800">
-      🌾 ${i}
-    </div>
-  `).join('');
-}
-
-const fabChat = document.getElementById('fab-chat-toggle');
-if (fabChat) {
-  fabChat.addEventListener('click', () => toggleChatbot(true));
 }
 
 function toggleChatbot(show) {
@@ -1307,43 +871,476 @@ function toggleChatbot(show) {
   }
 }
 
-async function sendChatMessage() {
+function switchTab(tabId) {
+  document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+  document.querySelectorAll('.dock-item').forEach(btn => btn.classList.remove('active'));
+
+  const activeTab = document.getElementById(tabId);
+  const activeDock = document.getElementById(`dock-${tabId}`);
+
+  if (activeTab) activeTab.classList.add('active');
+  if (activeDock) activeDock.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderCategoryChips() {
+  const container = document.getElementById('category-chips');
+  if (!container) return;
+
+  const cats = ['ทั้งหมด', ...Object.keys(foodCategories)];
+  container.innerHTML = cats.map(cat => {
+    const isSelected = selectedCategory === cat;
+    const activeClass = isSelected ? 'bg-orange-500 text-white shadow-xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200';
+    return `<button onclick="selectCategoryChip('${cat}')" class="px-3 py-1.5 rounded-xl transition whitespace-nowrap ${activeClass}">${cat}</button>`;
+  }).join('');
+}
+
+function selectCategoryChip(cat) {
+  selectedCategory = cat;
+  renderCategoryChips();
+  renderCategories(document.getElementById('searchInput').value.trim());
+}
+
+function renderCategories(filterText = "") {
+  const container = document.getElementById('category-container');
+  if (!container) return;
+
+  container.innerHTML = "";
+  let html = "";
+  let hasResult = false;
+
+  for (const [category, items] of Object.entries(foodCategories)) {
+    if (selectedCategory !== 'ทั้งหมด' && selectedCategory !== category) continue;
+
+    const filteredItems = items.filter(item => item.toLowerCase().includes(filterText.toLowerCase()));
+    if (filteredItems.length > 0) {
+      hasResult = true;
+      const itemsHtml = filteredItems.map(item => `
+        <div onclick="openRecipeModal('${item}')" class="bg-slate-50 border border-slate-200/80 hover:border-orange-300 rounded-xl p-3 flex flex-col items-center text-center cursor-pointer hover:bg-white transition active:scale-95 group shadow-2xs">
+          <div class="w-9 h-9 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center text-sm mb-1.5 group-hover:scale-110 transition">
+            <i class="fa-solid fa-utensils"></i>
+          </div>
+          <span class="text-xs font-semibold text-slate-700 leading-tight">${item}</span>
+        </div>
+      `).join('');
+
+      html += `
+        <details class="group bg-white rounded-2xl shadow-xs border border-slate-200/80 overflow-hidden">
+          <summary class="px-4 py-3.5 flex justify-between items-center font-bold text-slate-800 bg-slate-50/80 hover:bg-slate-100 transition cursor-pointer select-none">
+            <span class="text-sm flex items-center gap-2">
+              ${category}
+              <span class="bg-orange-100 text-orange-700 text-[10px] font-bold px-2 py-0.5 rounded-full">${filteredItems.length}</span>
+            </span>
+            <i class="fa-solid fa-chevron-down text-xs text-slate-400 chevron-icon"></i>
+          </summary>
+          <div class="p-3 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 bg-white border-t border-slate-100">
+            ${itemsHtml}
+          </div>
+        </details>
+      `;
+    }
+  }
+
+  if (!hasResult) {
+    html = `<div class="text-center py-12 text-slate-400 text-xs"><i class="fa-solid fa-box-open text-3xl mb-2 opacity-40"></i><br>ไม่พบรายการอาหารที่ค้นหา</div>`;
+  }
+
+  container.innerHTML = html;
+}
+
+document.getElementById('searchInput')?.addEventListener('input', (e) => {
+  renderCategories(e.target.value.trim());
+});
+
+function getRecipeData(name) {
+  if (recipeDB[name]) return recipeDB[name];
+  
+  return {
+    ph: "4.0 - 5.5",
+    brix: "20 - 40°Brix",
+    aw: "< 0.85",
+    shelf: "3 - 6 เดือน",
+    preservation: "การควบคุมความชื้นและการลดค่า Water Activity ($A_w$) รวมทั้งปรับสภาวะความเป็นกรด ยับยั้งเชื้อก่อโรค",
+    steps: [
+      `คัดเลือกวัตถุดิบ ${name} สดใหม่และล้างทำความสะอาด`,
+      "เตรียมส่วนผสม ปรุงรสตามอัตราส่วนมาตรฐาน",
+      "ผ่านกระบวนการถนอมอาหาร (ตาก / ดอง / หมัก / อบความร้อน)",
+      "บรรจุในภาชนะสะอาด ซีลปิดสนิทเก็บรักษาในอุณหภูมิที่เหมาะสม"
+    ],
+    ingredients: [
+      { name: `วัตถุดิบหลัก (${name})`, price: "100 บาท" },
+      { name: "เครื่องปรุงรส / ส่วนผสมหลัก", price: "25 บาท" },
+      { name: "บรรจุภัณฑ์ซีลปิดสนิท", price: "15 บาท" }
+    ]
+  };
+}
+
+function openRecipeModal(name) {
+  let category = "แปรรูปทั่วไป";
+  for (const [cat, items] of Object.entries(foodCategories)) {
+    if (items.includes(name)) { category = cat; break; }
+  }
+
+  const data = getRecipeData(name);
+  document.getElementById('recipe-title').innerText = name;
+  document.getElementById('recipe-category').innerText = category;
+  document.getElementById('spec-ph').innerText = data.ph;
+  document.getElementById('spec-brix').innerText = data.brix;
+  document.getElementById('spec-aw').innerText = data.aw;
+  document.getElementById('spec-shelf').innerText = data.shelf;
+  document.getElementById('recipe-preservation').innerText = data.preservation;
+
+  document.getElementById('recipe-steps').innerHTML = data.steps.map(s => `<li>${s}</li>`).join('');
+  document.getElementById('recipe-ingredients').innerHTML = data.ingredients.map(ing => `
+    <tr>
+      <td class="p-2 font-medium">${ing.name}</td>
+      <td class="p-2 text-right font-bold text-orange-600">${ing.price}</td>
+    </tr>
+  `).join('');
+
+  openModal('recipe-modal');
+}
+
+/* Calculators Logic */
+function adjustInput(id, delta, minVal) {
+  const input = document.getElementById(id);
+  if (!input) return;
+  let val = parseInt(input.value) || minVal;
+  val = Math.max(minVal, val + delta);
+  input.value = val;
+}
+
+function setBrinePreset(pct, label) {
+  document.getElementById('brine-percent').value = pct;
+  calcSaltBrine();
+  showToast(`เลือกสูตร ${label} (${pct}%) เรียบร้อย`);
+}
+
+function calcSaltBrine() {
+  const water = parseFloat(document.getElementById('brine-water').value) || 1;
+  const pct = parseFloat(document.getElementById('brine-percent').value) || 8;
+  const saltGrams = Math.round(water * 1000 * (pct / 100));
+
+  document.getElementById('brine-result').innerText = `${saltGrams} กรัม`;
+  document.getElementById('brine-summary-desc').innerText = `น้ำ ${water} ลิตร + เกลือ ${saltGrams} กรัม`;
+}
+
+function setSyrupPreset(brix) {
+  document.getElementById('target-brix').value = brix;
+  calcSyrupBrix();
+  showToast(`เลือกสูตรความหวาน ${brix}°Brix เรียบร้อย`);
+}
+
+function calcSyrupBrix() {
+  const water = parseFloat(document.getElementById('syrup-water').value) || 1;
+  const brix = parseFloat(document.getElementById('target-brix').value) || 50;
+  
+  const sugarKg = (water * brix) / (100 - brix);
+  document.getElementById('syrup-result').innerText = `${sugarKg.toFixed(2)} กก.`;
+}
+
+function calcCommercialPrice() {
+  const raw = parseFloat(document.getElementById('pro-raw-cost').value) || 0;
+  const pack = parseFloat(document.getElementById('pro-pack-cost').value) || 0;
+  const utility = parseFloat(document.getElementById('pro-utility-cost').value) || 0;
+  const units = parseFloat(document.getElementById('pro-total-units').value) || 1;
+  const marginPct = parseFloat(document.getElementById('pro-margin-slider').value) || 40;
+
+  document.getElementById('margin-value-display').innerText = `${marginPct}%`;
+
+  const totalBatchCost = raw + pack + utility;
+  const costPerUnit = totalBatchCost / Math.max(1, units);
+  const recPrice = costPerUnit / (1 - (marginPct / 100));
+
+  document.getElementById('pro-cost-per-unit').innerText = `${costPerUnit.toFixed(2)} ฿`;
+  document.getElementById('pro-recommended-price').innerText = `${recPrice.toFixed(2)} ฿`;
+}
+
+/* Shelf life Visualizer */
+function updateShelfLifeVisualizer() {
+  const key = document.getElementById('shelf-food-select').value;
+  const items = shelfLifeData[key] || shelfLifeData.banana;
+
+  const html = items.map(item => `
+    <div class="space-y-1">
+      <div class="flex justify-between text-xs font-bold text-slate-700">
+        <span>${item.method}</span>
+        <span class="text-teal-700">${item.days}</span>
+      </div>
+      <div class="w-full bg-slate-100 rounded-full h-3 overflow-hidden border border-slate-200/80">
+        <div class="${item.color} h-3 rounded-full transition-all duration-500" style="width: ${item.pct}%"></div>
+      </div>
+    </div>
+  `).join('');
+
+  document.getElementById('shelf-life-results').innerHTML = html;
+}
+
+/* FDA Official Portal Frame Handler (EXACTLY 2 PORTALS) */
+function loadOfficialPortal(url, title) {
+  const iframe = document.getElementById('fda-live-iframe');
+  const titleEl = document.getElementById('portal-frame-title');
+  const extBtn = document.getElementById('portal-frame-external');
+  const topDirectBtn = document.getElementById('fda-direct-btn');
+
+  if (iframe) iframe.src = url;
+  if (titleEl) titleEl.innerHTML = `<i class="fa-solid fa-circle text-emerald-400 text-[10px]"></i> ${title}`;
+  if (extBtn) extBtn.href = url;
+  if (topDirectBtn) topDirectBtn.href = url;
+
+  document.querySelectorAll('.fda-portal-btn').forEach(btn => {
+    btn.classList.remove('active', 'bg-teal-50', 'border-teal-200', 'text-teal-900');
+    btn.classList.add('bg-slate-50', 'border-slate-200', 'text-slate-700');
+  });
+
+  if (event && event.currentTarget) {
+    event.currentTarget.classList.add('active', 'bg-teal-50', 'border-teal-200', 'text-teal-900');
+    event.currentTarget.classList.remove('bg-slate-50', 'border-slate-200', 'text-slate-700');
+  }
+}
+
+function refreshPortalFrame() {
+  const iframe = document.getElementById('fda-live-iframe');
+  if (iframe) iframe.src = iframe.src;
+}
+
+/* Automatic Batch Logbook Logic & Auto Date Calculation */
+function autoFillDurationFromMenu() {
+  const select = document.getElementById('log-menu-select');
+  const customContainer = document.getElementById('custom-name-container');
+  const selectedOpt = select.options[select.selectedIndex];
+  
+  if (select.value === 'custom') {
+    customContainer.classList.remove('hidden');
+  } else {
+    customContainer.classList.add('hidden');
+    if (selectedOpt && selectedOpt.dataset.days) {
+      document.getElementById('log-duration-days').value = selectedOpt.dataset.days;
+    }
+  }
+  calcTargetFromDays();
+}
+
+function calcTargetFromDays() {
+  const startVal = document.getElementById('log-start-date').value;
+  const daysVal = parseInt(document.getElementById('log-duration-days').value) || 1;
+
+  if (!startVal) return;
+
+  const startDate = new Date(startVal);
+  startDate.setDate(startDate.getDate() + daysVal);
+
+  const yyyy = startDate.getFullYear();
+  const mm = String(startDate.getMonth() + 1).padStart(2, '0');
+  const dd = String(startDate.getDate()).padStart(2, '0');
+
+  document.getElementById('log-target-date').value = `${yyyy}-${mm}-${dd}`;
+}
+
+function saveBatchLog() {
+  const select = document.getElementById('log-menu-select');
+  let name = select.value;
+  if (name === 'custom') {
+    name = document.getElementById('log-custom-name').value.trim();
+  }
+
+  const qty = document.getElementById('log-qty').value;
+  const startDate = document.getElementById('log-start-date').value;
+  const durationDays = parseInt(document.getElementById('log-duration-days').value) || 1;
+  const targetDate = document.getElementById('log-target-date').value;
+
+  if (!name || !targetDate) {
+    showToast("กรุณาเลือกเมนูหรือระบุชื่อผลิตภัณฑ์", false);
+    return;
+  }
+
+  const newLog = { id: Date.now(), name, qty, startDate, durationDays, targetDate };
+  batchLogs.unshift(newLog);
+  localStorage.setItem('foodtech_logs', JSON.stringify(batchLogs));
+  
+  renderBatchLogs();
+  showToast(`บันทึกลงทะเบียน ${name} (${durationDays} วันได้กิน) เรียบร้อย! 🎉`);
+
+  if (select.value === 'custom') {
+    document.getElementById('log-custom-name').value = '';
+  }
+}
+
+function deleteBatchLog(id) {
+  batchLogs = batchLogs.filter(item => item.id !== id);
+  localStorage.setItem('foodtech_logs', JSON.stringify(batchLogs));
+  renderBatchLogs();
+  showToast("ลบรายการเรียบร้อยแล้ว");
+}
+
+function exportBatchLogs() {
+  const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(batchLogs, null, 2));
+  const downloadAnchor = document.createElement('a');
+  downloadAnchor.setAttribute("href", dataStr);
+  downloadAnchor.setAttribute("download", `food_processing_logs_${Date.now()}.json`);
+  document.body.appendChild(downloadAnchor);
+  downloadAnchor.click();
+  downloadAnchor.remove();
+}
+
+function renderBatchLogs() {
+  const container = document.getElementById('batch-logs-list');
+  if (!container) return;
+
+  if (batchLogs.length === 0) {
+    container.innerHTML = `<div class="text-center py-8 text-slate-400 text-xs"><i class="fa-solid fa-calendar-xmark text-2xl mb-1 opacity-50"></i><br>ยังไม่มีรายการถนอมอาหารที่ลงทะเบียนไว้</div>`;
+    return;
+  }
+
+  const today = new Date();
+  today.setHours(0,0,0,0);
+
+  container.innerHTML = batchLogs.map(log => {
+    const target = new Date(log.targetDate);
+    target.setHours(0,0,0,0);
+    const start = new Date(log.startDate);
+    start.setHours(0,0,0,0);
+
+    const diffTime = target - today;
+    const daysRemaining = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
+    const totalDuration = Math.max(1, log.durationDays || Math.ceil((target - start) / (1000 * 60 * 60 * 24)));
+    const daysPassed = Math.max(0, Math.ceil((today - start) / (1000 * 60 * 60 * 24)));
+    const progressPct = Math.min(100, Math.round((daysPassed / totalDuration) * 100));
+
+    let statusBadge = "";
+    let statusBg = "bg-white border-slate-200";
+
+    if (daysRemaining > 0) {
+      statusBadge = `<span class="bg-amber-100 text-amber-800 text-[10px] font-bold px-2.5 py-1 rounded-full"><i class="fa-solid fa-hourglass-half mr-1 animate-pulse"></i>เหลืออีก ${daysRemaining} วันได้กิน</span>`;
+    } else {
+      statusBadge = `<span class="bg-emerald-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-full shadow-xs"><i class="fa-solid fa-circle-check mr-1 animate-bounce"></i>🎉 ครบกำหนดแล้ว! พร้อมรับประทาน</span>`;
+      statusBg = "bg-emerald-50/60 border-emerald-300 ring-2 ring-emerald-400/20";
+    }
+
+    return `
+      <div class="${statusBg} p-4 rounded-2xl border shadow-2xs space-y-2 text-xs transition">
+        <div class="flex justify-between items-start gap-2">
+          <div>
+            <h4 class="font-bold font-brand text-slate-800 text-sm flex items-center gap-2">
+              ${log.name}
+              <span class="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-md font-normal">${log.qty || 1} ชิ้น/กระปุก</span>
+            </h4>
+            <p class="text-slate-400 text-[11px] mt-0.5">เริ่มทำ: ${log.startDate} | กำหนดหมัก/ตาก: <strong class="text-slate-700">${log.durationDays || '-'} วัน</strong></p>
+          </div>
+          ${statusBadge}
+        </div>
+
+        <div class="space-y-1 pt-1">
+          <div class="flex justify-between text-[10px] font-bold text-slate-500">
+            <span>ความคืบหน้าการถนอมอาหาร</span>
+            <span>${progressPct}% (${daysPassed}/${totalDuration} วัน)</span>
+          </div>
+          <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden border">
+            <div class="bg-gradient-to-r from-amber-400 to-emerald-500 h-2 rounded-full transition-all duration-500" style="width: ${progressPct}%"></div>
+          </div>
+        </div>
+
+        <div class="pt-2 flex justify-between items-center border-t border-slate-100 text-[11px]">
+          <span class="text-slate-500">วันพร้อมกิน: <strong class="text-orange-600">${log.targetDate}</strong></span>
+          <button onclick="deleteBatchLog(${log.id})" class="w-7 h-7 rounded-lg bg-red-50 text-red-500 border border-red-200 flex items-center justify-center hover:bg-red-100 transition" title="ลบรายการ"><i class="fa-solid fa-trash text-xs"></i></button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+/* AI Assistant & Utilities */
+function updateMarketPricesAI() {
+  const icon = document.getElementById('ai-spin-icon');
+  if (icon) icon.classList.add('fa-spin');
+  setTimeout(() => {
+    if (icon) icon.classList.remove('fa-spin');
+    showToast("อัปเดตราคากลางวัตถุดิบล่าสุดเรียบร้อย");
+  }, 800);
+}
+
+function sendChatMessage() {
   const input = document.getElementById('user-input');
   const text = input.value.trim();
   if (!text) return;
 
+  const history = document.getElementById('chat-history');
+  
+  const userDiv = document.createElement('div');
+  userDiv.className = 'flex items-start justify-end gap-2 text-xs';
+  userDiv.innerHTML = `
+    <div class="bg-orange-500 text-white p-3 rounded-2xl rounded-tr-none shadow-2xs max-w-[85%] leading-relaxed">${text}</div>
+  `;
+  history.appendChild(userDiv);
   input.value = '';
-  appendChatMessage(text, 'user');
 
-  const indicator = document.getElementById('thinking-indicator');
-  indicator.classList.remove('hidden');
+  document.getElementById('thinking-indicator').classList.remove('hidden');
+  history.scrollTop = history.scrollHeight;
 
   setTimeout(() => {
-    indicator.classList.add('hidden');
-    let reply = "สำหรับเรื่องนี้ แนะนำให้ควบคุมความชื้น (Aw < 0.6) และรักษาสภาพแวดล้อมสะอาดตามเกณฑ์ GMP เพื่อให้เก็บได้นานครับ!";
-    if (text.includes("เปรี้ยว") || text.includes("แหนม")) {
-      reply = "แหนมไม่เปรี้ยวอาจเกิดจากอุณหภูมิหมักต่ำเกินไป หรือปริมาณกระเทียม/ข้าวสุกไม่เพียงพอให้จุลินทรีย์ Lactic Acid ย่อยครับ!";
-    }
-    appendChatMessage(reply, 'bot');
+    document.getElementById('thinking-indicator').classList.add('hidden');
+    const aiDiv = document.createElement('div');
+    aiDiv.className = 'flex items-start gap-2.5 text-xs';
+    aiDiv.innerHTML = `
+      <div class="w-7 h-7 rounded-full bg-orange-100 flex items-center justify-center text-sm border shrink-0">🤖</div>
+      <div class="bg-white p-3 rounded-2xl rounded-tl-none border border-slate-200 text-slate-700 shadow-2xs max-w-[85%] leading-relaxed">
+        สำหรับคำถามเรื่อง <strong>"${text}"</strong> แนะนำให้รักษาความสะอาดและควบคุมค่า pH หรือปริมาณเกลือให้ได้มาตรฐาน เพื่อยืดอายุการเก็บรักษาและป้องกันจุลินทรีย์ครับ!
+      </div>
+    `;
+    history.appendChild(aiDiv);
+    history.scrollTop = history.scrollHeight;
   }, 1000);
 }
 
-function appendChatMessage(text, sender) {
-  const history = document.getElementById('chat-history');
-  const isUser = sender === 'user';
-  const div = document.createElement('div');
-  div.className = `flex items-start gap-2.5 ${isUser ? 'flex-row-reverse' : ''}`;
-  div.innerHTML = `
-    <div class="w-7 h-7 rounded-full ${isUser ? 'bg-slate-300' : 'bg-orange-100'} flex items-center justify-center text-sm border shrink-0">${isUser ? '👤' : '🤖'}</div>
-    <div class="${isUser ? 'bg-orange-500 text-white' : 'bg-white border border-slate-200 text-slate-700'} p-3 rounded-2xl ${isUser ? 'rounded-tr-none' : 'rounded-tl-none'} shadow-2xs max-w-[85%] leading-relaxed">
-      ${text}
-    </div>
-  `;
-  history.appendChild(div);
-  history.scrollTop = history.scrollHeight;
+function initCalendar() {
+  const grid = document.getElementById('seasonal-items-grid');
+  if (!grid) return;
+
+  const seasonalCrops = ["🍌 กล้วยน้ำว้า (ดกสุด)", "🥭 มะม่วงดิบ (ดอง/แช่อิ่ม)", "🍍 สับปะรด (ทำไวน์/กวน)", "🍈 ทุเรียน (ทอด/กวน)", "🌶️ พริกจินดา (ซอสพริก)", "🥬 ผักกาดเขียว (ผักดอง)"];
+  grid.innerHTML = seasonalCrops.map(crop => `<div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-slate-700 text-center">${crop}</div>`).join('');
 }
 
-// Global Load Event Listener
+function initQuiz() {
+  const container = document.getElementById('quiz-container');
+  if (!container) return;
+
+  const q = quizDB[currentQuizIndex];
+  container.innerHTML = `
+    <p class="font-bold text-sm text-slate-800">${q.q}</p>
+    <div class="space-y-2 pt-2">
+      ${q.options.map((opt, i) => `
+        <button onclick="checkQuizAnswer(${i})" class="w-full text-left p-3 rounded-xl border border-slate-200 hover:border-orange-400 hover:bg-orange-50 font-medium text-xs transition">
+          ${i + 1}. ${opt}
+        </button>
+      `).join('')}
+    </div>
+  `;
+}
+
+function checkQuizAnswer(idx) {
+  const q = quizDB[currentQuizIndex];
+  if (idx === q.ans) {
+    confetti({ particleCount: 50, spread: 60, origin: { y: 0.6 } });
+    showToast("ถูกต้องครับ! 🎉 ได้รับ 10 คะแนน");
+  } else {
+    showToast("ยังไม่ถูกต้อง ลองใหม่อีกครั้งนะครับ", false);
+  }
+}
+
+function showToast(msg, isSuccess = true) {
+  const container = document.getElementById('toast-container');
+  if (!container) return;
+
+  const toast = document.createElement('div');
+  toast.className = `toast-enter ${isSuccess ? 'bg-slate-900 text-white' : 'bg-red-600 text-white'} px-4 py-3 rounded-2xl shadow-xl text-xs font-semibold flex items-center gap-2 mb-2 pointer-events-auto`;
+  toast.innerHTML = `<i class="${isSuccess ? 'fa-solid fa-circle-check text-emerald-400' : 'fa-solid fa-circle-exclamation text-amber-300'}"></i> ${msg}`;
+
+  container.appendChild(toast);
+  setTimeout(() => toast.remove(), 3000);
+}
+
+// Global Window Onload Initializer
 window.onload = function() {
   initApp();
 };
