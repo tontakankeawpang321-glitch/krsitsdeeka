@@ -41,7 +41,7 @@
         }
       }
     }
-  }
+  };
 </script>
 
 <style>
@@ -119,21 +119,20 @@
         <h1 class="text-lg md:text-xl font-bold font-brand leading-none text-slate-900 flex items-center gap-1.5">
           Food Tech <span class="text-orange-600">Hub Pro</span>
         </h1>
-        <p class="text-[11px] text-slate-500 mt-0.5">คลังความรู้ & เครื่องมือแปรรูปอาหาร</p>
+        <p class="text-[11px] text-slate-500 mt-0.5">คลังความรู้ & ชุมชนแปรรูปอาหาร</p>
       </div>
     </div>
 
-    <!-- Quick Utilities -->
-    <div class="flex items-center gap-2">
-      <button onclick="openModal('calendar-modal')" class="w-10 h-10 rounded-xl bg-orange-50 hover:bg-orange-100 text-orange-600 border border-orange-200/60 flex items-center justify-center transition active:scale-95 shadow-2xs" title="ปฏิทินวัตถุดิบ">
-        <i class="fa-regular fa-calendar-days text-base"></i>
+    <!-- Quick Utility Buttons -->
+    <div class="flex items-center gap-1.5">
+      <button onclick="openModal('calendar-modal')" class="w-9 h-9 rounded-xl bg-orange-50 hover:bg-orange-100 text-orange-600 border border-orange-200/60 flex items-center justify-center transition active:scale-95 shadow-2xs" title="ปฏิทินวัตถุดิบ">
+        <i class="fa-regular fa-calendar-days text-sm"></i>
       </button>
-      <button onclick="openModal('quiz-modal')" class="w-10 h-10 rounded-xl bg-teal-50 hover:bg-teal-100 text-teal-600 border border-teal-200/60 flex items-center justify-center transition active:scale-95 shadow-2xs relative" title="มินิเกมตอบคำถาม">
-        <i class="fa-solid fa-gamepad text-base"></i>
-        <span class="absolute -top-1 -right-1 flex h-3 w-3">
-          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75"></span>
-          <span class="relative inline-flex rounded-full h-3 w-3 bg-teal-500"></span>
-        </span>
+      <button onclick="openModal('shelflife-modal')" class="w-9 h-9 rounded-xl bg-teal-50 hover:bg-teal-100 text-teal-600 border border-teal-200/60 flex items-center justify-center transition active:scale-95 shadow-2xs" title="เปรียบเทียบยืดอายุอาหาร">
+        <i class="fa-solid fa-hourglass-half text-sm"></i>
+      </button>
+      <button onclick="openModal('calc-modal')" class="w-9 h-9 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-600 border border-amber-200/60 flex items-center justify-center transition active:scale-95 shadow-2xs" title="เครื่องคิดเลขแปรรูป">
+        <i class="fa-solid fa-calculator text-sm"></i>
       </button>
     </div>
   </div>
@@ -156,254 +155,48 @@
 
     <!-- Category Grid Container -->
     <div id="category-container" class="space-y-3">
-      <!-- JS Dynamic Accordions (Collapsed by default) -->
+      <!-- JS Dynamic Accordions -->
     </div>
   </section>
 
-  <!-- ================= TAB 2: CALCULATORS HUB ================= -->
-  <section id="tab-calcs" class="tab-content space-y-3">
-    <!-- Compact Header Banner -->
-    <div class="bg-gradient-to-r from-orange-500 to-amber-500 rounded-2xl p-3.5 text-white shadow-xs flex items-center justify-between">
-      <div>
-        <h2 class="text-base font-bold font-brand flex items-center gap-2">
-          <i class="fa-solid fa-calculator"></i> เครื่องมือคำนวณแปรรูป
-        </h2>
-        <p class="text-[11px] text-orange-100 mt-0.5">เลือกโหมดคำนวณสูตรเกลือ น้ำตาล และต้นทุนสินค้าได้ในหน้าเดียว</p>
-      </div>
-    </div>
-
-    <!-- Segmented Sub-tab Control -->
-    <div class="bg-slate-200/80 p-1 rounded-xl flex text-xs font-semibold text-slate-600 gap-1">
-      <button onclick="switchSubCalc('subcalc-brine')" id="btn-subcalc-brine" class="subcalc-btn active flex-1 py-2 px-1.5 rounded-lg text-center transition bg-white text-orange-600 shadow-2xs font-bold truncate">💧 น้ำเกลือดอง</button>
-      <button onclick="switchSubCalc('subcalc-syrup')" id="btn-subcalc-syrup" class="subcalc-btn flex-1 py-2 px-1.5 rounded-lg text-center transition hover:text-slate-900 truncate">🍯 น้ำเชื่อม Brix</button>
-      <button onclick="switchSubCalc('subcalc-cost')" id="btn-subcalc-cost" class="subcalc-btn flex-1 py-2 px-1.5 rounded-lg text-center transition hover:text-slate-900 truncate">💰 ต้นทุน & ราคา</button>
-    </div>
-
-    <!-- Sub Calc 1: Salt Brine % Calc -->
-    <div id="subcalc-brine" class="subcalc-content bg-white rounded-2xl p-4 shadow-2xs border border-slate-200/80 space-y-3">
-      <div class="flex items-center justify-between">
-        <h3 class="font-bold font-brand text-slate-800 text-sm flex items-center gap-1.5">
-          <i class="fa-solid fa-bottle-droplet text-blue-500"></i> 1. คำนวณน้ำเกลือดอง (Salt Brine)
-        </h3>
-      </div>
-      
-      <div>
-        <p class="text-[10px] font-semibold text-slate-500 mb-1"><i class="fa-solid fa-wand-magic-sparkles text-amber-500"></i> สูตรแนะนำ (Preset):</p>
-        <div class="flex flex-wrap gap-1 text-[11px]">
-          <button onclick="setBrinePreset(5, 'ผักดอง/กิมจิ')" class="px-2 py-0.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 font-medium border border-blue-200 transition">🥬 ผักดอง/กิมจิ (5%)</button>
-          <button onclick="setBrinePreset(8, 'ผลไม้ดอง')" class="px-2 py-0.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 font-medium border border-blue-200 transition">🥭 ผลไม้ดอง (8%)</button>
-          <button onclick="setBrinePreset(12, 'ไข่เค็ม/หมักปลา')" class="px-2 py-0.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 font-medium border border-blue-200 transition">🥚 ไข่เค็ม/ปลาเค็ม (12%)</button>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-2 gap-2 text-xs">
-        <div>
-          <label class="block text-[11px] font-semibold text-slate-600 mb-1">น้ำสะอาด (ลิตร)</label>
-          <div class="flex items-center gap-1.5">
-            <button onclick="adjustInput('brine-water', -1, 1); calcSaltBrine();" class="w-8 h-8 bg-slate-100 hover:bg-slate-200 rounded-lg font-bold text-slate-700 shrink-0">-</button>
-            <input type="number" id="brine-water" value="5" min="1" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 text-center font-bold text-slate-800 outline-none focus:ring-1 focus:ring-blue-400" oninput="calcSaltBrine()">
-            <button onclick="adjustInput('brine-water', 1, 1); calcSaltBrine();" class="w-8 h-8 bg-slate-100 hover:bg-slate-200 rounded-lg font-bold text-slate-700 shrink-0">+</button>
-          </div>
-        </div>
-        <div>
-          <label class="block text-[11px] font-semibold text-slate-600 mb-1">ความเค็ม (%)</label>
-          <select id="brine-percent" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 font-bold text-slate-800 outline-none focus:ring-1 focus:ring-blue-400 text-xs" onchange="calcSaltBrine()">
-            <option value="3">3% (เค็มน้อย)</option>
-            <option value="5">5% (ผักดอง/กิมจิ)</option>
-            <option value="8" selected>8% (ผลไม้ดอง)</option>
-            <option value="12">12% (ไข่เค็ม/ปลาเค็ม)</option>
-            <option value="15">15% (ดองระยะยาว)</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="bg-blue-50 border border-blue-200 rounded-xl p-3 flex justify-between items-center text-xs shadow-2xs">
-        <div>
-          <span class="text-blue-800 font-bold block">ปริมาณเกลือแกงที่ต้องใช้:</span>
-          <span class="text-[10px] text-blue-600" id="brine-summary-desc">น้ำ 5 ลิตร + เกลือ 400 กรัม</span>
-        </div>
-        <span class="text-xl font-bold font-brand text-blue-700" id="brine-result">400 กรัม</span>
-      </div>
-    </div>
-
-    <!-- Sub Calc 2: Syrup Brix Calc -->
-    <div id="subcalc-syrup" class="subcalc-content hidden bg-white rounded-2xl p-4 shadow-2xs border border-slate-200/80 space-y-3">
-      <div class="flex items-center justify-between">
-        <h3 class="font-bold font-brand text-slate-800 text-sm flex items-center gap-1.5">
-          <i class="fa-solid fa-cubes-stacked text-amber-500"></i> 2. คำนวณน้ำเชื่อมแช่อิ่ม (°Brix)
-        </h3>
-      </div>
-
-      <div>
-        <p class="text-[10px] font-semibold text-slate-500 mb-1"><i class="fa-solid fa-wand-magic-sparkles text-amber-500"></i> ความหวานแนะนำ (Preset):</p>
-        <div class="flex flex-wrap gap-1 text-[11px]">
-          <button onclick="setSyrupPreset(30)" class="px-2 py-0.5 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 font-medium border border-amber-200 transition">30°Brix (เริ่มต้น)</button>
-          <button onclick="setSyrupPreset(50)" class="px-2 py-0.5 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 font-medium border border-amber-200 transition">50°Brix (ทั่วไป)</button>
-          <button onclick="setSyrupPreset(65)" class="px-2 py-0.5 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 font-medium border border-amber-200 transition">65°Brix (เข้มข้น)</button>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-2 gap-2 text-xs">
-        <div>
-          <label class="block text-[11px] font-semibold text-slate-600 mb-1">น้ำเปล่า (ลิตร)</label>
-          <div class="flex items-center gap-1.5">
-            <button onclick="adjustInput('syrup-water', -1, 1); calcSyrupBrix();" class="w-8 h-8 bg-slate-100 hover:bg-slate-200 rounded-lg font-bold text-slate-700 shrink-0">-</button>
-            <input type="number" id="syrup-water" value="2" min="1" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 text-center font-bold text-slate-800 outline-none focus:ring-1 focus:ring-amber-400" oninput="calcSyrupBrix()">
-            <button onclick="adjustInput('syrup-water', 1, 1); calcSyrupBrix();" class="w-8 h-8 bg-slate-100 hover:bg-slate-200 rounded-lg font-bold text-slate-700 shrink-0">+</button>
-          </div>
-        </div>
-        <div>
-          <label class="block text-[11px] font-semibold text-slate-600 mb-1">ความหวาน (°Brix)</label>
-          <input type="number" id="target-brix" value="50" min="10" max="80" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 font-bold text-slate-800 outline-none focus:ring-1 focus:ring-amber-400 text-xs" oninput="calcSyrupBrix()">
-        </div>
-      </div>
-
-      <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 flex justify-between items-center text-xs shadow-2xs">
-        <div>
-          <span class="text-amber-900 font-bold block">น้ำตาลทรายที่ต้องใช้:</span>
-          <span class="text-[10px] text-amber-700">ละลายน้ำและต้มให้เดือดก่อนแช่อิ่ม</span>
-        </div>
-        <span class="text-xl font-bold font-brand text-amber-700" id="syrup-result">2.00 กก.</span>
-      </div>
-    </div>
-
-    <!-- Sub Calc 3: Commercial Cost & Profit Calculator -->
-    <div id="subcalc-cost" class="subcalc-content hidden bg-white rounded-2xl p-4 shadow-2xs border border-slate-200/80 space-y-2.5">
-      <h3 class="font-bold font-brand text-slate-800 text-sm flex items-center gap-1.5">
-        <i class="fa-solid fa-chart-line text-emerald-500"></i> 3. คำนวณต้นทุน & ราคาขายต่อถุง
-      </h3>
-      
-      <div class="grid grid-cols-2 gap-2 text-[11px]">
-        <div>
-          <label class="block font-semibold text-slate-600 mb-0.5">วัตถุดิบรวม (บาท)</label>
-          <input type="number" id="pro-raw-cost" value="500" class="w-full bg-slate-50 border rounded-lg px-2.5 py-1.5 font-bold text-slate-700 outline-none focus:ring-1 focus:ring-emerald-400" oninput="calcCommercialPrice()">
-        </div>
-        <div>
-          <label class="block font-semibold text-slate-600 mb-0.5">บรรจุภัณฑ์/ถุง (บาท)</label>
-          <input type="number" id="pro-pack-cost" value="50" class="w-full bg-slate-50 border rounded-lg px-2.5 py-1.5 font-bold text-slate-700 outline-none focus:ring-1 focus:ring-emerald-400" oninput="calcCommercialPrice()">
-        </div>
-        <div>
-          <label class="block font-semibold text-slate-600 mb-0.5">ค่าแรง + แก๊ส/ไฟ (บาท)</label>
-          <input type="number" id="pro-utility-cost" value="100" class="w-full bg-slate-50 border rounded-lg px-2.5 py-1.5 font-bold text-slate-700 outline-none focus:ring-1 focus:ring-emerald-400" oninput="calcCommercialPrice()">
-        </div>
-        <div>
-          <label class="block font-semibold text-slate-600 mb-0.5">จำนวนบรรจุได้ (ถุง)</label>
-          <input type="number" id="pro-total-units" value="20" min="1" class="w-full bg-slate-50 border rounded-lg px-2.5 py-1.5 font-bold text-slate-700 outline-none focus:ring-1 focus:ring-emerald-400" oninput="calcCommercialPrice()">
-        </div>
-      </div>
-
-      <div class="pt-1">
-        <div class="flex justify-between items-center text-[11px] font-semibold text-slate-700 mb-0.5">
-          <span>อัตรากำไร (Margin):</span>
-          <span class="text-orange-600 font-bold" id="margin-value-display">40%</span>
-        </div>
-        <input type="range" id="pro-margin-slider" min="10" max="80" value="40" class="w-full accent-orange-500 cursor-pointer h-1.5 bg-slate-200 rounded-lg" oninput="calcCommercialPrice()">
-      </div>
-
-      <div class="grid grid-cols-2 gap-2 pt-1 text-center">
-        <div class="bg-slate-50 p-2 rounded-xl border">
-          <p class="text-[10px] text-slate-500">ต้นทุนต่อถุง</p>
-          <p class="text-base font-bold text-slate-800" id="pro-cost-per-unit">32.50 ฿</p>
-        </div>
-        <div class="bg-emerald-50 p-2 rounded-xl border border-emerald-200">
-          <p class="text-[10px] text-emerald-700 font-semibold">ราคาขายแนะนำ/ถุง</p>
-          <p class="text-lg font-extrabold text-emerald-600" id="pro-recommended-price">54.17 ฿</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ================= TAB 3: SHELF-LIFE VISUALIZER ================= -->
-  <section id="tab-shelflife" class="tab-content space-y-4">
-    <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 space-y-4">
-      <div class="flex justify-between items-start">
-        <div>
-          <h3 class="font-bold font-brand text-slate-800 text-base flex items-center gap-2">
-            <i class="fa-solid fa-hourglass-half text-teal-600"></i> เปรียบเทียบการยืดอายุอาหาร (Shelf-life Visualizer)
-          </h3>
-          <p class="text-xs text-slate-500 mt-0.5">เลือกประเภทอาหารเพื่อเปรียบเทียบระยะเวลาเก็บรักษาตามกรรมวิธี</p>
-        </div>
-      </div>
-
-      <select id="shelf-food-select" onchange="updateShelfLifeVisualizer()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-700 outline-none focus:ring-2 focus:ring-teal-400">
-        <option value="banana">🍌 กล้วยน้ำว้า</option>
-        <option value="pork">🥩 เนื้อหมูสด</option>
-        <option value="mango">🥭 มะม่วง</option>
-        <option value="durian">🍈 ทุเรียน</option>
-      </select>
-
-      <div id="shelf-life-results" class="space-y-2.5 pt-2">
-        <!-- JS Injected Bars -->
-      </div>
-    </div>
-  </section>
-
-  <!-- ================= TAB 4: อย. & NFI ONLY (2 WEBSITES EXACTLY) ================= -->
-  <section id="tab-news" class="tab-content space-y-4">
-    <!-- Header Banner -->
-    <div class="bg-gradient-to-r from-emerald-800 to-teal-700 rounded-2xl p-5 text-white shadow-md flex justify-between items-center">
+  <!-- ================= TAB 2: COMMUNITY & GOOGLE SHEETS DISCUSSIONS ================= -->
+  <section id="tab-community" class="tab-content space-y-4">
+    <!-- Community Banner -->
+    <div class="bg-gradient-to-r from-teal-700 to-emerald-600 rounded-2xl p-5 text-white shadow-md flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
       <div>
         <h2 class="text-xl font-bold font-brand flex items-center gap-2">
-          <i class="fa-solid fa-stamp text-amber-400"></i> ตรวจเลข อย. & สถาบันอาหาร (NFI)
+          <i class="fa-solid fa-comments text-amber-300"></i> ชุมชนคนแปรรูปอาหาร
         </h2>
-        <p class="text-xs text-emerald-100 mt-1">เข้าถึงระบบตรวจสถานะผลิตภัณฑ์ และคู่มือมาตรฐานสถานที่ผลิตอาหารสดตรงจากเว็บหลัก</p>
+        <p class="text-xs text-teal-100 mt-1">พูดคุย แลกเปลี่ยนความรู้ และถาม-ตอบเทคนิคการถนอมอาหารใกล้ตัว</p>
       </div>
-      <a id="fda-direct-btn" href="https://oryor.com/%E0%B8%AD%E0%B8%A2/check-product" target="_blank" rel="noopener noreferrer" class="px-3.5 py-2 rounded-xl bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold text-xs transition shrink-0 flex items-center gap-1.5 shadow-sm">
-        เปิดเว็บหลัก <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
-      </a>
+      <button onclick="openModal('post-question-modal')" class="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold text-xs transition shrink-0 flex items-center justify-center gap-2 shadow-md active:scale-95 border border-amber-300">
+        <i class="fa-solid fa-pen-to-square text-sm"></i> ตั้งคำถาม / แชร์ความรู้
+      </button>
     </div>
 
-    <!-- Official Portal Selector Bar (EXACTLY 2 BUTTONS) -->
-    <div class="bg-white rounded-2xl p-3 shadow-xs border border-slate-200/80 space-y-2">
-      <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
-        <i class="fa-solid fa-globe text-teal-600"></i> เลือกระบบตรวจสอบ (Official Live Web Portals)
-      </p>
-      
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-        <!-- 1. ตรวจเลข อย. -->
-        <button onclick="loadOfficialPortal('https://oryor.com/%E0%B8%AD%E0%B8%A2/check-product', 'ระบบตรวจสอบเลขสารบบ อย. (อย. Check)')" class="fda-portal-btn active p-3 rounded-2xl bg-teal-50 border border-teal-200 font-semibold text-teal-900 flex items-center gap-3 transition text-left shadow-2xs">
-          <div class="w-10 h-10 rounded-xl bg-blue-500 text-white flex items-center justify-center shrink-0 shadow-sm">
-            <i class="fa-solid fa-magnifying-glass-chart text-lg"></i>
-          </div>
-          <div>
-            <p class="text-xs font-bold leading-tight">ตรวจเลข อย.</p>
-            <p class="text-[10px] text-teal-600 mt-0.5">เช็คสถานะผลิตภัณฑ์</p>
-          </div>
+    <!-- Sheet Connection Info Bar -->
+    <div class="bg-white rounded-2xl p-3 shadow-2xs border border-slate-200/80 flex flex-wrap items-center justify-between gap-2 text-xs">
+      <div class="flex items-center gap-2 text-slate-600">
+        <i class="fa-solid fa-database text-emerald-500 text-sm"></i>
+        <span>เชื่อมต่อข้อมูล <strong></strong></span>
+      </div>
+      <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+        <button onclick="openModal('post-question-modal')" class="flex-1 sm:flex-initial text-xs text-teal-800 bg-amber-300 hover:bg-amber-400 border border-amber-400 px-3 py-1.5 rounded-xl font-bold transition flex items-center justify-center gap-1.5 shadow-2xs">
+          <i class="fa-solid fa-plus text-slate-900"></i> ตั้งคำถามใหม่
         </button>
-
-        <!-- 2. สถาบันอาหาร (NFI) -->
-        <button onclick="loadOfficialPortal('https://www.nfi.or.th/', 'สถาบันอาหาร (National Food Institute - NFI)')" class="fda-portal-btn p-3 rounded-2xl bg-slate-50 border border-slate-200 hover:bg-orange-50 font-semibold text-slate-700 flex items-center gap-3 transition text-left shadow-2xs">
-          <div class="w-10 h-10 rounded-xl bg-orange-500 text-white flex items-center justify-center shrink-0 shadow-sm">
-            <i class="fa-solid fa-building-columns text-lg"></i>
-          </div>
-          <div>
-            <p class="text-xs font-bold leading-tight">สถาบันอาหาร (NFI)</p>
-            <p class="text-[10px] text-slate-500 mt-0.5">ปรึกษา GMP / ส่งแล็บ</p>
-          </div>
+        <button onclick="fetchCommunityPosts()" class="text-xs text-teal-700 bg-teal-50 hover:bg-teal-100 border border-teal-200/80 px-3 py-1.5 rounded-xl font-bold transition flex items-center gap-1">
+          <i class="fa-solid fa-arrows-rotate" id="refresh-posts-icon"></i> รีเฟรช
         </button>
       </div>
     </div>
 
-    <!-- Live Official Web Frame Viewport -->
-    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col h-[600px]">
-      <div class="bg-slate-900 px-4 py-2.5 text-white flex justify-between items-center text-xs">
-        <span id="portal-frame-title" class="font-bold flex items-center gap-2 truncate">
-          <i class="fa-solid fa-circle text-emerald-400 text-[10px]"></i> ระบบตรวจสอบเลขสารบบ อย. (อย. Check)
-        </span>
-        <div class="flex items-center gap-2 shrink-0">
-          <button onclick="refreshPortalFrame()" class="hover:text-amber-300 text-slate-300 transition" title="รีเฟรชหน้าเว็บ"><i class="fa-solid fa-arrows-rotate"></i></button>
-          <a id="portal-frame-external" href="https://oryor.com/%E0%B8%AD%E0%B8%A2/check-product" target="_blank" rel="noopener noreferrer" class="bg-emerald-600 hover:bg-emerald-500 text-white px-2.5 py-1 rounded-lg font-bold text-[10px] transition flex items-center gap-1">
-            เปิดเต็มหน้าต่าง <i class="fa-solid fa-up-right-from-square text-[8px]"></i>
-          </a>
-        </div>
-      </div>
-      <div class="flex-1 bg-slate-100 relative">
-        <iframe id="fda-live-iframe" class="w-full h-full border-0" src="https://oryor.com/%E0%B8%AD%E0%B8%A2/check-product" title="Official Web Portal"></iframe>
-      </div>
+    <!-- Posts Feed Container -->
+    <div id="community-posts-list" class="space-y-3">
+      <!-- JS Injected Community Posts -->
     </div>
   </section>
 
-  <!-- ================= TAB 5: BATCH LOGBOOK & AUTOMATIC COUNTDOWN TRACKER ================= -->
+  <!-- ================= TAB 3: BATCH LOGBOOK & AUTOMATIC COUNTDOWN TRACKER ================= -->
   <section id="tab-logbook" class="tab-content space-y-4">
     <div class="bg-gradient-to-r from-orange-600 to-amber-500 rounded-2xl p-5 text-white shadow-md">
       <h2 class="text-xl font-bold font-brand flex items-center gap-2">
@@ -492,23 +285,15 @@
 <!-- Sticky Bottom Dock Navigation -->
 <nav class="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200/80 shadow-lg px-2 py-2">
   <div class="max-w-md mx-auto flex justify-around items-center">
-    <button onclick="switchTab('tab-recipes')" id="dock-tab-recipes" class="dock-item active flex flex-col items-center gap-1 text-slate-400 hover:text-orange-500 transition py-1 px-3">
+    <button onclick="switchTab('tab-recipes')" id="dock-tab-recipes" class="dock-item active flex flex-col items-center gap-1 text-slate-400 hover:text-orange-500 transition py-1 px-4">
       <i class="fa-solid fa-book-open text-lg transition-transform"></i>
       <span class="text-[10px] font-semibold">สูตรอาหาร</span>
     </button>
-    <button onclick="switchTab('tab-calcs')" id="dock-tab-calcs" class="dock-item flex flex-col items-center gap-1 text-slate-400 hover:text-orange-500 transition py-1 px-3">
-      <i class="fa-solid fa-calculator text-lg transition-transform"></i>
-      <span class="text-[10px] font-semibold">เครื่องคิดเลข</span>
+    <button onclick="switchTab('tab-community')" id="dock-tab-community" class="dock-item flex flex-col items-center gap-1 text-slate-400 hover:text-teal-600 transition py-1 px-4">
+      <i class="fa-solid fa-users text-lg transition-transform"></i>
+      <span class="text-[10px] font-semibold">ชุมชนแปรรูป</span>
     </button>
-    <button onclick="switchTab('tab-shelflife')" id="dock-tab-shelflife" class="dock-item flex flex-col items-center gap-1 text-slate-400 hover:text-orange-500 transition py-1 px-3">
-      <i class="fa-solid fa-shield-halved text-lg transition-transform"></i>
-      <span class="text-[10px] font-semibold">ยืดอายุ</span>
-    </button>
-    <button onclick="switchTab('tab-news')" id="dock-tab-news" class="dock-item flex flex-col items-center gap-1 text-slate-400 hover:text-orange-500 transition py-1 px-3">
-      <i class="fa-solid fa-stamp text-lg transition-transform"></i>
-      <span class="text-[10px] font-semibold">ตรวจ อย. & NFI</span>
-    </button>
-    <button onclick="switchTab('tab-logbook')" id="dock-tab-logbook" class="dock-item flex flex-col items-center gap-1 text-slate-400 hover:text-orange-500 transition py-1 px-3">
+    <button onclick="switchTab('tab-logbook')" id="dock-tab-logbook" class="dock-item flex flex-col items-center gap-1 text-slate-400 hover:text-orange-500 transition py-1 px-4">
       <i class="fa-solid fa-clipboard-list text-lg transition-transform"></i>
       <span class="text-[10px] font-semibold">สมุดบันทึก</span>
     </button>
@@ -539,7 +324,7 @@
       <div class="flex items-start gap-2.5">
         <div class="w-7 h-7 rounded-full bg-orange-100 flex items-center justify-center text-sm border shrink-0">🤖</div>
         <div class="bg-white p-3 rounded-2xl rounded-tl-none border border-slate-200 text-slate-700 shadow-2xs max-w-[85%] leading-relaxed">
-          สวัสดีครับ! 🥗 ยินดีต้อนรับสู่ Food Tech Hub Pro สอบถามวิธีแปรรูป แก้ปัญหาอาหารเสีย หรือตั้งสูตรได้เลยครับ!
+          สวัสดีครับ! 🥗 ยินดีต้อนรับสู่ Food Tech Hub Pro สอบถามวิธีแปรรูป แก้ปัญหาอาหารเสีย หรือการยืดอายุอาหารได้เลยครับ!
         </div>
       </div>
     </div>
@@ -557,7 +342,8 @@
   </div>
 </div>
 
-<!-- Modals -->
+<!-- ================= MODALS ================= -->
+
 <!-- 1. Recipe Detail Modal -->
 <div id="recipe-modal" class="modal-overlay fixed inset-0 z-50 hidden flex items-center justify-center p-4">
   <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-xs" onclick="closeModal('recipe-modal')"></div>
@@ -621,21 +407,151 @@
   </div>
 </div>
 
-<!-- 2. Quiz Mini-Game Modal -->
-<div id="quiz-modal" class="modal-overlay fixed inset-0 z-50 hidden flex items-center justify-center p-4">
-  <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-xs" onclick="closeModal('quiz-modal')"></div>
-  <div class="relative w-full max-w-md bg-white rounded-3xl shadow-2xl p-5 z-10 space-y-4">
+<!-- 2. Calculator Modal -->
+<div id="calc-modal" class="modal-overlay fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+  <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-xs" onclick="closeModal('calc-modal')"></div>
+  <div class="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl p-5 z-10 space-y-3">
     <div class="flex justify-between items-center border-b pb-3">
-      <h3 class="font-bold font-brand text-slate-800 text-base"><i class="fa-solid fa-trophy text-amber-500 mr-1.5"></i> แฟนพันธุ์แท้การแปรรูป</h3>
-      <button onclick="closeModal('quiz-modal')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
+      <h3 class="font-bold font-brand text-slate-800 text-base flex items-center gap-2">
+        <i class="fa-solid fa-calculator text-amber-500"></i> เครื่องมือคำนวณแปรรูป
+      </h3>
+      <button onclick="closeModal('calc-modal')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
     </div>
-    <div id="quiz-container" class="space-y-3">
-      <!-- Dynamic Quiz Question -->
+
+    <!-- Segmented Sub-tab Control -->
+    <div class="bg-slate-200/80 p-1 rounded-xl flex text-xs font-semibold text-slate-600 gap-1">
+      <button onclick="switchSubCalc('subcalc-brine')" id="btn-subcalc-brine" class="subcalc-btn active flex-1 py-2 px-1 rounded-lg text-center transition bg-white text-orange-600 shadow-2xs font-bold truncate">💧 น้ำเกลือดอง</button>
+      <button onclick="switchSubCalc('subcalc-syrup')" id="btn-subcalc-syrup" class="subcalc-btn flex-1 py-2 px-1 rounded-lg text-center transition hover:text-slate-900 truncate">🍯 น้ำเชื่อม Brix</button>
+      <button onclick="switchSubCalc('subcalc-cost')" id="btn-subcalc-cost" class="subcalc-btn flex-1 py-2 px-1 rounded-lg text-center transition hover:text-slate-900 truncate">💰 ต้นทุน & ราคา</button>
+    </div>
+
+    <!-- Sub Calc 1: Salt Brine % Calc -->
+    <div id="subcalc-brine" class="subcalc-content bg-white rounded-2xl p-3 border border-slate-200/80 space-y-2.5">
+      <h4 class="font-bold text-xs text-slate-800">1. คำนวณน้ำเกลือดอง (Salt Brine)</h4>
+      <div class="flex flex-wrap gap-1 text-[11px]">
+        <button onclick="setBrinePreset(5, 'ผักดอง/กิมจิ')" class="px-2 py-0.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 font-medium border border-blue-200">🥬 ผักดอง/กิมจิ (5%)</button>
+        <button onclick="setBrinePreset(8, 'ผลไม้ดอง')" class="px-2 py-0.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 font-medium border border-blue-200">🥭 ผลไม้ดอง (8%)</button>
+        <button onclick="setBrinePreset(12, 'ไข่เค็ม/หมักปลา')" class="px-2 py-0.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 font-medium border border-blue-200">🥚 ไข่เค็ม/ปลาเค็ม (12%)</button>
+      </div>
+      <div class="grid grid-cols-2 gap-2 text-xs">
+        <div>
+          <label class="block text-[10px] font-semibold text-slate-600 mb-1">น้ำสะอาด (ลิตร)</label>
+          <input type="number" id="brine-water" value="5" min="1" class="w-full bg-slate-50 border rounded-lg px-2 py-1.5 font-bold text-center" oninput="calcSaltBrine()">
+        </div>
+        <div>
+          <label class="block text-[10px] font-semibold text-slate-600 mb-1">ความเค็ม (%)</label>
+          <select id="brine-percent" class="w-full bg-slate-50 border rounded-lg px-2 py-1.5 font-bold text-xs" onchange="calcSaltBrine()">
+            <option value="3">3%</option>
+            <option value="5">5%</option>
+            <option value="8" selected>8%</option>
+            <option value="12">12%</option>
+            <option value="15">15%</option>
+          </select>
+        </div>
+      </div>
+      <div class="bg-blue-50 border border-blue-200 rounded-xl p-2.5 flex justify-between items-center text-xs">
+        <div>
+          <span class="text-blue-800 font-bold block text-[11px]">ปริมาณเกลือแกงที่ต้องใช้:</span>
+          <span class="text-[10px] text-blue-600" id="brine-summary-desc">น้ำ 5 ลิตร + เกลือ 400 กรัม</span>
+        </div>
+        <span class="text-lg font-bold font-brand text-blue-700" id="brine-result">400 กรัม</span>
+      </div>
+    </div>
+
+    <!-- Sub Calc 2: Syrup Brix Calc -->
+    <div id="subcalc-syrup" class="subcalc-content hidden bg-white rounded-2xl p-3 border border-slate-200/80 space-y-2.5">
+      <h4 class="font-bold text-xs text-slate-800">2. คำนวณน้ำเชื่อมแช่อิ่ม (°Brix)</h4>
+      <div class="flex flex-wrap gap-1 text-[11px]">
+        <button onclick="setSyrupPreset(30)" class="px-2 py-0.5 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200">30°Brix</button>
+        <button onclick="setSyrupPreset(50)" class="px-2 py-0.5 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200">50°Brix</button>
+        <button onclick="setSyrupPreset(65)" class="px-2 py-0.5 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200">65°Brix</button>
+      </div>
+      <div class="grid grid-cols-2 gap-2 text-xs">
+        <div>
+          <label class="block text-[10px] font-semibold text-slate-600 mb-1">น้ำเปล่า (ลิตร)</label>
+          <input type="number" id="syrup-water" value="2" min="1" class="w-full bg-slate-50 border rounded-lg px-2 py-1.5 font-bold text-center" oninput="calcSyrupBrix()">
+        </div>
+        <div>
+          <label class="block text-[10px] font-semibold text-slate-600 mb-1">ความหวาน (°Brix)</label>
+          <input type="number" id="target-brix" value="50" min="10" max="80" class="w-full bg-slate-50 border rounded-lg px-2 py-1.5 font-bold text-center text-xs" oninput="calcSyrupBrix()">
+        </div>
+      </div>
+      <div class="bg-amber-50 border border-amber-200 rounded-xl p-2.5 flex justify-between items-center text-xs">
+        <div>
+          <span class="text-amber-900 font-bold block text-[11px]">น้ำตาลทรายที่ต้องใช้:</span>
+          <span class="text-[10px] text-amber-700">ละลายน้ำและต้มให้เดือดก่อนแช่อิ่ม</span>
+        </div>
+        <span class="text-lg font-bold font-brand text-amber-700" id="syrup-result">2.00 กก.</span>
+      </div>
+    </div>
+
+    <!-- Sub Calc 3: Cost Calc -->
+    <div id="subcalc-cost" class="subcalc-content hidden bg-white rounded-2xl p-3 border border-slate-200/80 space-y-2">
+      <h4 class="font-bold text-xs text-slate-800">3. คำนวณต้นทุน & ราคาขายต่อถุง</h4>
+      <div class="grid grid-cols-2 gap-2 text-[10px]">
+        <div>
+          <label class="block font-semibold text-slate-600 mb-0.5">วัตถุดิบรวม (บาท)</label>
+          <input type="number" id="pro-raw-cost" value="500" class="w-full bg-slate-50 border rounded-lg px-2 py-1 font-bold" oninput="calcCommercialPrice()">
+        </div>
+        <div>
+          <label class="block font-semibold text-slate-600 mb-0.5">บรรจุภัณฑ์ (บาท)</label>
+          <input type="number" id="pro-pack-cost" value="50" class="w-full bg-slate-50 border rounded-lg px-2 py-1 font-bold" oninput="calcCommercialPrice()">
+        </div>
+        <div>
+          <label class="block font-semibold text-slate-600 mb-0.5">ค่าแรง+แก๊ส (บาท)</label>
+          <input type="number" id="pro-utility-cost" value="100" class="w-full bg-slate-50 border rounded-lg px-2 py-1 font-bold" oninput="calcCommercialPrice()">
+        </div>
+        <div>
+          <label class="block font-semibold text-slate-600 mb-0.5">จำนวนบรรจุ (ถุง)</label>
+          <input type="number" id="pro-total-units" value="20" min="1" class="w-full bg-slate-50 border rounded-lg px-2 py-1 font-bold" oninput="calcCommercialPrice()">
+        </div>
+      </div>
+      <div>
+        <div class="flex justify-between items-center text-[10px] font-semibold text-slate-700">
+          <span>อัตรากำไร (Margin):</span>
+          <span class="text-orange-600 font-bold" id="margin-value-display">40%</span>
+        </div>
+        <input type="range" id="pro-margin-slider" min="10" max="80" value="40" class="w-full accent-orange-500 cursor-pointer h-1.5 bg-slate-200 rounded-lg" oninput="calcCommercialPrice()">
+      </div>
+      <div class="grid grid-cols-2 gap-2 text-center text-xs">
+        <div class="bg-slate-50 p-1.5 rounded-lg border">
+          <p class="text-[9px] text-slate-500">ต้นทุนต่อถุง</p>
+          <p class="font-bold text-slate-800" id="pro-cost-per-unit">32.50 ฿</p>
+        </div>
+        <div class="bg-emerald-50 p-1.5 rounded-lg border border-emerald-200">
+          <p class="text-[9px] text-emerald-700 font-semibold">ราคาขายแนะนำ/ถุง</p>
+          <p class="font-extrabold text-emerald-600" id="pro-recommended-price">54.17 ฿</p>
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- 3. Calendar Modal -->
+<!-- 3. Shelf-life Visualizer Modal -->
+<div id="shelflife-modal" class="modal-overlay fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+  <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-xs" onclick="closeModal('shelflife-modal')"></div>
+  <div class="relative w-full max-w-md bg-white rounded-3xl shadow-2xl p-5 z-10 space-y-3">
+    <div class="flex justify-between items-center border-b pb-3">
+      <h3 class="font-bold font-brand text-slate-800 text-base flex items-center gap-2">
+        <i class="fa-solid fa-hourglass-half text-teal-600"></i> เปรียบเทียบยืดอายุอาหาร
+      </h3>
+      <button onclick="closeModal('shelflife-modal')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+
+    <select id="shelf-food-select" onchange="updateShelfLifeVisualizer()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold text-slate-700 outline-none">
+      <option value="banana">🍌 กล้วยน้ำว้า</option>
+      <option value="pork">🥩 เนื้อหมูสด</option>
+      <option value="mango">🥭 มะม่วง</option>
+      <option value="durian">🍈 ทุเรียน</option>
+    </select>
+
+    <div id="shelf-life-results" class="space-y-2.5 pt-1">
+      <!-- JS Injected Bars -->
+    </div>
+  </div>
+</div>
+
+<!-- 4. Calendar Modal -->
 <div id="calendar-modal" class="modal-overlay fixed inset-0 z-50 hidden flex items-center justify-center p-4">
   <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-xs" onclick="closeModal('calendar-modal')"></div>
   <div class="relative w-full max-w-md bg-white rounded-3xl shadow-2xl p-5 z-10 space-y-4">
@@ -658,21 +574,72 @@
   </div>
 </div>
 
+<!-- 5. Community Post Question Modal -->
+<div id="post-question-modal" class="modal-overlay fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+  <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-xs" onclick="closeModal('post-question-modal')"></div>
+  <div class="relative w-full max-w-md bg-white rounded-3xl shadow-2xl p-5 z-10 space-y-3">
+    <div class="flex justify-between items-center border-b pb-3">
+      <h3 class="font-bold font-brand text-slate-800 text-base flex items-center gap-2">
+        <i class="fa-solid fa-pen-to-square text-teal-600"></i> ตั้งคำถาม / แชร์ความรู้แปรรูป
+      </h3>
+      <button onclick="closeModal('post-question-modal')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+
+    <div class="space-y-3 text-xs">
+      <div>
+        <label class="block font-semibold text-slate-600 mb-1">ชื่อ / นามแฝงของคุณ</label>
+        <input type="text" id="post-author" placeholder="เช่น ช่างน้อยแปรรูป" class="w-full bg-slate-50 border rounded-xl px-3 py-2 font-medium outline-none focus:ring-2 focus:ring-teal-400">
+      </div>
+      <div>
+        <label class="block font-semibold text-slate-600 mb-1">หมวดหมู่เรื่องที่จะพูดคุย</label>
+        <select id="post-category" class="w-full bg-slate-50 border rounded-xl px-3 py-2 font-bold text-slate-800 outline-none focus:ring-2 focus:ring-teal-400">
+          <option value="ทั่วไป">💬 พูดคุยแปรรูปทั่วไป</option>
+          <option value="เทคนิคดอง/หมัก">🥬 เทคนิคการดอง / การหมัก</option>
+          <option value="แก้ปัญหาอาหารเสีย">⚠️ แก้ปัญหาแปรรูปไม่ได้มาตรฐาน</option>
+          <option value="เครื่องมือ/บรรจุภัณฑ์">📦 เครื่องมือและบรรจุภัณฑ์</option>
+        </select>
+      </div>
+      <div>
+        <label class="block font-semibold text-slate-600 mb-1">รายละเอียดคำถาม / บทเรียนที่อยากแบ่งปัน</label>
+        <textarea id="post-content" rows="4" placeholder="พิมพ์ข้อความของคุณที่นี่..." class="w-full bg-slate-50 border rounded-xl p-3 font-medium outline-none focus:ring-2 focus:ring-teal-400 resize-none"></textarea>
+      </div>
+      <button onclick="submitCommunityPost()" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-2.5 rounded-xl transition active:scale-98 shadow-md text-xs flex items-center justify-center gap-2">
+        <i class="fa-solid fa-paper-plane"></i> โพสต์ลง Google Sheet ชุมชน
+      </button>
+    </div>
+  </div>
+</div>
+
 <!-- Toast Container -->
 <div id="toast-container" class="fixed top-5 left-1/2 -translate-x-1/2 z-50 pointer-events-none w-full max-w-xs px-2"></div>
 
 <script>
-/* ================= GLOBAL STATE & COMPLETE 100+ FOOD DATABASE ================= */
-const BACKEND_URL = 'https://polished-sunset-f33e.tontakankeawpang321.workers.dev';
-let chatHistory = [
-  { role: "user", parts: [{ text: "System Instruction: คุณคือ 'น้องแปรรูป AI' ผู้ช่วยด้านการถนอมและแปรรูปอาหารระดับผู้เชี่ยวชาญ ร่าเริง สุภาพ ตอบกระชับ เน้นสูตรทำกินทำขาย ให้ความรู้เชิงวิทยาศาสตร์อาหารอย่างถูกต้อง" }] }
-];
+/* ================= GLOBAL STATE & GOOGLE APPS SCRIPT CONFIG ================= */
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzp1x3ZGQebNx-_Ul7OqLdskDJ2Q6oD7JFdJCN2ScWSPmenOGe0y1mOqrhLG0MuhFPN/exec'; 
 
-let favorites = JSON.parse(localStorage.getItem('foodtech_favs')) || [];
 let batchLogs = JSON.parse(localStorage.getItem('foodtech_logs')) || [];
 let selectedCategory = 'ทั้งหมด';
-let currentQuizIndex = 0;
 let autoTimerInterval = null;
+
+// Mock community posts fallback if Apps Script URL is empty or unavailable
+let mockCommunityPosts = [
+  {
+    id: 1,
+    author: "พี่สมชาย ถนอมอาหาร",
+    category: "เทคนิคดอง/หมัก",
+    content: "ดองมะม่วงเบาใส่เกลือ 8% ใช้เวลาดองกี่วันกำลังดีครับ? แล้วทำอย่างไรไม่ให้เนื้อเปื่อย?",
+    date: "2026-07-30 14:20",
+    likes: 5
+  },
+  {
+    id: 2,
+    author: "ป้าป้อม แม่ค้าแหนม",
+    category: "แก้ปัญหาอาหารเสีย",
+    content: "เคล็ดลับแหนมหมูเปรี้ยวเร็วและหนังหมูกรอบ คือต้องนวดจนเกิดยางเหนียวข้น แล้วมัดถุงให้ไร้อากาศที่สุดครับ!",
+    date: "2026-07-31 09:15",
+    likes: 12
+  }
+];
 
 const foodCategories = {
   "🥩 แปรรูปเนื้อสัตว์ & สัตว์ปีก": [
@@ -738,7 +705,7 @@ const recipeDB = {
   },
   "มะม่วงแช่อิ่ม": {
     ph: "3.5 - 4.0", brix: "50 - 60°Brix", aw: "< 0.85", shelf: "6 - 12 เดือน",
-    preservation: "การออสโมซิสด้วยน้ำเชื่อมความเข้มข้นสูง ดึงน้ำออกจากเนื้อผลไม้ยับยั้งจุลินทรีย์",
+    preservation: "การออสโมซิสด้วยน้ำเชื่อมความเข้มข้นสูง ดึงน้ำออกจากเนื้อผลไม้อยับยั้งจุลินทรีย์",
     steps: [
       "ดองมะม่วงดิบในน้ำเกลือ 8-10% เป็นเวลา 5-7 วัน",
       "ล้างน้ำสะอาด แช่น้ำปูนใสเพื่อให้เนื้อกรอบ",
@@ -778,23 +745,149 @@ const shelfLifeData = {
   ]
 };
 
-const quizDB = [
-  {
-    q: "การทำน้ำเกลือดองผักหรือกิมจิควรมีความเค็มประมาณกี่เปอร์เซ็นต์?",
-    options: ["1 - 2%", "3 - 5%", "15 - 20%", "50%"],
-    ans: 1
-  },
-  {
-    q: "การถนอมอาหารด้วยการตากแห้งหรืออบพาราโบลาใช้หลักการใด?",
-    options: ["การเพิ่มความดัน", "การลดค่า Water Activity (Aw)", "การเพิ่มความเปรี้ยว pH", "การเติมสีสังเคราะห์"],
-    ans: 1
-  },
-  {
-    q: "แหนมหมูเกิดรสเปรี้ยวตามธรรมชาติจากกระบวนการใด?",
-    options: ["การเติมน้ำส้มสายชู", "การหมักให้เกิดกรดแลคติกโดยแบคทีเรีย", "การตากแดดนวดข้าว", "การใช้ยีสต์หมักเหล้า"],
-    ans: 1
+// 1. ดึงข้อมูลโพสต์ทั้งหมดจาก Google Sheets
+async function fetchCommunityPosts() {
+  const icon = document.getElementById('refresh-posts-icon');
+  if (icon) icon.classList.add('fa-spin');
+
+  const container = document.getElementById('community-posts-list');
+  if (!container) return;
+
+  try {
+    // ใส่ timestamp กันแคชเบราว์เซอร์
+    const res = await fetch(`${APPS_SCRIPT_URL}?t=${Date.now()}`);
+    const data = await res.json();
+    
+    if (Array.isArray(data) && data.length > 0) {
+      mockCommunityPosts = data;
+      renderCommunityPosts(data);
+    } else {
+      renderCommunityPosts([]);
+    }
+  } catch (err) {
+    console.warn("Using local community data fallback due to CORS/Network:", err);
+    renderCommunityPosts(mockCommunityPosts);
+  } finally {
+    if (icon) icon.classList.remove('fa-spin');
   }
-];
+}
+
+function renderCommunityPosts(posts) {
+  const container = document.getElementById('community-posts-list');
+  if (!container) return;
+
+  if (!posts || posts.length === 0) {
+    container.innerHTML = `<div class="text-center py-8 text-slate-400 text-xs"><i class="fa-solid fa-comments text-2xl mb-1 opacity-50"></i><br>ยังไม่มีโพสต์ในชุมชน เป็นคนแรกที่ตั้งคำถามเลย!</div>`;
+    return;
+  }
+
+  container.innerHTML = posts.map(post => `
+    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs space-y-2 text-xs">
+      <div class="flex justify-between items-start">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-full bg-teal-100 text-teal-700 flex items-center justify-center font-bold text-xs">
+            ${post.author ? post.author.charAt(0) : '👤'}
+          </div>
+          <div>
+            <h4 class="font-bold text-slate-800 leading-tight">${post.author || 'สมาชิกชุมชน'}</h4>
+            <span class="text-[10px] text-slate-400">${post.date || 'เมื่อสักครู่'}</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span class="bg-teal-50 text-teal-800 text-[10px] font-bold px-2 py-0.5 rounded-md border border-teal-200">
+            ${post.category || 'พูดคุยทั่วไป'}
+          </span>
+          <button onclick="deleteCommunityPost(${post.id || 0})" class="w-6.5 h-6.5 rounded-lg bg-red-50 text-red-500 hover:bg-red-100 hover:text-red-600 border border-red-200 flex items-center justify-center transition active:scale-90" title="ลบคำถามนี้">
+            <i class="fa-regular fa-trash-can text-[11px]"></i>
+          </button>
+        </div>
+      </div>
+
+      <p class="text-slate-700 leading-relaxed pt-1">${post.content}</p>
+
+      <div class="pt-2 border-t flex justify-between items-center text-[11px] text-slate-500">
+        <button onclick="likePost(${post.id || 0})" class="hover:text-teal-600 transition flex items-center gap-1 font-semibold">
+          <i class="fa-regular fa-thumbs-up text-xs"></i> เป็นประโยชน์ (${post.likes || 0})
+        </button>
+        <button onclick="openModal('post-question-modal')" class="hover:text-teal-600 transition flex items-center gap-1 font-semibold">
+          <i class="fa-regular fa-comment text-xs"></i> ร่วมตอบคำถาม
+        </button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// 2. โพสต์คำถามใหม่ลง Google Sheets
+async function submitCommunityPost() {
+  const author = document.getElementById('post-author').value.trim();
+  const category = document.getElementById('post-category').value;
+  const content = document.getElementById('post-content').value.trim();
+
+  if (!author || !content) {
+    showToast("กรุณากรอกชื่อและเนื้อหาให้ครบถ้วน", false);
+    return;
+  }
+
+  const now = new Date();
+  const dateStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+
+  const newPost = {
+    action: 'create',
+    id: Date.now(),
+    author: author,
+    category: category,
+    content: content,
+    date: dateStr,
+    likes: 0
+  };
+
+  showToast("กำลังบันทึกข้อมูลไปยัง Google Sheets...");
+
+  try {
+    await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(newPost)
+    });
+    
+    showToast("โพสต์คำถามของคุณเรียบร้อยแล้ว! 🎉");
+    closeModal('post-question-modal');
+    document.getElementById('post-content').value = '';
+
+    setTimeout(() => {
+      fetchCommunityPosts();
+    }, 1000);
+
+  } catch (err) {
+    console.error("Sheet post error:", err);
+    showToast("เกิดข้อผิดพลาดในการบันทึกข้อมูล", false);
+  }
+}
+
+// 3. กดถูกใจ (Like)
+function likePost(id) {
+  fetch(APPS_SCRIPT_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify({ action: 'like', id: id })
+  }).then(() => {
+    showToast("ขอบคุณสำหรับการกดให้กำลังใจ!");
+    setTimeout(() => fetchCommunityPosts(), 800);
+  }).catch(err => console.error("Like error:", err));
+}
+
+// 4. ลบโพสต์
+function deleteCommunityPost(id) {
+  showToast("กำลังลบรายการ...");
+  fetch(APPS_SCRIPT_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify({ action: 'delete', id: id })
+  }).then(() => {
+    showToast("ลบคำถามเรียบร้อยแล้ว");
+    setTimeout(() => fetchCommunityPosts(), 800);
+  }).catch(err => console.error("Delete error:", err));
+}
 
 function switchSubCalc(subId) {
   document.querySelectorAll('.subcalc-content').forEach(el => el.classList.add('hidden'));
@@ -829,7 +922,7 @@ function initApp() {
   
   renderBatchLogs();
   initCalendar();
-  initQuiz();
+  fetchCommunityPosts();
 
   // Auto Refresh countdown every 30 seconds
   if (autoTimerInterval) clearInterval(autoTimerInterval);
@@ -885,6 +978,11 @@ function switchTab(tabId) {
 
   if (activeTab) activeTab.classList.add('active');
   if (activeDock) activeDock.classList.add('active');
+  
+  if (tabId === 'tab-community') {
+    fetchCommunityPosts();
+  }
+
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -1006,7 +1104,6 @@ function openRecipeModal(name) {
   openModal('recipe-modal');
 }
 
-/* Calculators Logic */
 function adjustInput(id, delta, minVal) {
   const input = document.getElementById(id);
   if (!input) return;
@@ -1061,7 +1158,6 @@ function calcCommercialPrice() {
   document.getElementById('pro-recommended-price').innerText = `${recPrice.toFixed(2)} ฿`;
 }
 
-/* Shelf life Visualizer */
 function updateShelfLifeVisualizer() {
   const key = document.getElementById('shelf-food-select').value;
   const items = shelfLifeData[key] || shelfLifeData.banana;
@@ -1072,8 +1168,8 @@ function updateShelfLifeVisualizer() {
         <span>${item.method}</span>
         <span class="text-teal-700">${item.days}</span>
       </div>
-      <div class="w-full bg-slate-100 rounded-full h-3 overflow-hidden border border-slate-200/80">
-        <div class="${item.color} h-3 rounded-full transition-all duration-500" style="width: ${item.pct}%"></div>
+      <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden border border-slate-200/80">
+        <div class="${item.color} h-2.5 rounded-full transition-all duration-500" style="width: ${item.pct}%"></div>
       </div>
     </div>
   `).join('');
@@ -1081,35 +1177,6 @@ function updateShelfLifeVisualizer() {
   document.getElementById('shelf-life-results').innerHTML = html;
 }
 
-/* FDA Official Portal Frame Handler (EXACTLY 2 PORTALS) */
-function loadOfficialPortal(url, title) {
-  const iframe = document.getElementById('fda-live-iframe');
-  const titleEl = document.getElementById('portal-frame-title');
-  const extBtn = document.getElementById('portal-frame-external');
-  const topDirectBtn = document.getElementById('fda-direct-btn');
-
-  if (iframe) iframe.src = url;
-  if (titleEl) titleEl.innerHTML = `<i class="fa-solid fa-circle text-emerald-400 text-[10px]"></i> ${title}`;
-  if (extBtn) extBtn.href = url;
-  if (topDirectBtn) topDirectBtn.href = url;
-
-  document.querySelectorAll('.fda-portal-btn').forEach(btn => {
-    btn.classList.remove('active', 'bg-teal-50', 'border-teal-200', 'text-teal-900');
-    btn.classList.add('bg-slate-50', 'border-slate-200', 'text-slate-700');
-  });
-
-  if (event && event.currentTarget) {
-    event.currentTarget.classList.add('active', 'bg-teal-50', 'border-teal-200', 'text-teal-900');
-    event.currentTarget.classList.remove('bg-slate-50', 'border-slate-200', 'text-slate-700');
-  }
-}
-
-function refreshPortalFrame() {
-  const iframe = document.getElementById('fda-live-iframe');
-  if (iframe) iframe.src = iframe.src;
-}
-
-/* Automatic Batch Logbook Logic & Auto Date Calculation */
 function autoFillDurationFromMenu() {
   const select = document.getElementById('log-menu-select');
   const customContainer = document.getElementById('custom-name-container');
@@ -1255,7 +1322,6 @@ function renderBatchLogs() {
   }).join('');
 }
 
-/* AI Assistant & Utilities */
 function updateMarketPricesAI() {
   const icon = document.getElementById('ai-spin-icon');
   if (icon) icon.classList.add('fa-spin');
@@ -1280,21 +1346,19 @@ async function sendChatMessage() {
   history.appendChild(userDiv);
   input.value = '';
 
-  chatHistory.push({ role: "user", parts: [{ text: text }] });
-
   document.getElementById('thinking-indicator').classList.remove('hidden');
   history.scrollTop = history.scrollHeight;
 
-  try {
-    const res = await fetch(BACKEND_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ history: chatHistory })
-    });
+  setTimeout(() => {
+    let reply = "ยินดีให้คำแนะนำครับ! สำหรับการแปรรูปอาหาร ความสะอาด ฆ่าเชื้อภาชนะ และการควบคุมความชื้น/กรด-ด่าง ($pH$) เป็นหัวใจสำคัญที่สุดในการป้องกันอาหารเสียครับ";
     
-    const data = await res.json();
-    const reply = data.reply || data.text || "ขออภัยครับ ระบบประมวลผลคำตอบขัดข้องชั่วคราว";
-    chatHistory.push({ role: "model", parts: [{ text: reply }] });
+    if (text.includes("แหนม")) {
+      reply = "💡 **เทคนิคทำแหนมหมู:** ต้องนวดหมูกับเกลือจนเกิดยางเหนียว บรรจุใส่ถุงให้แน่นและไล่อากาศออกให้หมด หมักไว้ 2-3 วันที่อุณหภูมิห้อง แบคทีเรียแลคติกจะสร้างกรดให้ความเปี้ยวกลมกล่อมครับ";
+    } else if (text.includes("กล้วย") || text.includes("ตาก")) {
+      reply = "🍌 **เทคนิคกล้วยตาก:** ควรใช้กล้วยน้ำว้าพันธุ์มลีอ่องสุกงอม ล้างน้ำเกลือ 1% ตากในตู้อบพาราโบลาโดม 3-4 วัน จะได้กล้วยตากเนื้อนุ่ม สีทองสวย ไม่ดำครับ";
+    } else if (text.includes("ดอง") || text.includes("เกลือ")) {
+      reply = "🧂 **อัตราส่วนน้ำเกลือดอง:**\n- ผักดอง/กิมจิ: น้ำเกลือ 3-5%\n- ผลไม้ดอง: น้ำเกลือ 8-10%\n- ไข่เค็ม/หมักปลา: น้ำเกลือ 12-15%";
+    }
 
     const aiDiv = document.createElement('div');
     aiDiv.className = 'flex items-start gap-2.5 text-xs';
@@ -1305,21 +1369,9 @@ async function sendChatMessage() {
       </div>
     `;
     history.appendChild(aiDiv);
-  } catch (err) {
-    console.error("AI Chatbot Error:", err);
-    const errDiv = document.createElement('div');
-    errDiv.className = 'flex items-start gap-2.5 text-xs';
-    errDiv.innerHTML = `
-      <div class="w-7 h-7 rounded-full bg-red-100 flex items-center justify-center text-sm border shrink-0">🤖</div>
-      <div class="bg-red-50 p-3 rounded-2xl rounded-tl-none border border-red-200 text-red-700 shadow-2xs max-w-[85%] leading-relaxed">
-        ขออภัยครับ ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ AI ได้ในขณะนี้ โปรดลองใหม่อีกครั้งครับ 😓
-      </div>
-    `;
-    history.appendChild(errDiv);
-  } finally {
     document.getElementById('thinking-indicator').classList.add('hidden');
     history.scrollTop = history.scrollHeight;
-  }
+  }, 700);
 }
 
 function initCalendar() {
@@ -1328,33 +1380,6 @@ function initCalendar() {
 
   const seasonalCrops = ["🍌 กล้วยน้ำว้า (ดกสุด)", "🥭 มะม่วงดิบ (ดอง/แช่อิ่ม)", "🍍 สับปะรด (ทำไวน์/กวน)", "🍈 ทุเรียน (ทอด/กวน)", "🌶️ พริกจินดา (ซอสพริก)", "🥬 ผักกาดเขียว (ผักดอง)"];
   grid.innerHTML = seasonalCrops.map(crop => `<div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-slate-700 text-center">${crop}</div>`).join('');
-}
-
-function initQuiz() {
-  const container = document.getElementById('quiz-container');
-  if (!container) return;
-
-  const q = quizDB[currentQuizIndex];
-  container.innerHTML = `
-    <p class="font-bold text-sm text-slate-800">${q.q}</p>
-    <div class="space-y-2 pt-2">
-      ${q.options.map((opt, i) => `
-        <button onclick="checkQuizAnswer(${i})" class="w-full text-left p-3 rounded-xl border border-slate-200 hover:border-orange-400 hover:bg-orange-50 font-medium text-xs transition">
-          ${i + 1}. ${opt}
-        </button>
-      `).join('')}
-    </div>
-  `;
-}
-
-function checkQuizAnswer(idx) {
-  const q = quizDB[currentQuizIndex];
-  if (idx === q.ans) {
-    confetti({ particleCount: 50, spread: 60, origin: { y: 0.6 } });
-    showToast("ถูกต้องครับ! 🎉 ได้รับ 10 คะแนน");
-  } else {
-    showToast("ยังไม่ถูกต้อง ลองใหม่อีกครั้งนะครับ", false);
-  }
 }
 
 function showToast(msg, isSuccess = true) {
@@ -1369,7 +1394,7 @@ function showToast(msg, isSuccess = true) {
   setTimeout(() => toast.remove(), 3000);
 }
 
-// Global Window Onload Initializer
+/* Global Window Onload Initializer */
 window.onload = function() {
   initApp();
 };
