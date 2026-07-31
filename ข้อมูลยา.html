@@ -3,257 +3,193 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>รายชื่อยารักษาโรค (AI Pharmacist & Health Hub)</title>
+<title>AI Pharmacist & Health Hub</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&family=Kodchasan:wght@600;700&display=swap" rel="stylesheet">
+<!-- Fonts & Frameworks -->
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Kodchasan:wght@600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com"></script>
-<!-- Markdown Parser for AI response -->
+<!-- Markdown Parser -->
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
 <style>
   :root {
-    --bg: #fffdf7;
-    --paper: #ffffff;
-    --ink: #0f172a;
-    --muted: #475569;
-    --line: #e5e7eb;
-    --brand: #50b5a5;
-    --brand-2: #2f8f80;
-    --chip: #e6fffb;
-    --ring: #c7f5ef;
-    --ok: #16a34a;
-    --danger: #dc2626;
-    --radius: 16px;
-    --shadow: 0 10px 30px -18px rgba(2,8,23,.28);
+    --bg: #f8fafc; --paper: #ffffff; --ink: #0f172a; --muted: #64748b; --line: #e2e8f0;
+    --brand: #0d9488; --brand-dark: #0f766e; --brand-light: #ccfbf1; --radius: 20px;
+    --shadow-sm: 0 4px 20px -2px rgba(13, 148, 136, 0.08);
+    --shadow-lg: 0 20px 35px -8px rgba(15, 23, 42, 0.08);
   }
   * { box-sizing: border-box; }
-  html, body {
-    margin: 0;
-    background: var(--bg);
-    color: var(--ink);
-    font-family: "Sarabun", system-ui, -apple-system, sans-serif;
-  }
-  a { color: #0ea5e9; text-decoration: none; }
-  a:hover { text-decoration: underline; }
-
-  /* ล็อกสกอร์เมื่อมี modal */
+  html, body { margin: 0; background: #f1f5f9; color: var(--ink); font-family: "Sarabun", system-ui, sans-serif; }
   body.no-scroll { overflow: hidden; }
 
-  .wrap { max-width: 1100px; margin: auto; padding: 24px 16px 80px; }
-  header.app {
-    position: sticky; top: 0; z-index: 50; backdrop-filter: blur(10px);
-    background: linear-gradient(180deg, rgba(255,253,247,.92), rgba(255,253,247,.75) 60%, rgba(255,253,247,0));
-    padding: 18px 16px 10px; margin: 0 -16px; border-bottom: 1px solid rgba(0,0,0,.04);
-  }
-  .title {
-    font-family: "Kodchasan","Sarabun",sans-serif; font-weight: 700; letter-spacing: .2px;
-    display: flex; align-items: center; gap: 8px; margin-bottom: 10px; padding: 0 16px; color: #0b3b34;
-    flex-wrap: wrap; 
-  }
-  .badge {
-    display: inline-flex; align-items: center; gap: 6px;
-    background: linear-gradient(145deg, var(--brand), #9fe7dc);
-    color: #053c34; padding: 6px 10px; border-radius: 999px; font-weight: 700; font-size: 12px;
-    box-shadow: inset 0 1px 0 #fff, 0 2px 10px rgba(2,143,128,.25);
+  /* Header Glassmorphism */
+  header.app-header {
+    position: sticky; top: 0; z-index: 45; backdrop-filter: blur(16px);
+    background: rgba(255, 255, 255, 0.92); border-bottom: 1px solid rgba(226, 232, 240, 0.9);
+    box-shadow: 0 4px 20px -4px rgba(15, 23, 42, 0.04);
   }
 
-  /* Controls */
-  .controls { display: flex; gap: 10px; align-items: center; padding: 8px 16px 0; flex-wrap: wrap; }
-  .controls .field { position: relative; flex: 1 1 200px; }
-  .controls input[type="search"], .controls select {
-    width: 100%; height: 42px; border-radius: 12px; border: 1px solid var(--line); background: var(--paper);
-    padding: 0 12px; font-size: 15px; outline: none; transition: border-color 0.2s;
+  /* App Icon Badge */
+  .icon-badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    background: linear-gradient(135deg, #14b8a6, #0d9488);
+    color: white; border-radius: 14px; box-shadow: 0 6px 16px -4px rgba(13, 148, 136, 0.4);
   }
-  .controls input[type="search"]:focus, .controls select:focus {
-    border-color: var(--brand);
+
+  /* Side Drawer */
+  #side-drawer { transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+  #side-drawer.closed { transform: translateX(-100%); }
+
+  /* Cards Grid */
+  .grid-layout { display: grid; gap: 18px; grid-template-columns: repeat(12, 1fr); }
+  .drug-card {
+    grid-column: span 4; background: var(--paper); border: 1px solid rgba(226, 232, 240, 0.9); border-radius: var(--radius);
+    padding: 18px; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: 12px;
+    transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
   }
-  .controls button {
-    height: 42px; border-radius: 12px; border: 1px solid #67dacb; cursor: pointer;
-    padding: 0 14px; font-weight: 800; letter-spacing: .2px;
-    background: linear-gradient(145deg, #ddfff8, #baf3ea); color: #064e43;
-    box-shadow: inset 0 1px 0 #fff, 0 10px 24px -14px rgba(2,143,128,.45);
-    transition: transform .06s, background .18s;
+  .drug-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); border-color: #cbd5e1; }
+  @media (max-width: 1024px) { .drug-card { grid-column: span 6; } }
+  @media (max-width: 640px) { .drug-card { grid-column: span 12; } }
+
+  /* Modern Buttons */
+  .btn-primary {
+    background: linear-gradient(135deg, #0d9488, #0f766e); color: white;
+    font-weight: 700; border-radius: 14px; transition: all 0.2s ease;
+    box-shadow: 0 4px 14px -2px rgba(13, 148, 136, 0.35);
   }
-  .controls button:hover { background: linear-gradient(145deg, #c9fbf0, #9eeadf); }
-  .controls button:active { transform: translateY(1px); }
+  .btn-primary:hover { opacity: 0.95; transform: translateY(-1px); box-shadow: 0 6px 20px -2px rgba(13, 148, 136, 0.45); }
 
-  /* Grid */
-  .grid { display: grid; gap: 14px; padding: 14px 0; grid-template-columns: repeat(12,1fr); }
-  .card {
-    grid-column: span 4; background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius);
-    padding: 14px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 10px;
-    transition: transform .18s ease, box-shadow .18s ease;
-  }
-  .card:hover { transform: translateY(-2px); box-shadow: 0 14px 40px -18px rgba(2,8,23,.36); }
-  @media (max-width:1000px) { .card { grid-column: span 6; } }
-  @media (max-width:640px) { .card { grid-column: span 6; } }
-  @media (max-width:440px) { .card { grid-column: span 12; } }
+  /* Tab Display Management */
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
 
-  .drug-name { margin: 0; font-size: 18px; line-height: 1.35; display: flex; gap: 8px; align-items: center; font-weight: 700; }
-  .generic { font-size: 14px; color: #0b3b34; font-weight: 700; }
+  /* Chat Bubbles */
+  .chat-bubble-user { background: linear-gradient(135deg, #0d9488, #0f766e); color: white; border-radius: 20px 20px 4px 20px; box-shadow: 0 4px 12px rgba(13, 148, 136, 0.2); }
+  .chat-bubble-model { background-color: #ffffff; color: #0f172a; border: 1px solid #e2e8f0; border-radius: 20px 20px 20px 4px; box-shadow: var(--shadow-sm); }
 
-  .meta { display: flex; gap: 8px; flex-wrap: wrap; font-size: 12px; }
-  .pill { background: #f8fafc; border: 1px solid var(--line); border-radius: 999px; padding: 4px 8px; }
-  .tags { display: flex; gap: 6px; flex-wrap: wrap; }
-  .tag { font-size: 12px; background: #ecfeff; color: #064e43; padding: 4px 8px; border-radius: 999px; border: 1px solid #a5f3fc; }
-  .excerpt { color: #334155; font-size: 14px; line-height: 1.55; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-
-  .btn {
-    align-self: flex-start; margin-top: auto; display: inline-flex; align-items: center; gap: 8px; font-weight: 800; letter-spacing: .2px;
-    padding: 10px 14px; border-radius: 12px; border: 1px solid #67dacb;
-    background: linear-gradient(145deg,#ddfff8,#baf3ea); color: #064e43; cursor: pointer;
-    transition: transform .06s, box-shadow .18s, background .2s; box-shadow: inset 0 1px 0 #fff, 0 10px 24px -14px rgba(2,143,128,.45);
-  }
-  .btn:hover { background: linear-gradient(145deg,#c9fbf0,#9eeadf); }
-  .btn:active { transform: translateY(1px); }
-
-  /* Pagination */
-  .pager { display: flex; align-items: center; gap: 8px; justify-content: center; padding: 12px 0 34px; }
-  .pager button { border: 1px solid var(--line); background: var(--paper); border-radius: 999px; padding: 8px 16px; cursor: pointer; font-weight: 600; }
-  .pager button:disabled { opacity: 0.5; cursor: not-allowed; }
-  .pager .info { font-size: 13px; color: var(--muted); padding: 0 8px; }
-
-  /* Modal (Drug Details) */
-  .modal-backdrop {
-    position: fixed; inset: 0; background: rgba(0,0,0,.42); display: none; place-items: center; padding: 16px; z-index: 100;
-    touch-action: none;
-  }
-  .modal {
-    max-width: 920px; width: 100%; max-height: 88vh; overflow: auto;
-    background: var(--paper); border-radius: 20px; border: 1px solid var(--line); box-shadow: 0 30px 80px rgba(0,0,0,.35);
-  }
-  .modal header {
-    position: sticky; top: 0; background: linear-gradient(180deg,#fff,rgba(255,255,255,.92));
-    padding: 16px 18px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; gap: 10px; z-index: 10;
-  }
-  .modal .body { padding: 18px; }
-  .modal h2 { margin: 0 0 8px; font-size: 22px; }
-  .close { border: none; background: #111; color: #fff; border-radius: 12px; padding: 8px 14px; cursor: pointer; font-weight: bold; }
-  .srcs { margin-top: 14px; font-size: 14px; color: #475569; }
-  .srcs a { word-break: break-all; }
-
-  .modal-backdrop.show { display: grid; }
-  .content-html img { max-width: 100%; height: auto; border-radius: 12px; }
-  .content-html table { border-collapse: collapse; width: 100%; }
-  .content-html table, .content-html th, .content-html td { border: 1px solid #ddd; }
-  .content-html th, .content-html td { padding: 8px; }
-
-  .skeleton { background: linear-gradient(90deg, #f6f7f9 25%, #eceff3 37%, #f6f7f9 63%); animation: shimmer 1.2s infinite; background-size: 200% 100%; }
-  @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-
-  /* ====== สีข้อความตามหมวดหมู่ยา ====== */
-  .cat-analgesic .drug-name { color: #b45309; }      
-  .cat-antipyretic .drug-name { color: #2563eb; }    
-  .cat-antibiotic .drug-name { color: #dc2626; }     
-  .cat-antihistamine .drug-name { color: #0f766e; }  
-  .cat-antacid .drug-name { color: #7c3aed; }        
-  .cat-cough .drug-name { color: #1e40af; }          
-  .cat-vitamin .drug-name { color: #166534; }        
-
-  /* ===== Chatbot UI ===== */
-  .chat-bubble::before { content: ''; position: absolute; width: 0; height: 0; border-style: solid; }
-  .chat-bubble-user::before {
-    border-width: 0 12px 12px 12px; border-color: transparent transparent #50b5a5 transparent;
-    top: -10px; right: 12px;
-  }
-  .chat-bubble-model::before {
-    border-width: 0 12px 12px 12px; border-color: transparent transparent #f3f4f6 transparent;
-    top: -10px; left: 12px;
-  }
+  /* Thinking Animation */
   .gemini-thinking-bar {
-    position: relative; width: 100%; height: 4px; background-color: #e0e0e0;
-    border-radius: 2px; overflow: hidden;
+    position: relative; width: 100%; height: 4px; background-color: #e2e8f0; border-radius: 2px; overflow: hidden;
   }
   .gemini-thinking-bar::before {
     content: ''; position: absolute; top: 0; left: 0; height: 100%; width: 100%;
-    background: linear-gradient(90deg, #50b5a5, #2f8f80, #50b5a5);
-    background-size: 200% 100%; animation: thinking-gradient 2s linear infinite;
+    background: linear-gradient(90deg, #14b8a6, #0f766e, #14b8a6);
+    background-size: 200% 100%; animation: thinking-gradient 1.8s linear infinite;
   }
   @keyframes thinking-gradient { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-  
-  #fab-chat-toggle {
-    position: fixed; bottom: 25px; right: 25px;
-    width: 60px; height: 60px;
-    background-color: #064e43;
-    color: white; border: none; border-radius: 50%;
-    font-size: 22px; font-weight: bold; line-height: 60px; text-align: center;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.3);
-    cursor: pointer; z-index: 998;
-    transition: transform 0.2s, opacity 0.3s;
-    font-family: 'Kodchasan', sans-serif;
-  }
-  #fab-chat-toggle:hover { transform: scale(1.08); background-color: #50b5a5; }
-  
-  #chatbot-modal {
-    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-    z-index: 1000; transition: opacity 0.3s, transform 0.3s;
-    opacity: 1; transform: translateY(0); pointer-events: auto;
-  }
-  #chatbot-modal.chatbot-hidden {
-    opacity: 0; transform: translateY(100%); pointer-events: none;
-  }
 
-  /* Health Form Specifics */
-  .health-form-group { margin-bottom: 10px; }
-  .health-form-label { display: block; font-size: 13px; color: #4b5563; margin-bottom: 3px; font-weight: 700; }
-  .health-form-input {
-    width: 100%; padding: 8px 12px; border: 1px solid #e5e7eb; border-radius: 8px; outline: none; transition: border-color 0.2s;
-    background-color: #f9fafb; font-size: 14px;
-  }
-  .health-form-input:focus { border-color: #50b5a5; background-color: white; }
+  /* Skeleton Shimmer */
+  .skeleton { background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 37%, #f1f5f9 63%); background-size: 200% 100%; animation: shimmer 1.4s infinite; }
+  @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
 
-  /* Chips for diseases */
-  .chip-group { display: flex; flex-wrap: wrap; gap: 8px; }
-  .chip-option {
-    cursor: pointer; padding: 6px 12px; border-radius: 999px; border: 1px solid #cbd5e1;
-    background-color: #f1f5f9; color: #475569; font-size: 13px; transition: all 0.2s;
-    user-select: none;
-  }
-  .chip-option:hover { background-color: #e2e8f0; }
-  .chip-option.selected {
-    background-color: #ccfbf1; border-color: #50b5a5; color: #0f766e; font-weight: 700;
-  }
-
-  /* Result Markdown */
-  .result-markdown p { margin-bottom: 0.8em; line-height: 1.6; }
-  .result-markdown h3 { font-size: 1.25rem; font-weight: 700; color: #064e43; margin-top: 1em; margin-bottom: 0.5em; }
-  .result-markdown ul { list-style-type: disc; padding-left: 1.5em; margin-bottom: 0.8em; }
-  .result-markdown li { margin-bottom: 0.2em; }
-  .result-markdown strong { color: #0f172a; }
+  /* Markdown Body Styles */
+  .markdown-body p { margin-bottom: 0.75em; line-height: 1.6; }
+  .markdown-body h3 { font-size: 1.15rem; font-weight: 700; color: #0f766e; margin-top: 1em; margin-bottom: 0.4em; }
+  .markdown-body ul { list-style-type: disc; padding-left: 1.25em; margin-bottom: 0.75em; }
 </style>
 </head>
-<body>
+<body class="pb-28 md:pb-12 bg-slate-100 text-slate-800">
 
-  <header class="app">
-    <div class="wrap" style="padding:0">
-      <div class="title">
-        <span class="badge">ฐานข้อมูล</span>
-        <div style="font-size:20px">ยารักษาโรค & AI เภสัชกร</div>
-        
-        <!-- ปุ่มสแกนภาพยา -->
-        <button id="scan-drug-btn" class="ml-1 bg-teal-600 hover:bg-teal-700 text-white font-bold py-1 px-3 rounded-full text-sm flex items-center gap-1 shadow-md transition-all border border-teal-700">
-             <span class="text-lg">📷</span> <span>สแกนภาพยา</span>
+  <header class="app-header px-4 py-3 shadow-sm">
+    <div class="max-w-6xl mx-auto flex items-center justify-between gap-3">
+      <!-- Left: Brand Logo & Side Drawer Toggle -->
+      <div class="flex items-center gap-3">
+        <button id="open-drawer-btn" class="p-2 hover:bg-slate-100 rounded-xl text-slate-700 transition-all border border-slate-200/80" title="เปิดเมนู">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
         </button>
+        <div class="flex items-center gap-2.5">
+          <span class="w-10 h-10 icon-badge text-xl shadow-teal-500/20">💊</span>
+          <div>
+            <h1 class="text-base md:text-lg font-bold text-teal-950 leading-tight tracking-tight">AI Pharmacist</h1>
+            <p class="text-[11px] text-teal-600 font-bold hidden sm:block">ศูนย์รวมข้อมูลยา & ประเมินสุขภาพ AI</p>
+          </div>
+        </div>
+      </div>
 
-        <!-- ปุ่มประเมินสุขภาพ -->
-        <button id="health-check-btn" class="ml-1 bg-[#50b5a5] hover:bg-[#3d8f81] text-white font-bold py-1 px-3 rounded-full text-sm flex items-center gap-1 shadow-md transition-all border border-[#3d8f81]">
-             <span class="text-lg">🩺</span> <span>ประเมินสุขภาพ</span>
+      <!-- Center: Desktop Header Navigation Tabs -->
+      <div class="hidden md:flex items-center gap-1.5 bg-slate-100 p-1.5 rounded-2xl border border-slate-200/80">
+        <button onclick="switchTab('drugs')" id="header-tab-drugs" class="header-tab-btn px-4 py-2 rounded-xl text-xs font-bold transition-all bg-white text-teal-800 shadow-sm">
+          💊 รายชื่อยา
         </button>
-
-        <!-- ปุ่มเช็กสิทธิรักษาฟรีรายปี -->
-        <button id="rights-check-btn" class="ml-1 bg-amber-500 hover:bg-amber-600 text-white font-bold py-1 px-3 rounded-full text-sm flex items-center gap-1 shadow-md transition-all border border-amber-600">
-             <span class="text-lg">💳</span> <span>สิทธิรักษาฟรีรายปี</span>
+        <button onclick="switchTab('chatbot')" id="header-tab-chatbot" class="header-tab-btn px-4 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 hover:text-teal-800">
+          🤖 AI เภสัชกร
+        </button>
+        <button onclick="switchTab('community')" id="header-tab-community" class="header-tab-btn px-4 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 hover:text-teal-800">
+          👥 ชุมชน Q&A
         </button>
       </div>
 
-      <div class="controls" aria-label="เครื่องมือค้นหาและตัวกรอง">
-        <div class="field flex gap-2">
-          <input id="q" type="search" placeholder="ค้นหาชื่อยา / ชื่อสามัญ / อาการ ...">
-          <button id="quick-cam-btn" title="ถ่ายภาพยาเพื่อค้นหา" class="bg-teal-100 text-teal-800 hover:bg-teal-200 border-teal-300 px-3 flex items-center">📷</button>
+      <!-- Right: Quick Action Buttons -->
+      <div class="flex items-center gap-2">
+        <button onclick="toggleHealthModal(true)" class="px-3 py-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-800 border border-emerald-300/60 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all shadow-sm" title="ประเมินสุขภาพ">
+          <span class="text-base">🩺</span> <span class="hidden lg:inline">ประเมินสุขภาพ</span>
+        </button>
+        <button onclick="toggleRightsModal(true)" class="px-3 py-2 bg-amber-500/10 hover:bg-amber-500/20 text-amber-800 border border-amber-300/60 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all shadow-sm" title="สิทธิรักษาฟรี">
+          <span class="text-base">💳</span> <span class="hidden lg:inline">สิทธิรักษา</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div id="drawer-overlay" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden transition-opacity"></div>
+  <aside id="side-drawer" class="fixed top-0 left-0 w-80 max-w-[85vw] h-full bg-white z-50 shadow-2xl flex flex-col closed">
+    <div class="p-5 bg-gradient-to-br from-teal-800 to-teal-950 text-white flex justify-between items-center">
+      <div class="flex items-center gap-3">
+        <span class="w-10 h-10 icon-badge bg-white/10 backdrop-blur-md text-xl border border-white/20">🏥</span>
+        <div>
+          <h2 class="font-bold text-base tracking-tight">เมนูบริการสุขภาพ</h2>
+          <p class="text-[11px] text-teal-200 font-medium">AI Pharmacist Hub</p>
         </div>
-        <div class="field">
-          <select id="cat" aria-label="เลือกหมวดยา">
-            <option value="">— ทุกหมวด —</option>
+      </div>
+      <button id="close-drawer-btn" class="w-8 h-8 flex items-center justify-center hover:bg-white/10 rounded-full text-white text-xl transition-colors">&times;</button>
+    </div>
+
+    <div class="p-4 space-y-3 flex-1 overflow-y-auto">
+      <button onclick="closeDrawer(); switchTab('drugs')" class="w-full p-3 bg-slate-50 hover:bg-teal-50 text-slate-800 rounded-xl flex items-center gap-3 text-left font-bold text-xs border border-slate-200">
+        <span class="text-lg">💊</span> ค้นหารายชื่อยาในฐานข้อมูล
+      </button>
+
+      <button onclick="closeDrawer(); switchTab('chatbot')" class="w-full p-3 bg-slate-50 hover:bg-teal-50 text-slate-800 rounded-xl flex items-center gap-3 text-left font-bold text-xs border border-slate-200">
+        <span class="text-lg">🤖</span> AI เภสัชกร ปรึกษาสุขภาพ 24 ชม.
+      </button>
+
+      <button onclick="closeDrawer(); switchTab('community')" class="w-full p-3 bg-slate-50 hover:bg-teal-50 text-slate-800 rounded-xl flex items-center gap-3 text-left font-bold text-xs border border-slate-200">
+        <span class="text-lg">👥</span> ชุมชนถาม-ตอบ เรื่องยา & สุขภาพ
+      </button>
+
+      <hr class="border-slate-100 my-2">
+
+      <button onclick="closeDrawer(); toggleHealthModal(true)" class="w-full p-3.5 bg-emerald-50/80 hover:bg-emerald-100 text-emerald-950 rounded-2xl flex items-center gap-3.5 text-left font-semibold text-sm transition-all border border-emerald-200/60 shadow-sm">
+        <span class="w-10 h-10 rounded-xl bg-emerald-500/15 text-emerald-700 flex items-center justify-center text-xl">🩺</span>
+        <div>
+          <div class="font-bold">ประเมินสุขภาพ & BMI</div>
+          <p class="text-[11px] text-emerald-700 font-medium">วิเคราะห์อาการป่วยและดัชนีมวลกาย</p>
+        </div>
+      </button>
+
+      <button onclick="closeDrawer(); toggleRightsModal(true)" class="w-full p-3.5 bg-amber-50/80 hover:bg-amber-100 text-amber-950 rounded-2xl flex items-center gap-3.5 text-left font-semibold text-sm transition-all border border-amber-200/60 shadow-sm">
+        <span class="w-10 h-10 rounded-xl bg-amber-500/15 text-amber-700 flex items-center justify-center text-xl">💳</span>
+        <div>
+          <div class="font-bold">สิทธิรักษาฟรีประจำปี</div>
+          <p class="text-[11px] text-amber-700 font-medium">บัตรทอง, ประกันสังคม, ข้าราชการ</p>
+        </div>
+      </button>
+    </div>
+
+    <div class="p-4 bg-slate-50 border-t border-slate-200/80 text-center text-xs text-slate-400 font-semibold">
+      © 2026 AI Pharmacist Hub v4.0
+    </div>
+  </aside>
+
+  <main class="max-w-6xl mx-auto px-4 py-5">
+
+    <!-- TAB 1: DRUGS DIRECTORY & SEARCH BAR WITH SCAN BUTTON -->
+    <section id="tab-drugs" class="tab-content active">
+      <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200/80 mb-5 space-y-3">
+        <div class="flex flex-wrap md:flex-nowrap gap-2.5">
+          <input id="q" type="search" placeholder="ค้นหาชื่อยา / ชื่อสามัญ / สรรพคุณอาการ..." class="flex-1 h-11 px-3.5 border border-slate-200 rounded-xl outline-none focus:border-teal-600 focus:ring-2 focus:ring-teal-500/20 text-sm transition-all bg-slate-50/50 focus:bg-white">
+          <select id="cat" class="h-11 px-3.5 border border-slate-200 rounded-xl outline-none focus:border-teal-600 focus:ring-2 focus:ring-teal-500/20 text-sm bg-slate-50/50 focus:bg-white font-medium text-slate-700 transition-all">
+            <option value="">— ทุกหมวดหมู่ —</option>
             <option value="analgesic">ยาแก้ปวด</option>
             <option value="antipyretic">ยาลดไข้</option>
             <option value="antibiotic">ยาฆ่าเชื้อ</option>
@@ -262,461 +198,436 @@
             <option value="cough">ยาแก้ไอ/ขับเสมหะ</option>
             <option value="vitamin">วิตามิน/อาหารเสริม</option>
           </select>
-        </div>
-        <button id="searchBtn">ค้นหา</button>
-        <button id="clearBtn" title="ล้างตัวกรอง">ล้าง</button>
-      </div>
-    </div>
-  </header>
+          <button id="searchBtn" class="btn-primary h-11 px-5 text-sm font-bold">ค้นหา</button>
+          
+          <!-- SCAN BUTTON NEXT TO SEARCH -->
+          <button onclick="toggleScanModal(true)" class="h-11 px-4 bg-teal-500/10 hover:bg-teal-500/20 text-teal-800 border border-teal-300/80 rounded-xl text-sm font-bold flex items-center gap-1.5 transition-all shadow-sm" title="สแกนภาพ/ฉลากยา AI Vision">
+            <span class="text-base">📷</span> <span>สแกนภาพ</span>
+          </button>
 
-  <main class="wrap" id="mainContent">
-    <section id="grid" class="grid"></section>
-    <div class="pager" role="navigation" aria-label="เพจจิเนชัน">
-      <button id="prevBtn">ย้อนกลับ</button>
-      <span class="info" id="pageInfo"></span>
-      <button id="nextBtn">ถัดไป</button>
-    </div>
+          <button id="clearBtn" class="h-11 px-4 border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-100 text-sm font-bold transition-all">ล้าง</button>
+        </div>
+      </div>
+
+      <!-- Drugs Cards Grid -->
+      <div id="grid" class="grid-layout"></div>
+
+      <!-- Pagination -->
+      <div class="flex items-center justify-center gap-3 mt-8">
+        <button id="prevBtn" class="px-4 py-2 border border-slate-200 rounded-xl text-sm bg-white hover:bg-slate-50 font-bold disabled:opacity-40 shadow-sm transition-all">ย้อนกลับ</button>
+        <span id="pageInfo" class="text-xs text-slate-500 font-bold px-2">หน้า 1 / 1</span>
+        <button id="nextBtn" class="px-4 py-2 border border-slate-200 rounded-xl text-sm bg-white hover:bg-slate-50 font-bold disabled:opacity-40 shadow-sm transition-all">ถัดไป</button>
+      </div>
+    </section>
+
+    <!-- TAB 2: AI PHARMACIST CHATBOT -->
+    <section id="tab-chatbot" class="tab-content">
+      <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm flex flex-col h-[75vh] max-h-[700px] overflow-hidden">
+        <header class="p-4 bg-gradient-to-r from-teal-800 to-teal-900 text-white flex justify-between items-center shadow-md">
+          <div class="flex items-center gap-3">
+            <span class="text-2xl">🤖</span>
+            <div>
+              <h2 class="font-bold text-base">AI เภสัชกรประจำบ้าน</h2>
+              <p class="text-xs text-teal-200">ปรึกษาข้อมูลตัวยา วิธีรับประทาน ข้อระวัง 24 ชม.</p>
+            </div>
+          </div>
+          <button id="new-chat-btn" class="px-3.5 py-1.5 bg-white/10 hover:bg-white/20 text-white rounded-xl text-xs font-bold transition-colors border border-white/20">
+            🔄 เริ่มสนทนาใหม่
+          </button>
+        </header>
+
+        <div id="chat-history" class="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50/70">
+          <div class="flex items-start gap-2.5">
+            <span class="text-2xl">🤖</span>
+            <div class="chat-bubble-model p-3.5 max-w-[85%] shadow-sm text-sm leading-relaxed">
+              สวัสดีครับ ผมคือ AI ผู้ช่วยเภสัชกร สอบถามข้อมูลตัวยา สรรพคุณ ข้อควรระวัง หรือคำแนะนำอาการเจ็บป่วยเบื้องต้นได้เลยครับ!
+            </div>
+          </div>
+        </div>
+
+        <div id="thinking-indicator" class="p-3 hidden bg-slate-50/70 border-t border-slate-100">
+          <div class="flex items-center gap-2">
+            <span class="text-xl">🤖</span>
+            <div class="chat-bubble-model p-3 w-48 shadow-sm">
+              <div class="gemini-thinking-bar"></div>
+              <span class="text-[11px] text-slate-400 mt-1 block">AI กำลังประมวลผลคำตอบ...</span>
+            </div>
+          </div>
+        </div>
+
+        <footer class="p-3 bg-white border-t border-slate-200/80">
+          <div class="flex gap-2">
+            <input id="user-input" type="text" placeholder="พิมพ์คำถาม หรือระบุชื่อยาที่ต้องการสอบถาม..." class="flex-1 px-4 py-3 border border-slate-200 rounded-xl text-sm outline-none focus:border-teal-600 focus:ring-2 focus:ring-teal-500/20 bg-slate-50/50 focus:bg-white">
+            <button id="send-btn" class="btn-primary px-6 py-3 text-sm font-bold flex items-center gap-1.5">
+              <span>ส่ง</span> <span>➔</span>
+            </button>
+          </div>
+        </footer>
+      </div>
+    </section>
+
+    <!-- TAB 3: COMMUNITY FORUM -->
+    <section id="tab-community" class="tab-content">
+      <div class="space-y-6 max-w-4xl mx-auto">
+        <!-- Create Post Card -->
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+          <h3 class="font-bold text-base text-teal-950 flex items-center gap-2">
+            <span>✍️</span> ตั้งคำถาม / แชร์ความรู้เรื่องยาและสุขภาพ
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <input type="text" id="post-author" placeholder="ชื่อผู้โพสต์ (เช่น คนไข้ A / ภญ. สมสิริ)" class="p-2.5 border border-slate-200 rounded-xl text-xs outline-none focus:border-teal-600">
+            <select id="post-cat" class="p-2.5 border border-slate-200 rounded-xl text-xs outline-none focus:border-teal-600 font-medium">
+              <option value="สอบถามการใช้ยา">สอบถามการใช้ยา</option>
+              <option value="ประสบการณ์การรักษา">ประสบการณ์การรักษา</option>
+              <option value="ความรู้สุขภาพ">ความรู้สุขภาพ</option>
+              <option value="พูดคุยทั่วไป">พูดคุยทั่วไป</option>
+            </select>
+          </div>
+          <input type="text" id="post-title" placeholder="หัวข้อกระทู้..." class="w-full p-2.5 border border-slate-200 rounded-xl text-xs font-bold outline-none focus:border-teal-600">
+          <textarea id="post-content" rows="3" placeholder="ระบุรายละเอียด หรือคำถามของคุณ..." class="w-full p-2.5 border border-slate-200 rounded-xl text-xs outline-none focus:border-teal-600"></textarea>
+          <div class="flex justify-end">
+            <button id="submit-post-btn" class="btn-primary px-5 py-2.5 text-xs font-bold">
+              🚀 โพสต์ลงชุมชน
+            </button>
+          </div>
+        </div>
+
+        <!-- Community Feed Container -->
+        <div id="posts-container" class="space-y-4">
+          <!-- Posts rendered dynamically -->
+        </div>
+      </div>
+    </section>
+
   </main>
 
-  <div id="modalBackdrop" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="mTitle">
-    <div class="modal">
-      <header>
-        <h2 id="mTitle">—</h2>
-        <button id="closeModal" class="close" aria-label="ปิดหน้าต่าง">ปิด</button>
+
+  <!-- MODAL: Drug Details -->
+  <div id="modalBackdrop" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm">
+    <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
+      <header class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+        <h3 id="mTitle" class="font-bold text-lg text-slate-800">—</h3>
+        <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 text-2xl font-bold">&times;</button>
       </header>
-      <div class="body">
-        <div class="meta" id="mMeta"></div>
-        <div class="content-html" id="mContent"></div>
-        <div class="srcs" id="mSources"></div>
+      <div class="p-4 overflow-y-auto space-y-3 text-sm">
+        <div id="mMeta" class="flex flex-wrap gap-2"></div>
+        <div id="mContent" class="prose prose-sm max-w-none text-slate-700 leading-relaxed"></div>
+        <div id="mSources" class="text-xs text-slate-400 border-t border-slate-100 pt-2"></div>
       </div>
     </div>
   </div>
 
-  <footer>
-    <p class="footer-links" style="text-align: center; color: #475569; margin-top: 20px;">
-      © 2026 Crow Studio & AI Pharmacist |
-      <a href="https://sites.google.com/view/privacy-policy-pdpa-crow-studi/%E0%B8%AB%E0%B8%99%E0%B8%B2%E0%B9%81%E0%B8%A3%E0%B8%81" target="_blank">นโยบายความเป็นส่วนตัว</a>
-    </p>
-  </footer>
-
-  <!-- FAB Button (สำหรับ Chatbot) -->
-  <button id="fab-chat-toggle" title="ถามเภสัชกร AI">Ai</button>
-
-  <div id="chatbot-modal" class="chatbot-hidden">
-    <div class="flex flex-col h-screen bg-gray-100">
-      <header class="bg-[#50b5a5] text-white p-3 md:p-4 flex justify-between items-center shadow-md">
-        <div class="flex items-center gap-2">
-            <span class="text-xl md:text-2xl">💊</span>
-            <div>
-                <h1 class="text-base md:text-lg font-bold font-sans text-white m-0">AI เภสัชกร</h1>
-                <p class="text-xs text-green-100 hidden md:block">ผู้ช่วยอัจฉริยะ 24 ชม.</p>
-            </div>
+  <!-- MODAL: Image AI Vision Scanner -->
+  <div id="scan-modal-overlay" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm">
+    <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl flex flex-col overflow-hidden max-h-[90vh]">
+      <header class="p-3.5 bg-teal-700 text-white flex justify-between items-center">
+        <div class="flex items-center gap-2 font-bold text-sm md:text-base">
+          <span>📷</span> สแกนวิเคราะห์ภาพถ่าย/ฉลากยา (AI Vision)
         </div>
-        <div class="flex items-center gap-2">
-          <button id="new-chat-btn" class="bg-[#ddfff8] hover:bg-[#baf3ea] text-[#064e43] font-bold py-1.5 px-3 rounded-lg text-sm transition-colors">
-            เริ่มใหม่
-          </button>
-          <button id="chatbot-close-btn" class="bg-gray-800 hover:bg-gray-900 text-white font-bold py-1.5 px-3 rounded-lg text-sm transition-colors">
-            ปิด
-          </button>
-        </div>
+        <button onclick="toggleScanModal(false)" class="text-white/80 hover:text-white text-2xl leading-none">&times;</button>
       </header>
 
-      <main id="chat-history" class="flex-1 overflow-y-auto p-4 space-y-4 bg-[#f0fdfa]">
-        <div class="flex items-start space-x-2">
-          <span class="text-2xl">🤖</span>
-          <div class="chat-bubble chat-bubble-model bg-white text-gray-800 p-3 rounded-lg max-w-lg relative border border-gray-200 shadow-sm">
-            <p>สวัสดีครับ ผมคือ AI ผู้ช่วยเภสัชกร สอบถามข้อมูลยา อาการ หรือการทานยาได้เลยครับ<br><br>
-            หากต้องการประเมินสุขภาพเบื้องต้น สามารถกดปุ่ม <strong>"🩺 ประเมินสุขภาพ"</strong> หรือ <strong>"📷 สแกนภาพยา"</strong> ได้ที่เมนูด้านบนครับ
-            </p>
+      <div class="p-4 overflow-y-auto space-y-3 text-sm bg-slate-50">
+        <div class="border-2 border-dashed border-teal-300 bg-teal-50/50 rounded-xl p-4 text-center space-y-2 relative">
+          <input type="file" id="camera-file-input" accept="image/*" class="hidden" onchange="handleImageSelect(event)">
+          <div id="preview-container" class="hidden relative inline-block max-h-48 rounded-lg overflow-hidden border border-slate-200">
+            <img id="image-preview" src="" alt="Drug Preview" class="max-h-48 object-contain">
+          </div>
+          <div id="upload-placeholder" class="py-4">
+            <span class="text-3xl">📸</span>
+            <p class="text-xs text-slate-600 font-semibold mt-1">ถ่ายภาพเม็ดยา แผงยา ฉลากข้างขวด หรือซองยา</p>
+            <p class="text-[11px] text-slate-400">ระบบบีบอัดภาพอัตโนมัติ แม่นยำและรวดเร็ว</p>
+          </div>
+          <div class="flex justify-center gap-2 pt-1">
+            <button onclick="document.getElementById('camera-file-input').click()" class="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-xs font-bold shadow-sm transition-all">
+              เลือกรูป / ถ่ายภาพ
+            </button>
           </div>
         </div>
-      </main>
 
-      <div id="thinking-indicator" class="p-4 hidden bg-[#f0fdfa]">
-        <div class="flex items-center space-x-2">
-          <span class="text-2xl">🤖</span>
-          <div class="chat-bubble chat-bubble-model bg-white text-gray-800 p-3 rounded-lg max-w-lg relative border border-gray-200">
-            <div class="gemini-thinking-bar"></div>
-            <span class="text-xs text-gray-500 mt-1 block">กำลังวิเคราะห์และพิมพ์คำตอบ...</span>
-          </div>
+        <div id="scan-result-area" class="hidden p-3 bg-white rounded-xl border border-slate-200 space-y-2">
+          <!-- AI Vision Analysis Result -->
         </div>
       </div>
 
-      <footer class="bg-white p-3 shadow-inner border-t border-gray-200 m-0 w-full max-w-full z-10">
-        <div class="flex space-x-2">
-          <input id="user-input" type="text" placeholder="พิมพ์ชื่อยา อาการ หรือข้อสงสัย..." class="flex-1 p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#50b5a5] font-sans text-base">
-          <button id="send-btn" class="bg-[#50b5a5] hover:bg-[#2f8f80] text-white font-bold py-2 px-5 rounded-xl shadow-sm transition-colors">
-            ส่ง
-          </button>
-        </div>
+      <footer class="p-3 bg-white border-t border-slate-100 flex justify-end gap-2">
+        <button onclick="toggleScanModal(false)" class="px-4 py-2 text-slate-500 text-xs font-bold hover:bg-slate-100 rounded-lg">ปิด</button>
+        <button id="analyze-img-btn" onclick="analyzeDrugImage()" class="btn-primary px-5 py-2 text-xs" disabled>
+          ⚡ เริ่มวิเคราะห์ภาพ
+        </button>
       </footer>
     </div>
   </div>
 
-  <div id="health-modal-overlay" class="fixed inset-0 w-full h-full bg-black/60 z-[2000] hidden flex items-center justify-center p-4 backdrop-blur-sm">
-        <div class="bg-white rounded-2xl w-full max-w-lg shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
-            <header class="p-3 border-b border-gray-100 flex justify-between items-center bg-[#50b5a5]">
-                <div class="flex items-center gap-2 text-white font-bold text-lg">
-                    <span>🩺</span> ประเมินสุขภาพเบื้องต้น & BMI
-                </div>
-                <button id="close-health-modal" class="text-white/80 hover:text-white text-2xl leading-none">&times;</button>
-            </header>
-            
-            <div id="health-form-scroll-area" class="p-4 overflow-y-auto space-y-3 bg-slate-50">
-                <div class="grid grid-cols-4 gap-2">
-                    <div class="col-span-2 sm:col-span-1">
-                         <label class="health-form-label">เพศ</label>
-                         <select id="hf-gender" class="health-form-input">
-                            <option value="ชาย">ชาย</option>
-                            <option value="หญิง">หญิง</option>
-                        </select>
-                    </div>
-                    <div class="col-span-2 sm:col-span-1">
-                        <label class="health-form-label">อายุ (ปี)</label>
-                        <input type="number" id="hf-age" class="health-form-input" placeholder="30">
-                    </div>
-                    <div class="col-span-2 sm:col-span-1">
-                        <label class="health-form-label">น้ำหนัก (kg)</label>
-                        <input type="number" id="hf-weight" class="health-form-input" placeholder="60">
-                    </div>
-                    <div class="col-span-2 sm:col-span-1">
-                        <label class="health-form-label">ส่วนสูง (cm)</label>
-                        <input type="number" id="hf-height" class="health-form-input" placeholder="165">
-                    </div>
-                </div>
-
-                <div class="health-form-group">
-                    <label class="health-form-label">โรคประจำตัว (เลือกได้มากกว่า 1)</label>
-                    <div class="chip-group" id="disease-chips">
-                        <div class="chip-option selected" data-val="ไม่มี">ไม่มี</div>
-                        <div class="chip-option" data-val="ความดันโลหิตสูง">ความดันโลหิตสูง</div>
-                        <div class="chip-option" data-val="เบาหวาน">เบาหวาน</div>
-                        <div class="chip-option" data-val="ไขมันในเลือดสูง">ไขมันในเลือดสูง</div>
-                        <div class="chip-option" data-val="โรคหัวใจ">โรคหัวใจ</div>
-                        <div class="chip-option" data-val="หอบหืด">หอบหืด</div>
-                        <div class="chip-option" data-val="ไตเรื้อรัง">ไตเรื้อรัง</div>
-                    </div>
-                    <input type="text" id="hf-disease-other" class="health-form-input mt-2" placeholder="โรคประจำตัวอื่นๆ ระบุ...">
-                </div>
-
-                <div class="health-form-group">
-                    <label class="health-form-label text-red-600">ประวัติแพ้ยา / อาหาร (สำคัญมาก)</label>
-                    <input type="text" id="hf-allergy" class="health-form-input border-red-200 bg-red-50 focus:bg-white" placeholder="ระบุชื่อยาที่เคยแพ้ หรือพิมพ์ 'ไม่มี'">
-                </div>
-
-                <div class="health-form-group">
-                    <label class="health-form-label text-[#064e43] text-base">อาการที่ต้องการปรึกษา (ระบุรายละเอียด)</label>
-                    <textarea id="hf-symptoms" rows="4" class="health-form-input border-[#50b5a5] shadow-sm text-base" placeholder="เช่น มีไข้ต่ำๆ ปวดหัวขมับซ้ายมา 2 วัน กลืนอาหารแล้วเจ็บคอ..."></textarea>
-                </div>
-            </div>
-
-            <footer class="p-3 border-t border-gray-100 flex justify-end gap-3 bg-white">
-                <button id="cancel-health-btn" class="px-4 py-2 text-gray-500 hover:bg-gray-100 rounded-lg text-sm font-bold">ยกเลิก</button>
-                <button id="submit-health-btn" class="px-6 py-2 bg-[#50b5a5] hover:bg-[#2f8f80] text-white rounded-lg text-sm font-bold shadow-lg transition-all flex items-center gap-2">
-                    <span>⚡</span> วิเคราะห์อาการ
-                </button>
-            </footer>
+  <!-- MODAL: Health Check & BMI -->
+  <div id="health-modal-overlay" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm">
+    <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
+      <header class="p-3.5 bg-emerald-700 text-white flex justify-between items-center">
+        <div class="flex items-center gap-2 font-bold text-sm md:text-base">
+          <span>🩺</span> ประเมินสุขภาพเบื้องต้น & BMI
         </div>
-  </div>
+        <button onclick="toggleHealthModal(false)" class="text-white/80 hover:text-white text-2xl leading-none">&times;</button>
+      </header>
 
-  <div id="scan-modal-overlay" class="fixed inset-0 w-full h-full bg-black/60 z-[2000] hidden flex items-center justify-center p-4 backdrop-blur-sm">
-      <div class="bg-white rounded-2xl w-full max-w-lg shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
-          <header class="p-3 border-b border-gray-100 flex justify-between items-center bg-teal-600 text-white">
-              <div class="flex items-center gap-2 font-bold text-lg">
-                  <span>📷</span> สแกนภาพยา / ฉลากยา (AI Vision)
-              </div>
-              <button id="close-scan-modal" class="text-white/80 hover:text-white text-2xl leading-none">&times;</button>
-          </header>
-
-          <div class="p-5 overflow-y-auto space-y-4 bg-slate-50 text-center">
-              <p class="text-sm text-gray-600">ถ่ายภาพ หรือ อัปโหลดรูปแผงยา กล่องยา หรือฉลากยา เพื่อให้ AI ช่วยอ่านข้อมูล</p>
-
-              <!-- Image Preview / Drop Zone -->
-              <div id="scan-dropzone" class="border-2 border-dashed border-teal-300 bg-teal-50/50 rounded-xl p-6 cursor-pointer flex flex-col items-center justify-center hover:bg-teal-100/50 transition-all">
-                  <img id="scan-preview-img" class="max-h-56 rounded-lg shadow hidden mb-2" src="" alt="Preview">
-                  <div id="scan-placeholder" class="space-y-2">
-                      <span class="text-4xl block">💊</span>
-                      <span class="text-sm font-semibold text-teal-800 block">กดตรงนี้เพื่อเลือกรูปภาพ หรือถ่ายภาพ</span>
-                      <span class="text-xs text-gray-500 block">รองรับไฟล์ JPG, PNG, WEBP (ระบบจะย่อบีบอัดรูปภาพให้อัตโนมัติ)</span>
-                  </div>
-              </div>
-
-              <input type="file" id="scan-file-input" accept="image/*" capture="environment" class="hidden">
-
-              <div class="flex justify-center gap-3">
-                  <button id="select-file-btn" class="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg text-sm font-bold shadow-sm hover:bg-gray-50">📁 เลือกไฟล์</button>
-                  <button id="take-photo-btn" class="px-4 py-2 bg-teal-100 border border-teal-300 text-teal-800 rounded-lg text-sm font-bold shadow-sm hover:bg-teal-200">📷 ถ่ายรูปยา</button>
-              </div>
+      <div class="p-4 overflow-y-auto space-y-3 bg-slate-50 text-xs md:text-sm">
+        <div class="grid grid-cols-4 gap-2">
+          <div class="col-span-2 sm:col-span-1">
+            <label class="block font-bold text-slate-600 mb-1">เพศ</label>
+            <select id="hf-gender" class="w-full p-2 border border-slate-200 rounded-lg bg-white">
+              <option value="ชาย">ชาย</option>
+              <option value="หญิง">หญิง</option>
+            </select>
           </div>
-
-          <footer class="p-3 border-t border-gray-100 flex justify-end gap-3 bg-white">
-              <button id="cancel-scan-btn" class="px-4 py-2 text-gray-500 hover:bg-gray-100 rounded-lg text-sm font-bold">ยกเลิก</button>
-              <button id="submit-scan-btn" disabled class="px-6 py-2 bg-teal-600 hover:bg-teal-700 disabled:opacity-50 text-white rounded-lg text-sm font-bold shadow-lg transition-all flex items-center gap-2">
-                  <span>🔎</span> วิเคราะห์ภาพยา
-              </button>
-          </footer>
-      </div>
-  </div>
-
-  <div id="rights-modal-overlay" class="fixed inset-0 w-full h-full bg-black/60 z-[2000] hidden flex items-center justify-center p-4 backdrop-blur-sm">
-      <div class="bg-white rounded-2xl w-full max-w-lg shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
-          <header class="p-3 border-b border-gray-100 flex justify-between items-center bg-amber-500">
-              <div class="flex items-center gap-2 text-white font-bold text-lg">
-                  <span>💳</span> สิทธิรักษาฟรี (บัตรทอง/ประกันสังคม/ข้าราชการ)
-              </div>
-              <button id="close-rights-modal" class="text-white/80 hover:text-white text-2xl leading-none">&times;</button>
-          </header>
-          
-          <div id="rights-form-scroll-area" class="p-0 overflow-y-auto bg-white" style="max-height: 60vh;">
-              <div class="p-5 border-b border-gray-100 bg-amber-50">
-                  <h3 class="text-lg font-bold text-gray-800">สรุปสิทธิประโยชน์สุขภาพประจำปี 2569</h3>
-                  <p class="text-sm text-gray-600 mt-1">อัปเดตสิทธิรักษาฟรี ประกันสุขภาพถั่วหน้า และสิทธิทันตกรรม</p>
-                  <div class="flex items-center gap-3 mt-2">
-                      <span class="text-[10px] font-bold bg-green-100 text-green-700 px-2 py-0.5 rounded border border-green-200">AI Verified</span>
-                      <span class="text-[10px] text-gray-500" id="rights-update-date">ล่าสุด: --/--/--</span>
-                  </div>
-              </div>
-              
-              <div class="p-5 space-y-4 text-sm">
-                  <div class="group">
-                      <h4 class="font-bold text-[#064e43] mb-1">UCEP: เจ็บป่วยฉุกเฉินวิกฤต มีสิทธิทุกที่</h4>
-                      <p class="text-gray-600 leading-relaxed">เข้าโรงพยาบาลที่ใกล้ที่สุดฟรี 72 ชั่วโมงแรก ทั้งรัฐและเอกชน</p>
-                  </div>
-                  <div class="group">
-                      <h4 class="font-bold text-[#064e43] mb-1">30 บาทรักษาทุกที่ ด้วยบัตรประชาชนใบเดียว</h4>
-                      <p class="text-gray-600 leading-relaxed">ยื่นบัตรประชาชนรับบริการได้ทันที ณ หน่วยบริการปฐมภูมิที่ร่วมโครงการ</p>
-                  </div>
-                  <div class="group">
-                      <h4 class="font-bold text-[#064e43] mb-1">รับยาฟรีที่ร้านยาใกล้บ้าน (16 กลุ่มอาการเจ็บป่วยเล็กน้อย)</h4>
-                      <p class="text-gray-600 leading-relaxed">เช่น มีไข้ ปวดหัว ไอ เจ็บคอ ปวดท้อง ท้องเสีย ผื่นคัน ปรึกษาเภสัชกรรับยาฟรี</p>
-                  </div>
-                  <div class="group">
-                      <h4 class="font-bold text-[#064e43] mb-1">ทำฟันฟรีประจำปี</h4>
-                      <p class="text-gray-600 leading-relaxed">ถอนฟัน อุดฟัน ขูดหินปูน ผ่าฟันคุด ตามเงื่อนไขของแต่ละสิทธิรักษา</p>
-                  </div>
-              </div>
+          <div class="col-span-2 sm:col-span-1">
+            <label class="block font-bold text-slate-600 mb-1">อายุ (ปี)</label>
+            <input type="number" id="hf-age" placeholder="30" class="w-full p-2 border border-slate-200 rounded-lg bg-white">
           </div>
-
-          <footer class="p-3 border-t border-gray-100 flex justify-end gap-3 bg-white">
-              <button id="cancel-rights-btn" class="px-4 py-2 text-gray-500 hover:bg-gray-100 rounded-lg text-sm font-bold">ปิด</button>
-              <button id="submit-rights-btn" class="px-6 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-sm font-bold shadow-lg transition-all flex items-center gap-2">
-                  <span>🔄</span> อัปเดตสิทธิรักษาล่าสุดวันนี้
-              </button>
-          </footer>
-      </div>
-  </div>
-
-  <div id="result-modal-overlay" class="fixed inset-0 w-full h-full bg-black/70 z-[2050] hidden flex items-center justify-center p-4 backdrop-blur-sm">
-      <div class="bg-white rounded-2xl w-full max-w-2xl shadow-2xl flex flex-col max-h-[85vh] overflow-hidden">
-          <header class="p-4 border-b border-gray-100 flex justify-between items-center bg-white sticky top-0">
-              <div class="flex items-center gap-2 text-[#0f172a] font-bold text-xl">
-                  <span>🤖</span> ผลการวิเคราะห์ (AI)
-              </div>
-              <button id="close-result-modal" class="text-gray-400 hover:text-gray-600 text-3xl leading-none">&times;</button>
-          </header>
-          
-          <div id="result-content-area" class="p-6 overflow-y-auto bg-[#fffdf7] text-gray-800 text-base leading-relaxed result-markdown">
-              <div class="flex flex-col items-center justify-center py-10 space-y-4 text-gray-500">
-                   <div class="w-10 h-10 border-4 border-gray-200 border-t-[#50b5a5] rounded-full animate-spin"></div>
-                   <p>กำลังประมวลผลข้อมูล...</p>
-              </div>
+          <div class="col-span-2 sm:col-span-1">
+            <label class="block font-bold text-slate-600 mb-1">น้ำหนัก (kg)</label>
+            <input type="number" id="hf-weight" placeholder="60" class="w-full p-2 border border-slate-200 rounded-lg bg-white">
           </div>
+          <div class="col-span-2 sm:col-span-1">
+            <label class="block font-bold text-slate-600 mb-1">ส่วนสูง (cm)</label>
+            <input type="number" id="hf-height" placeholder="170" class="w-full p-2 border border-slate-200 rounded-lg bg-white">
+          </div>
+        </div>
 
-          <footer class="p-4 border-t border-gray-100 bg-gray-50 text-xs text-center text-gray-500">
-              คำเตือน: ข้อมูลจาก AI เป็นเพียงคำแนะนำเบื้องต้น ไม่สามารถแทนที่การวินิจฉัยโดยแพทย์หรือเภสัชกรได้
-          </footer>
+        <div>
+          <label class="block font-bold text-slate-600 mb-1">โรคประจำตัว</label>
+          <input type="text" id="hf-disease" placeholder="เช่น ความดัน, เบาหวาน, หอบหืด หรือ 'ไม่มี'" class="w-full p-2 border border-slate-200 rounded-lg bg-white">
+        </div>
+
+        <div>
+          <label class="block font-bold text-red-600 mb-1">ประวัติแพ้ยา / อาหาร (สำคัญ)</label>
+          <input type="text" id="hf-allergy" placeholder="ระบุชื่อยาที่แพ้ หรือ 'ไม่มี'" class="w-full p-2 border border-red-200 bg-red-50/50 rounded-lg">
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">อาการเจ็บป่วยที่ปรึกษา</label>
+          <textarea id="hf-symptoms" rows="3" placeholder="ระบุอาการอย่างละเอียด เช่น ปวดหัวข้างขวามา 2 วัน, มีไข้ต่ำๆ..." class="w-full p-2 border border-slate-300 rounded-lg bg-white"></textarea>
+        </div>
       </div>
+
+      <footer class="p-3 bg-white border-t border-slate-100 flex justify-end gap-2">
+        <button onclick="toggleHealthModal(false)" class="px-4 py-2 text-slate-500 text-xs font-bold hover:bg-slate-100 rounded-lg">ยกเลิก</button>
+        <button onclick="submitHealthAssessment()" class="btn-primary px-5 py-2 text-xs">⚡ วิเคราะห์อาการ</button>
+      </footer>
+    </div>
   </div>
+
+  <!-- MODAL: Rights Check -->
+  <div id="rights-modal-overlay" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm">
+    <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
+      <header class="p-3.5 bg-amber-600 text-white flex justify-between items-center">
+        <div class="flex items-center gap-2 font-bold text-sm md:text-base">
+          <span>💳</span> สิทธิรักษาฟรีประจำปี 2026
+        </div>
+        <button onclick="toggleRightsModal(false)" class="text-white/80 hover:text-white text-2xl leading-none">&times;</button>
+      </header>
+
+      <div class="p-4 overflow-y-auto space-y-3 text-xs md:text-sm bg-slate-50">
+        <div class="p-3 bg-amber-50 border border-amber-200 rounded-xl text-amber-900 space-y-1">
+          <h4 class="font-bold">✨ สิทธิบัตรทอง / ประกันสังคม / ข้าราชการ</h4>
+          <p>ครอบคลุมการรักษาโรคทั่วไป, ยารักษาโรคตามบัญชียาหลัก, ทันตกรรม, ตรวจสุขภาพประจำปี และรับยาที่ร้านยาใกล้บ้านฟรี 16 อาการ</p>
+        </div>
+        <p class="text-slate-500 text-center">กดปุ่มด้านล่างเพื่อให้อัลกอริทึม AI สรุปอัปเดตสิทธิรักษาฟรีล่าสุดให้คุณ</p>
+      </div>
+
+      <footer class="p-3 bg-white border-t border-slate-100 flex justify-end gap-2">
+        <button onclick="toggleRightsModal(false)" class="px-4 py-2 text-slate-500 text-xs font-bold hover:bg-slate-100 rounded-lg">ปิด</button>
+        <button onclick="submitRightsCheck()" class="px-5 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-bold shadow-sm transition-colors">
+          🔄 อัปเดตสิทธิรักษา AI
+        </button>
+      </footer>
+    </div>
+  </div>
+
+  <!-- MODAL: Shared Result Overlay -->
+  <div id="result-modal-overlay" class="fixed inset-0 bg-black/70 z-[60] hidden flex items-center justify-center p-4 backdrop-blur-sm">
+    <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
+      <header class="p-4 border-b border-slate-100 flex justify-between items-center bg-white sticky top-0">
+        <h3 class="font-bold text-base text-slate-800 flex items-center gap-2">
+          <span>🤖</span> ผลการวิเคราะห์ AI
+        </h3>
+        <button onclick="toggleResultModal(false)" class="text-slate-400 hover:text-slate-600 text-2xl leading-none">&times;</button>
+      </header>
+      <div id="result-content-area" class="p-5 overflow-y-auto space-y-3 text-slate-800 text-sm leading-relaxed markdown-body">
+        <!-- Content inserted dynamically -->
+      </div>
+      <footer class="p-3 bg-slate-50 border-t border-slate-100 text-center text-xs text-slate-400">
+        ข้อแนะนำจาก AI เป็นเพียงข้อมูลประกอบ ไม่สามารถทดแทนการวินิจฉัยจากแพทย์ได้
+      </footer>
+    </div>
+  </div>
+
+  <!-- ALWAYS-VISIBLE FIXED BOTTOM NAVIGATION BAR FOR MOBILE -->
+  <nav class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-200/90 z-40 px-3 py-2 flex justify-around items-center md:hidden shadow-[0_-4px_20px_rgba(0,0,0,0.08)]">
+    <button onclick="switchTab('drugs')" id="nav-btn-drugs" class="nav-tab-btn flex-1 py-1 flex flex-col items-center gap-1 text-teal-700 font-bold">
+      <span class="text-xl">💊</span>
+      <span class="text-[11px] tracking-tight">รายชื่อยา</span>
+    </button>
+    <button onclick="switchTab('chatbot')" id="nav-btn-chatbot" class="nav-tab-btn flex-1 py-1 flex flex-col items-center gap-1 text-slate-500">
+      <span class="text-xl">🤖</span>
+      <span class="text-[11px] tracking-tight">AI เภสัชกร</span>
+    </button>
+    <button onclick="switchTab('community')" id="nav-btn-community" class="nav-tab-btn flex-1 py-1 flex flex-col items-center gap-1 text-slate-500">
+      <span class="text-xl">👥</span>
+      <span class="text-[11px] tracking-tight">ชุมชน Q&A</span>
+    </button>
+  </nav>
 
 <script>
-/** ================= CONFIG & GLOBALS ================= **/
-const API_JSON_URL = 'https://raw.githubusercontent.com/tontakankeawpang321-glitch/krsitsdeeka/main/drugs.json';
+/** CONFIGURATION **/
 const API_URL = 'https://medic-scan.tontakankeawpang321.workers.dev';
+const DRUGS_JSON_URL = 'https://raw.githubusercontent.com/tontakankeawpang321-glitch/krsitsdeeka/main/drugs.json';
+const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbyGG_-_xDr_ymidtn4XJq5TRjAhvoPDpiJ_VuvNWlZgXnhlWKVjyuQ9QRg9CfNGSpMn/exec';
+
 const PAGE_SIZE = 12;
 
-let rawData = [];
-let viewData = [];
+let rawDrugs = [];
+let viewDrugs = [];
 let currentPage = 1;
-let selectedScanBase64 = null; // Full Data URL
-let selectedScanPureBase64 = null; // Clean Base64 without data:image/jpeg;base64,
-let selectedScanMimeType = 'image/jpeg';
+let selectedImageData = null;
 
-/** Helper: Safe Event Binding **/
-function safeAddListener(id, event, handler) {
-  const el = document.getElementById(id);
-  if (el) {
-    el.addEventListener(event, handler);
+// Local Community Posts Store
+let communityPosts = [
+  {
+    id: "p1",
+    author: "ภญ. สมสิริ",
+    category: "สอบถามการใช้ยา",
+    title: "ยาลดไข้พาราเซตามอล กินติดต่อกันได้กี่วัน?",
+    content: "การทานยาพาราเซตามอลไม่ควรทานติดต่อกันเกิน 5 วันโดยไม่พบแพทย์นะคะ และไม่ควรเกินวันละ 4,000 มิลลิกรัมเพื่อป้องกันพิษต่อตับค่ะ",
+    timestamp: "10 นาทีที่แล้ว",
+    replies: [
+      { id: "r1", author: "คนไข้ A", content: "ขอบคุณสำหรับข้อมูลครับผม!", timestamp: "5 นาทีที่แล้ว" }
+    ]
   }
+];
+
+/** INITIALIZATION **/
+window.addEventListener('DOMContentLoaded', () => {
+  initDrawer();
+  initChatbot();
+  initCommunity();
+  loadDrugsData();
+});
+
+/** DRAWER CONTROL **/
+function initDrawer() {
+  const openBtn = document.getElementById('open-drawer-btn');
+  const closeBtn = document.getElementById('close-drawer-btn');
+  const overlay = document.getElementById('drawer-overlay');
+
+  if (openBtn) openBtn.addEventListener('click', openDrawer);
+  if (closeBtn) closeBtn.addEventListener('click', closeDrawer);
+  if (overlay) overlay.addEventListener('click', closeDrawer);
 }
 
-/** Helper: HTML & Text Parsing **/
-function escapeHtml(str = '') {
-  return String(str).replace(/[&<>"']/g, c => ({
-    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-  }[c]));
+function openDrawer() {
+  document.getElementById('side-drawer').classList.remove('closed');
+  document.getElementById('drawer-overlay').classList.remove('hidden');
+}
+function closeDrawer() {
+  document.getElementById('side-drawer').classList.add('closed');
+  document.getElementById('drawer-overlay').classList.add('hidden');
 }
 
-function stripHtml(html = '') {
-  const tmp = document.createElement('div');
-  tmp.innerHTML = html;
-  return tmp.textContent || tmp.innerText || '';
-}
-
-/** Helper: Image Resize & Compression (Solves Payload Size Issues) **/
-function resizeAndCompressImage(file, maxWidth = 1024, maxHeight = 1024, quality = 0.82) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const img = new Image();
-      img.onload = () => {
-        let width = img.width;
-        let height = img.height;
-
-        if (width > maxWidth || height > maxHeight) {
-          if (width > height) {
-            height = Math.round((height * maxWidth) / width);
-            width = maxWidth;
-          } else {
-            width = Math.round((width * maxHeight) / height);
-            height = maxHeight;
-          }
-        }
-
-        const canvas = document.createElement('canvas');
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, width, height);
-
-        const mimeType = file.type || 'image/jpeg';
-        const dataUrl = canvas.toDataURL('image/jpeg', quality);
-        const pureBase64 = dataUrl.replace(/^data:image\/\w+;base64,/, '');
-
-        resolve({
-          dataUrl,
-          pureBase64,
-          mimeType: 'image/jpeg'
-        });
-      };
-      img.onerror = (err) => reject(new Error("ไม่สามารถโหลดรูปภาพได้"));
-      img.src = e.target.result;
-    };
-    reader.onerror = (err) => reject(new Error("ไม่สามารถอ่านไฟล์ได้"));
-    reader.readAsDataURL(file);
+/** TAB SWITCHING (Both Desktop & Mobile Sync) **/
+function switchTab(tabId) {
+  // Hide all contents
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  
+  // Mobile Nav Buttons Reset
+  document.querySelectorAll('.nav-tab-btn').forEach(el => {
+    el.classList.remove('text-teal-700', 'font-bold');
+    el.classList.add('text-slate-500');
   });
-}
 
-const CAT_TH_TO_KEY = {
-  'ยาแก้ปวด': 'analgesic',
-  'ยาลดไข้': 'antipyretic',
-  'ยาฆ่าเชื้อ': 'antibiotic',
-  'ยาแก้แพ้': 'antihistamine',
-  'ยาลดกรด/กระเพาะ': 'antacid',
-  'ยาแก้ไอ/ขับเสมหะ': 'cough',
-  'วิตามิน/อาหารเสริม': 'vitamin'
-};
+  // Desktop Nav Buttons Reset
+  document.querySelectorAll('.header-tab-btn').forEach(el => {
+    el.classList.remove('bg-white', 'text-teal-800', 'shadow-sm');
+    el.classList.add('text-slate-600');
+  });
 
-function normalizeDrug(x = {}) {
-  if (x.name || x.generic || x.category || x.contentHtml) {
-    return {
-      id: String(x.id || ''),
-      name: String(x.name || ''),
-      generic: String(x.generic || ''),
-      category: String(x.category || ''),
-      descHtml: String(x.contentHtml || ''),
-      caution: String(x.caution || ''),
-      sources: Array.isArray(x.sources) ? x.sources : String(x.sources || '').split(/[|,;]+/).map(s => s.trim()).filter(Boolean),
-      updatedAt: String(x.updatedAt || '')
-    };
+  // Show Active Tab
+  const activeTab = document.getElementById(`tab-${tabId}`);
+  if (activeTab) activeTab.classList.add('active');
+
+  // Activate Mobile Nav Button
+  const navBtn = document.getElementById(`nav-btn-${tabId}`);
+  if (navBtn) {
+    navBtn.classList.remove('text-slate-500');
+    navBtn.classList.add('text-teal-700', 'font-bold');
   }
-  const thaiName = x['ชื่อยา'];
-  const thaiCat = x['หมวด'];
-  const thaiDesc = x['รายละเอียดยาแบบพอเข้าใจ'];
-  const thaiCaution = x['คำเตือนคำแนะนำ'];
-  const thaiSrc = x['อ้างอิง url'];
-  const key = CAT_TH_TO_KEY[thaiCat] || (String(thaiCat || '').toLowerCase()) || '';
-  return {
-    id: String(x.id || ''),
-    name: String(thaiName || ''),
-    generic: '',
-    category: key,
-    descHtml: escapeHtml(String(thaiDesc || '')).replace(/\n/g, '<br>'),
-    caution: String(thaiCaution || ''),
-    sources: String(thaiSrc || '').split(/[|,;]+/).map(s => s.trim()).filter(Boolean),
-    updatedAt: ''
-  };
+
+  // Activate Desktop Header Tab Button
+  const headerBtn = document.getElementById(`header-tab-${tabId}`);
+  if (headerBtn) {
+    headerBtn.classList.remove('text-slate-600');
+    headerBtn.classList.add('bg-white', 'text-teal-800', 'shadow-sm');
+  }
+
+  if (tabId === 'community') fetchCommunityPosts();
 }
 
-/** ================= DRUG DATA & RENDER ================= **/
-async function loadDrugData() {
+/** DRUGS DATABASE & RENDER **/
+async function loadDrugsData() {
+  const grid = document.getElementById('grid');
+  grid.innerHTML = Array.from({length: 6}).map(() => `
+    <div class="drug-card">
+      <div class="skeleton h-5 w-3/4 rounded-lg"></div>
+      <div class="skeleton h-3 w-1/2 rounded-lg"></div>
+      <div class="skeleton h-16 rounded-xl"></div>
+    </div>
+  `).join('');
+
   try {
-    const res = await fetch(API_JSON_URL, { cache: 'no-store' });
-    if (!res.ok) throw new Error(`HTTP Error ${res.status}`);
+    const res = await fetch(DRUGS_JSON_URL);
     const json = await res.json();
-    const arr = Array.isArray(json) ? json : (Array.isArray(json.data) ? json.data : []);
-    rawData = arr.map(normalizeDrug).filter(d => d.name && d.name.trim() !== '');
-    viewData = rawData.slice(0);
+    const arr = Array.isArray(json) ? json : (json.data || []);
+    
+    rawDrugs = arr.map((x, idx) => ({
+      id: String(x.id || idx),
+      name: String(x.name || x['ชื่อยา'] || ''),
+      category: String(x.category || x['หมวด'] || ''),
+      desc: String(x.contentHtml || x['รายละเอียดยาแบบพอเข้าใจ'] || ''),
+      caution: String(x.caution || x['คำเตือนคำแนะนำ'] || '')
+    })).filter(d => d.name.trim() !== '');
+
+    viewDrugs = rawDrugs.slice(0);
     renderGrid();
   } catch (err) {
-    const gridEl = document.getElementById('grid');
-    if (gridEl) {
-      gridEl.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:24px; color:#dc2626">
-        เกิดข้อผิดพลาดในการโหลดข้อมูลยา: ${escapeHtml(err.message)}
-      </div>`;
-    }
-  }
-}
-
-function renderGrid() {
-  const gridEl = document.getElementById('grid');
-  if (!gridEl) return;
-
-  const total = viewData.length;
-  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
-  currentPage = Math.min(Math.max(1, currentPage), totalPages);
-  const start = (currentPage - 1) * PAGE_SIZE;
-  const items = viewData.slice(start, start + PAGE_SIZE);
-
-  if (!items.length) {
-    gridEl.innerHTML = `<div style="grid-column:1/-1; text-align:center; color:#475569; padding:32px">ไม่พบรายการยาที่ตรงกับเงื่อนไข</div>`;
-  } else {
-    gridEl.innerHTML = items.map(it => {
-      const catClass = it.category ? ` cat-${escapeHtml(it.category)}` : '';
-      const excerpt = stripHtml(it.descHtml || '').slice(0, 160);
-      return `
-        <article class="card${catClass}">
-          <h3 class="drug-name">💊 ${escapeHtml(it.name)}</h3>
-          ${it.generic ? `<div class="generic">(${escapeHtml(it.generic)})</div>` : ''}
-          <div class="meta">
-            ${it.category ? `<span class="pill">หมวด: ${escapeHtml(it.category)}</span>` : ''}
-          </div>
-          <div class="excerpt">${escapeHtml(excerpt)}${excerpt.length >= 160 ? '…' : ''}</div>
-          <button class="btn" onclick="openDrugDetailModal('${encodeURIComponent(it.id)}', '${encodeURIComponent(it.name)}')">รายละเอียด</button>
-        </article>
-      `;
-    }).join('');
+    grid.innerHTML = `<div class="col-span-12 text-center py-8 text-red-500 font-bold">ไม่สามารถโหลดข้อมูลยาได้ (${err.message})</div>`;
   }
 
-  const pageInfo = document.getElementById('pageInfo');
-  if (pageInfo) pageInfo.textContent = `หน้า ${currentPage} / ${totalPages}`;
-  
+  // Bind Search Listeners
+  const searchBtn = document.getElementById('searchBtn');
+  const clearBtn = document.getElementById('clearBtn');
+  const qInput = document.getElementById('q');
+  const catSelect = document.getElementById('cat');
+
+  if (searchBtn) searchBtn.addEventListener('click', applyFilter);
+  if (clearBtn) clearBtn.addEventListener('click', () => {
+    qInput.value = ''; catSelect.value = '';
+    viewDrugs = rawDrugs.slice(0);
+    currentPage = 1; renderGrid();
+  });
+  if (qInput) qInput.addEventListener('keydown', e => { if (e.key === 'Enter') applyFilter(); });
+  if (catSelect) catSelect.addEventListener('change', applyFilter);
+
   const prevBtn = document.getElementById('prevBtn');
-  if (prevBtn) prevBtn.disabled = currentPage <= 1;
-  
   const nextBtn = document.getElementById('nextBtn');
-  if (nextBtn) nextBtn.disabled = currentPage >= totalPages;
+  if (prevBtn) prevBtn.addEventListener('click', () => { currentPage = Math.max(1, currentPage - 1); renderGrid(); });
+  if (nextBtn) nextBtn.addEventListener('click', () => { currentPage++; renderGrid(); });
 }
 
-function applySearchFilters() {
-  const qEl = document.getElementById('q');
-  const catEl = document.getElementById('cat');
-  const q = qEl ? qEl.value.trim().toLowerCase() : '';
-  const category = catEl ? catEl.value.trim().toLowerCase() : '';
+function applyFilter() {
+  const q = document.getElementById('q').value.trim().toLowerCase();
+  const cat = document.getElementById('cat').value.trim().toLowerCase();
 
-  viewData = rawData.filter(it => {
-    const matchQ = !q || [it.name, it.generic, stripHtml(it.descHtml || ''), it.caution].join(' ').toLowerCase().includes(q);
-    const matchCat = !category || (String(it.category || '').toLowerCase() === category);
+  viewDrugs = rawDrugs.filter(d => {
+    const matchQ = !q || d.name.toLowerCase().includes(q) || d.desc.toLowerCase().includes(q);
+    const matchCat = !cat || d.category.toLowerCase().includes(cat);
     return matchQ && matchCat;
   });
 
@@ -724,543 +635,431 @@ function applySearchFilters() {
   renderGrid();
 }
 
-/** ================= MODALS & BODY LOCK ================= **/
-let savedScrollY = 0;
+function renderGrid() {
+  const grid = document.getElementById('grid');
+  const totalPages = Math.max(1, Math.ceil(viewDrugs.length / PAGE_SIZE));
+  currentPage = Math.min(Math.max(1, currentPage), totalPages);
 
-function lockBody() {
-  if (document.body.classList.contains('no-scroll')) return;
-  savedScrollY = window.scrollY || document.documentElement.scrollTop;
-  document.body.classList.add('no-scroll');
-  document.body.style.position = 'fixed';
-  document.body.style.top = `-${savedScrollY}px`;
-  document.body.style.width = '100%';
-}
+  const start = (currentPage - 1) * PAGE_SIZE;
+  const currentItems = viewDrugs.slice(start, start + PAGE_SIZE);
 
-function unlockBody() {
-  document.body.classList.remove('no-scroll');
-  document.body.style.position = '';
-  document.body.style.top = '';
-  document.body.style.width = '';
-  window.scrollTo(0, savedScrollY);
-}
-
-function checkAndUnlockBody() {
-  const drugModal = document.getElementById('modalBackdrop');
-  const healthModal = document.getElementById('health-modal-overlay');
-  const rightsModal = document.getElementById('rights-modal-overlay');
-  const resultModal = document.getElementById('result-modal-overlay');
-  const scanModal = document.getElementById('scan-modal-overlay');
-
-  const isAnyOpen = (drugModal && drugModal.classList.contains('show')) ||
-                    (healthModal && !healthModal.classList.contains('hidden')) ||
-                    (rightsModal && !rightsModal.classList.contains('hidden')) ||
-                    (resultModal && !resultModal.classList.contains('hidden')) ||
-                    (scanModal && !scanModal.classList.contains('hidden'));
-
-  if (!isAnyOpen) unlockBody();
-}
-
-function openDrugDetailModal(encodedId, encodedName) {
-  const id = decodeURIComponent(encodedId || '');
-  const name = decodeURIComponent(encodedName || '');
-  const item = rawData.find(x => (x.id && x.id === id) || (x.name === name)) || {};
-
-  const mTitle = document.getElementById('mTitle');
-  const mMeta = document.getElementById('mMeta');
-  const mContent = document.getElementById('mContent');
-  const mSources = document.getElementById('mSources');
-
-  if (mTitle) mTitle.textContent = item.name || '(ไม่มีชื่อ)';
-  if (mMeta) {
-    mMeta.innerHTML = `
-      ${item.category ? `<span class="pill">หมวด: ${escapeHtml(item.category)}</span>` : ''}
-      ${item.caution ? `<span class="pill" style="border-color:#fca5a5; background:#fff1f2; color:#991b1b;">คำเตือน: ${escapeHtml(item.caution)}</span>` : ''}
-    `;
-  }
-  if (mContent) mContent.innerHTML = item.descHtml || '';
-  if (mSources) {
-    const srcs = (item.sources || []).map(s => `<a href="${escapeHtml(s)}" target="_blank" rel="noopener">${escapeHtml(s)}</a>`).join('<br>');
-    mSources.innerHTML = srcs ? `<strong>แหล่งอ้างอิง:</strong><br>${srcs}` : '';
+  if (!currentItems.length) {
+    grid.innerHTML = `<div class="col-span-12 text-center py-12 text-slate-400 font-semibold">ไม่พบข้อมูลยาตามเงื่อนไขที่ค้นหา</div>`;
+  } else {
+    grid.innerHTML = currentItems.map(item => `
+      <article class="drug-card">
+        <div class="flex justify-between items-start">
+          <h3 class="font-bold text-base text-teal-900">💊 ${escapeHtml(item.name)}</h3>
+          <span class="text-[10px] bg-teal-50 text-teal-700 border border-teal-200 px-2 py-0.5 rounded-full font-bold">${escapeHtml(item.category || 'ทั่วไป')}</span>
+        </div>
+        <p class="text-xs text-slate-600 line-clamp-3">${stripHtml(item.desc)}</p>
+        <button onclick="openDrugModal('${encodeURIComponent(item.id)}')" class="mt-auto py-2 bg-teal-50 hover:bg-teal-100 text-teal-800 font-bold rounded-xl text-xs transition-colors">
+          ดูรายละเอียด
+        </button>
+      </article>
+    `).join('');
   }
 
-  const modalBackdrop = document.getElementById('modalBackdrop');
-  if (modalBackdrop) modalBackdrop.classList.add('show');
-  lockBody();
+  document.getElementById('pageInfo').textContent = `หน้า ${currentPage} / ${totalPages}`;
+  document.getElementById('prevBtn').disabled = currentPage <= 1;
+  document.getElementById('nextBtn').disabled = currentPage >= totalPages;
 }
 
-function closeDrugDetailModal() {
-  const modalBackdrop = document.getElementById('modalBackdrop');
-  if (modalBackdrop) modalBackdrop.classList.remove('show');
-  checkAndUnlockBody();
+function openDrugModal(encodedId) {
+  const id = decodeURIComponent(encodedId);
+  const item = rawDrugs.find(d => d.id === id);
+  if (!item) return;
+
+  document.getElementById('mTitle').textContent = `💊 ${item.name}`;
+  document.getElementById('mMeta').innerHTML = `
+    <span class="px-2.5 py-1 bg-teal-100 text-teal-800 rounded-lg text-xs font-bold">หมวด: ${escapeHtml(item.category || 'ทั่วไป')}</span>
+    ${item.caution ? `<span class="px-2.5 py-1 bg-red-100 text-red-800 rounded-lg text-xs font-bold">⚠️ ${escapeHtml(item.caution)}</span>` : ''}
+  `;
+  document.getElementById('mContent').innerHTML = item.desc || '<p>ไม่มีข้อมูลอธิบายเพิ่มเติม</p>';
+  document.getElementById('modalBackdrop').classList.remove('hidden');
 }
 
-/** ================= AI API CALL (WORKER & VISION) ================= **/
-const SYSTEM_PROMPT = {
-  role: "user",
-  parts: [{ text: "คุณคือ AI เภสัชกร ให้ข้อมูลยา สุขภาพ และสิทธิการรักษาเชิงความรู้ด้วยภาษาไทยเข้าใจง่าย ไม่วินิจฉัยโรคทางการแพทย์" }]
-};
-const SYSTEM_ACK = {
-  role: "model",
-  parts: [{ text: "รับทราบครับ ผมคือ AI เภสัชกร พร้อมให้บริการครับ" }]
-};
+function closeModal() {
+  document.getElementById('modalBackdrop').classList.add('hidden');
+}
 
-let chatHistory = [SYSTEM_PROMPT, SYSTEM_ACK];
-
-async function callAIBackend(message, history = [], imageObj = null) {
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 60000);
-
+/** STREAMING_CHUNK:AI Service helper function... **/
+async function callAI(message, imageObj = null, history = []) {
   try {
-    // Construct universal payload
-    const payload = { 
-      message, 
-      history 
-    };
-
-    if (imageObj) {
-      // Support multiple worker formats for maximum compatibility
-      payload.image = imageObj.dataUrl || imageObj.pureBase64;
-      payload.imageBase64 = imageObj.pureBase64;
-      payload.mimeType = imageObj.mimeType || 'image/jpeg';
-      payload.imageData = {
-        mimeType: imageObj.mimeType || 'image/jpeg',
-        data: imageObj.pureBase64
-      };
-    }
+    const payload = { message, history };
+    if (imageObj) payload.image = imageObj;
 
     const res = await fetch(API_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-      signal: controller.signal
+      body: JSON.stringify(payload)
     });
 
-    if (!res.ok) throw new Error(`HTTP error ${res.status}`);
-    const json = await res.json();
-    return json.reply || json.text || "ขออภัย ไม่พบคำตอบจากระบบ AI";
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    return data.reply || "ไม่สามารถดึงข้อมูลได้ในขณะนี้";
   } catch (err) {
-    console.error("AI Call Error:", err);
-    return "เกิดข้อผิดพลาดในการเชื่อมต่อ AI: " + err.message;
-  } finally {
-    clearTimeout(timeout);
+    return "เกิดข้อผิดพลาดในการเชื่อมต่อระบบ AI: " + err.message;
   }
 }
 
-/** ================= CHATBOT LOGIC ================= **/
-function addChatBubble(message, isUser = true) {
-  const chatHistoryEl = document.getElementById('chat-history');
-  if (!chatHistoryEl) return;
+/** CHATBOT LOGIC **/
+let chatHistory = [];
+function initChatbot() {
+  const sendBtn = document.getElementById('send-btn');
+  const input = document.getElementById('user-input');
+  const newChatBtn = document.getElementById('new-chat-btn');
 
-  const bubbleType = isUser ? 'user' : 'model';
-  const icon = isUser ? '👤' : '🤖';
-  const bgClass = isUser ? 'bg-[#50b5a5] text-white' : 'bg-white text-gray-800 border border-gray-200';
-
-  const wrap = document.createElement('div');
-  wrap.className = `flex items-start space-x-2 ${isUser ? 'flex-row-reverse space-x-reverse' : ''}`;
-
-  const bubble = document.createElement('div');
-  bubble.className = `chat-bubble chat-bubble-${bubbleType} ${bgClass} p-3 rounded-lg max-w-lg relative shadow-sm`;
-  bubble.innerHTML = `<p>${message.replace(/\n/g, '<br>')}</p>`;
-
-  wrap.innerHTML = `<span class="text-2xl">${icon}</span>`;
-  wrap.appendChild(bubble);
-
-  chatHistoryEl.appendChild(wrap);
-  chatHistoryEl.scrollTop = chatHistoryEl.scrollHeight;
-}
-
-function setThinkingState(on) {
-  const thinkingEl = document.getElementById('thinking-indicator');
-  const chatHistoryEl = document.getElementById('chat-history');
-  if (thinkingEl) thinkingEl.classList.toggle('hidden', !on);
-  if (on && chatHistoryEl) chatHistoryEl.scrollTop = chatHistoryEl.scrollHeight;
+  if (sendBtn) sendBtn.addEventListener('click', handleChatSend);
+  if (input) input.addEventListener('keydown', e => { if (e.key === 'Enter') handleChatSend(); });
+  if (newChatBtn) newChatBtn.addEventListener('click', () => {
+    chatHistory = [];
+    document.getElementById('chat-history').innerHTML = `
+      <div class="flex items-start gap-2.5">
+        <span class="text-2xl">🤖</span>
+        <div class="chat-bubble-model p-3.5 max-w-[85%] shadow-sm text-sm leading-relaxed">
+          สวัสดีครับ ผมคือ AI ผู้ช่วยเภสัชกร สอบถามข้อมูลตัวยา สรรพคุณ ข้อควรระวัง หรือคำแนะนำอาการเจ็บป่วยเบื้องต้นได้เลยครับ!
+        </div>
+      </div>`;
+  });
 }
 
 async function handleChatSend() {
-  const inputEl = document.getElementById('user-input');
-  if (!inputEl) return;
-  const message = inputEl.value.trim();
-  if (!message) return;
+  const input = document.getElementById('user-input');
+  const text = input.value.trim();
+  if (!text) return;
 
-  addChatBubble(message, true);
-  inputEl.value = '';
-  setThinkingState(true);
+  appendChatBubble(text, true);
+  input.value = '';
 
-  chatHistory.push({ role: "user", parts: [{ text: message }] });
-  let sendHist = chatHistory;
-  if (chatHistory.length > 10) {
-    sendHist = [chatHistory[0], chatHistory[1], ...chatHistory.slice(-8)];
-  }
+  const thinking = document.getElementById('thinking-indicator');
+  thinking.classList.remove('hidden');
 
-  const reply = await callAIBackend(message, sendHist);
-  chatHistory.push({ role: "model", parts: [{ text: reply }] });
+  chatHistory.push({ role: 'user', parts: [{ text }] });
+  const aiReply = await callAI(text, null, chatHistory);
+  chatHistory.push({ role: 'model', parts: [{ text: aiReply }] });
 
-  setThinkingState(false);
-  if (reply) addChatBubble(reply, false);
+  thinking.classList.add('hidden');
+  appendChatBubble(aiReply, false);
 }
 
-/** ================= DRUG IMAGE SCANNER ================= **/
+function appendChatBubble(msg, isUser) {
+  const container = document.getElementById('chat-history');
+  const wrap = document.createElement('div');
+  wrap.className = `flex items-start gap-2.5 ${isUser ? 'flex-row-reverse' : ''}`;
+  
+  wrap.innerHTML = `
+    <span class="text-xl">${isUser ? '👤' : '🤖'}</span>
+    <div class="${isUser ? 'chat-bubble-user' : 'chat-bubble-model'} p-3.5 max-w-[85%] shadow-sm text-sm leading-relaxed">
+      ${isUser ? escapeHtml(msg) : marked.parse(msg)}
+    </div>
+  `;
+  container.appendChild(wrap);
+  container.scrollTop = container.scrollHeight;
+}
+
+/** STREAMING_CHUNK:Image Vision Scanner... **/
 function toggleScanModal(show) {
-  const overlay = document.getElementById('scan-modal-overlay');
-  if (!overlay) return;
-  if (show) {
-    overlay.classList.remove('hidden');
-    lockBody();
-  } else {
-    overlay.classList.add('hidden');
-    checkAndUnlockBody();
-  }
+  document.getElementById('scan-modal-overlay').classList.toggle('hidden', !show);
 }
 
-async function handleFileSelect(file) {
+function handleImageSelect(e) {
+  const file = e.target.files[0];
   if (!file) return;
 
-  const previewImg = document.getElementById('scan-preview-img');
-  const placeholder = document.getElementById('scan-placeholder');
-  const submitBtn = document.getElementById('submit-scan-btn');
+  const reader = new FileReader();
+  reader.onload = (evt) => {
+    const img = new Image();
+    img.onload = () => {
+      // Compress image client side
+      const canvas = document.createElement('canvas');
+      let width = img.width;
+      let height = img.height;
+      const MAX_SIZE = 1024;
 
-  if (placeholder) {
-    placeholder.innerHTML = `<span class="text-sm font-semibold text-teal-800">⏳ กำลังย่อและประมวลผลรูปภาพ...</span>`;
-  }
+      if (width > height && width > MAX_SIZE) {
+        height *= MAX_SIZE / width;
+        width = MAX_SIZE;
+      } else if (height > MAX_SIZE) {
+        width *= MAX_SIZE / height;
+        height = MAX_SIZE;
+      }
 
-  try {
-    // Compress and resize image client-side to fix large camera file issues
-    const compressed = await resizeAndCompressImage(file, 1024, 1024, 0.82);
-    selectedScanBase64 = compressed.dataUrl;
-    selectedScanPureBase64 = compressed.pureBase64;
-    selectedScanMimeType = compressed.mimeType;
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, width, height);
 
-    if (previewImg) {
-      previewImg.src = selectedScanBase64;
-      previewImg.classList.remove('hidden');
-    }
-    if (placeholder) placeholder.classList.add('hidden');
-    if (submitBtn) submitBtn.disabled = false;
-  } catch (err) {
-    alert("ไม่สามารถประมวลผลรูปภาพนี้ได้: " + err.message);
-    if (placeholder) {
-      placeholder.innerHTML = `
-        <span class="text-4xl block">💊</span>
-        <span class="text-sm font-semibold text-teal-800 block">กดตรงนี้เพื่อเลือกรูปภาพ หรือถ่ายภาพ</span>`;
-    }
-  }
+      const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.85);
+      const pureBase64 = compressedDataUrl.split(',')[1];
+
+      selectedImageData = {
+        pureBase64: pureBase64,
+        mimeType: 'image/jpeg',
+        dataURL: compressedDataUrl
+      };
+
+      document.getElementById('image-preview').src = compressedDataUrl;
+      document.getElementById('preview-container').classList.remove('hidden');
+      document.getElementById('upload-placeholder').classList.add('hidden');
+      document.getElementById('analyze-img-btn').disabled = false;
+    };
+    img.src = evt.target.result;
+  };
+  reader.readAsDataURL(file);
 }
 
-async function submitScanImage() {
-  if (!selectedScanBase64 || !selectedScanPureBase64) return;
+async function analyzeDrugImage() {
+  if (!selectedImageData) return;
 
-  toggleScanModal(false);
-  
-  const resultModal = document.getElementById('result-modal-overlay');
-  const contentArea = document.getElementById('result-content-area');
-  if (resultModal) resultModal.classList.remove('hidden');
-  lockBody();
-
-  if (contentArea) {
-    contentArea.innerHTML = `
-      <div class="flex flex-col items-center justify-center py-10 space-y-4 text-gray-500">
-           <div class="w-10 h-10 border-4 border-gray-200 border-t-teal-600 rounded-full animate-spin"></div>
-           <p class="font-bold text-teal-700">AI Vision กำลังวิเคราะห์ตัวยาและสแกนฉลากจากรูปภาพ...</p>
-      </div>`;
-  }
+  const resArea = document.getElementById('scan-result-area');
+  resArea.classList.remove('hidden');
+  resArea.innerHTML = `<div class="text-center py-4 text-teal-700 font-bold animate-pulse">กำลังอ่านข้อมูลจากรูปถ่ายและวิเคราะห์ด้วย AI...</div>`;
 
   const prompt = `
-  คุณคือ AI เภสัชกรผู้เชี่ยวชาญ กรุณาอ่านและวิเคราะห์รูปภาพยานี้:
-  1. ระบุชื่อยาชัดเจน (ชื่อการค้า / ชื่อสามัญทางยา) บรรทัดแรก
-  2. สรรพคุณของยาและกลุ่มยา
-  3. ขนาดบรรจุ / ขนาดยา (ถ้ามองเห็นบนฉลาก)
-  4. วิธีการทานยาและคำแนะนำการใช้
-  5. ข้อควรระวังและคำเตือนที่สำคัญ
-  
-  หากอ่านชื่อยาได้ ให้เขียนชื่อยาภาษาไทย/อังกฤษไว้บรรทัดแรกสุดของคำตอบอย่างชัดเจน
+  ช่วยอ่านและวิเคราะห์ภาพถ่ายยาต่อไปนี้:
+  1. ชื่อยา (ยี่ห้อ / ชื่อสามัญ)
+  2. สรรพคุณและการรักษา
+  3. ขนาดและวิธีรับประทาน
+  4. คำเตือนและข้อควรระวังสำคัญ
   `;
 
-  try {
-    const imgObj = {
-      dataUrl: selectedScanBase64,
-      pureBase64: selectedScanPureBase64,
-      mimeType: selectedScanMimeType
-    };
-
-    const aiText = await callAIBackend(prompt, [], imgObj);
-    if (contentArea) contentArea.innerHTML = marked.parse(aiText);
-
-    // Auto-populate search field if drug name is recognized
-    const firstLine = aiText.split('\n')[0] || '';
-    if (firstLine.length < 60) {
-      const cleanName = firstLine.replace(/[*#]/g, '').trim();
-      const qInput = document.getElementById('q');
-      if (qInput && cleanName) {
-        qInput.value = cleanName;
-        applySearchFilters();
-      }
-    }
-  } catch (err) {
-    if (contentArea) {
-      contentArea.innerHTML = `<div class="text-red-600 text-center py-8">เกิดข้อผิดพลาดในการวิเคราะห์ภาพ: ${escapeHtml(err.message)}</div>`;
-    }
-  }
+  const aiText = await callAI(prompt, selectedImageData);
+  resArea.innerHTML = `<div class="markdown-body">${marked.parse(aiText)}</div>`;
 }
 
-/** ================= HEALTH CHECK & RIGHTS ================= **/
-function toggleHealthModal(show) {
-  const el = document.getElementById('health-modal-overlay');
-  if (!el) return;
-  if (show) {
-    el.classList.remove('hidden');
-    lockBody();
-  } else {
-    el.classList.add('hidden');
-    checkAndUnlockBody();
-  }
-}
+/** HEALTH & RIGHTS MODALS **/
+function toggleHealthModal(show) { document.getElementById('health-modal-overlay').classList.toggle('hidden', !show); }
+function toggleRightsModal(show) { document.getElementById('rights-modal-overlay').classList.toggle('hidden', !show); }
+function toggleResultModal(show) { document.getElementById('result-modal-overlay').classList.toggle('hidden', !show); }
 
-function toggleRightsModal(show) {
-  const el = document.getElementById('rights-modal-overlay');
-  if (!el) return;
-  if (show) {
-    el.classList.remove('hidden');
-    lockBody();
-  } else {
-    el.classList.add('hidden');
-    checkAndUnlockBody();
-  }
-}
-
-function toggleResultModal(show) {
-  const el = document.getElementById('result-modal-overlay');
-  if (!el) return;
-  if (show) {
-    el.classList.remove('hidden');
-    lockBody();
-  } else {
-    el.classList.add('hidden');
-    checkAndUnlockBody();
-  }
-}
-
-async function handleHealthSubmit() {
-  const age = document.getElementById('hf-age')?.value.trim() || '-';
-  const gender = document.getElementById('hf-gender')?.value || 'ชาย';
-  const weight = document.getElementById('hf-weight')?.value.trim() || '-';
-  const height = document.getElementById('hf-height')?.value.trim() || '-';
-  const allergy = document.getElementById('hf-allergy')?.value.trim() || 'ไม่มี';
-  const symptoms = document.getElementById('hf-symptoms')?.value.trim();
-
-  let diseases = Array.from(document.querySelectorAll('.chip-option.selected')).map(c => c.getAttribute('data-val'));
-  const otherDisease = document.getElementById('hf-disease-other')?.value.trim();
-  if (otherDisease) diseases.push(otherDisease);
-  if (!diseases.length) diseases = ['ไม่มี'];
+async function submitHealthAssessment() {
+  const gender = document.getElementById('hf-gender').value;
+  const age = document.getElementById('hf-age').value || '-';
+  const weight = parseFloat(document.getElementById('hf-weight').value) || 0;
+  const height = parseFloat(document.getElementById('hf-height').value) || 0;
+  const disease = document.getElementById('hf-disease').value || 'ไม่มี';
+  const allergy = document.getElementById('hf-allergy').value || 'ไม่มี';
+  const symptoms = document.getElementById('hf-symptoms').value.trim();
 
   if (!symptoms) {
-    alert("กรุณาระบุอาการที่ต้องการปรึกษา");
+    document.getElementById('hf-symptoms').focus();
+    document.getElementById('hf-symptoms').classList.add('border-red-500');
     return;
+  }
+  document.getElementById('hf-symptoms').classList.remove('border-red-500');
+
+  let bmiStr = "";
+  if (weight > 0 && height > 0) {
+    const bmi = (weight / ((height/100) ** 2)).toFixed(1);
+    bmiStr = `\n- BMI: ${bmi}`;
   }
 
   toggleHealthModal(false);
   toggleResultModal(true);
 
-  const contentArea = document.getElementById('result-content-area');
-  if (contentArea) {
-    contentArea.innerHTML = `
-      <div class="flex flex-col items-center justify-center py-10 space-y-4 text-gray-500">
-           <div class="w-10 h-10 border-4 border-gray-200 border-t-[#50b5a5] rounded-full animate-spin"></div>
-           <p>AI กำลังวิเคราะห์อาการและประเมินสุขภาพ...</p>
-      </div>`;
-  }
-
-  let bmiInfo = "";
-  if (weight !== '-' && height !== '-') {
-    const w = parseFloat(weight);
-    const h = parseFloat(height) / 100;
-    if (w > 0 && h > 0) {
-      const bmi = (w / (h * h)).toFixed(1);
-      bmiInfo = `\n- ค่า BMI: ${bmi}`;
-    }
-  }
+  const resContent = document.getElementById('result-content-area');
+  resContent.innerHTML = `<div class="text-center py-8 text-teal-700 font-bold animate-pulse">กำลังวิเคราะห์ข้อมูลสุขภาพและคำนวณ BMI...</div>`;
 
   const prompt = `
-  วิเคราะห์อาการผู้ป่วยเบื้องต้น:
-  - เพศ: ${gender}, อายุ: ${age} ปี, น้ำหนัก: ${weight} kg, ส่วนสูง: ${height} cm ${bmiInfo}
-  - โรคประจำตัว: ${diseases.join(', ')}
+  ข้อมูลสุขภาพผู้ป่วย:
+  - เพศ: ${gender}, อายุ: ${age} ปี${bmiStr}
+  - โรคประจำตัว: ${disease}
   - ประวัติแพ้ยา: ${allergy}
-  - อาการที่เล่า: "${symptoms}"
+  - อาการป่วยที่พบ: "${symptoms}"
 
-  โปรดสรุปสั้นๆ:
-  1. ประเมินอาการและความเสี่ยงเบื้องต้น
-  2. คำแนะนำการดูแลตัวเอง
-  3. ยาสามัญประจำบ้านที่อาจช่วยได้ (หากไม่มีข้อห้าม)
-  4. สัญญาณเตือนที่ต้องรีบไปพบแพทย์
+  โปรดอธิบาย:
+  1. ประเมินดัชนีมวลกาย BMI (ถ้ามีข้อมูล)
+  2. การประเมินสาเหตุเบื้องต้น
+  3. คำแนะนำการดูแลตนเองและยาสามัญที่อาจใช้ได้
+  4. สัญญาณเตือนอันตรายที่ควรไปโรงพยาบาลทันที
   `;
 
-  try {
-    const aiReply = await callAIBackend(prompt);
-    if (contentArea) contentArea.innerHTML = marked.parse(aiReply);
-  } catch (err) {
-    if (contentArea) contentArea.innerHTML = `<div class="text-red-600 text-center py-6">${escapeHtml(err.message)}</div>`;
-  }
+  const result = await callAI(prompt);
+  resContent.innerHTML = marked.parse(result);
 }
 
-async function handleRightsSubmit() {
-  const lastUpdate = localStorage.getItem('rightsLastUpdate');
-  const cachedResult = localStorage.getItem('rightsResult');
-  const ONE_DAY = 24 * 60 * 60 * 1000;
-
-  if (lastUpdate && cachedResult && (Date.now() - parseInt(lastUpdate) < ONE_DAY)) {
-    toggleRightsModal(false);
-    toggleResultModal(true);
-    const contentArea = document.getElementById('result-content-area');
-    if (contentArea) {
-      contentArea.innerHTML = `
-        <div class="p-3 mb-4 bg-green-50 text-green-800 text-sm rounded-lg border border-green-200">
-            ✅ <strong>ข้อมูลอัปเดตของวันนี้</strong> (แคชระบบ 24 ชม.)
-        </div>
-        ${marked.parse(cachedResult)}
-      `;
-    }
-    return;
-  }
-
+async function submitRightsCheck() {
   toggleRightsModal(false);
   toggleResultModal(true);
 
-  const contentArea = document.getElementById('result-content-area');
-  if (contentArea) {
-    contentArea.innerHTML = `
-      <div class="flex flex-col items-center justify-center py-10 space-y-4 text-gray-500">
-           <div class="w-10 h-10 border-4 border-gray-200 border-t-amber-500 rounded-full animate-spin"></div>
-           <p>AI กำลังค้นหาข้อมูลสิทธิรักษาฟรีล่าสุดปี 2569...</p>
-      </div>`;
-  }
+  const resContent = document.getElementById('result-content-area');
+  resContent.innerHTML = `<div class="text-center py-8 text-amber-600 font-bold animate-pulse">กำลังดึงข้อมูลสิทธิรักษาพยาบาลล่าสุดประจำปี 2026...</div>`;
 
   const prompt = `
-  สรุปสิทธิประโยชน์การรักษาพยาบาลฟรีประจำปีล่าสุด (บัตรทอง 30 บาท / ประกันสังคม / ข้าราชการ):
-  1. สิทธิรักษาพยาบาลทั่วไปและอุบัติเหตุฉุกเฉิน UCEP
-  2. สิทธิทันตกรรมประจำปี
-  3. สิทธิรับยาฟรีที่ร้านยาใกล้บ้าน
-  4. สิทธิคัดกรองโรคและวัคซีนฟรี
-  5. ขั้นตอนการใช้สิทธิด้วยบัตรประชาชนใบเดียว
+  สรุปสิทธิประโยชน์รักษาพยาบาลฟรีประจำปี 2026 (บัตรทอง 30 บาท, ประกันสังคม, ข้าราชการ):
+  1. บริการรักษาโรคทั่วไปและการรับยาฟรีที่ร้านยาใกล้บ้าน
+  2. สิทธิทันตกรรม ตรวจสุขภาพ และวัคซีน
+  3. สิทธิการฟอกไต ล้างไต และโรคค่าใช้จ่ายสูง
+  4. วิธีการใช้สิทธิด้วยบัตรประชาชนใบเดียว
   `;
 
+  const result = await callAI(prompt);
+  resContent.innerHTML = marked.parse(result);
+}
+
+/** STREAMING_CHUNK:Community Forum & GAS Sync logic... **/
+function initCommunity() {
+  const postBtn = document.getElementById('submit-post-btn');
+  if (postBtn) postBtn.addEventListener('click', handleCreatePost);
+}
+
+async function fetchCommunityPosts() {
+  if (GAS_API_URL) {
+    try {
+      const res = await fetch(GAS_API_URL);
+      if (res.ok) {
+        const posts = await res.json();
+        if (Array.isArray(posts) && posts.length) {
+          communityPosts = posts;
+        }
+      }
+    } catch (e) {
+      console.warn("GAS Fetch failed, using local posts:", e);
+    }
+  }
+  renderCommunityPosts();
+}
+
+function renderCommunityPosts() {
+  const container = document.getElementById('posts-container');
+  if (!communityPosts.length) {
+    container.innerHTML = `<div class="bg-white p-6 rounded-2xl text-center text-slate-400">ยังไม่มีโพสต์ในชุมชน เป็นคนแรกที่โพสต์ถามเลย!</div>`;
+    return;
+  }
+
+  container.innerHTML = communityPosts.map(post => `
+    <div class="bg-white p-4.5 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+      <div class="flex justify-between items-start">
+        <div class="flex items-center gap-2">
+          <span class="w-8 h-8 rounded-full bg-teal-100 text-teal-800 font-bold flex items-center justify-center text-xs">
+            ${escapeHtml(post.author ? post.author[0] : 'U')}
+          </span>
+          <div>
+            <h4 class="font-bold text-xs text-slate-800">${escapeHtml(post.author || 'สมาชิกทั่วไป')}</h4>
+            <span class="text-[10px] text-slate-400">${escapeHtml(post.timestamp || 'เมื่อซักครู่')}</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-semibold">${escapeHtml(post.category || 'ทั่วไป')}</span>
+          <button onclick="deleteCommunityPost('${post.id}')" class="text-slate-400 hover:text-red-500 text-sm p-1" title="ลบโพสต์">🗑️</button>
+        </div>
+      </div>
+
+      <div>
+        <h3 class="font-bold text-sm text-teal-900 mb-1">${escapeHtml(post.title)}</h3>
+        <p class="text-xs text-slate-700 leading-relaxed">${escapeHtml(post.content)}</p>
+      </div>
+
+      <!-- Replies List -->
+      ${post.replies && post.replies.length ? `
+        <div class="pl-3 border-l-2 border-teal-200 space-y-2 pt-1">
+          ${post.replies.map(r => `
+            <div class="bg-slate-50 p-2 rounded-lg text-xs">
+              <span class="font-bold text-teal-800">${escapeHtml(r.author)}:</span>
+              <span class="text-slate-700">${escapeHtml(r.content)}</span>
+            </div>
+          `).join('')}
+        </div>
+      ` : ''}
+
+      <!-- Add Reply Input -->
+      <div class="flex gap-2 pt-2 border-t border-slate-100">
+        <input type="text" id="reply-input-${post.id}" placeholder="พิมพ์คำตอบ / ความคิดเห็น..." class="flex-1 p-2 border border-slate-200 rounded-lg text-xs outline-none focus:border-teal-600">
+        <button onclick="handleReplyPost('${post.id}')" class="px-3 py-1.5 bg-teal-50 text-teal-700 hover:bg-teal-100 rounded-lg text-xs font-bold transition-colors">
+          ตอบกลับ
+        </button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ฟังก์ชันกลางสำหรับส่งข้อมูลไปยัง Google Apps Script
+async function sendToGAS(payload) {
+  if (!GAS_API_URL) return;
+  
   try {
-    const aiText = await callAIBackend(prompt);
-    localStorage.setItem('rightsResult', aiText);
-    localStorage.setItem('rightsLastUpdate', Date.now().toString());
-    if (contentArea) contentArea.innerHTML = marked.parse(aiText);
-  } catch (err) {
-    if (contentArea) contentArea.innerHTML = `<div class="text-red-600 text-center py-6">${escapeHtml(err.message)}</div>`;
+    // ใช้ Content-Type: 'text/plain' เพื่อเลี่ยง Preflight CORS Issue ใน GAS
+    await fetch(GAS_API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    });
+  } catch (e) {
+    console.warn("GAS Sync Error:", e);
   }
 }
 
-/** ================= EVENT LISTENERS INIT ================= **/
-document.addEventListener('DOMContentLoaded', () => {
-  // Load Drug Data
-  loadDrugData();
+async function handleCreatePost() {
+  const author = document.getElementById('post-author').value.trim() || 'สมาชิกทั่วไป';
+  const category = document.getElementById('post-cat').value;
+  const title = document.getElementById('post-title').value.trim();
+  const content = document.getElementById('post-content').value.trim();
 
-  // Search Controls
-  safeAddListener('searchBtn', 'click', applySearchFilters);
-  safeAddListener('clearBtn', 'click', () => {
-    const q = document.getElementById('q');
-    const cat = document.getElementById('cat');
-    if (q) q.value = '';
-    if (cat) cat.value = '';
-    viewData = rawData.slice(0);
-    currentPage = 1;
-    renderGrid();
-  });
-  safeAddListener('q', 'keydown', e => { if (e.key === 'Enter') applySearchFilters(); });
-  safeAddListener('cat', 'change', applySearchFilters);
-
-  // Pagination
-  safeAddListener('prevBtn', 'click', () => { currentPage = Math.max(1, currentPage - 1); renderGrid(); });
-  safeAddListener('nextBtn', 'click', () => { currentPage++; renderGrid(); });
-
-  // Drug Detail Modal Close
-  safeAddListener('closeModal', 'click', closeDrugDetailModal);
-  safeAddListener('modalBackdrop', 'click', e => { if (e.target.id === 'modalBackdrop') closeDrugDetailModal(); });
-
-  // Chatbot Trigger
-  const fabBtn = document.getElementById('fab-chat-toggle');
-  const chatModal = document.getElementById('chatbot-modal');
-  if (fabBtn && chatModal) {
-    fabBtn.addEventListener('click', () => {
-      chatModal.classList.remove('chatbot-hidden');
-      fabBtn.style.opacity = '0';
-    });
-  }
-  safeAddListener('chatbot-close-btn', 'click', () => {
-    if (chatModal) chatModal.classList.add('chatbot-hidden');
-    if (fabBtn) fabBtn.style.opacity = '1';
-  });
-
-  safeAddListener('send-btn', 'click', handleChatSend);
-  safeAddListener('user-input', 'keydown', e => { if (e.key === 'Enter') handleChatSend(); });
-  safeAddListener('new-chat-btn', 'click', () => {
-    chatHistory = [SYSTEM_PROMPT, SYSTEM_ACK];
-    const historyEl = document.getElementById('chat-history');
-    if (historyEl) {
-      historyEl.innerHTML = `<div class="flex items-start space-x-2"><span class="text-2xl">🤖</span><div class="chat-bubble chat-bubble-model bg-white text-gray-800 p-3 rounded-lg max-w-lg relative border border-gray-200 shadow-sm"><p>สวัสดีครับ ผมคือ AI ผู้ช่วยเภสัชกร สอบถามเรื่องยาได้เลยครับ</p></div></div>`;
-    }
-  });
-
-  // Health Assessment Modal
-  safeAddListener('health-check-btn', 'click', () => toggleHealthModal(true));
-  safeAddListener('close-health-modal', 'click', () => toggleHealthModal(false));
-  safeAddListener('cancel-health-btn', 'click', () => toggleHealthModal(false));
-  safeAddListener('submit-health-btn', 'click', handleHealthSubmit);
-
-  // Disease Chips Selection
-  document.querySelectorAll('.chip-option').forEach(chip => {
-    chip.addEventListener('click', () => {
-      const val = chip.getAttribute('data-val');
-      if (val === 'ไม่มี') {
-        document.querySelectorAll('.chip-option').forEach(c => c.classList.remove('selected'));
-        chip.classList.add('selected');
-      } else {
-        const noChip = document.querySelector('.chip-option[data-val="ไม่มี"]');
-        if (noChip) noChip.classList.remove('selected');
-        chip.classList.toggle('selected');
-      }
-    });
-  });
-
-  // Rights Check Modal
-  safeAddListener('rights-check-btn', 'click', () => toggleRightsModal(true));
-  safeAddListener('close-rights-modal', 'click', () => toggleRightsModal(false));
-  safeAddListener('cancel-rights-btn', 'click', () => toggleRightsModal(false));
-  safeAddListener('submit-rights-btn', 'click', handleRightsSubmit);
-
-  // Result Modal Close
-  safeAddListener('close-result-modal', 'click', () => toggleResultModal(false));
-
-  // Drug Scanner Modal & Handlers
-  safeAddListener('scan-drug-btn', 'click', () => toggleScanModal(true));
-  safeAddListener('quick-cam-btn', 'click', () => toggleScanModal(true));
-  safeAddListener('close-scan-modal', 'click', () => toggleScanModal(false));
-  safeAddListener('cancel-scan-btn', 'click', () => toggleScanModal(false));
-
-  const dropZone = document.getElementById('scan-dropzone');
-  const fileInput = document.getElementById('scan-file-input');
-
-  if (dropZone && fileInput) {
-    dropZone.addEventListener('click', () => fileInput.click());
-    fileInput.addEventListener('change', e => {
-      if (e.target.files && e.target.files[0]) handleFileSelect(e.target.files[0]);
-    });
+  if (!title || !content) {
+    if (!title) document.getElementById('post-title').focus();
+    else if (!content) document.getElementById('post-content').focus();
+    return;
   }
 
-  safeAddListener('select-file-btn', 'click', () => { if (fileInput) fileInput.click(); });
-  safeAddListener('take-photo-btn', 'click', () => { if (fileInput) fileInput.click(); });
-  safeAddListener('submit-scan-btn', 'click', submitScanImage);
+  const newPost = {
+    id: "p_" + Date.now(),
+    author, category, title, content,
+    timestamp: "เมื่อซักครู่",
+    replies: []
+  };
 
-  // Update Rights Date Display
-  const rightsDateEl = document.getElementById('rights-update-date');
-  if (rightsDateEl) {
-    const now = new Date();
-    const months = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
-    rightsDateEl.textContent = `ล่าสุด: ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear() + 543}`;
-  }
-});
+  communityPosts.unshift(newPost);
+  document.getElementById('post-title').value = '';
+  document.getElementById('post-content').value = '';
+
+  renderCommunityPosts();
+
+  // ส่งข้อมูลไปบันทึก
+  sendToGAS({ action: 'create', post: newPost });
+}
+
+async function handleReplyPost(postId) {
+  const input = document.getElementById(`reply-input-${postId}`);
+  const text = input ? input.value.trim() : '';
+  if (!text) return;
+
+  const post = communityPosts.find(p => p.id === postId);
+  if (!post) return;
+
+  if (!post.replies) post.replies = [];
+  const replyObj = {
+    id: "r_" + Date.now(),
+    author: "ผู้ใช้งาน",
+    content: text,
+    timestamp: "เมื่อซักครู่"
+  };
+
+  post.replies.push(replyObj);
+  renderCommunityPosts();
+
+  // ส่งข้อมูลไปบันทึก
+  sendToGAS({ action: 'reply', postId, reply: replyObj });
+}
+
+async function deleteCommunityPost(postId) {
+  // ลบโพสต์ทันทีโดยไม่ใช้ confirm() เพื่อป้องกันปัญหา iFrame/Pop-up blocker
+  communityPosts = communityPosts.filter(p => p.id !== postId);
+  renderCommunityPosts();
+
+  // ส่งข้อมูลไปบันทึกบน Google Apps Script
+  sendToGAS({ action: 'delete', id: postId });
+}
+
+/** HELPER UTILITIES **/
+function escapeHtml(s = '') {
+  return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+function stripHtml(html = '') {
+  const tmp = document.createElement('div');
+  tmp.innerHTML = html;
+  return tmp.textContent || tmp.innerText || '';
+}
 </script>
 </body>
 </html>
