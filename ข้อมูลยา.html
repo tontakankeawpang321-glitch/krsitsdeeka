@@ -329,7 +329,7 @@
 
       <div class="p-4 overflow-y-auto space-y-3 text-sm bg-slate-50">
         <div class="border-2 border-dashed border-teal-300 bg-teal-50/50 rounded-xl p-4 text-center space-y-2 relative">
-          <input type="file" id="camera-file-input" accept="image/*" class="hidden" onchange="handleImageSelect(event)">
+          <input type="file" id="camera-file-input" accept="image/*" capture="environment" class="hidden" onchange="handleImageSelect(event)">
           <div id="preview-container" class="hidden relative inline-block max-h-48 rounded-lg overflow-hidden border border-slate-200">
             <img id="image-preview" src="" alt="Drug Preview" class="max-h-48 object-contain">
           </div>
@@ -340,7 +340,7 @@
           </div>
           <div class="flex justify-center gap-2 pt-1">
             <button onclick="document.getElementById('camera-file-input').click()" class="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-xs font-bold shadow-sm transition-all">
-              เลือกรูป / ถ่ายภาพ
+              📷 เลือกรูป / ถ่ายภาพ
             </button>
           </div>
         </div>
@@ -685,22 +685,43 @@ function closeModal() {
 
 /** STREAMING_CHUNK:AI Service helper function... **/
 async function callAI(message, imageObj = null, history = []) {
+  const payload = { message, history };
+  
+  // Format image for maximum compatibility across various Cloudflare Worker / Gemini proxy implementations
+  if (imageObj) {
+    payload.image = imageObj.pureBase64 || imageObj.dataURL || imageObj;
+    payload.imageData = imageObj.pureBase64 || imageObj.dataURL;
+    payload.mimeType = imageObj.mimeType || 'image/jpeg';
+    payload.inlineData = {
+      mimeType: imageObj.mimeType || 'image/jpeg',
+      data: imageObj.pureBase64 || ''
+    };
+    payload.dataURL = imageObj.dataURL || '';
+  }
+
   try {
-    const payload = { message, history };
-    if (imageObj) payload.image = imageObj;
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 45000); // 45s timeout
 
     const res = await fetch(API_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
+      signal: controller.signal
     });
+    clearTimeout(timeoutId);
 
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
-    return data.reply || "ไม่สามารถดึงข้อมูลได้ในขณะนี้";
+    
+    const replyText = data.reply || data.response || data.text || data.choices?.[0]?.message?.content || (typeof data === 'string' ? data : null);
+    if (replyText) return replyText;
   } catch (err) {
-    return "เกิดข้อผิดพลาดในการเชื่อมต่อระบบ AI: " + err.message;
+    console.warn(`API call failed for ${API_URL}:`, err);
+    return "เกิดข้อผิดพลาดในการเชื่อมต่อระบบ AI: " + (err ? err.message : "ไม่สามารถติดต่อเซิร์ฟเวอร์ได้");
   }
+
+  return "เกิดข้อผิดพลาดในการรับข้อมูลจาก AI";
 }
 
 /** CHATBOT LOGIC **/
@@ -771,11 +792,11 @@ function handleImageSelect(e) {
   reader.onload = (evt) => {
     const img = new Image();
     img.onload = () => {
-      // Compress image client side
+      // Compress & resize image on client-side (Max 800px)
       const canvas = document.createElement('canvas');
       let width = img.width;
       let height = img.height;
-      const MAX_SIZE = 1024;
+      const MAX_SIZE = 800;
 
       if (width > height && width > MAX_SIZE) {
         height *= MAX_SIZE / width;
@@ -790,19 +811,28 @@ function handleImageSelect(e) {
       const ctx = canvas.getContext('2d');
       ctx.drawImage(img, 0, 0, width, height);
 
-      const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.85);
+      const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.8);
       const pureBase64 = compressedDataUrl.split(',')[1];
 
       selectedImageData = {
         pureBase64: pureBase64,
         mimeType: 'image/jpeg',
-        dataURL: compressedDataUrl
+        dataURL: compressedDataUrl,
+        inlineData: {
+          mimeType: 'image/jpeg',
+          data: pureBase64
+        }
       };
 
       document.getElementById('image-preview').src = compressedDataUrl;
       document.getElementById('preview-container').classList.remove('hidden');
       document.getElementById('upload-placeholder').classList.add('hidden');
-      document.getElementById('analyze-img-btn').disabled = false;
+      
+      const analyzeBtn = document.getElementById('analyze-img-btn');
+      if (analyzeBtn) {
+        analyzeBtn.disabled = false;
+        analyzeBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+      }
     };
     img.src = evt.target.result;
   };
@@ -813,19 +843,40 @@ async function analyzeDrugImage() {
   if (!selectedImageData) return;
 
   const resArea = document.getElementById('scan-result-area');
+  const analyzeBtn = document.getElementById('analyze-img-btn');
+  
+  if (analyzeBtn) {
+    analyzeBtn.disabled = true;
+    analyzeBtn.innerText = "⏳ กำลังวิเคราะห์...";
+  }
+
   resArea.classList.remove('hidden');
-  resArea.innerHTML = `<div class="text-center py-4 text-teal-700 font-bold animate-pulse">กำลังอ่านข้อมูลจากรูปถ่ายและวิเคราะห์ด้วย AI...</div>`;
+  resArea.innerHTML = `<div class="text-center py-6 text-teal-700 font-bold animate-pulse flex flex-col items-center justify-center gap-2">
+    <div class="w-8 h-8 border-4 border-teal-200 border-t-teal-600 rounded-full animate-spin"></div>
+    <span>กำลังอ่านข้อมูลและวิเคราะห์ภาพถ่ายยาด้วย AI...</span>
+  </div>`;
 
   const prompt = `
-  ช่วยอ่านและวิเคราะห์ภาพถ่ายยาต่อไปนี้:
-  1. ชื่อยา (ยี่ห้อ / ชื่อสามัญ)
-  2. สรรพคุณและการรักษา
-  3. ขนาดและวิธีรับประทาน
-  4. คำเตือนและข้อควรระวังสำคัญ
+  ช่วยอ่านและวิเคราะห์ภาพถ่ายยาต่อไปนี้อย่างรายละเอียด:
+  1. **ชื่อยา** (ยี่ห้อ / ชื่อสามัญทางยา / Active Ingredient)
+  2. **สรรพคุณและการรักษา**
+  3. **ขนาดและวิธีรับประทาน**
+  4. **ข้อควรระวังสำคัญและคำเตือน**
+  
+  โปรดสรุปให้อ่านง่ายและกระชับ
   `;
 
-  const aiText = await callAI(prompt, selectedImageData);
-  resArea.innerHTML = `<div class="markdown-body">${marked.parse(aiText)}</div>`;
+  try {
+    const aiText = await callAI(prompt, selectedImageData);
+    resArea.innerHTML = `<div class="markdown-body text-slate-800 text-xs md:text-sm leading-relaxed">${marked.parse(aiText)}</div>`;
+  } catch (err) {
+    resArea.innerHTML = `<div class="p-3 bg-red-50 text-red-700 text-xs rounded-xl font-bold">ไม่สามารถวิเคราะห์ภาพได้: ${escapeHtml(err.message)}</div>`;
+  } finally {
+    if (analyzeBtn) {
+      analyzeBtn.disabled = false;
+      analyzeBtn.innerText = "⚡ เริ่มวิเคราะห์ภาพ";
+    }
+  }
 }
 
 /** HEALTH & RIGHTS MODALS **/
